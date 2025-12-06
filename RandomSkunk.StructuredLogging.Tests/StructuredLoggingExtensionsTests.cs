@@ -1,429 +1,706 @@
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using RandomSkunk.Logging;
 
 namespace RandomSkunk.StructuredLogging.Tests;
 
-public class StructuredLoggingExtensionsTests
+public abstract class StructuredLoggingExtensionsTests
 {
-    #region Write Method Tests - Basic LogAttributeSpanOrArray
+    protected readonly Mock<EasyLogger> _mockLogger = new();
+    protected readonly ILogger _logger;
 
-    [Fact]
-    public void Write_WithNullLogger_ThrowsArgumentNullException()
+    protected readonly EventId _eventId = new(42, "TestEvent");
+    protected readonly Exception? _exception = new InvalidOperationException("Test exception");
+
+    protected readonly (string Key, string Value) _logAttribute1 = ("Foo", "abc");
+    protected readonly (string Key, int Value) _logAttribute2 = ("Bar", 123);
+    protected readonly (string Key, bool Value) _logAttribute3 = ("Baz", true);
+    protected readonly (string Key, double Value) _logAttribute4 = ("Qux", 45.6);
+    protected readonly (string Key, string Value) _logAttribute5 = ("Corge", "xyz");
+    protected readonly (string Key, int Value) _logAttribute6 = ("Grault", 789);
+    protected readonly (string Key, bool Value) _logAttribute7 = ("Garply", false);
+    protected readonly (string Key, double Value) _logAttribute8 = ("Waldo", 123.456);
+    protected readonly (string Key, Guid Value) _logAttribute9 = ("Plugh", Guid.Parse("8BDD00F1-6DB3-4760-862D-48643D76217C"));
+
+    protected readonly string _message = "Test log message";
+    protected readonly KeyValuePair<string, object?> _messageDataKeyValuePair = new("Fred", new DateTime(2025, 11, 25, 21, 33, 34, 459, DateTimeKind.Utc));
+    private protected readonly MessageData _messageData;
+
+    protected LogLevel _logLevel = LogLevel.Information;
+
+    protected StructuredLoggingExtensionsTests()
     {
-        // Arrange
-        ILogger logger = null!;
-
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() =>
-            logger.Write(LogLevel.Information, new EventId(1), null, "Test message", ("key", "value")));
+        _logger = _mockLogger.Object;
+        _messageData = new MessageData(_message, [_messageDataKeyValuePair]);
     }
 
-    [Fact]
-    public void Write_WithLoggerDisabled_DoesNotLog()
+    public class WriteStructuredLogMethodWithNoLogAttributes : StructuredLoggingExtensionsTests
     {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        loggerMock.Object.MinimumLogLevel = LogLevel.Warning;
-        ILogger logger = loggerMock.Object;
-
-        // Act
-        logger.Write(LogLevel.Information, new EventId(1), null, "Test message", ("key", "value"));
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never);
-    }
-
-    [Fact]
-    public void Write_WithBasicParameters_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-        var eventId = new EventId(123, "TestEvent");
-        var exception = new Exception("Test exception");
-
-        // Act
-        logger.Write(LogLevel.Error, eventId, exception, "Test message", ("foo", 123), ("bar", "abc"));
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsError()
-            && log.HasMessage("Test message")
-            && log.HasAttribute("foo", 123)
-            && log.HasAttribute("bar", "abc"))),
-        Times.Once());
-    }
-
-    [Fact]
-    public void Write_WithNoAttributes_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-
-        // Act
-        logger.Write(LogLevel.Information, new EventId(1), null, "Test message without attributes");
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsInformation()
-            && log.HasMessage("Test message without attributes"))),
-        Times.Once());
-    }
-
-    [Fact]
-    public void Write_WithNullMessage_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        EasyLogger logger = loggerMock.Object;
-        logger.MinimumLogLevel = LogLevel.Debug;
-
-        // Act
-        logger.Write(LogLevel.Debug, new EventId(1), null, null, ("key", "value"));
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsDebug()
-            && log.HasAttribute("key", "value"))),
-        Times.Once());
-    }
-
-    [Fact]
-    public void Write_WithNullAttributeKeys_FiltersNullKeys()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-
-        // Act
-        logger.Write(LogLevel.Warning, new EventId(1), null, "Test message", ("validKey", "value1"), (null!, "value2"), ("anotherValidKey", "value3"));
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsWarning()
-            && log.HasMessage("Test message")
-            && log.HasAttribute("validKey", "value1")
-            && log.HasAttribute("anotherValidKey", "value3"))),
-        Times.Once());
-    }
-
-    [Fact]
-    public void Write_WithMultipleLogLevels_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        EasyLogger logger = loggerMock.Object;
-        logger.MinimumLogLevel = LogLevel.Trace;
-
-        // Act & Assert for each log level
-        logger.Write(LogLevel.Trace, new EventId(1), null, "Trace message");
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log => log.IsTrace())), Times.Once());
-
-        logger.Write(LogLevel.Debug, new EventId(2), null, "Debug message");
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log => log.IsDebug())), Times.Once());
-
-        logger.Write(LogLevel.Information, new EventId(3), null, "Info message");
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log => log.IsInformation())), Times.Once());
-
-        logger.Write(LogLevel.Warning, new EventId(4), null, "Warning message");
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log => log.IsWarning())), Times.Once());
-
-        logger.Write(LogLevel.Error, new EventId(5), null, "Error message");
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log => log.IsError())), Times.Once());
-
-        logger.Write(LogLevel.Critical, new EventId(6), null, "Critical message");
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log => log.IsCritical())), Times.Once());
-    }
-
-    #endregion
-
-    #region Write Method Tests - InterpolatedString
-
-    [Fact]
-    public void Write_WithInterpolatedString_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-        var value = 42;
-
-        // Act
-        logger.Write(LogLevel.Information, new EventId(1), null, $"Test with interpolated value: {value}", ("key", "value"));
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsInformation()
-            && log.HasMessage("Test with interpolated value: 42")
-            && log.HasAttribute("key", "value"))),
-        Times.Once());
-    }
-
-    [Fact]
-    public void Write_WithInterpolatedStringAndException_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-        var exception = new InvalidOperationException("Test exception");
-        var count = 5;
-
-        // Act
-        logger.Write(LogLevel.Error, new EventId(1), exception, $"Error processing {count} items", ("source", "test"));
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsError()
-            && log.HasMessage("Error processing 5 items")
-            && log.HasAttribute("source", "test"))),
-        Times.Once());
-    }
-
-    #endregion
-
-    #region Write Method Tests - IReadOnlyCollection<KeyValuePair<string, object?>>
-
-    [Fact]
-    public void Write_WithKeyValuePairCollection_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-        var attributes = new List<KeyValuePair<string, object?>>
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
         {
-            new("userId", 123),
-            new("userName", "testUser"),
-            new("isActive", true)
-        };
+            // Arrange
+            ILogger? logger = null;
 
-        // Act
-        logger.Write(LogLevel.Information, new EventId(1), null, "User operation", attributes);
+            // Act
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData);
 
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsInformation()
-            && log.HasMessage("User operation")
-            && log.HasAttribute("userId", 123)
-            && log.HasAttribute("userName", "testUser")
-            && log.HasAttribute("isActive", true))),
-        Times.Once());
-    }
-
-    [Fact]
-    public void Write_WithEmptyKeyValuePairCollection_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-        var attributes = new List<KeyValuePair<string, object?>>();
-
-        // Act
-        logger.Write(LogLevel.Information, new EventId(1), null, "Test message", attributes);
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsInformation()
-            && log.HasMessage("Test message"))),
-        Times.Once());
-    }
-
-    [Fact]
-    public void Write_WithNullKeyValuePairCollection_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-        IReadOnlyCollection<KeyValuePair<string, object?>> attributes = null!;
-
-        // Act
-        logger.Write(LogLevel.Information, new EventId(1), null, "Test message", attributes);
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsInformation()
-            && log.HasMessage("Test message"))),
-        Times.Once());
-    }
-
-    [Fact]
-    public void Write_WithInterpolatedStringAndKeyValuePairs_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-        var operationId = Guid.NewGuid();
-        var attributes = new List<KeyValuePair<string, object?>>
-        {
-            new("duration", 250),
-            new("status", "completed")
-        };
-
-        // Act
-        logger.Write(LogLevel.Information, new EventId(1), null, $"Operation {operationId} finished", attributes);
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsInformation()
-            && log.HasMessage($"Operation {operationId} finished")
-            && log.HasAttribute("duration", 250)
-            && log.HasAttribute("status", "completed"))),
-        Times.Once());
-    }
-
-    #endregion
-
-    #region BeginScope Method Tests - Basic LogAttributeSpanOrArray
-
-    [Fact]
-    public void BeginScope_WithNullLogger_ThrowsArgumentNullException()
-    {
-        // Arrange
-        ILogger logger = null!;
-
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() =>
-            logger.BeginScope("Test scope", ("key", "value")));
-    }
-
-    [Fact]
-    public void BeginScope_WithMessageAndAttributes_ReturnsScope()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-
-        // Act
-        var scope = logger.BeginScope("Test scope", ("key1", "value1"), ("key2", "value2"));
-
-        // Assert
-        Assert.NotNull(scope);
-    }
-
-    [Fact]
-    public void BeginScope_WithOnlyMessage_ReturnsScope()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        EasyLogger logger = loggerMock.Object;
-
-        // Act
-        var scope = logger.BeginScope("Test scope");
-
-        // Assert
-        Assert.NotNull(scope);
-    }
-
-    [Fact]
-    public void BeginScope_WithOnlyAttributes_ReturnsScope()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-
-        // Act
-        var scope = logger.BeginScope(("operation", "test"), ("requestId", 123));
-
-        // Assert
-        Assert.NotNull(scope);
-    }
-
-    [Fact]
-    public void BeginScope_AttributesOnly_ReturnsScope()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-
-        // Act
-        var scope = logger.BeginScope(("traceId", "abc123"), ("spanId", "def456"));
-
-        // Assert
-        Assert.NotNull(scope);
-    }
-
-    #endregion
-
-    #region Integration Tests
-
-    [Fact]
-    public void Write_WithLargeNumberOfAttributes_LogsCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-        
-        // Create more than 8 attributes to test the default case
-        var attributes = new List<(string, object?)>();
-        for (int i = 0; i < 10; i++)
-        {
-            attributes.Add(($"key{i}", $"value{i}"));
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
         }
 
-        // Act
-        logger.Write(LogLevel.Information, new EventId(1), null, "Test with many attributes", attributes.ToArray());
-
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsInformation()
-            && log.HasMessage("Test with many attributes")
-            && log.HasAttribute("key0", "value0")
-            && log.HasAttribute("key9", "value9"))),
-        Times.Once());
-    }
-
-    [Fact]
-    public void BeginScope_CanBeDisposed_WorksCorrectly()
-    {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        EasyLogger logger = loggerMock.Object;
-
-        // Act
-        using (var scope = logger.BeginScope("Test disposable scope", ("resource", "database")))
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
         {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData);
+
             // Assert
-            Assert.NotNull(scope);
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
 
-            Assert.Single(logger.CurrentScope);
-            Assert.Collection(logger.CurrentScope, s => Assert.Equal("Test disposable scope", s.ToString()));
-        } // Disposing should not throw.
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData);
 
-        // After disposal, the scope should be removed.
-        Assert.Empty(logger.CurrentScope);
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<LogAttributeArray>>(state =>
+                    state.Count == 1
+                    && state[0].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[0].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
     }
 
-    [Fact]
-    public void Write_WithVariousValueTypes_LogsCorrectly()
+    public class WriteStructuredLogMethodWithOneLogAttribute : StructuredLoggingExtensionsTests
     {
-        // Arrange
-        Mock<EasyLogger> loggerMock = new();
-        ILogger logger = loggerMock.Object;
-        var dateTime = DateTime.Now;
-        var guid = Guid.NewGuid();
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
+        {
+            // Arrange
+            ILogger? logger = null;
 
-        // Act
-        logger.Write(LogLevel.Information, new EventId(1), null, "Test with various types",
-            ("stringValue", "test"),
-            ("intValue", 42),
-            ("boolValue", true),
-            ("doubleValue", 3.14),
-            ("dateTimeValue", dateTime),
-            ("guidValue", guid),
-            ("nullValue", null));
+            // Act
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1);
 
-        // Assert
-        loggerMock.Verify(m => m.Write(It.Is<LogEntry>(log =>
-            log.IsInformation()
-            && log.HasMessage("Test with various types")
-            && log.HasAttribute("stringValue", "test")
-            && log.HasAttribute("intValue", 42)
-            && log.HasAttribute("boolValue", true)
-            && log.HasAttribute("doubleValue", 3.14)
-            && log.HasAttribute("dateTimeValue", dateTime)
-            && log.HasAttribute("guidValue", guid))),
-        Times.Once());
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
+        }
+
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
+        {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<LogAttributeTuple<string>>>(state =>
+                    state.Count == 2
+                    && state[0].Key == _logAttribute1.Key
+                    && Equals(state[0].Value, _logAttribute1.Value)
+                    && state[1].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[1].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
     }
 
-    #endregion
+    public class WriteStructuredLogMethodWithTwoLogAttributes : StructuredLoggingExtensionsTests
+    {
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
+        {
+            // Arrange
+            ILogger? logger = null;
+
+            // Act
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
+        }
+
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
+        {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<LogAttributeTuple<string, int>>>(state =>
+                    state.Count == 3
+                    && state[0].Key == _logAttribute1.Key
+                    && Equals(state[0].Value, _logAttribute1.Value)
+                    && state[1].Key == _logAttribute2.Key
+                    && Equals(state[1].Value, _logAttribute2.Value)
+                    && state[2].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[2].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
+    }
+
+    public class WriteStructuredLogMethodWithThreeLogAttributes : StructuredLoggingExtensionsTests
+    {
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
+        {
+            // Arrange
+            ILogger? logger = null;
+
+            // Act
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
+        }
+
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
+        {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<LogAttributeTuple<string, int, bool>>>(state =>
+                    state.Count == 4
+                    && state[0].Key == _logAttribute1.Key
+                    && Equals(state[0].Value, _logAttribute1.Value)
+                    && state[1].Key == _logAttribute2.Key
+                    && Equals(state[1].Value, _logAttribute2.Value)
+                    && state[2].Key == _logAttribute3.Key
+                    && Equals(state[2].Value, _logAttribute3.Value)
+                    && state[3].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[3].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
+    }
+
+    public class WriteStructuredLogMethodWithFourLogAttributes : StructuredLoggingExtensionsTests
+    {
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
+        {
+            // Arrange
+            ILogger? logger = null;
+
+            // Act
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
+        }
+
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
+        {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<LogAttributeTuple<string, int, bool, double>>>(state =>
+                    state.Count == 5
+                    && state[0].Key == _logAttribute1.Key
+                    && Equals(state[0].Value, _logAttribute1.Value)
+                    && state[1].Key == _logAttribute2.Key
+                    && Equals(state[1].Value, _logAttribute2.Value)
+                    && state[2].Key == _logAttribute3.Key
+                    && Equals(state[2].Value, _logAttribute3.Value)
+                    && state[3].Key == _logAttribute4.Key
+                    && Equals(state[3].Value, _logAttribute4.Value)
+                    && state[4].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[4].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
+    }
+
+    public class WriteStructuredLogMethodWithFiveLogAttributes : StructuredLoggingExtensionsTests
+    {
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
+        {
+            // Arrange
+            ILogger? logger = null;
+
+            // Act
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
+        }
+
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
+        {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<LogAttributeTuple<string, int, bool, double, string>>>(state =>
+                    state.Count == 6
+                    && state[0].Key == _logAttribute1.Key
+                    && Equals(state[0].Value, _logAttribute1.Value)
+                    && state[1].Key == _logAttribute2.Key
+                    && Equals(state[1].Value, _logAttribute2.Value)
+                    && state[2].Key == _logAttribute3.Key
+                    && Equals(state[2].Value, _logAttribute3.Value)
+                    && state[3].Key == _logAttribute4.Key
+                    && Equals(state[3].Value, _logAttribute4.Value)
+                    && state[4].Key == _logAttribute5.Key
+                    && Equals(state[4].Value, _logAttribute5.Value)
+                    && state[5].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[5].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
+    }
+
+    public class WriteStructuredLogMethodWithSixLogAttributes : StructuredLoggingExtensionsTests
+    {
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
+        {
+            // Arrange
+            ILogger? logger = null;
+
+            // Act
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5, in _logAttribute6);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
+        }
+
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
+        {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5, in _logAttribute6);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5, in _logAttribute6);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<LogAttributeTuple<string, int, bool, double, string, int>>>(state =>
+                    state.Count == 7
+                    && state[0].Key == _logAttribute1.Key
+                    && Equals(state[0].Value, _logAttribute1.Value)
+                    && state[1].Key == _logAttribute2.Key
+                    && Equals(state[1].Value, _logAttribute2.Value)
+                    && state[2].Key == _logAttribute3.Key
+                    && Equals(state[2].Value, _logAttribute3.Value)
+                    && state[3].Key == _logAttribute4.Key
+                    && Equals(state[3].Value, _logAttribute4.Value)
+                    && state[4].Key == _logAttribute5.Key
+                    && Equals(state[4].Value, _logAttribute5.Value)
+                    && state[5].Key == _logAttribute6.Key
+                    && Equals(state[5].Value, _logAttribute6.Value)
+                    && state[6].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[6].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
+    }
+
+    public class WriteStructuredLogMethodWithSevenLogAttributes : StructuredLoggingExtensionsTests
+    {
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
+        {
+            // Arrange
+            ILogger? logger = null;
+
+            // Act
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5, in _logAttribute6, in _logAttribute7);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
+        }
+
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
+        {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5, in _logAttribute6, in _logAttribute7);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5, in _logAttribute6, in _logAttribute7);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<LogAttributeTuple<string, int, bool, double, string, int, bool>>>(state =>
+                    state.Count == 8
+                    && state[0].Key == _logAttribute1.Key
+                    && Equals(state[0].Value, _logAttribute1.Value)
+                    && state[1].Key == _logAttribute2.Key
+                    && Equals(state[1].Value, _logAttribute2.Value)
+                    && state[2].Key == _logAttribute3.Key
+                    && Equals(state[2].Value, _logAttribute3.Value)
+                    && state[3].Key == _logAttribute4.Key
+                    && Equals(state[3].Value, _logAttribute4.Value)
+                    && state[4].Key == _logAttribute5.Key
+                    && Equals(state[4].Value, _logAttribute5.Value)
+                    && state[5].Key == _logAttribute6.Key
+                    && Equals(state[5].Value, _logAttribute6.Value)
+                    && state[6].Key == _logAttribute7.Key
+                    && Equals(state[6].Value, _logAttribute7.Value)
+                    && state[7].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[7].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
+    }
+
+    public class WriteStructuredLogMethodWithEightLogAttributes : StructuredLoggingExtensionsTests
+    {
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
+        {
+            // Arrange
+            ILogger? logger = null;
+
+            // Act
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5, in _logAttribute6, in _logAttribute7, in _logAttribute8);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
+        }
+
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
+        {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5, in _logAttribute6, in _logAttribute7, in _logAttribute8);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, in _logAttribute1, in _logAttribute2, in _logAttribute3, in _logAttribute4, in _logAttribute5, in _logAttribute6, in _logAttribute7, in _logAttribute8);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<LogAttributeTuple<string, int, bool, double, string, int, bool, double>>>(state =>
+                    state.Count == 9
+                    && state[0].Key == _logAttribute1.Key
+                    && Equals(state[0].Value, _logAttribute1.Value)
+                    && state[1].Key == _logAttribute2.Key
+                    && Equals(state[1].Value, _logAttribute2.Value)
+                    && state[2].Key == _logAttribute3.Key
+                    && Equals(state[2].Value, _logAttribute3.Value)
+                    && state[3].Key == _logAttribute4.Key
+                    && Equals(state[3].Value, _logAttribute4.Value)
+                    && state[4].Key == _logAttribute5.Key
+                    && Equals(state[4].Value, _logAttribute5.Value)
+                    && state[5].Key == _logAttribute6.Key
+                    && Equals(state[5].Value, _logAttribute6.Value)
+                    && state[6].Key == _logAttribute7.Key
+                    && Equals(state[6].Value, _logAttribute7.Value)
+                    && state[7].Key == _logAttribute8.Key
+                    && Equals(state[7].Value, _logAttribute8.Value)
+                    && state[8].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[8].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
+    }
+
+    public class WriteStructuredLogMethodWithNineLogAttributes : StructuredLoggingExtensionsTests
+    {
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
+        {
+            // Arrange
+            ILogger? logger = null;
+
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, _logAttribute1, _logAttribute2, _logAttribute3, _logAttribute4, _logAttribute5, _logAttribute6, _logAttribute7, _logAttribute8, _logAttribute9);
+
+            // Act / Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
+        }
+
+        [Fact]
+        public void GivenNullLogAttributes_DoesNotThrow()
+        {
+            // Arrange
+            Action act = () => _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, logAttributes: null!);
+
+            // Act / Assert
+            act.Should().NotThrow();
+        }
+
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
+        {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, _logAttribute1, _logAttribute2, _logAttribute3, _logAttribute4, _logAttribute5, _logAttribute6, _logAttribute7, _logAttribute8, _logAttribute9);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, _logAttribute1, _logAttribute2, _logAttribute3, _logAttribute4, _logAttribute5, _logAttribute6, _logAttribute7, _logAttribute8, _logAttribute9);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<LogAttributeArray>>(state =>
+                    state.Count == 10
+                    && state[0].Key == _logAttribute1.Key
+                    && Equals(state[0].Value, _logAttribute1.Value)
+                    && state[1].Key == _logAttribute2.Key
+                    && Equals(state[1].Value, _logAttribute2.Value)
+                    && state[2].Key == _logAttribute3.Key
+                    && Equals(state[2].Value, _logAttribute3.Value)
+                    && state[3].Key == _logAttribute4.Key
+                    && Equals(state[3].Value, _logAttribute4.Value)
+                    && state[4].Key == _logAttribute5.Key
+                    && Equals(state[4].Value, _logAttribute5.Value)
+                    && state[5].Key == _logAttribute6.Key
+                    && Equals(state[5].Value, _logAttribute6.Value)
+                    && state[6].Key == _logAttribute7.Key
+                    && Equals(state[6].Value, _logAttribute7.Value)
+                    && state[7].Key == _logAttribute8.Key
+                    && Equals(state[7].Value, _logAttribute8.Value)
+                    && state[8].Key == _logAttribute9.Key
+                    && Equals(state[8].Value, _logAttribute9.Value)
+                    && state[9].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[9].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
+    }
+
+    public class WriteStructuredLogMethodWithKeyValuePairCollection : StructuredLoggingExtensionsTests
+    {
+        [Fact]
+        public void GivenNullLogger_ThrowsArgumentNullException()
+        {
+            // Arrange
+            ILogger? logger = null;
+            IReadOnlyList<KeyValuePair<string, object?>> keyValuePairs =
+            [
+                new(_logAttribute1.Key, _logAttribute1.Value),
+                new(_logAttribute2.Key, _logAttribute2.Value),
+            ];
+
+            // Act
+            Action act = () => logger!.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, keyValuePairs);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName("logger");
+        }
+
+        [Fact]
+        public void GivenNullKeyValuePairs_DoesNotThrow()
+        {
+            // Arrange
+            Action act = () => _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, keyValuePairs: null!);
+
+            // Act / Assert
+            act.Should().NotThrow();
+        }
+
+        [Fact]
+        public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
+        {
+            // Arrange
+            _logLevel = LogLevel.Debug;
+            IReadOnlyList<KeyValuePair<string, object?>> keyValuePairs =
+            [
+                new(_logAttribute1.Key, _logAttribute1.Value),
+                new(_logAttribute2.Key, _logAttribute2.Value),
+            ];
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, keyValuePairs);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
+        {
+            // Arrange
+            IReadOnlyCollection<KeyValuePair<string, object?>> keyValuePairs = new Dictionary<string, object?>
+                {
+                    { _logAttribute1.Key, _logAttribute1.Value },
+                    { _logAttribute2.Key, _logAttribute2.Value },
+                };
+
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, keyValuePairs);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<KeyValuePairCollection>>(state =>
+                    state.Count == 3
+                    && state[0].Key == _logAttribute1.Key
+                    && Equals(state[0].Value, _logAttribute1.Value)
+                    && state[1].Key == _logAttribute2.Key
+                    && Equals(state[1].Value, _logAttribute2.Value)
+                    && state[2].Key == _messageDataKeyValuePair.Key
+                    && Equals(state[2].Value, _messageDataKeyValuePair.Value)))),
+                Times.Once());
+        }
+    }
 }

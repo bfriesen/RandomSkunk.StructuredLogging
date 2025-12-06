@@ -16,10 +16,68 @@ namespace RandomSkunk.StructuredLogging.Generator;
 [ExcludeFromCodeCoverage]
 public class StructuredLoggingExtensionsGenerator : IIncrementalGenerator
 {
-    private const string _writeSummaryFormat = """
+    private const string _summaryFormatNonInterpolatedMessage = """
     /// <summary>
     /// Writes a log entry at the {0} log level.
     /// </summary>
+""";
+
+    // This needs to mention an interpolation expression with a value with an actual format.
+    // The example should be a TimeSpan displaying the number of seconds to two decimal places.
+    private const string _summaryFormatInterpolatedMessage = """
+    /// <summary>
+    /// Writes a log entry at the {0} log level with its message specified as an interpolated string.
+    /// <para/>
+    /// To capture a log attribute in an interpolation expression, specify a format that starts with an HTML tag. In
+    /// <c>$"User {{userId:&lt;UserId&gt;}} logged in"</c>, the <c>userId</c> variable is captured in a log attribute named
+    /// "UserId". In <c>$"Operation completed in {{elapsedSeconds:&lt;ElapsedSeconds&gt;0.00}}"</c>, the <c>elapsedSeconds</c>
+    /// variable is captured in a log attribute named "ElapsedSeconds" with its value formatted to two decimal places
+    /// in the log message.
+    /// </summary>
+""";
+
+    private const string _traceRemarks = """
+    /// <remarks>
+    /// Trace logs contain the most detailed messages and may contain sensitive application data. These messages are disabled by
+    /// default and should never be enabled in a production environment.
+    /// </remarks>
+""";
+
+    private const string _debugRemarks = """
+    /// <remarks>
+    /// Debug logs are used for interactive investigation during development. These logs should primarily contain information
+    /// useful for debugging and have no long-term value.
+    /// </remarks>
+""";
+
+    private const string _informationRemarks = """
+    /// <remarks>
+    /// Information logs are used to track the general flow of the application. These logs should have long-term value and
+    /// contain information useful for understanding the application's behavior and state.
+    /// </remarks>
+""";
+
+    private const string _warningRemarks = """
+    /// <remarks>
+    /// Warning logs highlight an abnormal or unexpected event in the application flow, but do not otherwise cause the
+    /// application execution to stop. These logs may not require immediate attention but should be reviewed to ensure they do
+    /// not indicate a larger problem.
+    /// </remarks>
+""";
+
+    private const string _errorRemarks = """
+    /// <remarks>
+    /// Error logs highlight when the current flow of execution is stopped due to a failure. These should indicate a failure in
+    /// the current activity, not an application-wide failure. These logs should contain enough information to diagnose the issue
+    /// and should be reviewed promptly.
+    /// </remarks>
+""";
+
+    private const string _criticalRemarks = """
+    /// <remarks>
+    /// Critical logs describe an unrecoverable application or system crash, or a catastrophic failure that requires immediate
+    /// attention. These logs should contain enough information to diagnose the issue and should be reviewed as soon as possible.
+    /// </remarks>
 """;
 
     private const string _loggerParam = """
@@ -27,7 +85,7 @@ public class StructuredLoggingExtensionsGenerator : IIncrementalGenerator
 """;
 
     private const string _logLevelParam = """
-    /// <param name="logLevel">Entry will be written on this level.</param>
+    /// <param name="logLevel">The severity of the log.</param>
 """;
 
     private const string _eventIdParam = """
@@ -42,13 +100,21 @@ public class StructuredLoggingExtensionsGenerator : IIncrementalGenerator
     /// <param name="message">The log message.</param>
 """;
 
-    private const string _interpolatedStringMessageParamFormat = """
-    /// <param name="message">The log message as an interpolated string. Evaluated only if the logger is enabled at the {0}
-    /// log level.</param>
+    private const string _interpolatedStringMessageParam = """
+    /// <param name="interpolatedMessage">The log message as an interpolated string.</param>
 """;
 
     private const string _logAttributesParam = """
     /// <param name="logAttributes">Key value pairs associated with the log.</param>
+""";
+
+    private const string _logAttributeParamFormat = """
+    /// <param name="logAttribute{0}">The {1}key value pair associated with the log.</param>
+""";
+
+    private const string _keyValuePairsParam = """
+    /// <param name="keyValuePairs">Key value pairs (e.g. <c>Dictionary&lt;string, object?&gt;</c>) associated with the log.
+    /// </param>
 """;
 
     public void Initialize(IncrementalGeneratorInitializationContext context) =>
@@ -60,7 +126,8 @@ public class StructuredLoggingExtensionsGenerator : IIncrementalGenerator
 
         sb.AppendLine("""
 // <auto-generated/>
-// ReSharper disable All
+
+#nullable enable
 
 using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
@@ -68,46 +135,44 @@ using System.Runtime.CompilerServices;
 
 namespace RandomSkunk.StructuredLogging;
 
-using LogAttributeSpanOrArray =
-#if NET9_0_OR_GREATER
-    Span<(string Key, object? Value)>;
-#else
-    (string Key, object? Value)[];
-#endif
-
-/// <remarks>
+/// <content>
 /// Defines pass-through extension methods.
-/// </remarks>
-[ExcludeFromCodeCoverage]
-public static partial class StructuredLoggingExtensions
+/// </content>
+partial class StructuredLoggingExtensions
 {
 """);
 
         string?[] logLevels = [null, "Trace", "Debug", "Information", "Warning", "Error", "Critical"];
-        GenerateMethods(sb, logLevels, keepLogAttributesType: true);
-        GenerateMethods(sb, logLevels, keepLogAttributesType: false);
+        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.ParamsLogAttributeArray);
+        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.OneGenericParameter);
+        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.TwoGenericParameters);
+        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.ThreeGenericParameters);
+        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.FourGenericParameters);
+        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.FiveGenericParameters);
+        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.SixGenericParameters);
+        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.SevenGenericParameters);
+        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.EightGenericParameters);
+        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.KeyValuePairCollection);
         while (char.IsWhiteSpace(sb[sb.Length - 1]))
             sb.Length--;
         sb.AppendLine();
         return sb.AppendLine("}").ToString();
     }
 
-    /// <param name="keepLogAttributesType"><c>true</c> to leave the type of the logAttributes parameter as a log attribute span or
+    /// <param name="logAttributesParameterType"><c>true</c> to leave the type of the logAttributes parameter as a log attribute span or
     /// array. <c>false</c> to change the type to <c>IReadOnlyCollection&lt;KeyValuePair&lt;string, object?&gt;&gt;</c>.</param>
-    private static void GenerateMethods(StringBuilder sb, string?[] logLevels, bool keepLogAttributesType)
+    private static void GenerateMethods(StringBuilder sb, string?[] logLevels, LogAttributesParameterType logAttributesParameterType)
     {
         foreach (string? logLevel in logLevels)
         {
-            if (logLevel != null) // Skip the two Write overloads that are already defined in the main extension class.
-                GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: true, keepMessageType: true, keepLogAttributesType);
-
-            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: true, keepMessageType: false, keepLogAttributesType);
-            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: false, keepMessageType: true, keepLogAttributesType);
-            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: false, keepMessageType: false, keepLogAttributesType);
-            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: true, keepMessageType: true, keepLogAttributesType);
-            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: true, keepMessageType: false, keepLogAttributesType);
-            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: false, keepMessageType: true, keepLogAttributesType);
-            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: false, keepMessageType: false, keepLogAttributesType);
+            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: true, keepMessageType: true, logAttributesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: true, keepMessageType: false, logAttributesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: false, keepMessageType: true, logAttributesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: false, keepMessageType: false, logAttributesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: true, keepMessageType: true, logAttributesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: true, keepMessageType: false, logAttributesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: false, keepMessageType: true, logAttributesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: false, keepMessageType: false, logAttributesParameterType);
         }
     }
 
@@ -117,13 +182,40 @@ public static partial class StructuredLoggingExtensions
     /// omit the exception parameter and pass null to the <c>Write</c> method.</param>
     /// <param name="keepMessageType"><c>true</c> to leave the type of the message parameter as a string. <c>false</c> to change the type to an
     /// interpolated string.</param>
+    /// <param name="logAttributesParameterType">The type of the log attributes parameter</param>
     /// <param name="keepLogAttributesType"><c>true</c> to leave the type of the logAttributes parameter as a log attribute span or
     /// array. <c>false</c> to change the type to <c>IReadOnlyCollection&lt;KeyValuePair&lt;string, object?&gt;&gt;</c>.</param>
-    private static void GenerateMethod(StringBuilder sb, string? logLevel, bool passThroughEventId, bool passThroughException, bool keepMessageType, bool keepLogAttributesType)
+    private static void GenerateMethod(StringBuilder sb, string? logLevel, bool passThroughEventId, bool passThroughException, bool keepMessageType, LogAttributesParameterType logAttributesParameterType)
     {
         string logLevelDisplay = logLevel?.ToLower() ?? "specified";
 
-        sb.AppendFormat(_writeSummaryFormat, logLevelDisplay).AppendLine();
+        if (keepMessageType)
+            sb.AppendFormat(_summaryFormatNonInterpolatedMessage, logLevelDisplay).AppendLine();
+        else
+            sb.AppendFormat(_summaryFormatInterpolatedMessage, logLevelDisplay).AppendLine();
+
+        switch (logLevel)
+        {
+            case "Trace":
+                sb.AppendLine(_traceRemarks);
+                break;
+            case "Debug":
+                sb.AppendLine(_debugRemarks);
+                break;
+            case "Information":
+                sb.AppendLine(_informationRemarks);
+                break;
+            case "Warning":
+                sb.AppendLine(_warningRemarks);
+                break;
+            case "Error":
+                sb.AppendLine(_errorRemarks);
+                break;
+            case "Critical":
+                sb.AppendLine(_criticalRemarks);
+                break;
+        }
+
         sb.AppendLine(_loggerParam);
         if (logLevel == null)
             sb.AppendLine(_logLevelParam);
@@ -134,12 +226,14 @@ public static partial class StructuredLoggingExtensions
         if (keepMessageType)
             sb.AppendLine(_stringMessageParam);
         else
-            sb.AppendFormat(_interpolatedStringMessageParamFormat, logLevelDisplay).AppendLine();
-        sb.AppendLine(_logAttributesParam);
+            sb.AppendLine(_interpolatedStringMessageParam);
+
+        AppendLogAttributeParams(sb, logAttributesParameterType);
+
         sb.AppendFormat("""
-    public static void {0}(
+    public static void {0}{1}(
         this ILogger logger,
-""", logLevel ?? "Write").AppendLine();
+""", logLevel ?? "Write", GetGenericParameterDeclaration(logAttributesParameterType)).AppendLine();
 
         if (logLevel == null)
         {
@@ -174,33 +268,102 @@ public static partial class StructuredLoggingExtensions
             {
                 sb.AppendLine("""
         [InterpolatedStringHandlerArgument(nameof(logger), nameof(logLevel))]
-        ref InterpolatedString message,
+        ref WriteInterpolatedStringHandler interpolatedMessage,
 """);
             }
             else
             {
                 sb.AppendFormat("""
         [InterpolatedStringHandlerArgument(nameof(logger))]
-        ref InterpolatedString<{0}> message,
+        ref {0}InterpolatedStringHandler interpolatedMessage,
 """, logLevel).AppendLine();
             }
         }
 
-        if (keepLogAttributesType)
+        switch (logAttributesParameterType)
         {
-            sb.AppendLine("""
-        params LogAttributeSpanOrArray logAttributes) =>
+            case LogAttributesParameterType.ParamsLogAttributeArray:
+                sb.AppendLine("""
+        params (string Key, object? Value)[] logAttributes) =>
 """);
-        }
-        else
-        {
-            sb.AppendLine("""
-        IReadOnlyCollection<KeyValuePair<string, object?>> logAttributes) =>
+                break;
+            case LogAttributesParameterType.KeyValuePairCollection:
+                sb.AppendLine("""
+        IReadOnlyCollection<KeyValuePair<string, object?>>? keyValuePairs) =>
 """);
+                break;
+            case LogAttributesParameterType.OneGenericParameter:
+                sb.AppendLine("""
+        (string Key, T Value) logAttribute) =>
+""");
+                break;
+            case LogAttributesParameterType.TwoGenericParameters:
+                sb.AppendLine("""
+        (string Key, T1 Value) logAttribute1,
+        (string Key, T2 Value) logAttribute2) =>
+""");
+                break;
+            case LogAttributesParameterType.ThreeGenericParameters:
+                sb.AppendLine("""
+        (string Key, T1 Value) logAttribute1,
+        (string Key, T2 Value) logAttribute2,
+        (string Key, T3 Value) logAttribute3) =>
+""");
+                break;
+            case LogAttributesParameterType.FourGenericParameters:
+                sb.AppendLine("""
+        (string Key, T1 Value) logAttribute1,
+        (string Key, T2 Value) logAttribute2,
+        (string Key, T3 Value) logAttribute3,
+        (string Key, T4 Value) logAttribute4) =>
+""");
+                break;
+            case LogAttributesParameterType.FiveGenericParameters:
+                sb.AppendLine("""
+        (string Key, T1 Value) logAttribute1,
+        (string Key, T2 Value) logAttribute2,
+        (string Key, T3 Value) logAttribute3,
+        (string Key, T4 Value) logAttribute4,
+        (string Key, T5 Value) logAttribute5) =>
+""");
+                break;
+            case LogAttributesParameterType.SixGenericParameters:
+                sb.AppendLine("""
+        (string Key, T1 Value) logAttribute1,
+        (string Key, T2 Value) logAttribute2,
+        (string Key, T3 Value) logAttribute3,
+        (string Key, T4 Value) logAttribute4,
+        (string Key, T5 Value) logAttribute5,
+        (string Key, T6 Value) logAttribute6) =>
+""");
+                break;
+            case LogAttributesParameterType.SevenGenericParameters:
+                sb.AppendLine("""
+        (string Key, T1 Value) logAttribute1,
+        (string Key, T2 Value) logAttribute2,
+        (string Key, T3 Value) logAttribute3,
+        (string Key, T4 Value) logAttribute4,
+        (string Key, T5 Value) logAttribute5,
+        (string Key, T6 Value) logAttribute6,
+        (string Key, T7 Value) logAttribute7) =>
+""");
+                break;
+            case LogAttributesParameterType.EightGenericParameters:
+                sb.AppendLine("""
+        (string Key, T1 Value) logAttribute1,
+        (string Key, T2 Value) logAttribute2,
+        (string Key, T3 Value) logAttribute3,
+        (string Key, T4 Value) logAttribute4,
+        (string Key, T5 Value) logAttribute5,
+        (string Key, T6 Value) logAttribute6,
+        (string Key, T7 Value) logAttribute7,
+        (string Key, T8 Value) logAttribute8) =>
+""");
+                break;
         }
 
         sb.Append("""
-        logger.Write(
+        logger.WriteStructuredLog(
 """);
 
         if (logLevel == null)
@@ -232,14 +395,104 @@ public static partial class StructuredLoggingExtensions
 
         if (keepMessageType)
         {
-            sb.Append("message, ");
+            sb.Append("new MessageData(message), ");
         }
         else
         {
-            sb.Append("message.ToStringAndClear(), ");
+            sb.Append("interpolatedMessage.GetMessageDataAndClear(), ");
         }
 
-        sb.AppendLine("logAttributes);");
+        switch (logAttributesParameterType)
+        {
+            case LogAttributesParameterType.ParamsLogAttributeArray:
+                sb.AppendLine("logAttributes);");
+                break;
+            case LogAttributesParameterType.KeyValuePairCollection:
+                sb.AppendLine("keyValuePairs);");
+                break;
+            case LogAttributesParameterType.OneGenericParameter:
+                sb.AppendLine("in logAttribute);");
+                break;
+            case LogAttributesParameterType.TwoGenericParameters:
+                sb.AppendLine("in logAttribute1, in logAttribute2);");
+                break;
+            case LogAttributesParameterType.ThreeGenericParameters:
+                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3);");
+                break;
+            case LogAttributesParameterType.FourGenericParameters:
+                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4);");
+                break;
+            case LogAttributesParameterType.FiveGenericParameters:
+                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5);");
+                break;
+            case LogAttributesParameterType.SixGenericParameters:
+                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6);");
+                break;
+            case LogAttributesParameterType.SevenGenericParameters:
+                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, in logAttribute7);");
+                break;
+            case LogAttributesParameterType.EightGenericParameters:
+                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, in logAttribute7, in logAttribute8);");
+                break;
+        }
+
         sb.AppendLine();
+    }
+
+    private static void AppendLogAttributeParams(StringBuilder sb, LogAttributesParameterType logAttributesParameterType)
+    {
+        switch (logAttributesParameterType)
+        {
+            case LogAttributesParameterType.ParamsLogAttributeArray:
+                sb.AppendLine(_logAttributesParam);
+                return;
+            case LogAttributesParameterType.KeyValuePairCollection:
+                sb.AppendLine(_keyValuePairsParam);
+                return;
+        }
+
+        for (int i = 1; i <= (int)logAttributesParameterType; i++)
+        {
+            sb.AppendFormat(_logAttributeParamFormat, i == 1 ? null : i, i switch
+            {
+                1 => null,
+                2 => "second ",
+                3 => "third ",
+                4 => "fourth ",
+                5 => "fifth ",
+                6 => "sixth ",
+                7 => "seventh ",
+                8 => "eigth ",
+                _ => throw new InvalidOperationException(),
+            }).AppendLine();
+        }
+    }
+
+    private static string? GetGenericParameterDeclaration(LogAttributesParameterType logAttributesParameterType) =>
+        logAttributesParameterType switch
+        {
+            LogAttributesParameterType.OneGenericParameter => "<T>",
+            LogAttributesParameterType.TwoGenericParameters => "<T1, T2>",
+            LogAttributesParameterType.ThreeGenericParameters => "<T1, T2, T3>",
+            LogAttributesParameterType.FourGenericParameters => "<T1, T2, T3, T4>",
+            LogAttributesParameterType.FiveGenericParameters => "<T1, T2, T3, T4, T5>",
+            LogAttributesParameterType.SixGenericParameters => "<T1, T2, T3, T4, T5, T6>",
+            LogAttributesParameterType.SevenGenericParameters => "<T1, T2, T3, T4, T5, T6, T7>",
+            LogAttributesParameterType.EightGenericParameters => "<T1, T2, T3, T4, T5, T6, T7, T8>",
+            _ => null,
+        };
+
+    private enum LogAttributesParameterType
+    {
+        ParamsLogAttributeArray = -2,
+        KeyValuePairCollection = -1,
+        OneGenericParameter = 1,
+        TwoGenericParameters = 2,
+        ThreeGenericParameters = 3,
+        FourGenericParameters = 4,
+        FiveGenericParameters = 5,
+        SixGenericParameters = 6,
+        SevenGenericParameters = 7,
+        EightGenericParameters = 8,
     }
 }
