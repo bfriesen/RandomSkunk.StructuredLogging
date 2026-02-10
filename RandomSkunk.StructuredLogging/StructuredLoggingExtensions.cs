@@ -3,11 +3,14 @@
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
-/// Provides extension methods for structured logging using <see cref="ILogger"/>.
+/// Defines extension methods for structured logging using <see cref="ILogger"/>.
 /// </summary>
+/// <content>
+/// Defines the non-public WriteStructuredLog extension methods used by the public logging methods. Each method is optimized for
+/// its specific scenario to minimize allocations and maximize performance. Methods are marked internal for testing purposes.
+/// </content>
 public static partial class StructuredLoggingExtensions
 {
-    // Marked internal for testing.
     internal static void WriteStructuredLog(
         this ILogger logger,
         LogLevel logLevel,
@@ -21,12 +24,11 @@ public static partial class StructuredLoggingExtensions
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeArray>(messageData.Message, new(logAttributes, messageData.InterpolationKeyValuePairs)),
+            new LogState<LogAttributeArray>(in messageData, new(logAttributes)),
             exception,
             LogState<LogAttributeArray>.Formatter);
     }
 
-    // Marked internal for testing.
     internal static void WriteStructuredLog<T>(
         this ILogger logger,
         LogLevel logLevel,
@@ -40,12 +42,11 @@ public static partial class StructuredLoggingExtensions
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T>>(messageData.Message, new(in logAttribute, messageData.InterpolationKeyValuePairs)),
+            new LogState<LogAttributeTuple<T>>(in messageData, new(in logAttribute)),
             exception,
             LogState<LogAttributeTuple<T>>.Formatter);
     }
 
-    // Marked internal for testing.
     internal static void WriteStructuredLog<T1, T2>(
         this ILogger logger,
         LogLevel logLevel,
@@ -60,12 +61,11 @@ public static partial class StructuredLoggingExtensions
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2>>(messageData.Message, new(in logAttribute1, in logAttribute2, messageData.InterpolationKeyValuePairs)),
+            new LogState<LogAttributeTuple<T1, T2>>(in messageData, new(in logAttribute1, in logAttribute2)),
             exception,
             LogState<LogAttributeTuple<T1, T2>>.Formatter);
     }
 
-    // Marked internal for testing.
     internal static void WriteStructuredLog<T1, T2, T3>(
         this ILogger logger,
         LogLevel logLevel,
@@ -81,12 +81,11 @@ public static partial class StructuredLoggingExtensions
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3>>(messageData.Message, new(in logAttribute1, in logAttribute2, in logAttribute3, messageData.InterpolationKeyValuePairs)),
+            new LogState<LogAttributeTuple<T1, T2, T3>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3)),
             exception,
             LogState<LogAttributeTuple<T1, T2, T3>>.Formatter);
     }
 
-    // Marked internal for testing.
     internal static void WriteStructuredLog<T1, T2, T3, T4>(
         this ILogger logger,
         LogLevel logLevel,
@@ -103,12 +102,11 @@ public static partial class StructuredLoggingExtensions
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3, T4>>(messageData.Message, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, messageData.InterpolationKeyValuePairs)),
+            new LogState<LogAttributeTuple<T1, T2, T3, T4>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4)),
             exception,
             LogState<LogAttributeTuple<T1, T2, T3, T4>>.Formatter);
     }
 
-    // Marked internal for testing.
     internal static void WriteStructuredLog<T1, T2, T3, T4, T5>(
         this ILogger logger,
         LogLevel logLevel,
@@ -126,12 +124,11 @@ public static partial class StructuredLoggingExtensions
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5>>(messageData.Message, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, messageData.InterpolationKeyValuePairs)),
+            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5)),
             exception,
             LogState<LogAttributeTuple<T1, T2, T3, T4, T5>>.Formatter);
     }
 
-    // Marked internal for testing.
     internal static void WriteStructuredLog<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         LogLevel logLevel,
@@ -150,12 +147,11 @@ public static partial class StructuredLoggingExtensions
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6>>(messageData.Message, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, messageData.InterpolationKeyValuePairs)),
+            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6)),
             exception,
             LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6>>.Formatter);
     }
 
-    // Marked internal for testing.
     internal static void WriteStructuredLog<T1, T2, T3, T4, T5, T6, T7>(
         this ILogger logger,
         LogLevel logLevel,
@@ -175,12 +171,11 @@ public static partial class StructuredLoggingExtensions
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6, T7>>(messageData.Message, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, in logAttribute7, messageData.InterpolationKeyValuePairs)),
+            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6, T7>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, in logAttribute7)),
             exception,
             LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6, T7>>.Formatter);
     }
 
-    // Marked internal for testing.
     internal static void WriteStructuredLog<T1, T2, T3, T4, T5, T6, T7, T8>(
         this ILogger logger,
         LogLevel logLevel,
@@ -201,12 +196,11 @@ public static partial class StructuredLoggingExtensions
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6, T7, T8>>(messageData.Message, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, in logAttribute7, in logAttribute8, messageData.InterpolationKeyValuePairs)),
+            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6, T7, T8>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, in logAttribute7, in logAttribute8)),
             exception,
             LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6, T7, T8>>.Formatter);
     }
 
-    // Marked internal for testing.
     internal static void WriteStructuredLog(
         this ILogger logger,
         LogLevel logLevel,
@@ -220,7 +214,7 @@ public static partial class StructuredLoggingExtensions
         logger.Log(
             logLevel,
             eventId,
-            new LogState<KeyValuePairCollection>(messageData.Message, new(keyValuePairs, messageData.InterpolationKeyValuePairs)),
+            new LogState<KeyValuePairCollection>(in messageData, new(keyValuePairs)),
             exception,
             LogState<KeyValuePairCollection>.Formatter);
     }

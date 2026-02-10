@@ -22,62 +22,15 @@ public class StructuredLoggingExtensionsGenerator : IIncrementalGenerator
     /// </summary>
 """;
 
-    // This needs to mention an interpolation expression with a value with an actual format.
-    // The example should be a TimeSpan displaying the number of seconds to two decimal places.
     private const string _summaryFormatInterpolatedMessage = """
     /// <summary>
     /// Writes a log entry at the {0} log level with its message specified as an interpolated string.
     /// <para/>
-    /// To capture a log attribute in an interpolation expression, specify a format that starts with an HTML tag. In
-    /// <c>$"User {{userId:&lt;UserId&gt;}} logged in"</c>, the <c>userId</c> variable is captured in a log attribute named
-    /// "UserId". In <c>$"Operation completed in {{elapsedSeconds:&lt;ElapsedSeconds&gt;0.00}}"</c>, the <c>elapsedSeconds</c>
-    /// variable is captured in a log attribute named "ElapsedSeconds" with its value formatted to two decimal places
-    /// in the log message.
+    /// To capture a log attribute in an interpolation expression, specify a format that starts with an HTML tag. In <c>$"User
+    /// {{user.Id:&lt;user-id&gt;}} logged in."</c>, the <c>user.Id</c> expression is captured in a log attribute named "user-id".
+    /// In <c>$"Operation completed in {{elapsed.TotalSeconds:&lt;ElapsedSeconds&gt;0.000}} seconds."</c>, the log attribute is
+    /// named "ElapsedSeconds" and "0.000" is used as the format string when rendering the value in the message.
     /// </summary>
-""";
-
-    private const string _traceRemarks = """
-    /// <remarks>
-    /// Trace logs contain the most detailed messages and may contain sensitive application data. These messages are disabled by
-    /// default and should never be enabled in a production environment.
-    /// </remarks>
-""";
-
-    private const string _debugRemarks = """
-    /// <remarks>
-    /// Debug logs are used for interactive investigation during development. These logs should primarily contain information
-    /// useful for debugging and have no long-term value.
-    /// </remarks>
-""";
-
-    private const string _informationRemarks = """
-    /// <remarks>
-    /// Information logs are used to track the general flow of the application. These logs should have long-term value and
-    /// contain information useful for understanding the application's behavior and state.
-    /// </remarks>
-""";
-
-    private const string _warningRemarks = """
-    /// <remarks>
-    /// Warning logs highlight an abnormal or unexpected event in the application flow, but do not otherwise cause the
-    /// application execution to stop. These logs may not require immediate attention but should be reviewed to ensure they do
-    /// not indicate a larger problem.
-    /// </remarks>
-""";
-
-    private const string _errorRemarks = """
-    /// <remarks>
-    /// Error logs highlight when the current flow of execution is stopped due to a failure. These should indicate a failure in
-    /// the current activity, not an application-wide failure. These logs should contain enough information to diagnose the issue
-    /// and should be reviewed promptly.
-    /// </remarks>
-""";
-
-    private const string _criticalRemarks = """
-    /// <remarks>
-    /// Critical logs describe an unrecoverable application or system crash, or a catastrophic failure that requires immediate
-    /// attention. These logs should contain enough information to diagnose the issue and should be reviewed as soon as possible.
-    /// </remarks>
 """;
 
     private const string _loggerParam = """
@@ -136,7 +89,7 @@ using System.Runtime.CompilerServices;
 namespace RandomSkunk.StructuredLogging;
 
 /// <content>
-/// Defines pass-through extension methods.
+/// Defines the public API for the library. Each method calls one of the non-public WriteStructuredLog methods.
 /// </content>
 partial class StructuredLoggingExtensions
 {
@@ -193,28 +146,6 @@ partial class StructuredLoggingExtensions
             sb.AppendFormat(_summaryFormatNonInterpolatedMessage, logLevelDisplay).AppendLine();
         else
             sb.AppendFormat(_summaryFormatInterpolatedMessage, logLevelDisplay).AppendLine();
-
-        switch (logLevel)
-        {
-            case "Trace":
-                sb.AppendLine(_traceRemarks);
-                break;
-            case "Debug":
-                sb.AppendLine(_debugRemarks);
-                break;
-            case "Information":
-                sb.AppendLine(_informationRemarks);
-                break;
-            case "Warning":
-                sb.AppendLine(_warningRemarks);
-                break;
-            case "Error":
-                sb.AppendLine(_errorRemarks);
-                break;
-            case "Critical":
-                sb.AppendLine(_criticalRemarks);
-                break;
-        }
 
         sb.AppendLine(_loggerParam);
         if (logLevel == null)
@@ -395,7 +326,7 @@ partial class StructuredLoggingExtensions
 
         if (keepMessageType)
         {
-            sb.Append("new MessageData(message), ");
+            sb.Append("new(message), ");
         }
         else
         {

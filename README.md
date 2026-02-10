@@ -1,177 +1,146 @@
-# RandomSkunk.StructuredLogging
+﻿# RandomSkunk.StructuredLogging
 
-Modern structured logging extensions for .NET that separate human-readable messages from machine-readable attributes. Include 
-contextual data (user IDs, correlation IDs, metrics) in logs without forcing them into message templates.
+[![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+Modern, high-performance structured logging extensions for .NET that cleanly separate human-readable messages from machine-readable attributes. Stop cluttering your message templates with structured data and start writing logs that are easier to read and query.
+
+## Why Choose RandomSkunk.StructuredLogging?
+
+Traditional structured logging forces you to embed data into message templates. This often leads to:
+
+- **Verbose and Unreadable Messages**: `Log("User {UserId} logged in from {IPAddress}", userId, ipAddress)`
+- **Performance Overhead**: Message template caching can consume memory and CPU.
+- **Rigid Structure**: You can only log what your template allows.
+
+This library takes a different approach by treating messages and attributes as separate concerns, giving you the best of both worlds: **clean, readable messages** and **rich, queryable data**.
 
 ## Features
 
-- **Clean Separation**: Human-readable messages separate from structured data attributes
-- **High Performance**: Zero caching overhead - any string can be used as a log message
-- **Custom Interpolated Strings**: Conditional evaluation based on log level enablement and attribute extraction
-- **Flexible Overloads**: Up to 8 strongly-typed attributes, arrays, or collections
-- **Multi-Target**: Supports .NET 8, .NET 9 with optimized implementations
+- ✨ **Clean Separation**: Keep your log messages for humans and your attributes for machines.
+- 🚀 **High Performance**: A design that avoids message template caching overhead.
+- 📝 **Powerful Interpolated Strings**: Automatically extract attributes from interpolated strings (`$"User {user.Name:<UserName>}"`) without sacrificing performance. The interpolation only happens if the log level is enabled!
+- 💪 **Flexible & Type-Safe**: Pass attributes using tuples, dictionaries, or arrays with a rich set of overloads.
+- 🎯 **Multi-Targeted**: Targets both .NET 8 and .NET 9.
 
 ## Quick Start
 
-```csharp
-using Microsoft.Extensions.Logging;
-using RandomSkunk.StructuredLogging;
-
-// Basic logging with attributes (tuple syntax)
-logger.Information("User logged in",
-    ("UserId", userId),
-    ("SessionId", sessionId),
-    ("LoginTime", DateTime.UtcNow));
-
-// Using interpolated strings with attribute extraction
-logger.Warning($"Failed login attempt for {username:<Username>}",
-    ("AttemptCount", attemptCount),
-    ("IPAddress", clientIp));
-
-// With exception and event ID
-logger.Error(eventId, exception, "Database connection failed",
-    ("ConnectionString", connectionString),
-    ("RetryCount", retryCount));
-```
-
-## Attribute Extraction in Interpolated Strings
-
-You can extract log attributes directly from interpolated strings using the `<Key/>` format:
-
-```csharp
-logger.Information($"Order {orderId:<OrderId>} processed for {user.Name:<UserName>}");
-```
-- The value inside `{...:<Key>}` is added as a structured attribute with the specified key.
-- You can combine this with additional attributes passed as tuples or collections.
-
-## Performance Benefits
-
-### No String Caching
-
-Unlike traditional structured logging approaches, RandomSkunk.StructuredLogging **does not cache strings**. This means:
-
-- Any string can be used as a log message without performance penalties
-- No memory overhead from string caching mechanisms
-- Perfect for dynamic messages that change frequently
-
-```csharp
-// These are all equally performant - no caching overhead
-logger.Information($"Processing order {orderId} at {DateTime.Now}");
-logger.Information($"User {user.Name} performed action at {timestamp:yyyy-MM-dd}");
-logger.Information(GetDynamicMessage(context)); // Any string source works
-```
-
-### Best Practice for String Construction
-
-If you're constructing expensive strings for logging (especially for lower-level logs), be sure to check if logging is enabled
-first:
-
-```csharp
-if (logger.IsEnabled(LogLevel.Debug))
-{
-    string expensiveMessage = BuildComplexDiagnosticMessage(data);
-    logger.Debug(expensiveMessage, ("RequestId", requestId));
-}
-```
-
-Alternatively, you can inline the check by calling the method in an interpolated string:
-
-```csharp
-logger.Debug($"{BuildComplexDiagnosticMessage(data)}", ("RequestId", requestId));
-```
-
-### Custom Interpolated String Handlers
-
-The library provides custom interpolated string handlers that only evaluate when logging is enabled at the specified level and extract attributes:
-
-```csharp
-// String interpolation and attribute extraction are conditional
-logger.Debug($"Processing {items.Count:<ItemsCount>} items with total size {CalculateSize(items):<ItemsByteCount>N0} bytes");
-
-// If Debug logging is disabled, the interpolation never occurs
-// No performance impact from string formatting or method calls
-```
-
-## Advanced Usage
-
-### Dictionary and Collection Support
-
-Use any type implementing `IReadOnlyCollection<KeyValuePair<string, object?>>`:
-
-```csharp
-if (logger.IsEnabled(LogLevel.Information))
-{
-    Dictionary<string, object?> metadata = new()
-    {
-        ["UserId"] = user.Id,
-        ["TenantId"] = tenant.Id,
-        ["CorrelationId"] = correlationId
-    };
-
-    logger.Information("Operation completed", metadata);
-}
-```
-
-### Multiple Overloads
-
-The library provides extensive overloads for different scenarios:
-
-```csharp
-// Message only
-logger.Information("Simple message");
-
-// With up to 8 strongly-typed attributes
-logger.Information("Message", ("Key1", value1), ("Key2", value2), ...);
-
-// With attribute array
-logger.Information("Message", new[] { ("Key", value), ... });
-
-// With exception
-logger.Error(exception, "Operation failed", ("OperationId", opId));
-
-// With event ID and exception
-logger.Critical(eventId, exception, "System failure", 
-    ("ComponentId", componentId),
-    ("ErrorCode", errorCode));
-
-// With attribute collection
-logger.Warning("Something happened", metadata);
-```
-
-## Architecture
-
-### Conditional Evaluation
-
-The custom interpolated string handlers ensure string formatting and attribute extraction only occur when logging is enabled:
-
-```csharp
-// Used in the Write extension methods.
-public ref struct WriteInterpolatedStringHandler { /* ... */ }
-
-// Used in the Trace, Debug, Information, Warning, Error, and Critical extension methods.
-public ref struct InformationInterpolatedStringHandler { /* ... */ }
-// ... and similar for other log levels
-```
-
-### Optimized for Different Runtimes
-
-- **.NET 9+**: Uses `Span<T>` for zero-allocation attribute passing
-- **.NET 8**: Uses arrays with optimized copying strategies
-- **Source Generation**: Compile-time generation of extension methods for optimal performance
-
-## Installation
+### 1. Install the Package
 
 ```bash
 dotnet add package RandomSkunk.StructuredLogging
 ```
 
+### 2. Start Logging
+
+Use the extension methods on `Microsoft.Extensions.Logging.ILogger`.
+
+#### Basic Logging with Attributes
+
+Pass attributes as a list of `(string, object)` tuples. The message remains clean and readable.
+
+```csharp
+logger.Information("User logged in successfully",
+    ("UserId", user.Id),
+    ("SessionId", sessionId),
+    ("LoginTime", DateTime.UtcNow));
+```
+*Output Log (conceptual JSON):*
+```json
+{
+  "Message": "User logged in successfully",
+  "UserId": 123,
+  "SessionId": "xyz-abc",
+  "LoginTime": "2024-01-01T12:00:00Z"
+}
+```
+
+#### Attribute Extraction from Interpolated Strings
+
+For ultimate convenience, extract attributes directly from an interpolated string. The syntax `{value:<AttributeName>}` captures the value as an attribute and embeds it in the message.
+
+This is not just a simple `string.Format`. The library uses a custom interpolated string handler that **only evaluates the arguments and formats the string if the log level is enabled**.
+
+```csharp
+// The values for username and attemptCount are captured as attributes.
+logger.Warning($"Failed login attempt for {username:<Username>}",
+    ("AttemptCount", attemptCount),
+    ("IPAddress", clientIp));
+```
+*Output Log (conceptual JSON):*
+```json
+{
+  "Message": "Failed login attempt for brian",
+  "Username": "brian",
+  "AttemptCount": 3,
+  "IPAddress": "127.0.0.1"
+}
+```
+
+## Performance: Fast and Memory-Efficient
+
+Performance is a core feature. This library is designed to minimize overhead in your application.
+
+### Conditional Evaluation
+
+The custom interpolated string handlers are the magic behind the performance. String formatting and method calls inside an interpolated string **only occur if the log level is enabled**.
+
+```csharp
+// If Debug logging is disabled, CalculateSize() is never called and no string is created.
+logger.Debug($"Processing {items.Count:<ItemsCount>} items with total size {CalculateSize(items):<ItemsByteCount>N0} bytes");
+```
+
+### No Message Caching
+
+Unlike other libraries, we **do not cache message templates**. This eliminates memory overhead and performance penalties associated with managing a cache, making it ideal for dynamic log messages.
+
+## Advanced Usage
+
+The library is flexible enough to handle any scenario.
+
+### Logging with Exceptions and Event IDs
+
+All overloads support standard `EventId` and `Exception` arguments.
+
+```csharp
+logger.Error(new EventId(500, "DatabaseError"), exception, "Database connection failed",
+    ("ConnectionString", connectionString),
+    ("RetryCount", retryCount));
+```
+
+### Using Dictionaries for Attributes
+
+You can pass attributes in any `IReadOnlyCollection<KeyValuePair<string, object?>>`, including a `Dictionary`.
+
+```csharp
+var metadata = new Dictionary<string, object?>
+{
+    ["UserId"] = user.Id,
+    ["TenantId"] = tenant.Id,
+    ["CorrelationId"] = correlationId
+};
+
+logger.Information("Operation completed", metadata);
+```
+
+## How It Works
+
+The library extends `ILogger` with a new set of extension methods. These methods use custom [interpolated string handlers](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-10.0/improved-interpolated-strings) to intercept string formatting.
+
+1. The handler checks if the requested `LogLevel` is enabled.
+2. If not, it does nothing, and the call is nearly free.
+3. If enabled, it processes the interpolated string, extracting any attributes defined with the `<Key>` syntax.
+4. It then combines all attributes and passes them, along with the formatted message, to the underlying `ILogger` instance.
+5. The library uses an optimized array-based approach for passing attributes.
+
 ## Compatibility
 
 - **.NET 8.0** and later
-- **.NET 9.0** with enhanced performance optimizations
-- Compatible with all `Microsoft.Extensions.Logging` providers
+- **.NET 9.0**
+- Compatible with all `Microsoft.Extensions.Logging` providers (Serilog, Console, etc.)
 
 ## License
 
-MIT License.
-Copyright 2025 (c) Brian Friesen. All rights reserved.
+This project is licensed under the MIT License.
+
+Copyright (c) 2025-2026 Brian Friesen. All rights reserved.

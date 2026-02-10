@@ -6,26 +6,27 @@ namespace RandomSkunk.StructuredLogging.Tests;
 public class LogStateTests
 {
     [Fact]
-    public void Count_ReturnsIndexableKeyValuePairsCount()
+    public void Count_ReturnsSumOfKeyValuePairsLengthAndInterpolationKeyValuePairsCount()
     {
-        TestKeyValuePairArray keyValuePairs = new();
-        LogState<TestKeyValuePairArray> logState = new(null, keyValuePairs);
+        TwoItemKeyValuePairArray keyValuePairs = new();
+        KeyValuePairList4 interpolationKeyValuePairs = new() { new("Baz", true) };
+        MessageData messageData = new(null, in interpolationKeyValuePairs);
+        LogState<TwoItemKeyValuePairArray> logState = new(in messageData, keyValuePairs);
 
-        logState.Count.Should().Be(keyValuePairs.Length);
+        logState.Count.Should().Be(keyValuePairs.Length + interpolationKeyValuePairs.Count);
     }
 
     [Fact]
-    public void Indexer_ReturnsIndexableKeyValuePairsIndexer()
+    public void Indexer_RetrievesItemFromAppropriateCollection()
     {
-        TestKeyValuePairArray keyValuePairs = new();
-        LogState<TestKeyValuePairArray> logState = new(null, keyValuePairs);
+        TwoItemKeyValuePairArray keyValuePairs = new();
+        KeyValuePairList4 interpolationKeyValuePairs = new() { new("Baz", true) };
+        MessageData messageData = new(null, in interpolationKeyValuePairs);
+        LogState<TwoItemKeyValuePairArray> logState = new(in messageData, keyValuePairs);
 
-        for (int i = 0; i < keyValuePairs.Length; i++)
-        {
-            KeyValuePair<string, object?> expected = keyValuePairs[i];
-            KeyValuePair<string, object?> actual = logState[i];
-            actual.Should().Be(expected);
-        }
+        logState[0].Should().Be(keyValuePairs[0]);
+        logState[1].Should().Be(keyValuePairs[1]);
+        logState[2].Should().Be(interpolationKeyValuePairs[0]);
     }
 
     [Theory]
@@ -33,25 +34,30 @@ public class LogStateTests
     [InlineData("Test log message")]
     public void ToString_ReturnsMessage(string? message)
     {
-        LogState<TestKeyValuePairArray> logState = new(message, new TestKeyValuePairArray());
+        KeyValuePairList4 interpolationKeyValuePairs = new();
+        MessageData messageData = new(message, in interpolationKeyValuePairs);
+        LogState<TwoItemKeyValuePairArray> logState = new(in messageData, new TwoItemKeyValuePairArray());
         logState.ToString().Should().BeSameAs(message);
     }
 
     [Fact]
-    public void GetEnumerator_IteratesOverIndexableKeyValuePairs()
+    public void GetEnumerator_ReturnsEnumeratorThatIteratesOverItems()
     {
-        TestKeyValuePairArray keyValuePairs = new();
-        LogState<TestKeyValuePairArray> logState = new(null, keyValuePairs);
+        TwoItemKeyValuePairArray keyValuePairs = new();
+        KeyValuePairList4 interpolationKeyValuePairs = new() { new("Baz", true) };
+        MessageData messageData = new(null, in interpolationKeyValuePairs);
+        LogState<TwoItemKeyValuePairArray> logState = new(in messageData, keyValuePairs);
 
-        LogState<TestKeyValuePairArray>.Enumerator enumerator = logState.GetEnumerator();
+        LogState<TwoItemKeyValuePairArray>.Enumerator enumerator = logState.GetEnumerator();
 
-        for (int i = 0; i < keyValuePairs.Length; i++)
-        {
-            enumerator.MoveNext().Should().BeTrue();
-            KeyValuePair<string, object?> expected = keyValuePairs[i];
-            KeyValuePair<string, object?> actual = enumerator.Current;
-            actual.Should().Be(expected);
-        }
+        enumerator.MoveNext().Should().BeTrue();
+        enumerator.Current.Should().Be(keyValuePairs[0]);
+
+        enumerator.MoveNext().Should().BeTrue();
+        enumerator.Current.Should().Be(keyValuePairs[1]);
+
+        enumerator.MoveNext().Should().BeTrue();
+        enumerator.Current.Should().Be(interpolationKeyValuePairs[0]);
 
         enumerator.MoveNext().Should().BeFalse();
     }
@@ -59,25 +65,29 @@ public class LogStateTests
     [Fact]
     public void IEnumerableOfKeyValuePairOfStringToObject_GetEnumerator_ReturnsEnumerator()
     {
-        TestKeyValuePairArray keyValuePairs = new();
-        LogState<TestKeyValuePairArray> logState = new(null, keyValuePairs);
+        TwoItemKeyValuePairArray keyValuePairs = new();
+        KeyValuePairList4 interpolationKeyValuePairs = new() { new("Baz", true) };
+        MessageData messageData = new(null, in interpolationKeyValuePairs);
+        LogState<TwoItemKeyValuePairArray> logState = new(in messageData, keyValuePairs);
 
         IEnumerator<KeyValuePair<string, object?>> enumerator = ((IEnumerable<KeyValuePair<string, object?>>)logState).GetEnumerator();
 
-        enumerator.Should().BeOfType<LogState<TestKeyValuePairArray>.Enumerator>();
+        enumerator.Should().BeOfType<LogState<TwoItemKeyValuePairArray>.Enumerator>();
     }
 
     [Fact]
     public void IEnumerable_GetEnumerator_ReturnsEnumerator()
     {
-        TestKeyValuePairArray keyValuePairs = new();
-        LogState<TestKeyValuePairArray> logState = new(null, keyValuePairs);
+        TwoItemKeyValuePairArray keyValuePairs = new();
+        KeyValuePairList4 interpolationKeyValuePairs = new() { new("Baz", true) };
+        MessageData messageData = new(null, in interpolationKeyValuePairs);
+        LogState<TwoItemKeyValuePairArray> logState = new(in messageData, keyValuePairs);
 
         IEnumerator enumerator = ((IEnumerable)logState).GetEnumerator();
-        enumerator.Should().BeOfType<LogState<TestKeyValuePairArray>.Enumerator>();
+        enumerator.Should().BeOfType<LogState<TwoItemKeyValuePairArray>.Enumerator>();
     }
 
-    private readonly struct TestKeyValuePairArray : IKeyValuePairArray
+    private readonly struct TwoItemKeyValuePairArray : IKeyValuePairArray
     {
         public int Length => 2;
 
