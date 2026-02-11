@@ -380,13 +380,16 @@ partial class StructuredLoggingExtensions
             case LogAttributesParameterType.KeyValuePairCollection:
                 sb.AppendLine(_keyValuePairsParam);
                 return;
+            case LogAttributesParameterType.OneGenericParameter:
+                sb.AppendFormat(_logAttributeParamFormat, null, null).AppendLine();
+                return;
         }
 
         for (int i = 1; i <= (int)logAttributesParameterType; i++)
         {
-            sb.AppendFormat(_logAttributeParamFormat, i == 1 ? null : i, i switch
+            sb.AppendFormat(_logAttributeParamFormat, i, i switch
             {
-                1 => null,
+                1 => "first ",
                 2 => "second ",
                 3 => "third ",
                 4 => "fourth ",
