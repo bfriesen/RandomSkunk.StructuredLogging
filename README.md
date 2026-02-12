@@ -3,7 +3,7 @@
 [![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Modern, high-performance structured logging extensions for .NET that cleanly separate human-readable messages from machine-readable attributes. Stop cluttering your message templates with structured data and start writing logs that are easier to read and query.
+Modern, high-performance structured logging extensions for .NET that cleanly separate human-readable messages from machine-readable properties. Stop cluttering your message templates with structured data and start writing logs that are easier to read and query.
 
 ## Why Choose RandomSkunk.StructuredLogging?
 
@@ -13,15 +13,14 @@ Traditional structured logging forces you to embed data into message templates. 
 - **Performance Overhead**: Message template caching can consume memory and CPU.
 - **Rigid Structure**: You can only log what your template allows.
 
-This library takes a different approach by treating messages and attributes as separate concerns, giving you the best of both worlds: **clean, readable messages** and **rich, queryable data**.
+This library takes a different approach by treating messages and properties as separate concerns, giving you the best of both worlds: **clean, readable messages** and **rich, queryable data**.
 
 ## Features
 
-- ✨ **Clean Separation**: Keep your log messages for humans and your attributes for machines.
+- ✨ **Clean Separation**: Keep your log messages for humans and your properties for machines.
 - 🚀 **High Performance**: A design that avoids message template caching overhead.
-- 📝 **Powerful Interpolated Strings**: Automatically extract attributes from interpolated strings (`$"User {user.Name:<UserName>}"`) without sacrificing performance. The interpolation only happens if the log level is enabled!
-- 💪 **Flexible & Type-Safe**: Pass attributes using tuples, dictionaries, or arrays with a rich set of overloads.
-- 🎯 **Multi-Targeted**: Targets both .NET 8 and .NET 9.
+- 📝 **Powerful Interpolated Strings**: Automatically extract properties from interpolated strings (`$"User {user.Name:<UserName>}"`) without sacrificing performance. The interpolation only happens if the log level is enabled!
+- 💪 **Flexible & Type-Safe**: Pass properties using tuples, dictionaries, or arrays with a rich set of overloads.
 
 ## Quick Start
 
@@ -35,9 +34,9 @@ dotnet add package RandomSkunk.StructuredLogging
 
 Use the extension methods on `Microsoft.Extensions.Logging.ILogger`.
 
-#### Basic Logging with Attributes
+#### Basic Logging with Properties
 
-Pass attributes as a list of `(string, object)` tuples. The message remains clean and readable.
+Pass properties as a list of `(string, object)` tuples. The message remains clean and readable.
 
 ```csharp
 logger.Information("User logged in successfully",
@@ -55,14 +54,14 @@ logger.Information("User logged in successfully",
 }
 ```
 
-#### Attribute Extraction from Interpolated Strings
+#### Property Extraction from Interpolated Strings
 
-For ultimate convenience, extract attributes directly from an interpolated string. The syntax `{value:<AttributeName>}` captures the value as an attribute and embeds it in the message.
+For ultimate convenience, extract properties directly from an interpolated string. The syntax `{value:<PropertyName>}` captures the value as a property and embeds it in the message.
 
 This is not just a simple `string.Format`. The library uses a custom interpolated string handler that **only evaluates the arguments and formats the string if the log level is enabled**.
 
 ```csharp
-// The values for username and attemptCount are captured as attributes.
+// The values for username and attemptCount are captured as properties.
 logger.Warning($"Failed login attempt for {username:<Username>}",
     ("AttemptCount", attemptCount),
     ("IPAddress", clientIp));
@@ -108,9 +107,9 @@ logger.Error(new EventId(500, "DatabaseError"), exception, "Database connection 
     ("RetryCount", retryCount));
 ```
 
-### Using Dictionaries for Attributes
+### Using Dictionaries for Properties
 
-You can pass attributes in any `IReadOnlyCollection<KeyValuePair<string, object?>>`, including a `Dictionary`.
+You can pass properties in any `IReadOnlyCollection<KeyValuePair<string, object?>>`, including a `Dictionary`.
 
 ```csharp
 var metadata = new Dictionary<string, object?>
@@ -129,15 +128,16 @@ The library extends `ILogger` with a new set of extension methods. These methods
 
 1. The handler checks if the requested `LogLevel` is enabled.
 2. If not, it does nothing, and the call is nearly free.
-3. If enabled, it processes the interpolated string, extracting any attributes defined with the `<Key>` syntax.
-4. It then combines all attributes and passes them, along with the formatted message, to the underlying `ILogger` instance.
-5. The library uses an optimized array-based approach for passing attributes.
+3. If enabled, it processes the interpolated string, extracting any properties defined with the `<Key>` syntax.
+4. It then combines all properties and passes them, along with the formatted message, to the underlying `ILogger` instance.
+5. The library uses an optimized array-based approach for passing properties.
 
 ## Compatibility
 
-- **.NET 8.0** and later
+- **.NET 8.0**
 - **.NET 9.0**
-- Compatible with all `Microsoft.Extensions.Logging` providers (Serilog, Console, etc.)
+- **.NET 10.0**
+- Compatible with all `Microsoft.Extensions.Logging` providers (OpenTelemetry, Serilog, Console, etc.)
 
 ## License
 

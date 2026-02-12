@@ -17,16 +17,16 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        params (string Key, object? Value)[] logAttributes)
+        params (string Key, object? Value)[] logProperties)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeArray>(in messageData, new(logAttributes)),
+            new LogState<LogPropertyArray>(in messageData, new(logProperties)),
             exception,
-            LogState<LogAttributeArray>.Formatter);
+            LogState<LogPropertyArray>.Formatter);
     }
 
     internal static void WriteStructuredLog<T>(
@@ -35,16 +35,16 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        ref readonly (string Key, T Value) logAttribute)
+        ref readonly (string Key, T Value) logProperty)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T>>(in messageData, new(in logAttribute)),
+            new LogState<LogPropertyTuple<T>>(in messageData, new(in logProperty)),
             exception,
-            LogState<LogAttributeTuple<T>>.Formatter);
+            LogState<LogPropertyTuple<T>>.Formatter);
     }
 
     internal static void WriteStructuredLog<T1, T2>(
@@ -53,17 +53,17 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        ref readonly (string Key, T1 Value) logAttribute1,
-        ref readonly (string Key, T2 Value) logAttribute2)
+        ref readonly (string Key, T1 Value) logProperty1,
+        ref readonly (string Key, T2 Value) logProperty2)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2>>(in messageData, new(in logAttribute1, in logAttribute2)),
+            new LogState<LogPropertyTuple<T1, T2>>(in messageData, new(in logProperty1, in logProperty2)),
             exception,
-            LogState<LogAttributeTuple<T1, T2>>.Formatter);
+            LogState<LogPropertyTuple<T1, T2>>.Formatter);
     }
 
     internal static void WriteStructuredLog<T1, T2, T3>(
@@ -72,18 +72,18 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        ref readonly (string Key, T1 Value) logAttribute1,
-        ref readonly (string Key, T2 Value) logAttribute2,
-        ref readonly (string Key, T3 Value) logAttribute3)
+        ref readonly (string Key, T1 Value) logProperty1,
+        ref readonly (string Key, T2 Value) logProperty2,
+        ref readonly (string Key, T3 Value) logProperty3)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3)),
+            new LogState<LogPropertyTuple<T1, T2, T3>>(in messageData, new(in logProperty1, in logProperty2, in logProperty3)),
             exception,
-            LogState<LogAttributeTuple<T1, T2, T3>>.Formatter);
+            LogState<LogPropertyTuple<T1, T2, T3>>.Formatter);
     }
 
     internal static void WriteStructuredLog<T1, T2, T3, T4>(
@@ -92,19 +92,19 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        ref readonly (string Key, T1 Value) logAttribute1,
-        ref readonly (string Key, T2 Value) logAttribute2,
-        ref readonly (string Key, T3 Value) logAttribute3,
-        ref readonly (string Key, T4 Value) logAttribute4)
+        ref readonly (string Key, T1 Value) logProperty1,
+        ref readonly (string Key, T2 Value) logProperty2,
+        ref readonly (string Key, T3 Value) logProperty3,
+        ref readonly (string Key, T4 Value) logProperty4)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3, T4>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4)),
+            new LogState<LogPropertyTuple<T1, T2, T3, T4>>(in messageData, new(in logProperty1, in logProperty2, in logProperty3, in logProperty4)),
             exception,
-            LogState<LogAttributeTuple<T1, T2, T3, T4>>.Formatter);
+            LogState<LogPropertyTuple<T1, T2, T3, T4>>.Formatter);
     }
 
     internal static void WriteStructuredLog<T1, T2, T3, T4, T5>(
@@ -113,20 +113,20 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        ref readonly (string Key, T1 Value) logAttribute1,
-        ref readonly (string Key, T2 Value) logAttribute2,
-        ref readonly (string Key, T3 Value) logAttribute3,
-        ref readonly (string Key, T4 Value) logAttribute4,
-        ref readonly (string Key, T5 Value) logAttribute5)
+        ref readonly (string Key, T1 Value) logProperty1,
+        ref readonly (string Key, T2 Value) logProperty2,
+        ref readonly (string Key, T3 Value) logProperty3,
+        ref readonly (string Key, T4 Value) logProperty4,
+        ref readonly (string Key, T5 Value) logProperty5)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5)),
+            new LogState<LogPropertyTuple<T1, T2, T3, T4, T5>>(in messageData, new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5)),
             exception,
-            LogState<LogAttributeTuple<T1, T2, T3, T4, T5>>.Formatter);
+            LogState<LogPropertyTuple<T1, T2, T3, T4, T5>>.Formatter);
     }
 
     internal static void WriteStructuredLog<T1, T2, T3, T4, T5, T6>(
@@ -135,21 +135,21 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        ref readonly (string Key, T1 Value) logAttribute1,
-        ref readonly (string Key, T2 Value) logAttribute2,
-        ref readonly (string Key, T3 Value) logAttribute3,
-        ref readonly (string Key, T4 Value) logAttribute4,
-        ref readonly (string Key, T5 Value) logAttribute5,
-        ref readonly (string Key, T6 Value) logAttribute6)
+        ref readonly (string Key, T1 Value) logProperty1,
+        ref readonly (string Key, T2 Value) logProperty2,
+        ref readonly (string Key, T3 Value) logProperty3,
+        ref readonly (string Key, T4 Value) logProperty4,
+        ref readonly (string Key, T5 Value) logProperty5,
+        ref readonly (string Key, T6 Value) logProperty6)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6)),
+            new LogState<LogPropertyTuple<T1, T2, T3, T4, T5, T6>>(in messageData, new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6)),
             exception,
-            LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6>>.Formatter);
+            LogState<LogPropertyTuple<T1, T2, T3, T4, T5, T6>>.Formatter);
     }
 
     internal static void WriteStructuredLog<T1, T2, T3, T4, T5, T6, T7>(
@@ -158,22 +158,22 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        ref readonly (string Key, T1 Value) logAttribute1,
-        ref readonly (string Key, T2 Value) logAttribute2,
-        ref readonly (string Key, T3 Value) logAttribute3,
-        ref readonly (string Key, T4 Value) logAttribute4,
-        ref readonly (string Key, T5 Value) logAttribute5,
-        ref readonly (string Key, T6 Value) logAttribute6,
-        ref readonly (string Key, T7 Value) logAttribute7)
+        ref readonly (string Key, T1 Value) logProperty1,
+        ref readonly (string Key, T2 Value) logProperty2,
+        ref readonly (string Key, T3 Value) logProperty3,
+        ref readonly (string Key, T4 Value) logProperty4,
+        ref readonly (string Key, T5 Value) logProperty5,
+        ref readonly (string Key, T6 Value) logProperty6,
+        ref readonly (string Key, T7 Value) logProperty7)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6, T7>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, in logAttribute7)),
+            new LogState<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7>>(in messageData, new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7)),
             exception,
-            LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6, T7>>.Formatter);
+            LogState<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7>>.Formatter);
     }
 
     internal static void WriteStructuredLog<T1, T2, T3, T4, T5, T6, T7, T8>(
@@ -182,23 +182,23 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        ref readonly (string Key, T1 Value) logAttribute1,
-        ref readonly (string Key, T2 Value) logAttribute2,
-        ref readonly (string Key, T3 Value) logAttribute3,
-        ref readonly (string Key, T4 Value) logAttribute4,
-        ref readonly (string Key, T5 Value) logAttribute5,
-        ref readonly (string Key, T6 Value) logAttribute6,
-        ref readonly (string Key, T7 Value) logAttribute7,
-        ref readonly (string Key, T8 Value) logAttribute8)
+        ref readonly (string Key, T1 Value) logProperty1,
+        ref readonly (string Key, T2 Value) logProperty2,
+        ref readonly (string Key, T3 Value) logProperty3,
+        ref readonly (string Key, T4 Value) logProperty4,
+        ref readonly (string Key, T5 Value) logProperty5,
+        ref readonly (string Key, T6 Value) logProperty6,
+        ref readonly (string Key, T7 Value) logProperty7,
+        ref readonly (string Key, T8 Value) logProperty8)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Log(
             logLevel,
             eventId,
-            new LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6, T7, T8>>(in messageData, new(in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, in logAttribute7, in logAttribute8)),
+            new LogState<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7, T8>>(in messageData, new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7, in logProperty8)),
             exception,
-            LogState<LogAttributeTuple<T1, T2, T3, T4, T5, T6, T7, T8>>.Formatter);
+            LogState<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7, T8>>.Formatter);
     }
 
     internal static void WriteStructuredLog(
@@ -207,15 +207,33 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        IReadOnlyCollection<KeyValuePair<string, object?>>? keyValuePairs)
+        IReadOnlyCollection<KeyValuePair<string, object?>>? logProperties)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Log(
             logLevel,
             eventId,
-            new LogState<KeyValuePairCollection>(in messageData, new(keyValuePairs)),
+            new LogState<ReadOnlyNameValuePairCollection>(in messageData, new(logProperties)),
             exception,
-            LogState<KeyValuePairCollection>.Formatter);
+            LogState<ReadOnlyNameValuePairCollection>.Formatter);
+    }
+
+    internal static void WriteStructuredLog(
+        this ILogger logger,
+        LogLevel logLevel,
+        EventId eventId,
+        Exception? exception,
+        MessageData messageData,
+        IReadOnlyList<KeyValuePair<string, object?>>? logProperties)
+    {
+        ArgumentNullException.ThrowIfNull(logger);
+
+        logger.Log(
+            logLevel,
+            eventId,
+            new LogState<ReadOnlyNameValuePairList>(in messageData, new(logProperties)),
+            exception,
+            LogState<ReadOnlyNameValuePairList>.Formatter);
     }
 }

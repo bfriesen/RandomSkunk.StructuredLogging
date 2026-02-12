@@ -213,7 +213,7 @@ internal ref partial struct LoggingInterpolatedStringHandler
 {
     private bool _isEnabled;
     private DefaultInterpolatedStringHandler _innerHandler;
-    private KeyValuePairList4 _interpolationKeyValuePairs;
+    private NameValuePairList4 _interpolationNameValuePairs;
 
     public LoggingInterpolatedStringHandler(int literalLength, int formattedCount, ILogger? logger, LogLevel logLevel, out bool isEnabled)
     {
@@ -229,7 +229,7 @@ internal ref partial struct LoggingInterpolatedStringHandler
     public void AppendFormatted<T>(T value, string? format)
     {
         if (TryParseLeadingHtmlTag(ref format, out string? key))
-            _interpolationKeyValuePairs.Add(new(key, value));
+            _interpolationNameValuePairs.Add(new(key, value));
 
         _innerHandler.AppendFormatted(value, format);
     }
@@ -239,7 +239,7 @@ internal ref partial struct LoggingInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
         if (TryParseLeadingHtmlTag(ref format, out string? key))
-            _interpolationKeyValuePairs.Add(new(key, value));
+            _interpolationNameValuePairs.Add(new(key, value));
 
         _innerHandler.AppendFormatted(value, alignment, format);
     }
@@ -249,7 +249,7 @@ internal ref partial struct LoggingInterpolatedStringHandler
     public void AppendFormatted(scoped ReadOnlySpan<char> value, int alignment = 0, string? format = null)
     {
         if (TryParseLeadingHtmlTag(ref format, out string? key))
-            _interpolationKeyValuePairs.Add(new(key, value.ToString()));
+            _interpolationNameValuePairs.Add(new(key, value.ToString()));
 
         _innerHandler.AppendFormatted(value, alignment, format);
     }
@@ -259,7 +259,7 @@ internal ref partial struct LoggingInterpolatedStringHandler
     public void AppendFormatted(string? value, int alignment = 0, string? format = null)
     {
         if (TryParseLeadingHtmlTag(ref format, out string? key))
-            _interpolationKeyValuePairs.Add(new(key, value));
+            _interpolationNameValuePairs.Add(new(key, value));
 
         _innerHandler.AppendFormatted(value, alignment, format);
     }
@@ -267,7 +267,7 @@ internal ref partial struct LoggingInterpolatedStringHandler
     public void AppendFormatted(object? value, int alignment = 0, string? format = null)
     {
         if (TryParseLeadingHtmlTag(ref format, out string? key))
-            _interpolationKeyValuePairs.Add(new(key, value));
+            _interpolationNameValuePairs.Add(new(key, value));
 
         _innerHandler.AppendFormatted(value, alignment, format);
     }
@@ -278,7 +278,7 @@ internal ref partial struct LoggingInterpolatedStringHandler
     {
         if (_isEnabled)
         {
-            MessageData messageData = new(_innerHandler.ToStringAndClear(), in _interpolationKeyValuePairs);
+            MessageData messageData = new(_innerHandler.ToStringAndClear(), in _interpolationNameValuePairs);
             this = default; // defensive clear
             return messageData;
         }
@@ -286,13 +286,13 @@ internal ref partial struct LoggingInterpolatedStringHandler
         return default;
     }
 
-    private static bool TryParseLeadingHtmlTag(ref string? format, [NotNullWhen(true)] out string? logAttributeKey)
+    private static bool TryParseLeadingHtmlTag(ref string? format, [NotNullWhen(true)] out string? logPropertyKey)
     {
         // Try to match an html tag, e.g. "<Key>", at the start of the format string
         Regex.ValueMatchEnumerator htmlTagMatch = HtmlTagRegex().EnumerateMatches(format.AsSpan());
         if (!htmlTagMatch.MoveNext())
         {
-            logAttributeKey = null;
+            logPropertyKey = null;
             return false;
         }
 
@@ -302,11 +302,11 @@ internal ref partial struct LoggingInterpolatedStringHandler
         bool hasLogAttributteKey = htmlTagLength > 2; // An empty tag has a length of 2: "<>"
         bool hasFormatAfterTag = format.Length > htmlTagLength;
 
-        // Extract the log attribute key from the tag
-        logAttributeKey =
+        // Extract the log property key from the tag
+        logPropertyKey =
             hasLogAttributteKey
                 ? format[1..(htmlTagLength - 1)] // Exclude the two angle brackets to get the key
-                : null; // We don't actually have a log attribute key when we have an empty tag
+                : null; // We don't actually have a log property key when we have an empty tag
 
         // Remove the tag from the by-ref format parameter
         format =

@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
-/// Defines an expandable list of key-value pairs optimized for small counts (up to 4 items before heap allocation).
+/// Defines an expandable list of name-value pairs optimized for small counts (up to 4 items before heap allocation).
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
-internal struct KeyValuePairList4 : IEnumerable<KeyValuePair<string, object?>>
+internal struct NameValuePairList4 : IEnumerable<KeyValuePair<string, object?>>
 {
     private int _count;
     private KeyValuePair<string, object?> _item0;
@@ -71,10 +71,10 @@ internal struct KeyValuePairList4 : IEnumerable<KeyValuePair<string, object?>>
 }
 
 /// <summary>
-/// Defines an expandable list of key-value pairs optimized for small counts (up to 8 items before heap allocation).
+/// Defines an expandable list of name-value pairs optimized for small counts (up to 8 items before heap allocation).
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
-internal struct KeyValuePairList8 : IEnumerable<KeyValuePair<string, object?>>
+internal struct NameValuePairList8 : IEnumerable<KeyValuePair<string, object?>>
 {
     private int _count;
     private KeyValuePair<string, object?> _item0;

@@ -5,13 +5,13 @@ using System.Text;
 namespace RandomSkunk.StructuredLogging.Generator;
 
 /// <summary>
-/// Provides an incremental source generator that generates structured logging extension methods for the <see
-/// cref="ILogger"/> interface.
+/// Provides an incremental source generator that generates structured logging extension methods for the
+/// <c>Microsoft.Extensions.Logging.ILogger</c> interface.
 /// </summary>
-/// <remarks>This generator creates a set of strongly-typed extension methods for structured logging, enabling
-/// developers to log messages with interpolated strings, exceptions, event IDs, and  additional attributes. The
-/// generated methods support various log levels (e.g., Trace, Debug, Information, Warning, Error, Critical) and
-/// provide overloads for different combinations of  parameters.</remarks>
+/// <remarks>This generator creates a set of strongly-typed extension methods for structured logging, enabling developers to log
+/// messages with interpolated strings, exceptions, event IDs, and additional log properties. The generated methods support
+/// various log levels (e.g., Trace, Debug, Information, Warning, Error, Critical) and provide overloads for different
+/// combinations of parameters.</remarks>
 [Generator]
 [ExcludeFromCodeCoverage]
 public class StructuredLoggingExtensionsGenerator : IIncrementalGenerator
@@ -26,9 +26,9 @@ public class StructuredLoggingExtensionsGenerator : IIncrementalGenerator
     /// <summary>
     /// Writes a log entry at the {0} log level with its message specified as an interpolated string.
     /// <para/>
-    /// To capture a log attribute in an interpolation expression, specify a format that starts with an HTML tag. In <c>$"User
-    /// {{user.Id:&lt;user-id&gt;}} logged in."</c>, the <c>user.Id</c> expression is captured in a log attribute named "user-id".
-    /// In <c>$"Operation completed in {{elapsed.TotalSeconds:&lt;ElapsedSeconds&gt;0.000}} seconds."</c>, the log attribute is
+    /// To capture a log property in an interpolation expression, specify a format that starts with an HTML tag. In <c>$"User
+    /// {{user.Id:&lt;user-id&gt;}} logged in."</c>, the <c>user.Id</c> expression is captured in a log property named "user-id".
+    /// In <c>$"Operation completed in {{elapsed.TotalSeconds:&lt;ElapsedSeconds&gt;0.000}} seconds."</c>, the log property is
     /// named "ElapsedSeconds" and "0.000" is used as the format string when rendering the value in the message.
     /// </summary>
 """;
@@ -57,16 +57,21 @@ public class StructuredLoggingExtensionsGenerator : IIncrementalGenerator
     /// <param name="interpolatedMessage">The log message as an interpolated string.</param>
 """;
 
-    private const string _logAttributesParam = """
-    /// <param name="logAttributes">Key value pairs associated with the log.</param>
+    private const string _logPropertyArrayParam = """
+    /// <param name="logProperties">Name value pairs associated with the log.</param>
 """;
 
-    private const string _logAttributeParamFormat = """
-    /// <param name="logAttribute{0}">The {1}key value pair associated with the log.</param>
+    private const string _logPropertyParamFormat = """
+    /// <param name="logProperty{0}">The {1}name value pair associated with the log.</param>
 """;
 
-    private const string _keyValuePairsParam = """
-    /// <param name="keyValuePairs">Key value pairs (e.g. <c>Dictionary&lt;string, object?&gt;</c>) associated with the log.
+    private const string _nameValuePairCollectionParam = """
+    /// <param name="logProperties">Name value pairs (e.g. <c>Dictionary&lt;string, object?&gt;</c>) associated with the log.
+    /// </param>
+""";
+
+    private const string _nameValuePairListParam = """
+    /// <param name="logProperties">Name value pairs associated with the log.
     /// </param>
 """;
 
@@ -96,36 +101,35 @@ partial class StructuredLoggingExtensions
 """);
 
         string?[] logLevels = [null, "Trace", "Debug", "Information", "Warning", "Error", "Critical"];
-        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.ParamsLogAttributeArray);
-        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.OneGenericParameter);
-        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.TwoGenericParameters);
-        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.ThreeGenericParameters);
-        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.FourGenericParameters);
-        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.FiveGenericParameters);
-        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.SixGenericParameters);
-        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.SevenGenericParameters);
-        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.EightGenericParameters);
-        GenerateMethods(sb, logLevels, logAttributesParameterType: LogAttributesParameterType.KeyValuePairCollection);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.ParamsLogPropertyArray);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.OneGenericParameter);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.TwoGenericParameters);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.ThreeGenericParameters);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.FourGenericParameters);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.FiveGenericParameters);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.SixGenericParameters);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.SevenGenericParameters);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.EightGenericParameters);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.NameValuePairCollection);
+        GenerateMethods(sb, logLevels, logPropertiesParameterType: LogPropertiesParameterType.NameValuePairList);
         while (char.IsWhiteSpace(sb[sb.Length - 1]))
             sb.Length--;
         sb.AppendLine();
         return sb.AppendLine("}").ToString();
     }
 
-    /// <param name="logAttributesParameterType"><c>true</c> to leave the type of the logAttributes parameter as a log attribute span or
-    /// array. <c>false</c> to change the type to <c>IReadOnlyCollection&lt;KeyValuePair&lt;string, object?&gt;&gt;</c>.</param>
-    private static void GenerateMethods(StringBuilder sb, string?[] logLevels, LogAttributesParameterType logAttributesParameterType)
+    private static void GenerateMethods(StringBuilder sb, string?[] logLevels, LogPropertiesParameterType logPropertiesParameterType)
     {
         foreach (string? logLevel in logLevels)
         {
-            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: true, keepMessageType: true, logAttributesParameterType);
-            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: true, keepMessageType: false, logAttributesParameterType);
-            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: false, keepMessageType: true, logAttributesParameterType);
-            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: false, keepMessageType: false, logAttributesParameterType);
-            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: true, keepMessageType: true, logAttributesParameterType);
-            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: true, keepMessageType: false, logAttributesParameterType);
-            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: false, keepMessageType: true, logAttributesParameterType);
-            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: false, keepMessageType: false, logAttributesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: true, keepMessageType: true, logPropertiesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: true, keepMessageType: false, logPropertiesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: false, keepMessageType: true, logPropertiesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: true, passThroughException: false, keepMessageType: false, logPropertiesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: true, keepMessageType: true, logPropertiesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: true, keepMessageType: false, logPropertiesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: false, keepMessageType: true, logPropertiesParameterType);
+            GenerateMethod(sb, logLevel, passThroughEventId: false, passThroughException: false, keepMessageType: false, logPropertiesParameterType);
         }
     }
 
@@ -135,10 +139,8 @@ partial class StructuredLoggingExtensions
     /// omit the exception parameter and pass null to the <c>Write</c> method.</param>
     /// <param name="keepMessageType"><c>true</c> to leave the type of the message parameter as a string. <c>false</c> to change the type to an
     /// interpolated string.</param>
-    /// <param name="logAttributesParameterType">The type of the log attributes parameter</param>
-    /// <param name="keepLogAttributesType"><c>true</c> to leave the type of the logAttributes parameter as a log attribute span or
-    /// array. <c>false</c> to change the type to <c>IReadOnlyCollection&lt;KeyValuePair&lt;string, object?&gt;&gt;</c>.</param>
-    private static void GenerateMethod(StringBuilder sb, string? logLevel, bool passThroughEventId, bool passThroughException, bool keepMessageType, LogAttributesParameterType logAttributesParameterType)
+    /// <param name="logPropertiesParameterType">The type of the log properties parameter</param>
+    private static void GenerateMethod(StringBuilder sb, string? logLevel, bool passThroughEventId, bool passThroughException, bool keepMessageType, LogPropertiesParameterType logPropertiesParameterType)
     {
         string logLevelDisplay = logLevel?.ToLower() ?? "specified";
 
@@ -159,12 +161,12 @@ partial class StructuredLoggingExtensions
         else
             sb.AppendLine(_interpolatedStringMessageParam);
 
-        AppendLogAttributeParams(sb, logAttributesParameterType);
+        AppendLogPropertyParams(sb, logPropertiesParameterType);
 
         sb.AppendFormat("""
     public static void {0}{1}(
         this ILogger logger,
-""", logLevel ?? "Write", GetGenericParameterDeclaration(logAttributesParameterType)).AppendLine();
+""", logLevel ?? "Write", GetGenericParameterDeclaration(logPropertiesParameterType)).AppendLine();
 
         if (logLevel == null)
         {
@@ -211,84 +213,89 @@ partial class StructuredLoggingExtensions
             }
         }
 
-        switch (logAttributesParameterType)
+        switch (logPropertiesParameterType)
         {
-            case LogAttributesParameterType.ParamsLogAttributeArray:
+            case LogPropertiesParameterType.ParamsLogPropertyArray:
                 sb.AppendLine("""
-        params (string Key, object? Value)[] logAttributes) =>
+        params (string Key, object? Value)[] logProperties) =>
 """);
                 break;
-            case LogAttributesParameterType.KeyValuePairCollection:
+            case LogPropertiesParameterType.NameValuePairCollection:
                 sb.AppendLine("""
-        IReadOnlyCollection<KeyValuePair<string, object?>>? keyValuePairs) =>
+        IReadOnlyCollection<KeyValuePair<string, object?>>? logProperties) =>
 """);
                 break;
-            case LogAttributesParameterType.OneGenericParameter:
+            case LogPropertiesParameterType.NameValuePairList:
                 sb.AppendLine("""
-        (string Key, T Value) logAttribute) =>
+        IReadOnlyList<KeyValuePair<string, object?>>? logProperties) =>
 """);
                 break;
-            case LogAttributesParameterType.TwoGenericParameters:
+            case LogPropertiesParameterType.OneGenericParameter:
                 sb.AppendLine("""
-        (string Key, T1 Value) logAttribute1,
-        (string Key, T2 Value) logAttribute2) =>
+        (string Key, T Value) logProperty) =>
 """);
                 break;
-            case LogAttributesParameterType.ThreeGenericParameters:
+            case LogPropertiesParameterType.TwoGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logAttribute1,
-        (string Key, T2 Value) logAttribute2,
-        (string Key, T3 Value) logAttribute3) =>
+        (string Key, T1 Value) logProperty1,
+        (string Key, T2 Value) logProperty2) =>
 """);
                 break;
-            case LogAttributesParameterType.FourGenericParameters:
+            case LogPropertiesParameterType.ThreeGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logAttribute1,
-        (string Key, T2 Value) logAttribute2,
-        (string Key, T3 Value) logAttribute3,
-        (string Key, T4 Value) logAttribute4) =>
+        (string Key, T1 Value) logProperty1,
+        (string Key, T2 Value) logProperty2,
+        (string Key, T3 Value) logProperty3) =>
 """);
                 break;
-            case LogAttributesParameterType.FiveGenericParameters:
+            case LogPropertiesParameterType.FourGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logAttribute1,
-        (string Key, T2 Value) logAttribute2,
-        (string Key, T3 Value) logAttribute3,
-        (string Key, T4 Value) logAttribute4,
-        (string Key, T5 Value) logAttribute5) =>
+        (string Key, T1 Value) logProperty1,
+        (string Key, T2 Value) logProperty2,
+        (string Key, T3 Value) logProperty3,
+        (string Key, T4 Value) logProperty4) =>
 """);
                 break;
-            case LogAttributesParameterType.SixGenericParameters:
+            case LogPropertiesParameterType.FiveGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logAttribute1,
-        (string Key, T2 Value) logAttribute2,
-        (string Key, T3 Value) logAttribute3,
-        (string Key, T4 Value) logAttribute4,
-        (string Key, T5 Value) logAttribute5,
-        (string Key, T6 Value) logAttribute6) =>
+        (string Key, T1 Value) logProperty1,
+        (string Key, T2 Value) logProperty2,
+        (string Key, T3 Value) logProperty3,
+        (string Key, T4 Value) logProperty4,
+        (string Key, T5 Value) logProperty5) =>
 """);
                 break;
-            case LogAttributesParameterType.SevenGenericParameters:
+            case LogPropertiesParameterType.SixGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logAttribute1,
-        (string Key, T2 Value) logAttribute2,
-        (string Key, T3 Value) logAttribute3,
-        (string Key, T4 Value) logAttribute4,
-        (string Key, T5 Value) logAttribute5,
-        (string Key, T6 Value) logAttribute6,
-        (string Key, T7 Value) logAttribute7) =>
+        (string Key, T1 Value) logProperty1,
+        (string Key, T2 Value) logProperty2,
+        (string Key, T3 Value) logProperty3,
+        (string Key, T4 Value) logProperty4,
+        (string Key, T5 Value) logProperty5,
+        (string Key, T6 Value) logProperty6) =>
 """);
                 break;
-            case LogAttributesParameterType.EightGenericParameters:
+            case LogPropertiesParameterType.SevenGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logAttribute1,
-        (string Key, T2 Value) logAttribute2,
-        (string Key, T3 Value) logAttribute3,
-        (string Key, T4 Value) logAttribute4,
-        (string Key, T5 Value) logAttribute5,
-        (string Key, T6 Value) logAttribute6,
-        (string Key, T7 Value) logAttribute7,
-        (string Key, T8 Value) logAttribute8) =>
+        (string Key, T1 Value) logProperty1,
+        (string Key, T2 Value) logProperty2,
+        (string Key, T3 Value) logProperty3,
+        (string Key, T4 Value) logProperty4,
+        (string Key, T5 Value) logProperty5,
+        (string Key, T6 Value) logProperty6,
+        (string Key, T7 Value) logProperty7) =>
+""");
+                break;
+            case LogPropertiesParameterType.EightGenericParameters:
+                sb.AppendLine("""
+        (string Key, T1 Value) logProperty1,
+        (string Key, T2 Value) logProperty2,
+        (string Key, T3 Value) logProperty3,
+        (string Key, T4 Value) logProperty4,
+        (string Key, T5 Value) logProperty5,
+        (string Key, T6 Value) logProperty6,
+        (string Key, T7 Value) logProperty7,
+        (string Key, T8 Value) logProperty8) =>
 """);
                 break;
         }
@@ -333,61 +340,63 @@ partial class StructuredLoggingExtensions
             sb.Append("interpolatedMessage.GetMessageDataAndClear(), ");
         }
 
-        switch (logAttributesParameterType)
+        switch (logPropertiesParameterType)
         {
-            case LogAttributesParameterType.ParamsLogAttributeArray:
-                sb.AppendLine("logAttributes);");
+            case LogPropertiesParameterType.ParamsLogPropertyArray:
+            case LogPropertiesParameterType.NameValuePairCollection:
+            case LogPropertiesParameterType.NameValuePairList:
+                sb.AppendLine("logProperties);");
                 break;
-            case LogAttributesParameterType.KeyValuePairCollection:
-                sb.AppendLine("keyValuePairs);");
+            case LogPropertiesParameterType.OneGenericParameter:
+                sb.AppendLine("in logProperty);");
                 break;
-            case LogAttributesParameterType.OneGenericParameter:
-                sb.AppendLine("in logAttribute);");
+            case LogPropertiesParameterType.TwoGenericParameters:
+                sb.AppendLine("in logProperty1, in logProperty2);");
                 break;
-            case LogAttributesParameterType.TwoGenericParameters:
-                sb.AppendLine("in logAttribute1, in logAttribute2);");
+            case LogPropertiesParameterType.ThreeGenericParameters:
+                sb.AppendLine("in logProperty1, in logProperty2, in logProperty3);");
                 break;
-            case LogAttributesParameterType.ThreeGenericParameters:
-                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3);");
+            case LogPropertiesParameterType.FourGenericParameters:
+                sb.AppendLine("in logProperty1, in logProperty2, in logProperty3, in logProperty4);");
                 break;
-            case LogAttributesParameterType.FourGenericParameters:
-                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4);");
+            case LogPropertiesParameterType.FiveGenericParameters:
+                sb.AppendLine("in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5);");
                 break;
-            case LogAttributesParameterType.FiveGenericParameters:
-                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5);");
+            case LogPropertiesParameterType.SixGenericParameters:
+                sb.AppendLine("in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6);");
                 break;
-            case LogAttributesParameterType.SixGenericParameters:
-                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6);");
+            case LogPropertiesParameterType.SevenGenericParameters:
+                sb.AppendLine("in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7);");
                 break;
-            case LogAttributesParameterType.SevenGenericParameters:
-                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, in logAttribute7);");
-                break;
-            case LogAttributesParameterType.EightGenericParameters:
-                sb.AppendLine("in logAttribute1, in logAttribute2, in logAttribute3, in logAttribute4, in logAttribute5, in logAttribute6, in logAttribute7, in logAttribute8);");
+            case LogPropertiesParameterType.EightGenericParameters:
+                sb.AppendLine("in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7, in logProperty8);");
                 break;
         }
 
         sb.AppendLine();
     }
 
-    private static void AppendLogAttributeParams(StringBuilder sb, LogAttributesParameterType logAttributesParameterType)
+    private static void AppendLogPropertyParams(StringBuilder sb, LogPropertiesParameterType logPropertiesParameterType)
     {
-        switch (logAttributesParameterType)
+        switch (logPropertiesParameterType)
         {
-            case LogAttributesParameterType.ParamsLogAttributeArray:
-                sb.AppendLine(_logAttributesParam);
+            case LogPropertiesParameterType.ParamsLogPropertyArray:
+                sb.AppendLine(_logPropertyArrayParam);
                 return;
-            case LogAttributesParameterType.KeyValuePairCollection:
-                sb.AppendLine(_keyValuePairsParam);
+            case LogPropertiesParameterType.NameValuePairCollection:
+                sb.AppendLine(_nameValuePairCollectionParam);
                 return;
-            case LogAttributesParameterType.OneGenericParameter:
-                sb.AppendFormat(_logAttributeParamFormat, null, null).AppendLine();
+            case LogPropertiesParameterType.NameValuePairList:
+                sb.AppendLine(_nameValuePairListParam);
+                return;
+            case LogPropertiesParameterType.OneGenericParameter:
+                sb.AppendFormat(_logPropertyParamFormat, null, null).AppendLine();
                 return;
         }
 
-        for (int i = 1; i <= (int)logAttributesParameterType; i++)
+        for (int i = 1; i <= (int)logPropertiesParameterType; i++)
         {
-            sb.AppendFormat(_logAttributeParamFormat, i, i switch
+            sb.AppendFormat(_logPropertyParamFormat, i, i switch
             {
                 1 => "first ",
                 2 => "second ",
@@ -402,24 +411,25 @@ partial class StructuredLoggingExtensions
         }
     }
 
-    private static string? GetGenericParameterDeclaration(LogAttributesParameterType logAttributesParameterType) =>
-        logAttributesParameterType switch
+    private static string? GetGenericParameterDeclaration(LogPropertiesParameterType logPropertiesParameterType) =>
+        logPropertiesParameterType switch
         {
-            LogAttributesParameterType.OneGenericParameter => "<T>",
-            LogAttributesParameterType.TwoGenericParameters => "<T1, T2>",
-            LogAttributesParameterType.ThreeGenericParameters => "<T1, T2, T3>",
-            LogAttributesParameterType.FourGenericParameters => "<T1, T2, T3, T4>",
-            LogAttributesParameterType.FiveGenericParameters => "<T1, T2, T3, T4, T5>",
-            LogAttributesParameterType.SixGenericParameters => "<T1, T2, T3, T4, T5, T6>",
-            LogAttributesParameterType.SevenGenericParameters => "<T1, T2, T3, T4, T5, T6, T7>",
-            LogAttributesParameterType.EightGenericParameters => "<T1, T2, T3, T4, T5, T6, T7, T8>",
+            LogPropertiesParameterType.OneGenericParameter => "<T>",
+            LogPropertiesParameterType.TwoGenericParameters => "<T1, T2>",
+            LogPropertiesParameterType.ThreeGenericParameters => "<T1, T2, T3>",
+            LogPropertiesParameterType.FourGenericParameters => "<T1, T2, T3, T4>",
+            LogPropertiesParameterType.FiveGenericParameters => "<T1, T2, T3, T4, T5>",
+            LogPropertiesParameterType.SixGenericParameters => "<T1, T2, T3, T4, T5, T6>",
+            LogPropertiesParameterType.SevenGenericParameters => "<T1, T2, T3, T4, T5, T6, T7>",
+            LogPropertiesParameterType.EightGenericParameters => "<T1, T2, T3, T4, T5, T6, T7, T8>",
             _ => null,
         };
 
-    private enum LogAttributesParameterType
+    private enum LogPropertiesParameterType
     {
-        ParamsLogAttributeArray = -2,
-        KeyValuePairCollection = -1,
+        ParamsLogPropertyArray = -3,
+        NameValuePairCollection = -2,
+        NameValuePairList = -1,
         OneGenericParameter = 1,
         TwoGenericParameters = 2,
         ThreeGenericParameters = 3,

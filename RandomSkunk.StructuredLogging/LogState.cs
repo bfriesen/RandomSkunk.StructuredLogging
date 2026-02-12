@@ -5,23 +5,23 @@ using System.Runtime.InteropServices;
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
-/// Defines the state for a structured log entry, including the message and associated key-value pairs.
+/// Defines the state for a structured log entry, including the message and associated name-value pairs.
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
-internal readonly struct LogState<TKeyValuePairArray>(ref readonly MessageData messageData, TKeyValuePairArray keyValuePairs)
+internal readonly struct LogState<TNameValuePairArray>(ref readonly MessageData messageData, TNameValuePairArray nameValuePairs)
     : IReadOnlyList<KeyValuePair<string, object?>>
-    where TKeyValuePairArray : struct, IKeyValuePairArray
+    where TNameValuePairArray : struct, INameValuePairArray
 {
-    internal static readonly Func<LogState<TKeyValuePairArray>, Exception?, string> Formatter =
+    internal static readonly Func<LogState<TNameValuePairArray>, Exception?, string> Formatter =
         (state, exception) => state._message ?? string.Empty;
 
     private readonly string? _message = messageData.Message;
-    private readonly TKeyValuePairArray _keyValuePairs = keyValuePairs;
-    private readonly KeyValuePairList4 _interpolationKeyValuePairs = messageData.InterpolationKeyValuePairs;
+    private readonly TNameValuePairArray _nameValuePairs = nameValuePairs;
+    private readonly NameValuePairList4 _interpolationNameValuePairs = messageData.InterpolationNameValuePairs;
 
-    public int Count => _keyValuePairs.Length + _interpolationKeyValuePairs.Count;
+    public int Count => _nameValuePairs.Length + _interpolationNameValuePairs.Count;
 
-    public KeyValuePair<string, object?> this[int index] => GetItem(_keyValuePairs, _interpolationKeyValuePairs, index);
+    public KeyValuePair<string, object?> this[int index] => GetItem(_nameValuePairs, _interpolationNameValuePairs, index);
 
     /// <summary>Returns the log message.</summary>
     public override string? ToString() => _message;
@@ -34,25 +34,25 @@ internal readonly struct LogState<TKeyValuePairArray>(ref readonly MessageData m
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static KeyValuePair<string, object?> GetItem(
-        TKeyValuePairArray keyValuePairs,
-        KeyValuePairList4 interpolationKeyValuePairs,
+        TNameValuePairArray nameValuePairs,
+        NameValuePairList4 interpolationNameValuePairs,
         int index) =>
-        index < keyValuePairs.Length
-            ? keyValuePairs[index]
-            : interpolationKeyValuePairs[index - keyValuePairs.Length];
+        index < nameValuePairs.Length
+            ? nameValuePairs[index]
+            : interpolationNameValuePairs[index - nameValuePairs.Length];
 
     [StructLayout(LayoutKind.Auto)]
-    public struct Enumerator(ref readonly LogState<TKeyValuePairArray> logState) : IEnumerator<KeyValuePair<string, object?>>
+    public struct Enumerator(ref readonly LogState<TNameValuePairArray> logState) : IEnumerator<KeyValuePair<string, object?>>
     {
-        private TKeyValuePairArray _keyValuePairs = logState._keyValuePairs;
-        private KeyValuePairList4 _interpolationKeyValuePairs = logState._interpolationKeyValuePairs;
+        private TNameValuePairArray _nameValuePairs = logState._nameValuePairs;
+        private NameValuePairList4 _interpolationNameValuePairs = logState._interpolationNameValuePairs;
         private int _index = -1;
 
-        public readonly KeyValuePair<string, object?> Current => GetItem(_keyValuePairs, _interpolationKeyValuePairs, _index);
+        public readonly KeyValuePair<string, object?> Current => GetItem(_nameValuePairs, _interpolationNameValuePairs, _index);
 
         readonly object IEnumerator.Current => Current;
 
-        public bool MoveNext() => ++_index < _keyValuePairs.Length + _interpolationKeyValuePairs.Count;
+        public bool MoveNext() => ++_index < _nameValuePairs.Length + _interpolationNameValuePairs.Count;
 
         public void Dispose() => this = default;
 

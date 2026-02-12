@@ -7,7 +7,7 @@
 		<LangVersion>latest</LangVersion>
 
 		<Title>RandomSkunk.StructuredLogging</Title>
-		<Description>Modern structured logging extensions for .NET that separate human-readable messages from machine-readable attributes. Include contextual data (user IDs, correlation IDs, metrics) in logs without forcing them into message templates.</Description>
+		<Description>Modern structured logging extensions for .NET that separate human-readable messages from machine-readable log properties. Include contextual data (user IDs, correlation IDs, metrics) in logs without forcing them into message templates.</Description>
 		<Authors>Brian Friesen</Authors>
 		<Copyright>Copyright (c) 2025-2026 Brian Friesen. All rights reserved.</Copyright>
 
