@@ -364,16 +364,16 @@ partial class LogOperationExtensions
     private static string? GetLogOperationType(int genericParameterCount) =>
         genericParameterCount switch
         {
-            0 => "Operation<EmptyNameValuePairArray>",
-            1 => "Operation<LogPropertyTuple<T>>",
-            2 => "Operation<LogPropertyTuple<T1, T2>>",
-            3 => "Operation<LogPropertyTuple<T1, T2, T3>>",
-            4 => "Operation<LogPropertyTuple<T1, T2, T3, T4>>",
-            5 => "Operation<LogPropertyTuple<T1, T2, T3, T4, T5>>",
-            6 => "Operation<LogPropertyTuple<T1, T2, T3, T4, T5, T6>>",
-            7 => "Operation<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7>>",
-            8 => "Operation<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7, T8>>",
-            -1 => "Operation<ReadOnlyNameValuePairList<TNameValuePairList>>",
+            0 => "OperationLog<EmptyNameValuePairArray>",
+            1 => "OperationLog<LogPropertyTuple<T>>",
+            2 => "OperationLog<LogPropertyTuple<T1, T2>>",
+            3 => "OperationLog<LogPropertyTuple<T1, T2, T3>>",
+            4 => "OperationLog<LogPropertyTuple<T1, T2, T3, T4>>",
+            5 => "OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5>>",
+            6 => "OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6>>",
+            7 => "OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7>>",
+            8 => "OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7, T8>>",
+            -1 => "OperationLog<ReadOnlyNameValuePairList<TNameValuePairList>>",
             _ => null,
         };
 

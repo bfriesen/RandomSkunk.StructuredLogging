@@ -13,10 +13,10 @@ namespace RandomSkunk.StructuredLogging;
 /// for diagnostics and performance tracking.</remarks>
 public static partial class LogOperationExtensions
 {
-    /// <returns>An <see cref="Operation{TNameValuePairList}"/> object that, when disposed, writes a structured log at the debug
+    /// <returns>An <see cref="OperationLog{TNameValuePairList}"/> object that, when disposed, writes a structured log at the debug
     /// level indicating that the operation is complete. To include the result of the operation in this log, call the object's
-    /// <see cref="Operation{TNameValuePairList}.Return"/> method before disposing it.</returns>
-    internal static Operation<EmptyNameValuePairArray> GetOperation(
+    /// <see cref="OperationLog{TNameValuePairList}.ReturnValue"/> method before disposing it.</returns>
+    internal static OperationLog<EmptyNameValuePairArray> GetOperation(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
@@ -27,7 +27,7 @@ public static partial class LogOperationExtensions
             operationName,
             new());
 
-    internal static Operation<LogPropertyTuple<T>> GetOperation<T>(
+    internal static OperationLog<LogPropertyTuple<T>> GetOperation<T>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
@@ -39,7 +39,7 @@ public static partial class LogOperationExtensions
             operationName,
             new(in logProperty));
 
-    internal static Operation<LogPropertyTuple<T1, T2>> GetOperation<T1, T2>(
+    internal static OperationLog<LogPropertyTuple<T1, T2>> GetOperation<T1, T2>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
@@ -52,7 +52,7 @@ public static partial class LogOperationExtensions
             operationName,
             new(in logProperty1, in logProperty2));
 
-    internal static Operation<LogPropertyTuple<T1, T2, T3>> GetOperation<T1, T2, T3>(
+    internal static OperationLog<LogPropertyTuple<T1, T2, T3>> GetOperation<T1, T2, T3>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
@@ -66,7 +66,7 @@ public static partial class LogOperationExtensions
             operationName,
             new(in logProperty1, in logProperty2, in logProperty3));
 
-    internal static Operation<LogPropertyTuple<T1, T2, T3, T4>> GetOperation<T1, T2, T3, T4>(
+    internal static OperationLog<LogPropertyTuple<T1, T2, T3, T4>> GetOperation<T1, T2, T3, T4>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
@@ -81,7 +81,7 @@ public static partial class LogOperationExtensions
             operationName,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4));
 
-    internal static Operation<LogPropertyTuple<T1, T2, T3, T4, T5>> GetOperation<T1, T2, T3, T4, T5>(
+    internal static OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5>> GetOperation<T1, T2, T3, T4, T5>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
@@ -97,7 +97,7 @@ public static partial class LogOperationExtensions
             operationName,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5));
 
-    internal static Operation<LogPropertyTuple<T1, T2, T3, T4, T5, T6>> GetOperation<T1, T2, T3, T4, T5, T6>(
+    internal static OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6>> GetOperation<T1, T2, T3, T4, T5, T6>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
@@ -114,7 +114,7 @@ public static partial class LogOperationExtensions
             operationName,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6));
 
-    internal static Operation<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7>> GetOperation<T1, T2, T3, T4, T5, T6, T7>(
+    internal static OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7>> GetOperation<T1, T2, T3, T4, T5, T6, T7>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
@@ -132,7 +132,7 @@ public static partial class LogOperationExtensions
             operationName,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7));
 
-    internal static Operation<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7, T8>> GetOperation<T1, T2, T3, T4, T5, T6, T7, T8>(
+    internal static OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7, T8>> GetOperation<T1, T2, T3, T4, T5, T6, T7, T8>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
@@ -151,7 +151,7 @@ public static partial class LogOperationExtensions
             operationName,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7, in logProperty8));
 
-    internal static Operation<ReadOnlyNameValuePairList<TNameValuePairList>> GetOperation<TNameValuePairList>(
+    internal static OperationLog<ReadOnlyNameValuePairList<TNameValuePairList>> GetOperation<TNameValuePairList>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,

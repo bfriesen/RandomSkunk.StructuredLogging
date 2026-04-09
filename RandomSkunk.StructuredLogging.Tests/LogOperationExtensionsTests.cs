@@ -28,11 +28,11 @@ public abstract class LogOperationExtensionsTests
             ILogger? logger = null;
 
             // Act
-            var op = logger!.GetOperation(_logLevel, _eventId, "My.Operation");
+            var log = logger!.GetOperation(_logLevel, _eventId, "My.Operation");
 
             // Assert
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().BeEmpty();
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().BeEmpty();
         }
 
         [Fact]
@@ -42,26 +42,26 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation");
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation");
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().BeEmpty();
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().BeEmpty();
         }
 
         [Fact]
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation");
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation");
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasLogLevel(_logLevel)
                 && log.HasMessage("Operation starting: My.Operation"))), Times.Once());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().BeEmpty();
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().BeEmpty();
         }
     }
 
@@ -87,27 +87,27 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(1);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(1);
         }
 
         [Fact]
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasLogLevel(_logLevel)
                 && log.HasMessage("Operation starting: My.Operation")
                 && log.HasAttribute("P1", 1))), Times.Once());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(1);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(1);
         }
     }
 
@@ -133,19 +133,19 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(2);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(2);
         }
 
         [Fact]
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -153,8 +153,8 @@ public abstract class LogOperationExtensionsTests
                 && log.HasMessage("Operation starting: My.Operation")
                 && log.HasAttribute("P1", 1)
                 && log.HasAttribute("P2", 2))), Times.Once());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(2);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(2);
         }
     }
 
@@ -180,19 +180,19 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(3);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(3);
         }
 
         [Fact]
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -201,8 +201,8 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P1", 1)
                 && log.HasAttribute("P2", 2)
                 && log.HasAttribute("P3", 3))), Times.Once());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(3);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(3);
         }
     }
 
@@ -228,19 +228,19 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(4);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(4);
         }
 
         [Fact]
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -250,8 +250,8 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P2", 2)
                 && log.HasAttribute("P3", 3)
                 && log.HasAttribute("P4", 4))), Times.Once());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(4);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(4);
         }
     }
 
@@ -277,19 +277,19 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(5);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(5);
         }
 
         [Fact]
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -300,8 +300,8 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P3", 3)
                 && log.HasAttribute("P4", 4)
                 && log.HasAttribute("P5", 5))), Times.Once());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(5);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(5);
         }
     }
 
@@ -327,19 +327,19 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(6);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(6);
         }
 
         [Fact]
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -351,8 +351,8 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P4", 4)
                 && log.HasAttribute("P5", 5)
                 && log.HasAttribute("P6", 6))), Times.Once());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(6);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(6);
         }
     }
 
@@ -378,19 +378,19 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(7);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(7);
         }
 
         [Fact]
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -403,8 +403,8 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P5", 5)
                 && log.HasAttribute("P6", 6)
                 && log.HasAttribute("P7", 7))), Times.Once());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(7);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(7);
         }
     }
 
@@ -430,19 +430,19 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7), ("P8", 8));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7), ("P8", 8));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(8);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(8);
         }
 
         [Fact]
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7), ("P8", 8));
+            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7), ("P8", 8));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -456,8 +456,8 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P6", 6)
                 && log.HasAttribute("P7", 7)
                 && log.HasAttribute("P8", 8))), Times.Once());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(8);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(8);
         }
     }
 
@@ -485,12 +485,12 @@ public abstract class LogOperationExtensionsTests
             List<KeyValuePair<string, object?>> nameValuePairs = [new("P1", 1), new("P2", 2), new("P3", 3)];
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, nameValuePairs, "My.Operation");
+            var log = _logger.GetOperation(_logLevel, _eventId, nameValuePairs, "My.Operation");
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(3);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(3);
         }
 
         [Fact]
@@ -500,7 +500,7 @@ public abstract class LogOperationExtensionsTests
             List<KeyValuePair<string, object?>> nameValuePairs = [new("P1", 1), new("P2", 2), new("P3", 3)];
 
             // Act
-            var op = _logger.GetOperation(_logLevel, _eventId, nameValuePairs, "My.Operation");
+            var log = _logger.GetOperation(_logLevel, _eventId, nameValuePairs, "My.Operation");
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -509,8 +509,8 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P1", 1)
                 && log.HasAttribute("P2", 2)
                 && log.HasAttribute("P3", 3))), Times.Once());
-            op.EventId.Should().Be(_eventId);
-            op.Parameters.Should().HaveCount(3);
+            log.EventId.Should().Be(_eventId);
+            log.Parameters.Should().HaveCount(3);
         }
     }
 }

@@ -94,21 +94,18 @@ log when it ends. Both logs include the same operation parameters.
 ```csharp
 public int Divide(int dividend, int divisor, int? fallbackValue = null)
 {
-    using var op = logger.LogOperation(
-        LogLevel.Information,
-        1286859363,
+    using var log = logger.LogOperation(
         $"{typeof(Calculator)}.{nameof(Divide)}",
         dividend,
         divisor,
         fallbackValue);
 
-    if (op.Log(fallbackValue != null && divisor == 0))
+    if (log.IsNotNull(fallbackValue) && log.Condition(divisor == 0))
     {
-        op.Log($"Cannot divide by zero. Returning fallback value, {fallbackValue}.");
-        return op.Return(fallbackValue!.Value);
+        return log.ReturnValue(fallbackValue.Value);
     }
 
-    return op.Return(dividend / divisor);
+    return log.ReturnValue(dividend / divisor);
 }
 ```
 
@@ -119,7 +116,7 @@ public int Divide(int dividend, int divisor, int? fallbackValue = null)
   "Message": "Operation starting: MathUtilities.Calculator.Divide",
   "dividend": 10,
   "divisor": 2,
-  "fallbackValue": null
+  "fallbackValue": -2147483648
 }
 ```
 
@@ -128,9 +125,11 @@ public int Divide(int dividend, int divisor, int? fallbackValue = null)
   "Message": "Operation complete: MathUtilities.Calculator.Divide",
   "dividend": 10,
   "divisor": 2,
-  "fallbackValue": null,
+  "fallbackValue": -2147483648,
   "ReturnValue": 5,
-  "OperationLog": "[12:34:56.789Z] (fallbackValue != null && divisor == 0): false"
+  "OperationLog": "[12:34:56.787Z] `fallbackValue != null` is true
+[12:34:56.788Z] `divisor == 0` is false
+[12:34:56.789Z] Return value is `dividend / divisor`"
 }
 ```
 
