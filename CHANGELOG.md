@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.9.2] - 2026-04-09
+
+- Rename `Operation` struct to `OperationLog`.
+- Add `OperationLog.IsNotNull`, `OperationLog.IsNotNullOrEmpty`, and `OperationLog.IsNotNullOrWhiteSpace` methods.
+- Rename `OperationLog.Log` to `OperationLog.Append` and `OperationLog.Return` to `OperationLog.ReturnValue`.
+- Add caller argument parameter to `OperationLog.ReturnValue` and `OperationLog.Exception` methods.
+- Adjust operation log messages.
+
 ## [0.9.1] - 2026-04-09
 
 Add operation logging feature.
