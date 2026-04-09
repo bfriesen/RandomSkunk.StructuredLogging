@@ -10,7 +10,7 @@ public class LogPropertyArrayTests
         public void ReturnsCountOfUnderlyingLogPropertyArrayLength()
         {
             // Arrange
-            (string Key, object? Value)[] logPropertyArray =
+            (string Name, object? Value)[] logPropertyArray =
             [
                 ("Foo", "abc"),
                 ("Bar", 123)
@@ -18,7 +18,7 @@ public class LogPropertyArrayTests
             LogPropertyArray nameValuePairs = new(logPropertyArray);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(logPropertyArray.Length);
@@ -33,7 +33,7 @@ public class LogPropertyArrayTests
         public void WhenIndexIsInRange_ReturnsExpectedNameValuePair(int index)
         {
             // Arrange
-            (string Key, object? Value)[] logPropertyArray =
+            (string Name, object? Value)[] logPropertyArray =
             [
                 ("Foo", "abc"),
                 ("Bar", 123)
@@ -44,7 +44,7 @@ public class LogPropertyArrayTests
             KeyValuePair<string, object?> actual = nameValuePairs[index];
 
             // Assert
-            actual.Key.Should().Be(logPropertyArray[index].Key);
+            actual.Key.Should().Be(logPropertyArray[index].Name);
             actual.Value.Should().Be(logPropertyArray[index].Value);
         }
 
@@ -54,7 +54,7 @@ public class LogPropertyArrayTests
         public void WhenIndexIsOutOfRange_ThrowsIndexOutOfRangeException(int index)
         {
             // Arrange
-            (string Key, object? Value)[] logPropertyArray =
+            (string Name, object? Value)[] logPropertyArray =
             [
                 ("Foo", "abc"),
                 ("Bar", 123)
@@ -78,11 +78,11 @@ public class LogPropertyTuple1Tests
         public void ReturnsOne()
         {
             // Arrange
-            (string Key, string Value) logProperty = ("Foo", "abc");
+            (string Name, string Value) logProperty = ("Foo", "abc");
             LogPropertyTuple<string> nameValuePairs = new(in logProperty);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(1);
@@ -96,14 +96,14 @@ public class LogPropertyTuple1Tests
         public void WhenIndexIsInRange_ReturnsExpectedNameValuePair(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty = ("Foo", "abc");
+            (string Name, string Value) logProperty = ("Foo", "abc");
             LogPropertyTuple<string> nameValuePairs = new(in logProperty);
 
             // Act
             KeyValuePair<string, object?> actual = nameValuePairs[index];
 
             // Assert
-            actual.Key.Should().Be(logProperty.Key);
+            actual.Key.Should().Be(logProperty.Name);
             actual.Value.Should().Be(logProperty.Value);
         }
 
@@ -113,7 +113,7 @@ public class LogPropertyTuple1Tests
         public void WhenIndexIsOutOfRange_ThrowsIndexOutOfRangeException(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty = ("Foo", "abc");
+            (string Name, string Value) logProperty = ("Foo", "abc");
             LogPropertyTuple<string> nameValuePairs = new(in logProperty);
 
             // Act
@@ -133,12 +133,12 @@ public class LogPropertyTuple2Tests
         public void ReturnsTwo()
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
             LogPropertyTuple<string, int> nameValuePairs = new(in logProperty1, in logProperty2);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(2);
@@ -153,8 +153,8 @@ public class LogPropertyTuple2Tests
         public void WhenIndexIsInRange_ReturnsExpectedNameValuePair(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
             LogPropertyTuple<string, int> nameValuePairs = new(in logProperty1, in logProperty2);
 
             // Act
@@ -163,12 +163,12 @@ public class LogPropertyTuple2Tests
             // Assert
             if (index == 0)
             {
-                actual.Key.Should().Be(logProperty1.Key);
+                actual.Key.Should().Be(logProperty1.Name);
                 actual.Value.Should().Be(logProperty1.Value);
             }
             else
             {
-                actual.Key.Should().Be(logProperty2.Key);
+                actual.Key.Should().Be(logProperty2.Name);
                 actual.Value.Should().Be(logProperty2.Value);
             }
         }
@@ -179,8 +179,8 @@ public class LogPropertyTuple2Tests
         public void WhenIndexIsOutOfRange_ThrowsIndexOutOfRangeException(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
             LogPropertyTuple<string, int> nameValuePairs = new(in logProperty1, in logProperty2);
 
             // Act
@@ -200,13 +200,13 @@ public class LogPropertyTuple3Tests
         public void ReturnsThree()
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
             LogPropertyTuple<string, int, bool> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(3);
@@ -222,9 +222,9 @@ public class LogPropertyTuple3Tests
         public void WhenIndexIsInRange_ReturnsExpectedNameValuePair(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
             LogPropertyTuple<string, int, bool> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3);
 
             // Act
@@ -233,17 +233,17 @@ public class LogPropertyTuple3Tests
             // Assert
             if (index == 0)
             {
-                actual.Key.Should().Be(logProperty1.Key);
+                actual.Key.Should().Be(logProperty1.Name);
                 actual.Value.Should().Be(logProperty1.Value);
             }
             else if (index == 1)
             {
-                actual.Key.Should().Be(logProperty2.Key);
+                actual.Key.Should().Be(logProperty2.Name);
                 actual.Value.Should().Be(logProperty2.Value);
             }
             else
             {
-                actual.Key.Should().Be(logProperty3.Key);
+                actual.Key.Should().Be(logProperty3.Name);
                 actual.Value.Should().Be(logProperty3.Value);
             }
         }
@@ -254,9 +254,9 @@ public class LogPropertyTuple3Tests
         public void WhenIndexIsOutOfRange_ThrowsIndexOutOfRangeException(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
             LogPropertyTuple<string, int, bool> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3);
 
             // Act
@@ -276,14 +276,14 @@ public class LogPropertyTuple4Tests
         public void ReturnsFour()
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
             LogPropertyTuple<string, int, bool, double> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(4);
@@ -300,10 +300,10 @@ public class LogPropertyTuple4Tests
         public void WhenIndexIsInRange_ReturnsExpectedNameValuePair(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
             LogPropertyTuple<string, int, bool, double> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4);
 
             // Act
@@ -312,22 +312,22 @@ public class LogPropertyTuple4Tests
             // Assert
             if (index == 0)
             {
-                actual.Key.Should().Be(logProperty1.Key);
+                actual.Key.Should().Be(logProperty1.Name);
                 actual.Value.Should().Be(logProperty1.Value);
             }
             else if (index == 1)
             {
-                actual.Key.Should().Be(logProperty2.Key);
+                actual.Key.Should().Be(logProperty2.Name);
                 actual.Value.Should().Be(logProperty2.Value);
             }
             else if (index == 2)
             {
-                actual.Key.Should().Be(logProperty3.Key);
+                actual.Key.Should().Be(logProperty3.Name);
                 actual.Value.Should().Be(logProperty3.Value);
             }
             else
             {
-                actual.Key.Should().Be(logProperty4.Key);
+                actual.Key.Should().Be(logProperty4.Name);
                 actual.Value.Should().Be(logProperty4.Value);
             }
         }
@@ -338,10 +338,10 @@ public class LogPropertyTuple4Tests
         public void WhenIndexIsOutOfRange_ThrowsIndexOutOfRangeException(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
             LogPropertyTuple<string, int, bool, double> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4);
 
             // Act
@@ -361,15 +361,15 @@ public class LogPropertyTuple5Tests
         public void ReturnsFive()
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
             LogPropertyTuple<string, int, bool, double, string> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(5);
@@ -387,11 +387,11 @@ public class LogPropertyTuple5Tests
         public void WhenIndexIsInRange_ReturnsExpectedNameValuePair(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
             LogPropertyTuple<string, int, bool, double, string> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5);
 
             // Act
@@ -400,27 +400,27 @@ public class LogPropertyTuple5Tests
             // Assert
             if (index == 0)
             {
-                actual.Key.Should().Be(logProperty1.Key);
+                actual.Key.Should().Be(logProperty1.Name);
                 actual.Value.Should().Be(logProperty1.Value);
             }
             else if (index == 1)
             {
-                actual.Key.Should().Be(logProperty2.Key);
+                actual.Key.Should().Be(logProperty2.Name);
                 actual.Value.Should().Be(logProperty2.Value);
             }
             else if (index == 2)
             {
-                actual.Key.Should().Be(logProperty3.Key);
+                actual.Key.Should().Be(logProperty3.Name);
                 actual.Value.Should().Be(logProperty3.Value);
             }
             else if (index == 3)
             {
-                actual.Key.Should().Be(logProperty4.Key);
+                actual.Key.Should().Be(logProperty4.Name);
                 actual.Value.Should().Be(logProperty4.Value);
             }
             else
             {
-                actual.Key.Should().Be(logProperty5.Key);
+                actual.Key.Should().Be(logProperty5.Name);
                 actual.Value.Should().Be(logProperty5.Value);
             }
         }
@@ -431,11 +431,11 @@ public class LogPropertyTuple5Tests
         public void WhenIndexIsOutOfRange_ThrowsIndexOutOfRangeException(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
             LogPropertyTuple<string, int, bool, double, string> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5);
 
             // Act
@@ -455,16 +455,16 @@ public class LogPropertyTuple6Tests
         public void ReturnsSix()
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
-            (string Key, int Value) logProperty6 = ("Grault", 789);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, int Value) logProperty6 = ("Grault", 789);
             LogPropertyTuple<string, int, bool, double, string, int> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(6);
@@ -483,12 +483,12 @@ public class LogPropertyTuple6Tests
         public void WhenIndexIsInRange_ReturnsExpectedNameValuePair(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
-            (string Key, int Value) logProperty6 = ("Grault", 789);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, int Value) logProperty6 = ("Grault", 789);
             LogPropertyTuple<string, int, bool, double, string, int> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6);
 
             // Act
@@ -497,32 +497,32 @@ public class LogPropertyTuple6Tests
             // Assert
             if (index == 0)
             {
-                actual.Key.Should().Be(logProperty1.Key);
+                actual.Key.Should().Be(logProperty1.Name);
                 actual.Value.Should().Be(logProperty1.Value);
             }
             else if (index == 1)
             {
-                actual.Key.Should().Be(logProperty2.Key);
+                actual.Key.Should().Be(logProperty2.Name);
                 actual.Value.Should().Be(logProperty2.Value);
             }
             else if (index == 2)
             {
-                actual.Key.Should().Be(logProperty3.Key);
+                actual.Key.Should().Be(logProperty3.Name);
                 actual.Value.Should().Be(logProperty3.Value);
             }
             else if (index == 3)
             {
-                actual.Key.Should().Be(logProperty4.Key);
+                actual.Key.Should().Be(logProperty4.Name);
                 actual.Value.Should().Be(logProperty4.Value);
             }
             else if (index == 4)
             {
-                actual.Key.Should().Be(logProperty5.Key);
+                actual.Key.Should().Be(logProperty5.Name);
                 actual.Value.Should().Be(logProperty5.Value);
             }
             else
             {
-                actual.Key.Should().Be(logProperty6.Key);
+                actual.Key.Should().Be(logProperty6.Name);
                 actual.Value.Should().Be(logProperty6.Value);
             }
         }
@@ -533,12 +533,12 @@ public class LogPropertyTuple6Tests
         public void WhenIndexIsOutOfRange_ThrowsIndexOutOfRangeException(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
-            (string Key, int Value) logProperty6 = ("Grault", 789);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, int Value) logProperty6 = ("Grault", 789);
             LogPropertyTuple<string, int, bool, double, string, int> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6);
 
             // Act
@@ -558,17 +558,17 @@ public class LogPropertyTuple7Tests
         public void ReturnsSeven()
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
-            (string Key, int Value) logProperty6 = ("Grault", 789);
-            (string Key, bool Value) logProperty7 = ("Garply", false);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, int Value) logProperty6 = ("Grault", 789);
+            (string Name, bool Value) logProperty7 = ("Garply", false);
             LogPropertyTuple<string, int, bool, double, string, int, bool> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(7);
@@ -588,13 +588,13 @@ public class LogPropertyTuple7Tests
         public void WhenIndexIsInRange_ReturnsExpectedNameValuePair(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
-            (string Key, int Value) logProperty6 = ("Grault", 789);
-            (string Key, bool Value) logProperty7 = ("Garply", false);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, int Value) logProperty6 = ("Grault", 789);
+            (string Name, bool Value) logProperty7 = ("Garply", false);
             LogPropertyTuple<string, int, bool, double, string, int, bool> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7);
 
             // Act
@@ -603,37 +603,37 @@ public class LogPropertyTuple7Tests
             // Assert
             if (index == 0)
             {
-                actual.Key.Should().Be(logProperty1.Key);
+                actual.Key.Should().Be(logProperty1.Name);
                 actual.Value.Should().Be(logProperty1.Value);
             }
             else if (index == 1)
             {
-                actual.Key.Should().Be(logProperty2.Key);
+                actual.Key.Should().Be(logProperty2.Name);
                 actual.Value.Should().Be(logProperty2.Value);
             }
             else if (index == 2)
             {
-                actual.Key.Should().Be(logProperty3.Key);
+                actual.Key.Should().Be(logProperty3.Name);
                 actual.Value.Should().Be(logProperty3.Value);
             }
             else if (index == 3)
             {
-                actual.Key.Should().Be(logProperty4.Key);
+                actual.Key.Should().Be(logProperty4.Name);
                 actual.Value.Should().Be(logProperty4.Value);
             }
             else if (index == 4)
             {
-                actual.Key.Should().Be(logProperty5.Key);
+                actual.Key.Should().Be(logProperty5.Name);
                 actual.Value.Should().Be(logProperty5.Value);
             }
             else if (index == 5)
             {
-                actual.Key.Should().Be(logProperty6.Key);
+                actual.Key.Should().Be(logProperty6.Name);
                 actual.Value.Should().Be(logProperty6.Value);
             }
             else
             {
-                actual.Key.Should().Be(logProperty7.Key);
+                actual.Key.Should().Be(logProperty7.Name);
                 actual.Value.Should().Be(logProperty7.Value);
             }
         }
@@ -644,13 +644,13 @@ public class LogPropertyTuple7Tests
         public void WhenIndexIsOutOfRange_ThrowsIndexOutOfRangeException(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
-            (string Key, int Value) logProperty6 = ("Grault", 789);
-            (string Key, bool Value) logProperty7 = ("Garply", false);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, int Value) logProperty6 = ("Grault", 789);
+            (string Name, bool Value) logProperty7 = ("Garply", false);
             LogPropertyTuple<string, int, bool, double, string, int, bool> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7);
 
             // Act
@@ -670,18 +670,18 @@ public class LogPropertyTuple8Tests
         public void ReturnsEight()
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
-            (string Key, int Value) logProperty6 = ("Grault", 789);
-            (string Key, bool Value) logProperty7 = ("Garply", false);
-            (string Key, double Value) logProperty8 = ("Waldo", 123.456);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, int Value) logProperty6 = ("Grault", 789);
+            (string Name, bool Value) logProperty7 = ("Garply", false);
+            (string Name, double Value) logProperty8 = ("Waldo", 123.456);
             LogPropertyTuple<string, int, bool, double, string, int, bool, double> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7, in logProperty8);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(8);
@@ -702,14 +702,14 @@ public class LogPropertyTuple8Tests
         public void WhenIndexIsInRange_ReturnsExpectedNameValuePair(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
-            (string Key, int Value) logProperty6 = ("Grault", 789);
-            (string Key, bool Value) logProperty7 = ("Garply", false);
-            (string Key, double Value) logProperty8 = ("Waldo", 123.456);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, int Value) logProperty6 = ("Grault", 789);
+            (string Name, bool Value) logProperty7 = ("Garply", false);
+            (string Name, double Value) logProperty8 = ("Waldo", 123.456);
             LogPropertyTuple<string, int, bool, double, string, int, bool, double> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7, in logProperty8);
 
             // Act
@@ -718,42 +718,42 @@ public class LogPropertyTuple8Tests
             // Assert
             if (index == 0)
             {
-                actual.Key.Should().Be(logProperty1.Key);
+                actual.Key.Should().Be(logProperty1.Name);
                 actual.Value.Should().Be(logProperty1.Value);
             }
             else if (index == 1)
             {
-                actual.Key.Should().Be(logProperty2.Key);
+                actual.Key.Should().Be(logProperty2.Name);
                 actual.Value.Should().Be(logProperty2.Value);
             }
             else if (index == 2)
             {
-                actual.Key.Should().Be(logProperty3.Key);
+                actual.Key.Should().Be(logProperty3.Name);
                 actual.Value.Should().Be(logProperty3.Value);
             }
             else if (index == 3)
             {
-                actual.Key.Should().Be(logProperty4.Key);
+                actual.Key.Should().Be(logProperty4.Name);
                 actual.Value.Should().Be(logProperty4.Value);
             }
             else if (index == 4)
             {
-                actual.Key.Should().Be(logProperty5.Key);
+                actual.Key.Should().Be(logProperty5.Name);
                 actual.Value.Should().Be(logProperty5.Value);
             }
             else if (index == 5)
             {
-                actual.Key.Should().Be(logProperty6.Key);
+                actual.Key.Should().Be(logProperty6.Name);
                 actual.Value.Should().Be(logProperty6.Value);
             }
             else if (index == 6)
             {
-                actual.Key.Should().Be(logProperty7.Key);
+                actual.Key.Should().Be(logProperty7.Name);
                 actual.Value.Should().Be(logProperty7.Value);
             }
             else
             {
-                actual.Key.Should().Be(logProperty8.Key);
+                actual.Key.Should().Be(logProperty8.Name);
                 actual.Value.Should().Be(logProperty8.Value);
             }
         }
@@ -764,14 +764,14 @@ public class LogPropertyTuple8Tests
         public void WhenIndexIsOutOfRange_ThrowsIndexOutOfRangeException(int index)
         {
             // Arrange
-            (string Key, string Value) logProperty1 = ("Foo", "abc");
-            (string Key, int Value) logProperty2 = ("Bar", 123);
-            (string Key, bool Value) logProperty3 = ("Baz", true);
-            (string Key, double Value) logProperty4 = ("Qux", 45.6);
-            (string Key, string Value) logProperty5 = ("Corge", "xyz");
-            (string Key, int Value) logProperty6 = ("Grault", 789);
-            (string Key, bool Value) logProperty7 = ("Garply", false);
-            (string Key, double Value) logProperty8 = ("Waldo", 123.456);
+            (string Name, string Value) logProperty1 = ("Foo", "abc");
+            (string Name, int Value) logProperty2 = ("Bar", 123);
+            (string Name, bool Value) logProperty3 = ("Baz", true);
+            (string Name, double Value) logProperty4 = ("Qux", 45.6);
+            (string Name, string Value) logProperty5 = ("Corge", "xyz");
+            (string Name, int Value) logProperty6 = ("Grault", 789);
+            (string Name, bool Value) logProperty7 = ("Garply", false);
+            (string Name, double Value) logProperty8 = ("Waldo", 123.456);
             LogPropertyTuple<string, int, bool, double, string, int, bool, double> nameValuePairs = new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7, in logProperty8);
 
             // Act
@@ -799,7 +799,7 @@ public class ReadOnlyNameValuePairCollectionTests
             ReadOnlyNameValuePairCollection nameValuePairs = new(nameValuePairCollection);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(nameValuePairCollection.Count);
@@ -863,10 +863,10 @@ public class ReadOnlyNameValuePairListTests
                 new KeyValuePair<string, object?>("Foo", "abc"),
                 new KeyValuePair<string, object?>("Bar", 123)
             ];
-            ReadOnlyNameValuePairList nameValuePairs = new(nameValuePairList);
+            ReadOnlyNameValuePairList<List<KeyValuePair<string, object?>>> nameValuePairs = new(nameValuePairList);
 
             // Act
-            int length = nameValuePairs.Length;
+            int length = nameValuePairs.Count;
 
             // Assert
             length.Should().Be(nameValuePairList.Count);
@@ -886,7 +886,7 @@ public class ReadOnlyNameValuePairListTests
                 new KeyValuePair<string, object?>("Foo", "abc"),
                 new KeyValuePair<string, object?>("Bar", 123)
             ];
-            ReadOnlyNameValuePairList nameValuePairs = new(nameValuePairList);
+            ReadOnlyNameValuePairList<List<KeyValuePair<string, object?>>> nameValuePairs = new(nameValuePairList);
 
             // Act
             KeyValuePair<string, object?> actual = nameValuePairs[index];
@@ -906,7 +906,7 @@ public class ReadOnlyNameValuePairListTests
                 new KeyValuePair<string, object?>("Foo", "abc"),
                 new KeyValuePair<string, object?>("Bar", 123)
             ];
-            ReadOnlyNameValuePairList nameValuePairs = new(nameValuePairList);
+            ReadOnlyNameValuePairList<List<KeyValuePair<string, object?>>> nameValuePairs = new(nameValuePairList);
 
             // Act
             Action act = () => _ = nameValuePairs[index];

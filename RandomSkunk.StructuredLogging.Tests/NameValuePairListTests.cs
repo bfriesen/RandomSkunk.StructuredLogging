@@ -14,7 +14,7 @@ public class NameValuePairList4Tests
         KeyValuePair<string, object?> kvp5 = new("Key5", 5);
         KeyValuePair<string, object?> kvp6 = new("Key6", 6);
 
-        NameValuePairList4 nameValuePairs = default;
+        NameValuePairList2 nameValuePairs = default;
         nameValuePairs.Count.Should().Be(0);
         nameValuePairs.Invoking(kvps => kvps[-1]).Should().Throw<IndexOutOfRangeException>();
         nameValuePairs.Invoking(kvps => kvps[0]).Should().Throw<IndexOutOfRangeException>();
@@ -88,7 +88,7 @@ public class NameValuePairList8Tests
         KeyValuePair<string, object?> kvp9 = new("Key9", 9);
         KeyValuePair<string, object?> kvp10 = new("Key10", 10);
 
-        NameValuePairList8 nameValuePairs = default;
+        NameValuePairList6 nameValuePairs = default;
         nameValuePairs.Count.Should().Be(0);
         nameValuePairs.Invoking(kvps => kvps[-1]).Should().Throw<IndexOutOfRangeException>();
         nameValuePairs.Invoking(kvps => kvps[0]).Should().Throw<IndexOutOfRangeException>();

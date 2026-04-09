@@ -4,16 +4,14 @@ using System.Runtime.InteropServices;
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
-/// Defines an expandable list of name-value pairs optimized for small counts (up to 4 items before heap allocation).
+/// Defines an expandable list of name-value pairs optimized for small counts (up to 2 items before heap allocation).
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
-internal struct NameValuePairList4 : IEnumerable<KeyValuePair<string, object?>>
+internal struct NameValuePairList2 : IEnumerable<KeyValuePair<string, object?>>
 {
     private int _count;
     private KeyValuePair<string, object?> _item0;
     private KeyValuePair<string, object?> _item1;
-    private KeyValuePair<string, object?> _item2;
-    private KeyValuePair<string, object?> _item3;
     private List<KeyValuePair<string, object?>>? _overflow;
 
     public readonly int Count => _count;
@@ -29,9 +27,7 @@ internal struct NameValuePairList4 : IEnumerable<KeyValuePair<string, object?>>
             {
                 0 => _item0,
                 1 => _item1,
-                2 => _item2,
-                3 => _item3,
-                _ => _overflow![index - 4],
+                _ => _overflow![index - 2],
             };
         }
     }
@@ -47,13 +43,7 @@ internal struct NameValuePairList4 : IEnumerable<KeyValuePair<string, object?>>
                 _item1 = item;
                 break;
             case 2:
-                _item2 = item;
-                break;
-            case 3:
-                _item3 = item;
-                break;
-            case 4:
-                _overflow = [item];
+                _overflow = new(4) { item };
                 break;
             default:
                 _overflow!.Add(item);
@@ -71,10 +61,10 @@ internal struct NameValuePairList4 : IEnumerable<KeyValuePair<string, object?>>
 }
 
 /// <summary>
-/// Defines an expandable list of name-value pairs optimized for small counts (up to 8 items before heap allocation).
+/// Defines an expandable list of name-value pairs optimized for small counts (up to 6 items before heap allocation).
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
-internal struct NameValuePairList8 : IEnumerable<KeyValuePair<string, object?>>
+internal struct NameValuePairList6 : IEnumerable<KeyValuePair<string, object?>>
 {
     private int _count;
     private KeyValuePair<string, object?> _item0;
@@ -83,8 +73,6 @@ internal struct NameValuePairList8 : IEnumerable<KeyValuePair<string, object?>>
     private KeyValuePair<string, object?> _item3;
     private KeyValuePair<string, object?> _item4;
     private KeyValuePair<string, object?> _item5;
-    private KeyValuePair<string, object?> _item6;
-    private KeyValuePair<string, object?> _item7;
     private List<KeyValuePair<string, object?>>? _overflow;
 
     public readonly int Count => _count;
@@ -104,9 +92,7 @@ internal struct NameValuePairList8 : IEnumerable<KeyValuePair<string, object?>>
                 3 => _item3,
                 4 => _item4,
                 5 => _item5,
-                6 => _item6,
-                7 => _item7,
-                _ => _overflow![index - 8],
+                _ => _overflow![index - 6],
             };
         }
     }
@@ -134,13 +120,7 @@ internal struct NameValuePairList8 : IEnumerable<KeyValuePair<string, object?>>
                 _item5 = item;
                 break;
             case 6:
-                _item6 = item;
-                break;
-            case 7:
-                _item7 = item;
-                break;
-            case 8:
-                _overflow = [item];
+                _overflow = new(4) { item };
                 break;
             default:
                 _overflow!.Add(item);

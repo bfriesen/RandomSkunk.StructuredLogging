@@ -1,26 +1,34 @@
 ﻿# RandomSkunk.StructuredLogging
 
-[![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging/)
+[![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.svg)]
+(https://www.nuget.org/packages/RandomSkunk.StructuredLogging/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Modern, high-performance structured logging extensions for .NET that cleanly separate human-readable messages from machine-readable properties. Stop cluttering your message templates with structured data and start writing logs that are easier to read and query.
+Modern, high-performance structured logging extensions for .NET that cleanly separate human-readable messages from
+machine-readable properties. Stop cluttering your message templates with structured data and start writing logs that are easier
+to read and query.
 
 ## Why Choose RandomSkunk.StructuredLogging?
 
-Traditional structured logging forces you to embed data into message templates. This often leads to:
+The default logging extension methods from Microsoft.Extensions.Logging force you to embed structured log properties into message
+templates. This often leads to:
 
-- **Verbose and Unreadable Messages**: `Log("User {UserId} logged in from {IPAddress}", userId, ipAddress)`
+- **Verbose and Unreadable Messages**: `logger.LogInformation("User {UserId} logged in from {IPAddress}", userId, ipAddress)`
 - **Performance Overhead**: Message template caching can consume memory and CPU.
 - **Rigid Structure**: You can only log what your template allows.
 
-This library takes a different approach by treating messages and properties as separate concerns, giving you the best of both worlds: **clean, readable messages** and **rich, queryable data**.
+This library takes a different approach by treating messages and properties as separate concerns, giving you the best of both
+worlds: **clean, readable messages** and **rich, queryable data**.
 
 ## Features
 
 - ✨ **Clean Separation**: Keep your log messages for humans and your properties for machines.
 - 🚀 **High Performance**: A design that avoids message template caching overhead.
-- 📝 **Powerful Interpolated Strings**: Automatically extract properties from interpolated strings (`$"User {user.Name:<UserName>}"`) without sacrificing performance. The interpolation only happens if the log level is enabled!
+- 📝 **Powerful Interpolated Strings**: Automatically extract attributes from interpolated strings
+  (`$"User {user.Name:<UserName>}"`) without sacrificing performance. The interpolation only happens if the log level is enabled!
 - 💪 **Flexible & Type-Safe**: Pass properties using tuples, dictionaries, or arrays with a rich set of overloads.
+- 🔄 **Operation Logging**: Track operation start/completion logs with shared context, per-operation trace entries, and optional
+  return values/exceptions.
 
 ## Quick Start
 
@@ -56,12 +64,14 @@ logger.Information("User logged in successfully",
 
 #### Property Extraction from Interpolated Strings
 
-For ultimate convenience, extract properties directly from an interpolated string. The syntax `{value:<PropertyName>}` captures the value as a property and embeds it in the message.
+For ultimate convenience, extract properties directly from an interpolated string. The syntax `{value:<PropertyName>}` captures
+the value as a property and embeds it in the message.
 
-This is not just a simple `string.Format`. The library uses a custom interpolated string handler that **only evaluates the arguments and formats the string if the log level is enabled**.
+This is not just a simple `string.Format`. The library uses a custom interpolated string handler that **only evaluates the
+arguments and formats the string if the log level is enabled**.
 
 ```csharp
-// The values for username and attemptCount are captured as properties.
+// The values for username, attemptCount, and clientIp are captured as properties.
 logger.Warning($"Failed login attempt for {username:<Username>}",
     ("AttemptCount", attemptCount),
     ("IPAddress", clientIp));
@@ -76,13 +86,62 @@ logger.Warning($"Failed login attempt for {username:<Username>}",
 }
 ```
 
+#### Operation Logging
+
+Use `LogOperation` to automatically write an "operation starting" log when an operation begins, and an "operation complete"
+log when it ends. Both logs include the same operation parameters.
+
+```csharp
+public int Divide(int dividend, int divisor, int? fallbackValue = null)
+{
+    using var op = logger.LogOperation(
+        LogLevel.Information,
+        1286859363,
+        $"{typeof(Calculator)}.{nameof(Divide)}",
+        dividend,
+        divisor,
+        fallbackValue);
+
+    if (op.Log(fallbackValue != null && divisor == 0))
+    {
+        op.Log($"Cannot divide by zero. Returning fallback value, {fallbackValue}.");
+        return op.Return(fallbackValue!.Value);
+    }
+
+    return op.Return(dividend / divisor);
+}
+```
+
+*Output Logs (conceptual JSON):*
+
+```json
+{
+  "Message": "Operation starting: MathUtilities.Calculator.Divide",
+  "dividend": 10,
+  "divisor": 2,
+  "fallbackValue": null
+}
+```
+
+```json
+{
+  "Message": "Operation complete: MathUtilities.Calculator.Divide",
+  "dividend": 10,
+  "divisor": 2,
+  "fallbackValue": null,
+  "ReturnValue": 5,
+  "OperationLog": "[12:34:56.789Z] (fallbackValue != null && divisor == 0): false"
+}
+```
+
 ## Performance: Fast and Memory-Efficient
 
 Performance is a core feature. This library is designed to minimize overhead in your application.
 
 ### Conditional Evaluation
 
-The custom interpolated string handlers are the magic behind the performance. String formatting and method calls inside an interpolated string **only occur if the log level is enabled**.
+The custom interpolated string handlers are the magic behind the performance. String formatting and method calls inside an
+interpolated string **only occur if the log level is enabled**.
 
 ```csharp
 // If Debug logging is disabled, CalculateSize() is never called and no string is created.
@@ -91,7 +150,8 @@ logger.Debug($"Processing {items.Count:<ItemsCount>} items with total size {Calc
 
 ### No Message Caching
 
-Unlike other libraries, we **do not cache message templates**. This eliminates memory overhead and performance penalties associated with managing a cache, making it ideal for dynamic log messages.
+Unlike other libraries, we **do not cache message templates**. This eliminates memory overhead and performance penalties associated
+with managing a cache, making it ideal for dynamic log messages.
 
 ## Advanced Usage
 
@@ -124,13 +184,16 @@ logger.Information("Operation completed", metadata);
 
 ## How It Works
 
-The library extends `ILogger` with a new set of extension methods. These methods use custom [interpolated string handlers](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-10.0/improved-interpolated-strings) to intercept string formatting.
+The library extends `ILogger` with a new set of extension methods for structured event logs and operation logs. These methods
+use custom [interpolated string handlers]
+(https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-10.0/improved-interpolated-strings) to
+intercept string formatting.
 
 1. The handler checks if the requested `LogLevel` is enabled.
 2. If not, it does nothing, and the call is nearly free.
 3. If enabled, it processes the interpolated string, extracting any properties defined with the `<Key>` syntax.
 4. It then combines all properties and passes them, along with the formatted message, to the underlying `ILogger` instance.
-5. The library uses an optimized array-based approach for passing properties.
+5. The library uses an optimized struct-based approach for passing properties.
 
 ## Compatibility
 

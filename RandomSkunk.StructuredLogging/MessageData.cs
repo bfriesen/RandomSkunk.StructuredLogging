@@ -3,11 +3,11 @@
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
-/// Defines a structured log entry's message and any name-value pairs extracted during string interpolation.
+/// Defines a structured log entry's message and additional name-value pairs.
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
-internal readonly struct MessageData(string? message, in NameValuePairList4 interpolationNameValuePairs = default)
+internal readonly struct MessageData(string? message, in NameValuePairList2 additionalNameValuePairs = default)
 {
     public readonly string? Message = message;
-    public readonly NameValuePairList4 InterpolationNameValuePairs = interpolationNameValuePairs;
+    public readonly NameValuePairList2 AdditionalNameValuePairs = additionalNameValuePairs;
 }

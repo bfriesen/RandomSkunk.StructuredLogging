@@ -19,39 +19,39 @@ public class WriteInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Information;
         logger.Information($"{123}");
-        WriteInterpolatedStringHandler handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo}'.");
+        InterpolatedString.Message handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo:B}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo,-5}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo,10:B}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo,10:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified and both format and alignment are specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Bar: '{bar}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Bar: '{bar}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Bar: '{bar,-5}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Bar: '{bar,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified and alignment is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Baz: '{baz}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Baz: '{baz}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
     }
 
@@ -66,57 +66,57 @@ public class WriteInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Information;
 
-        WriteInterpolatedStringHandler handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo:<foo>}'.");
+        InterpolatedString.Message handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Bar: '{bar:<bar>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Baz: '{baz:<baz>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("qux", qux));
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
@@ -132,49 +132,49 @@ public class WriteInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Information;
 
-        WriteInterpolatedStringHandler handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo:<>}'.");
+        InterpolatedString.Message handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo:<>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo:<>B}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo,-5:<>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo,10:<>B}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo,10:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Bar: '{bar:<>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Bar: '{bar:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Bar: '{bar,-5:<>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Bar: '{bar,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Baz: '{baz:<>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Baz: '{baz:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Baz: '{baz,5:<>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Baz: '{baz,5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Qux: '{qux,-20:<>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Qux: '{qux,-20:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
 
@@ -189,49 +189,49 @@ public class WriteInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.None;
 
-        WriteInterpolatedStringHandler handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo:<foo>}'.");
+        InterpolatedString.Message handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Bar: '{bar:<bar>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Baz: '{baz:<baz>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWriteInterpolatedStringHandler(LogLevel.Information, $"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetWriteMessage(LogLevel.Information, $"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
     }
 }
@@ -248,39 +248,39 @@ public class TraceInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Trace;
 
-        TraceInterpolatedStringHandler handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo}'.");
+        InterpolatedString.TraceMessage handler = logger.GetTraceMessage($"Foo: '{foo}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo:B}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo,-5}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo,10:B}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo,10:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified and both format and alignment are specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Bar: '{bar}'.");
+        handler = logger.GetTraceMessage($"Bar: '{bar}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Bar: '{bar,-5}'.");
+        handler = logger.GetTraceMessage($"Bar: '{bar,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified and alignment is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Baz: '{baz}'.");
+        handler = logger.GetTraceMessage($"Baz: '{baz}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
     }
 
@@ -295,57 +295,57 @@ public class TraceInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Trace;
 
-        TraceInterpolatedStringHandler handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.TraceMessage handler = logger.GetTraceMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetTraceMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetTraceMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetTraceMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetTraceMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetTraceMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("qux", qux));
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
@@ -361,49 +361,49 @@ public class TraceInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Trace;
 
-        TraceInterpolatedStringHandler handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo:<>}'.");
+        InterpolatedString.TraceMessage handler = logger.GetTraceMessage($"Foo: '{foo:<>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo:<>B}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo,-5:<>}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo,10:<>B}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo,10:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Bar: '{bar:<>}'.");
+        handler = logger.GetTraceMessage($"Bar: '{bar:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Bar: '{bar,-5:<>}'.");
+        handler = logger.GetTraceMessage($"Bar: '{bar,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Baz: '{baz:<>}'.");
+        handler = logger.GetTraceMessage($"Baz: '{baz:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Baz: '{baz,5:<>}'.");
+        handler = logger.GetTraceMessage($"Baz: '{baz,5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Qux: '{qux,-20:<>}'.");
+        handler = logger.GetTraceMessage($"Qux: '{qux,-20:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
 
@@ -418,49 +418,49 @@ public class TraceInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.None;
 
-        TraceInterpolatedStringHandler handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.TraceMessage handler = logger.GetTraceMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetTraceMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetTraceMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetTraceMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetTraceMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetTraceMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetTraceInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetTraceMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
     }
 }
@@ -477,39 +477,39 @@ public class DebugInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Debug;
 
-        DebugInterpolatedStringHandler handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo}'.");
+        InterpolatedString.DebugMessage handler = logger.GetDebugMessage($"Foo: '{foo}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo:B}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo,-5}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo,10:B}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo,10:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified and both format and alignment are specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Bar: '{bar}'.");
+        handler = logger.GetDebugMessage($"Bar: '{bar}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Bar: '{bar,-5}'.");
+        handler = logger.GetDebugMessage($"Bar: '{bar,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified and alignment is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Baz: '{baz}'.");
+        handler = logger.GetDebugMessage($"Baz: '{baz}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
     }
 
@@ -524,57 +524,57 @@ public class DebugInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Debug;
 
-        DebugInterpolatedStringHandler handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.DebugMessage handler = logger.GetDebugMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetDebugMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetDebugMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetDebugMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetDebugMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetDebugMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("qux", qux));
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
@@ -590,49 +590,49 @@ public class DebugInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Debug;
 
-        DebugInterpolatedStringHandler handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo:<>}'.");
+        InterpolatedString.DebugMessage handler = logger.GetDebugMessage($"Foo: '{foo:<>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo:<>B}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo,-5:<>}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo,10:<>B}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo,10:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Bar: '{bar:<>}'.");
+        handler = logger.GetDebugMessage($"Bar: '{bar:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Bar: '{bar,-5:<>}'.");
+        handler = logger.GetDebugMessage($"Bar: '{bar,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Baz: '{baz:<>}'.");
+        handler = logger.GetDebugMessage($"Baz: '{baz:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Baz: '{baz,5:<>}'.");
+        handler = logger.GetDebugMessage($"Baz: '{baz,5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Qux: '{qux,-20:<>}'.");
+        handler = logger.GetDebugMessage($"Qux: '{qux,-20:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
 
@@ -647,49 +647,49 @@ public class DebugInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.None;
 
-        DebugInterpolatedStringHandler handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.DebugMessage handler = logger.GetDebugMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetDebugMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetDebugMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetDebugMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetDebugMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetDebugMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetDebugInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetDebugMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
     }
 }
@@ -706,39 +706,39 @@ public class InformationInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Information;
 
-        InformationInterpolatedStringHandler handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo}'.");
+        InterpolatedString.InformationMessage handler = logger.GetInformationMessage($"Foo: '{foo}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo:B}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo,-5}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo,10:B}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo,10:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified and both format and alignment are specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Bar: '{bar}'.");
+        handler = logger.GetInformationMessage($"Bar: '{bar}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Bar: '{bar,-5}'.");
+        handler = logger.GetInformationMessage($"Bar: '{bar,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified and alignment is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Baz: '{baz}'.");
+        handler = logger.GetInformationMessage($"Baz: '{baz}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
     }
 
@@ -753,57 +753,57 @@ public class InformationInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Information;
 
-        InformationInterpolatedStringHandler handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.InformationMessage handler = logger.GetInformationMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetInformationMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetInformationMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetInformationMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetInformationMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetInformationMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("qux", qux));
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
@@ -819,49 +819,49 @@ public class InformationInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Information;
 
-        InformationInterpolatedStringHandler handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo:<>}'.");
+        InterpolatedString.InformationMessage handler = logger.GetInformationMessage($"Foo: '{foo:<>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo:<>B}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo,-5:<>}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo,10:<>B}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo,10:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Bar: '{bar:<>}'.");
+        handler = logger.GetInformationMessage($"Bar: '{bar:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Bar: '{bar,-5:<>}'.");
+        handler = logger.GetInformationMessage($"Bar: '{bar,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Baz: '{baz:<>}'.");
+        handler = logger.GetInformationMessage($"Baz: '{baz:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Baz: '{baz,5:<>}'.");
+        handler = logger.GetInformationMessage($"Baz: '{baz,5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Qux: '{qux,-20:<>}'.");
+        handler = logger.GetInformationMessage($"Qux: '{qux,-20:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
 
@@ -876,49 +876,49 @@ public class InformationInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.None;
 
-        InformationInterpolatedStringHandler handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.InformationMessage handler = logger.GetInformationMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetInformationMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetInformationMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetInformationMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetInformationMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetInformationMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetInformationInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetInformationMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
     }
 }
@@ -935,39 +935,39 @@ public class WarningInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Warning;
 
-        WarningInterpolatedStringHandler handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo}'.");
+        InterpolatedString.WarningMessage handler = logger.GetWarningMessage($"Foo: '{foo}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo:B}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo,-5}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo,10:B}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo,10:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified and both format and alignment are specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Bar: '{bar}'.");
+        handler = logger.GetWarningMessage($"Bar: '{bar}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Bar: '{bar,-5}'.");
+        handler = logger.GetWarningMessage($"Bar: '{bar,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified and alignment is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Baz: '{baz}'.");
+        handler = logger.GetWarningMessage($"Baz: '{baz}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
     }
 
@@ -982,57 +982,57 @@ public class WarningInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Warning;
 
-        WarningInterpolatedStringHandler handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.WarningMessage handler = logger.GetWarningMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetWarningMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetWarningMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetWarningMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetWarningMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetWarningMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("qux", qux));
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
@@ -1048,49 +1048,49 @@ public class WarningInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Warning;
 
-        WarningInterpolatedStringHandler handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo:<>}'.");
+        InterpolatedString.WarningMessage handler = logger.GetWarningMessage($"Foo: '{foo:<>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo:<>B}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo,-5:<>}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo,10:<>B}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo,10:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Bar: '{bar:<>}'.");
+        handler = logger.GetWarningMessage($"Bar: '{bar:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Bar: '{bar,-5:<>}'.");
+        handler = logger.GetWarningMessage($"Bar: '{bar,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Baz: '{baz:<>}'.");
+        handler = logger.GetWarningMessage($"Baz: '{baz:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Baz: '{baz,5:<>}'.");
+        handler = logger.GetWarningMessage($"Baz: '{baz,5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Qux: '{qux,-20:<>}'.");
+        handler = logger.GetWarningMessage($"Qux: '{qux,-20:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
 
@@ -1105,49 +1105,49 @@ public class WarningInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.None;
 
-        WarningInterpolatedStringHandler handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.WarningMessage handler = logger.GetWarningMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetWarningMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetWarningMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetWarningMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetWarningMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetWarningMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetWarningInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetWarningMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
     }
 }
@@ -1164,39 +1164,39 @@ public class ErrorInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Error;
 
-        ErrorInterpolatedStringHandler handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo}'.");
+        InterpolatedString.ErrorMessage handler = logger.GetErrorMessage($"Foo: '{foo}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo:B}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo,-5}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo,10:B}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo,10:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified and both format and alignment are specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Bar: '{bar}'.");
+        handler = logger.GetErrorMessage($"Bar: '{bar}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Bar: '{bar,-5}'.");
+        handler = logger.GetErrorMessage($"Bar: '{bar,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified and alignment is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Baz: '{baz}'.");
+        handler = logger.GetErrorMessage($"Baz: '{baz}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
     }
 
@@ -1211,57 +1211,57 @@ public class ErrorInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Error;
 
-        ErrorInterpolatedStringHandler handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.ErrorMessage handler = logger.GetErrorMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetErrorMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetErrorMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetErrorMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetErrorMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetErrorMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("qux", qux));
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
@@ -1277,49 +1277,49 @@ public class ErrorInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Error;
 
-        ErrorInterpolatedStringHandler handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo:<>}'.");
+        InterpolatedString.ErrorMessage handler = logger.GetErrorMessage($"Foo: '{foo:<>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo:<>B}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo,-5:<>}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo,10:<>B}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo,10:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Bar: '{bar:<>}'.");
+        handler = logger.GetErrorMessage($"Bar: '{bar:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Bar: '{bar,-5:<>}'.");
+        handler = logger.GetErrorMessage($"Bar: '{bar,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Baz: '{baz:<>}'.");
+        handler = logger.GetErrorMessage($"Baz: '{baz:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Baz: '{baz,5:<>}'.");
+        handler = logger.GetErrorMessage($"Baz: '{baz,5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Qux: '{qux,-20:<>}'.");
+        handler = logger.GetErrorMessage($"Qux: '{qux,-20:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
 
@@ -1334,49 +1334,49 @@ public class ErrorInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.None;
 
-        ErrorInterpolatedStringHandler handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.ErrorMessage handler = logger.GetErrorMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetErrorMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetErrorMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetErrorMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetErrorMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetErrorMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetErrorInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetErrorMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
     }
 }
@@ -1393,39 +1393,39 @@ public class CriticalInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Critical;
 
-        CriticalInterpolatedStringHandler handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo}'.");
+        InterpolatedString.CriticalMessage handler = logger.GetCriticalMessage($"Foo: '{foo}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo:B}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo,-5}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo,10:B}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo,10:B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified and both format and alignment are specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Bar: '{bar}'.");
+        handler = logger.GetCriticalMessage($"Bar: '{bar}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Bar: '{bar,-5}'.");
+        handler = logger.GetCriticalMessage($"Bar: '{bar,-5}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified and alignment is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Baz: '{baz}'.");
+        handler = logger.GetCriticalMessage($"Baz: '{baz}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the format does not specify a log property name");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
     }
 
@@ -1440,57 +1440,57 @@ public class CriticalInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Critical;
 
-        CriticalInterpolatedStringHandler handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.CriticalMessage handler = logger.GetCriticalMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("foo", foo));
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetCriticalMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetCriticalMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("bar", bar.ToString()));
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetCriticalMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetCriticalMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("baz", baz));
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetCriticalMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().ContainSingle("the format specifies a log property name")
+        messageData.AdditionalNameValuePairs.Should().ContainSingle("the format specifies a log property name")
             .Which.Should().BeEquivalentTo(new KeyValuePair<string, object?>("qux", qux));
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
@@ -1506,49 +1506,49 @@ public class CriticalInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.Critical;
 
-        CriticalInterpolatedStringHandler handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo:<>}'.");
+        InterpolatedString.CriticalMessage handler = logger.GetCriticalMessage($"Foo: '{foo:<>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123'.", "the logger is enabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo:<>B}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '1111011'.", "the logger is enabled and format is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo,-5:<>}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '123  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo,10:<>B}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo,10:<>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Foo: '   1111011'.", "the logger is enabled and both format and alignment are specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Bar: '{bar:<>}'.");
+        handler = logger.GetCriticalMessage($"Bar: '{bar:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc'.", "the logger is enabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Bar: '{bar,-5:<>}'.");
+        handler = logger.GetCriticalMessage($"Bar: '{bar,-5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Bar: 'abc  '.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Baz: '{baz:<>}'.");
+        handler = logger.GetCriticalMessage($"Baz: '{baz:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: 'xyz'.", "the logger is enabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Baz: '{baz,5:<>}'.");
+        handler = logger.GetCriticalMessage($"Baz: '{baz,5:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Baz: '  xyz'.", "the logger is enabled and alignment is specified");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Qux: '{qux,-20:<>}'.");
+        handler = logger.GetCriticalMessage($"Qux: '{qux,-20:<>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is enabled but the log property key is empty");
         messageData.Message.Should().Be("Qux: 'http://qux.com/     '.", "the logger is enabled and alignment is specified");
     }
 
@@ -1563,49 +1563,49 @@ public class CriticalInterpolatedStringHandlerTests
         EasyLogger logger = new Mock<EasyLogger>().Object;
         logger.MinimumLogLevel = LogLevel.None;
 
-        CriticalInterpolatedStringHandler handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo:<foo>}'.");
+        InterpolatedString.CriticalMessage handler = logger.GetCriticalMessage($"Foo: '{foo:<foo>}'.");
         MessageData messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo:<foo>B}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo,-5:<foo>}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo,-5:<foo>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Foo: '{foo,10:<foo>B}'.");
+        handler = logger.GetCriticalMessage($"Foo: '{foo,10:<foo>B}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Bar: '{bar:<bar>}'.");
+        handler = logger.GetCriticalMessage($"Bar: '{bar:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Bar: '{bar,-5:<bar>}'.");
+        handler = logger.GetCriticalMessage($"Bar: '{bar,-5:<bar>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Baz: '{baz:<baz>}'.");
+        handler = logger.GetCriticalMessage($"Baz: '{baz:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Baz: '{baz,5:<baz>}'.");
+        handler = logger.GetCriticalMessage($"Baz: '{baz,5:<baz>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
 
-        handler = logger.GetCriticalInterpolatedStringHandler($"Qux: '{qux,-20:<qux>}'.");
+        handler = logger.GetCriticalMessage($"Qux: '{qux,-20:<qux>}'.");
         messageData = handler.GetMessageDataAndClear();
-        messageData.InterpolationNameValuePairs.Should().BeEmpty("the logger is disabled");
+        messageData.AdditionalNameValuePairs.Should().BeEmpty("the logger is disabled");
         messageData.Message.Should().BeNull("the logger is disabled");
     }
 }
@@ -1613,39 +1613,46 @@ public class CriticalInterpolatedStringHandlerTests
 [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Parameters are required by interpolated string handler argument")]
 internal static class InterpolatedStringHandlerExtensions
 {
-    public static WriteInterpolatedStringHandler GetWriteInterpolatedStringHandler(
+    /// <summary>Extension method for testing.</summary>
+    public static InterpolatedString.Message GetWriteMessage(
         this ILogger logger,
         LogLevel level,
         [InterpolatedStringHandlerArgument(nameof(logger), nameof(level))]
-        ref WriteInterpolatedStringHandler handler) => handler;
+        ref InterpolatedString.Message handler) => handler;
 
-    public static TraceInterpolatedStringHandler GetTraceInterpolatedStringHandler(
+    /// <summary>Extension method for testing.</summary>
+    public static InterpolatedString.TraceMessage GetTraceMessage(
         this ILogger logger,
         [InterpolatedStringHandlerArgument(nameof(logger))]
-        ref TraceInterpolatedStringHandler handler) => handler;
+        ref InterpolatedString.TraceMessage handler) => handler;
 
-    public static DebugInterpolatedStringHandler GetDebugInterpolatedStringHandler(
+    /// <summary>Extension method for testing.</summary>
+    public static InterpolatedString.DebugMessage GetDebugMessage(
         this ILogger logger,
         [InterpolatedStringHandlerArgument(nameof(logger))]
-        ref DebugInterpolatedStringHandler handler) => handler;
+        ref InterpolatedString.DebugMessage handler) => handler;
 
-    public static InformationInterpolatedStringHandler GetInformationInterpolatedStringHandler(
+    /// <summary>Extension method for testing.</summary>
+    public static InterpolatedString.InformationMessage GetInformationMessage(
         this ILogger logger,
         [InterpolatedStringHandlerArgument(nameof(logger))]
-        ref InformationInterpolatedStringHandler handler) => handler;
+        ref InterpolatedString.InformationMessage handler) => handler;
 
-    public static WarningInterpolatedStringHandler GetWarningInterpolatedStringHandler(
+    /// <summary>Extension method for testing.</summary>
+    public static InterpolatedString.WarningMessage GetWarningMessage(
         this ILogger logger,
         [InterpolatedStringHandlerArgument(nameof(logger))]
-        ref WarningInterpolatedStringHandler handler) => handler;
+        ref InterpolatedString.WarningMessage handler) => handler;
 
-    public static ErrorInterpolatedStringHandler GetErrorInterpolatedStringHandler(
+    /// <summary>Extension method for testing.</summary>
+    public static InterpolatedString.ErrorMessage GetErrorMessage(
         this ILogger logger,
         [InterpolatedStringHandlerArgument(nameof(logger))]
-        ref ErrorInterpolatedStringHandler handler) => handler;
+        ref InterpolatedString.ErrorMessage handler) => handler;
 
-    public static CriticalInterpolatedStringHandler GetCriticalInterpolatedStringHandler(
+    /// <summary>Extension method for testing.</summary>
+    public static InterpolatedString.CriticalMessage GetCriticalMessage(
         this ILogger logger,
         [InterpolatedStringHandlerArgument(nameof(logger))]
-        ref CriticalInterpolatedStringHandler handler) => handler;
+        ref InterpolatedString.CriticalMessage handler) => handler;
 }

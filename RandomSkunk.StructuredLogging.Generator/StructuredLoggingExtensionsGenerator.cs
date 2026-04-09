@@ -165,7 +165,7 @@ partial class StructuredLoggingExtensions
 
         sb.AppendFormat("""
     public static void {0}{1}(
-        this ILogger logger,
+        this ILogger? logger,
 """, logLevel ?? "Write", GetGenericParameterDeclaration(logPropertiesParameterType)).AppendLine();
 
         if (logLevel == null)
@@ -201,14 +201,14 @@ partial class StructuredLoggingExtensions
             {
                 sb.AppendLine("""
         [InterpolatedStringHandlerArgument(nameof(logger), nameof(logLevel))]
-        ref WriteInterpolatedStringHandler interpolatedMessage,
+        ref InterpolatedString.Message interpolatedMessage,
 """);
             }
             else
             {
                 sb.AppendFormat("""
         [InterpolatedStringHandlerArgument(nameof(logger))]
-        ref {0}InterpolatedStringHandler interpolatedMessage,
+        ref InterpolatedString.{0}Message interpolatedMessage,
 """, logLevel).AppendLine();
             }
         }
@@ -217,7 +217,7 @@ partial class StructuredLoggingExtensions
         {
             case LogPropertiesParameterType.ParamsLogPropertyArray:
                 sb.AppendLine("""
-        params (string Key, object? Value)[] logProperties) =>
+        params (string Name, object? Value)[] logProperties) =>
 """);
                 break;
             case LogPropertiesParameterType.NameValuePairCollection:
@@ -227,75 +227,76 @@ partial class StructuredLoggingExtensions
                 break;
             case LogPropertiesParameterType.NameValuePairList:
                 sb.AppendLine("""
-        IReadOnlyList<KeyValuePair<string, object?>>? logProperties) =>
+        TNameValuePairList logProperties)
+        where TNameValuePairList : notnull, IReadOnlyList<KeyValuePair<string, object?>> =>
 """);
                 break;
             case LogPropertiesParameterType.OneGenericParameter:
                 sb.AppendLine("""
-        (string Key, T Value) logProperty) =>
+        (string Name, T Value) logProperty) =>
 """);
                 break;
             case LogPropertiesParameterType.TwoGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logProperty1,
-        (string Key, T2 Value) logProperty2) =>
+        (string Name, T1 Value) logProperty1,
+        (string Name, T2 Value) logProperty2) =>
 """);
                 break;
             case LogPropertiesParameterType.ThreeGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logProperty1,
-        (string Key, T2 Value) logProperty2,
-        (string Key, T3 Value) logProperty3) =>
+        (string Name, T1 Value) logProperty1,
+        (string Name, T2 Value) logProperty2,
+        (string Name, T3 Value) logProperty3) =>
 """);
                 break;
             case LogPropertiesParameterType.FourGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logProperty1,
-        (string Key, T2 Value) logProperty2,
-        (string Key, T3 Value) logProperty3,
-        (string Key, T4 Value) logProperty4) =>
+        (string Name, T1 Value) logProperty1,
+        (string Name, T2 Value) logProperty2,
+        (string Name, T3 Value) logProperty3,
+        (string Name, T4 Value) logProperty4) =>
 """);
                 break;
             case LogPropertiesParameterType.FiveGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logProperty1,
-        (string Key, T2 Value) logProperty2,
-        (string Key, T3 Value) logProperty3,
-        (string Key, T4 Value) logProperty4,
-        (string Key, T5 Value) logProperty5) =>
+        (string Name, T1 Value) logProperty1,
+        (string Name, T2 Value) logProperty2,
+        (string Name, T3 Value) logProperty3,
+        (string Name, T4 Value) logProperty4,
+        (string Name, T5 Value) logProperty5) =>
 """);
                 break;
             case LogPropertiesParameterType.SixGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logProperty1,
-        (string Key, T2 Value) logProperty2,
-        (string Key, T3 Value) logProperty3,
-        (string Key, T4 Value) logProperty4,
-        (string Key, T5 Value) logProperty5,
-        (string Key, T6 Value) logProperty6) =>
+        (string Name, T1 Value) logProperty1,
+        (string Name, T2 Value) logProperty2,
+        (string Name, T3 Value) logProperty3,
+        (string Name, T4 Value) logProperty4,
+        (string Name, T5 Value) logProperty5,
+        (string Name, T6 Value) logProperty6) =>
 """);
                 break;
             case LogPropertiesParameterType.SevenGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logProperty1,
-        (string Key, T2 Value) logProperty2,
-        (string Key, T3 Value) logProperty3,
-        (string Key, T4 Value) logProperty4,
-        (string Key, T5 Value) logProperty5,
-        (string Key, T6 Value) logProperty6,
-        (string Key, T7 Value) logProperty7) =>
+        (string Name, T1 Value) logProperty1,
+        (string Name, T2 Value) logProperty2,
+        (string Name, T3 Value) logProperty3,
+        (string Name, T4 Value) logProperty4,
+        (string Name, T5 Value) logProperty5,
+        (string Name, T6 Value) logProperty6,
+        (string Name, T7 Value) logProperty7) =>
 """);
                 break;
             case LogPropertiesParameterType.EightGenericParameters:
                 sb.AppendLine("""
-        (string Key, T1 Value) logProperty1,
-        (string Key, T2 Value) logProperty2,
-        (string Key, T3 Value) logProperty3,
-        (string Key, T4 Value) logProperty4,
-        (string Key, T5 Value) logProperty5,
-        (string Key, T6 Value) logProperty6,
-        (string Key, T7 Value) logProperty7,
-        (string Key, T8 Value) logProperty8) =>
+        (string Name, T1 Value) logProperty1,
+        (string Name, T2 Value) logProperty2,
+        (string Name, T3 Value) logProperty3,
+        (string Name, T4 Value) logProperty4,
+        (string Name, T5 Value) logProperty5,
+        (string Name, T6 Value) logProperty6,
+        (string Name, T7 Value) logProperty7,
+        (string Name, T8 Value) logProperty8) =>
 """);
                 break;
         }
@@ -422,6 +423,7 @@ partial class StructuredLoggingExtensions
             LogPropertiesParameterType.SixGenericParameters => "<T1, T2, T3, T4, T5, T6>",
             LogPropertiesParameterType.SevenGenericParameters => "<T1, T2, T3, T4, T5, T6, T7>",
             LogPropertiesParameterType.EightGenericParameters => "<T1, T2, T3, T4, T5, T6, T7, T8>",
+            LogPropertiesParameterType.NameValuePairList => "<TNameValuePairList>",
             _ => null,
         };
 
