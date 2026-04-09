@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
-## [0.9.1] - 2024-04-09
+## [0.9.1] - 2026-04-09
 
 Add operation logging feature.
 
