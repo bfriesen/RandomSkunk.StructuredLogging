@@ -3,6 +3,7 @@ using Microsoft.Extensions.ObjectPool;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 
 namespace RandomSkunk.StructuredLogging;
 
@@ -151,8 +152,55 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     }
 
     /// <summary>
-    /// Adds a log entry containing the specified boolean condition and its original expression to the completion log's <c>OperationLog</c> property, then
-    /// returns the same value.
+    /// Adds a log entry containing the specified value and its original expression to the completion log's <c>OperationLog</c>
+    /// property, then returns the same value.
+    /// </summary>
+    /// <remarks>The following example adds an entry similar to <c>[20:57:24.615Z] `httpResponse.StatusCode` is NotFound</c> to
+    /// the operation log:
+    /// <code>
+    /// if ((int)log.Value(httpResponse.StatusCode) is >= 200 and &lt;= 299)
+    ///     ...
+    /// </code>
+    /// </remarks>
+    /// <param name="value">The value to log and return.</param>
+    /// <param name="valueExpression">The string representation of the original expression passed as the value. This is
+    /// automatically provided by the compiler and should not be set manually.</param>
+    /// <returns>The <paramref name="value"/> parameter.</returns>
+    public readonly T Value<T>(
+        T value,
+        [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
+    {
+        Append($"`{valueExpression}` is {value?.ToString() ?? "null"}");
+        return value;
+    }
+
+    /// <summary>
+    /// Adds a log entry containing the specified value, JSON serialized, and its original expression to the completion log's <c>OperationLog</c>
+    /// property, then returns the same value.
+    /// </summary>
+    /// <remarks>The following example adds an entry similar to <c>[20:57:24.615Z] `contact` is
+    /// {"firstName":"Joe","lastName":"Public"}</c> to the operation log:
+    /// <code>
+    /// log.JsonValue(contact);
+    /// </code>
+    /// </remarks>
+    /// <param name="value">The value to log and return.</param>
+    /// <param name="options">Options to control serialization behavior.</param>
+    /// <param name="valueExpression">The string representation of the original expression passed as the value. This is
+    /// automatically provided by the compiler and should not be set manually.</param>
+    /// <returns>The <paramref name="value"/> parameter.</returns>
+    public readonly T JsonValue<T>(
+        T value,
+        JsonSerializerOptions? options = null,
+        [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
+    {
+        Append($"`{valueExpression}` is {JsonSerializer.Serialize(value, options)}");
+        return value;
+    }
+
+    /// <summary>
+    /// Adds a log entry containing the specified boolean condition and its original expression to the completion log's
+    /// <c>OperationLog</c> property, then returns the same value.
     /// </summary>
     /// <remarks>The following example adds an entry similar to "[20:57:24.615Z] `divisor == 0` is true" to the operation log:
     /// <code>
