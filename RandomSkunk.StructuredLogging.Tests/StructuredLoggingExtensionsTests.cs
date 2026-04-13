@@ -714,17 +714,6 @@ public abstract class StructuredLoggingExtensionsTests
         }
 
         [Fact]
-        public void GivenNullNameValuePairs_ThrowsArgumentNullException()
-        {
-            // Arrange
-            Action act = () => _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, logProperties: (IReadOnlyList<KeyValuePair<string, object?>>)null!);
-
-            // Act / Assert
-            act.Should().Throw<ArgumentNullException>()
-                .WithParameterName("nameValuePairList");
-        }
-
-        [Fact]
         public void GivenLoggerIsDisabledAtTheSpecifiedLogLevel_DoesNotInvokeLogMethod()
         {
             // Arrange
@@ -740,6 +729,26 @@ public abstract class StructuredLoggingExtensionsTests
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+        }
+
+        [Fact]
+        public void GivenNullNameValuePairs_InvokesLogMethod()
+        {
+            // Act
+            _logger.WriteStructuredLog(_logLevel, _eventId, _exception, _messageData, logProperties: (IReadOnlyList<KeyValuePair<string, object?>>?)null);
+
+            // Assert
+            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
+                log.HasLogLevel(_logLevel)
+                && log.HasEventId(_eventId)
+                && log.HasException(_exception)
+                && log.HasMessage(_message)
+                && log.HasState<LogState<ReadOnlyNameValuePairList<IReadOnlyList<KeyValuePair<string, object?>>>>>(state =>
+                    state.Count != -1
+                    && state[0].Key == _messageDataNameValuePair.Key
+                    && Equals(state[0].Value, _messageDataNameValuePair.Value)
+                    ))),
+                Times.Once());
         }
 
         [Fact]

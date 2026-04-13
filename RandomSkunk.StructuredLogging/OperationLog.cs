@@ -114,9 +114,8 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// <param name="returnValueExpression">The string representation of the original expression passed as the return value. This
     /// is automatically provided by the compiler and should not be set manually.</param>
     /// <returns>The same return value.</returns>
-    [return: NotNullIfNotNull(nameof(returnValue))]
-    public T? ReturnValue<T>(
-        T? returnValue,
+    public T ReturnValue<T>(
+        T returnValue,
         [CallerArgumentExpression(nameof(returnValue))] string returnValueExpression = null!)
     {
         if (_operationLog != null)
@@ -137,9 +136,8 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// <param name="exceptionExpression">The string representation of the original expression passed as the exception. This is
     /// automatically provided by the compiler and should not be set manually.</param>
     /// <returns>The same exception instance provided in the exception parameter.</returns>
-    [return: NotNullIfNotNull(nameof(exception))]
-    public TException? Exception<TException>(
-        TException? exception,
+    public TException Exception<TException>(
+        TException exception,
         [CallerArgumentExpression(nameof(exception))] string exceptionExpression = null!)
         where TException : Exception
     {

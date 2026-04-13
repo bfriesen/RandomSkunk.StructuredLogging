@@ -185,8 +185,8 @@ public static partial class StructuredLoggingExtensions
         EventId eventId,
         Exception? exception,
         MessageData messageData,
-        TNameValuePairList logProperties)
-        where TNameValuePairList : notnull, IReadOnlyList<KeyValuePair<string, object?>> =>
+        TNameValuePairList? logProperties)
+        where TNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>> =>
         logger?.Log(
             logLevel,
             eventId,

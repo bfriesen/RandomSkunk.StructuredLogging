@@ -185,7 +185,7 @@ partial class LogOperationExtensions
         if (genericParameterCount == -1)
         {
             sb.AppendLine("""
-        TNameValuePairList nameValuePairList,
+        TNameValuePairList? nameValuePairList,
 """);
         }
 

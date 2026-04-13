@@ -155,9 +155,9 @@ public static partial class LogOperationExtensions
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        TNameValuePairList nameValuePairList,
+        TNameValuePairList? nameValuePairList,
         string? operationName)
-        where TNameValuePairList : notnull, IReadOnlyList<KeyValuePair<string, object?>> =>
+        where TNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>> =>
         new(logger,
             logLevel,
             eventId,

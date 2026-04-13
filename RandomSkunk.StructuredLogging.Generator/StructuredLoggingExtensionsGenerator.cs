@@ -71,8 +71,7 @@ public class StructuredLoggingExtensionsGenerator : IIncrementalGenerator
 """;
 
     private const string _nameValuePairListParam = """
-    /// <param name="logProperties">Name value pairs associated with the log.
-    /// </param>
+    /// <param name="logProperties">Name value pairs associated with the log.</param>
 """;
 
     public void Initialize(IncrementalGeneratorInitializationContext context) =>
@@ -227,8 +226,8 @@ partial class StructuredLoggingExtensions
                 break;
             case LogPropertiesParameterType.NameValuePairList:
                 sb.AppendLine("""
-        TNameValuePairList logProperties)
-        where TNameValuePairList : notnull, IReadOnlyList<KeyValuePair<string, object?>> =>
+        TNameValuePairList? logProperties)
+        where TNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>> =>
 """);
                 break;
             case LogPropertiesParameterType.OneGenericParameter:

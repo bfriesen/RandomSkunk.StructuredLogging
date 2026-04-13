@@ -573,23 +573,17 @@ public readonly struct ReadOnlyNameValuePairCollection : IReadOnlyList<KeyValueP
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
 public readonly struct ReadOnlyNameValuePairList<TNameValuePairList> : IReadOnlyList<KeyValuePair<string, object?>>
-    where TNameValuePairList : notnull, IReadOnlyList<KeyValuePair<string, object?>>
+    where TNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>>
 {
-    private readonly TNameValuePairList _logProperties;
+    private readonly TNameValuePairList? _logProperties;
 
-    internal ReadOnlyNameValuePairList(TNameValuePairList nameValuePairList) =>
-        _logProperties = nameValuePairList ?? throw new ArgumentNullException(nameof(nameValuePairList));
-
-    /// <summary>
-    /// Gets the backing <c>IReadOnlyList&lt;KeyValuePair&lt;string, object?&gt;&gt;</c> implementation.
-    /// </summary>
-    public TNameValuePairList BackingList => _logProperties;
+    internal ReadOnlyNameValuePairList(TNameValuePairList? nameValuePairList) => _logProperties = nameValuePairList;
 
     /// <inheritdoc/>
-    public int Count => _logProperties.Count;
+    public int Count => _logProperties?.Count ?? 0;
 
     /// <inheritdoc/>
-    public KeyValuePair<string, object?> this[int index] => _logProperties[index];
+    public KeyValuePair<string, object?> this[int index] => _logProperties != null ? _logProperties[index] : throw new IndexOutOfRangeException();
 
     /// <summary>
     /// Returns an enumerator that iterates through the collection of name-value pairs.
@@ -609,7 +603,7 @@ public readonly struct ReadOnlyNameValuePairList<TNameValuePairList> : IReadOnly
 /// IReadOnlyList&lt;KeyValuePair&lt;string, object?&gt;&gt; and cannot be null.</typeparam>
 public struct NameValuePairListEnumerator<TNameValuePairList>
     : IEnumerator<KeyValuePair<string, object?>>
-    where TNameValuePairList : notnull, IReadOnlyList<KeyValuePair<string, object?>>
+    where TNameValuePairList : struct, IReadOnlyList<KeyValuePair<string, object?>>
 {
     private TNameValuePairList _nameValuePairList;
     private int _index = -1;
