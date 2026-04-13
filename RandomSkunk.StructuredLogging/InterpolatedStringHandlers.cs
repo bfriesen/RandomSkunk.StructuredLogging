@@ -26,9 +26,9 @@ public static partial class InterpolatedString
         internal StringBuilder.AppendInterpolatedStringHandler _innerHandler;
 
         [EditorBrowsable(Never)]
-        public OperationLogEntry(int literalLength, int formattedCount, OperationLog<TNameValuePairList> operation, out bool isEnabled)
+        public OperationLogEntry(int literalLength, int formattedCount, OperationLog<TNameValuePairList> operationLog, out bool isEnabled)
         {
-            if (operation._operationLog is StringBuilder sb)
+            if (operationLog._sb is StringBuilder sb)
             {
                 if (sb.Length > 0)
                 {

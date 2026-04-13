@@ -46,7 +46,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     where TNameValuePairList : struct, IReadOnlyList<KeyValuePair<string, object?>>
 {
     /// <summary>Has a non-null value only when logging is enabled for the operation.</summary>
-    internal StringBuilder? _operationLog;
+    internal StringBuilder? _sb;
 
     private TNameValuePairList _operationParameters;
     private ILogger? _logger;
@@ -84,7 +84,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
             _logger = logger;
             _logLevel = logLevel;
             _operationCompleteMessage = $"Operation complete: {operationName}";
-            _operationLog = _stringBuilderPool.Get();
+            _sb = _stringBuilderPool.Get();
         }
     }
 
@@ -105,7 +105,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     public readonly void Append(
         [InterpolatedStringHandlerArgument("")]
         ref InterpolatedString.OperationLogEntry<TNameValuePairList> logEntry) =>
-        _operationLog?.Append(ref logEntry._innerHandler);
+        _sb?.Append(ref logEntry._innerHandler);
 
     /// <summary>
     /// Sets the <c>ReturnValue</c> property of the operation complete log and returns the same value.
@@ -119,11 +119,11 @@ public struct OperationLog<TNameValuePairList> : IDisposable
         T returnValue,
         [CallerArgumentExpression(nameof(returnValue))] string returnValueExpression = null!)
     {
-        if (_operationLog != null)
+        if (_sb != null)
         {
             _returnValue = returnValue;
             _hasReturnValue = true;
-            Append($"Return value is `{returnValueExpression}`");
+            Append($"Return value set to `{returnValueExpression}`");
         }
 
         return returnValue;
@@ -142,10 +142,10 @@ public struct OperationLog<TNameValuePairList> : IDisposable
         [CallerArgumentExpression(nameof(exception))] string exceptionExpression = null!)
         where TException : Exception
     {
-        if (_operationLog != null)
+        if (_sb != null)
         {
             _exception = exception;
-            Append($"Exception is `{typeof(TException).Name} {exceptionExpression}`");
+            Append($"Exception set to `{typeof(TException).Name} {exceptionExpression}`");
         }
 
         return exception;
@@ -155,7 +155,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// Adds a log entry containing the specified value and its original expression to the completion log's <c>OperationLog</c>
     /// property, then returns the same value.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to <c>[20:57:24.615Z] `httpResponse.StatusCode` is NotFound</c> to
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `httpResponse.StatusCode` is NotFound</c>" to
     /// the operation log:
     /// <code>
     /// if ((int)log.Value(httpResponse.StatusCode) is >= 200 and &lt;= 299)
@@ -175,11 +175,11 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     }
 
     /// <summary>
-    /// Adds a log entry containing the specified value, JSON serialized, and its original expression to the completion log's <c>OperationLog</c>
-    /// property, then returns the same value.
+    /// Adds a log entry containing the specified value, JSON serialized, and its original expression to the completion log's
+    /// <c>OperationLog</c> property, then returns the same value.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to <c>[20:57:24.615Z] `contact` is
-    /// {"firstName":"Joe","lastName":"Public"}</c> to the operation log:
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `contact` is
+    /// {"firstName":"Joe","lastName":"Public"}</c>" to the operation log:
     /// <code>
     /// log.JsonValue(contact);
     /// </code>
@@ -202,7 +202,8 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// Adds a log entry containing the specified boolean condition and its original expression to the completion log's
     /// <c>OperationLog</c> property, then returns the same value.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to "[20:57:24.615Z] `divisor == 0` is true" to the operation log:
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `divisor == 0` is true</c>" to the operation
+    /// log:
     /// <code>
     /// if (log.Condition(divisor == 0))
     ///     ...
@@ -224,8 +225,8 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// Returns whether the specified value is null. If logging is enabled for the operation, also appends a log entry to the
     /// operation log that indicates whether the value is null.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to "[20:57:24.615Z] `firstName == null` is true" to the operation
-    /// log:
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `firstName == null` is true</c>" to the
+    /// operation log:
     /// <code>
     /// if (log.IsNull(firstName))
     ///     ...
@@ -238,7 +239,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     public bool IsNull<T>([NotNullWhen(false)] T value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
         where T : class?
     {
-        bool isNull = value == null;
+        bool isNull = value is null;
         Append($"`{valueExpression} == null` is {(isNull ? "true" : "false")}");
         return isNull;
     }
@@ -247,7 +248,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// Returns whether the specified value is null. If logging is enabled for the operation, also appends a log entry to the
     /// operation log that indicates whether the value is null.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to "[20:57:24.615Z] `monthlyIncome == null` is true" to the
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `monthlyIncome == null` is true</c>" to the
     /// operation log:
     /// <code>
     /// if (log.IsNull(monthlyIncome))
@@ -270,8 +271,8 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// Returns whether the specified value is null or empty. If logging is enabled for the operation, also appends a log entry
     /// to the operation log that indicates whether the value is null or empty.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to "[20:57:24.615Z] `string.IsNullOrEmpty(firstName)` is true" to
-    /// the operation log:
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `string.IsNullOrEmpty(firstName)` is true</c>"
+    /// to the operation log:
     /// <code>
     /// if (log.IsNullOrEmpty(firstName))
     ///     ...
@@ -280,7 +281,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// <param name="value">The object to check.</param>
     /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
     /// compiler.</param>
-    /// <returns>true if the specified object is null; otherwise, false.</returns>
+    /// <returns>true if the specified object is null or empty; otherwise, false.</returns>
     public bool IsNullOrEmpty([NotNullWhen(false)] string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
     {
         bool isNullOrEmpty = string.IsNullOrEmpty(value);
@@ -292,8 +293,8 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// Returns whether the specified value is null or whitespace. If logging is enabled for the operation, also appends a log entry
     /// to the operation log that indicates whether the value is null or whitespace.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to "[20:57:24.615Z] `string.IsNullOrWhiteSpace(firstName)` is true" to
-    /// the operation log:
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `string.IsNullOrWhiteSpace(firstName)` is
+    /// true</c>" to the operation log:
     /// <code>
     /// if (log.IsNullOrWhiteSpace(firstName))
     ///     ...
@@ -302,7 +303,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// <param name="value">The object to check.</param>
     /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
     /// compiler.</param>
-    /// <returns>true if the specified object is null; otherwise, false.</returns>
+    /// <returns>true if the specified object is null or whitespace; otherwise, false.</returns>
     public bool IsNullOrWhiteSpace([NotNullWhen(false)] string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
     {
         bool isNullOrWhiteSpace = string.IsNullOrWhiteSpace(value);
@@ -314,8 +315,8 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// Returns whether the specified value is not null. If logging is enabled for the operation, also appends a log entry to the
     /// operation log that indicates whether the value is not null.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to "[20:57:24.615Z] `firstName != null` is true" to the operation
-    /// log:
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `firstName != null` is true</c>" to the
+    /// operation log:
     /// <code>
     /// if (log.IsNotNull(firstName))
     ///     ...
@@ -328,7 +329,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     public bool IsNotNull<T>([NotNullWhen(true)] T value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
         where T : class?
     {
-        bool isNotNull = value != null;
+        bool isNotNull = value is not null;
         Append($"`{valueExpression} != null` is {(isNotNull ? "true" : "false")}");
         return isNotNull;
     }
@@ -337,8 +338,8 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// Returns whether the specified value is not null. If logging is enabled for the operation, also appends a log entry to the
     /// operation log that indicates whether the value is not null.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to "[20:57:24.615Z] `monthlyIncome != null` is true" to the operation
-    /// log:
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `monthlyIncome != null` is true</c>" to the
+    /// operation log:
     /// <code>
     /// if (log.IsNotNull(monthlyIncome))
     ///     ...
@@ -360,8 +361,8 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// Returns whether the specified value is not null or empty. If logging is enabled for the operation, also appends a log entry to the
     /// operation log that indicates whether the value is not null or empty.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to "[20:57:24.615Z] `!string.IsNullOrEmpty(firstName)` is true" to the
-    /// operation log:
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `!string.IsNullOrEmpty(firstName)` is true</c>"
+    /// to the operation log:
     /// <code>
     /// if (log.IsNotNullOrEmpty(firstName))
     ///     ...
@@ -370,7 +371,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// <param name="value">The object to check.</param>
     /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
     /// compiler.</param>
-    /// <returns>true if the specified object is not null; otherwise, false.</returns>
+    /// <returns>true if the specified object is not null or empty; otherwise, false.</returns>
     public bool IsNotNullOrEmpty([NotNullWhen(true)] string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
     {
         bool isNotNullOrEmpty = !string.IsNullOrEmpty(value);
@@ -382,8 +383,8 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// Returns whether the specified value is not null or whitespace. If logging is enabled for the operation, also appends a log entry to the
     /// operation log that indicates whether the value is not null or whitespace.
     /// </summary>
-    /// <remarks>The following example adds an entry similar to "[20:57:24.615Z] `!string.IsNullOrWhiteSpace(firstName)` is true" to
-    /// the operation log:
+    /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `!string.IsNullOrWhiteSpace(firstName)` is
+    /// true</c>" to the operation log:
     /// <code>
     /// if (log.IsNotNullOrWhiteSpace(firstName))
     ///     ...
@@ -392,7 +393,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// <param name="value">The object to check.</param>
     /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
     /// compiler.</param>
-    /// <returns>true if the specified object is not null; otherwise, false.</returns>
+    /// <returns>true if the specified object is not null or whitespace; otherwise, false.</returns>
     public bool IsNotNullOrWhiteSpace([NotNullWhen(true)] string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
     {
         bool isNotNullOrWhiteSpace = !string.IsNullOrWhiteSpace(value);
@@ -405,13 +406,13 @@ public struct OperationLog<TNameValuePairList> : IDisposable
     /// </summary>
     public void Dispose()
     {
-        if (_operationLog != null)
+        if (_sb != null)
         {
             NameValuePairList2 additionalNameValuePairs = new();
             if (_hasReturnValue)
                 additionalNameValuePairs.Add(new("ReturnValue", _returnValue));
-            if (_operationLog.Length > 0)
-                additionalNameValuePairs.Add(new("OperationLog", _operationLog.ToString()));
+            if (_sb.Length > 0)
+                additionalNameValuePairs.Add(new("OperationLog", _sb.ToString()));
 
             MessageData message = new(_operationCompleteMessage, in additionalNameValuePairs);
             _logger!.Log(
@@ -421,7 +422,7 @@ public struct OperationLog<TNameValuePairList> : IDisposable
                 _exception,
                 LogState<TNameValuePairList>.Formatter);
 
-            _stringBuilderPool.Return(_operationLog);
+            _stringBuilderPool.Return(_sb);
         }
 
         this = default;

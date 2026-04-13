@@ -183,7 +183,7 @@ public abstract class OperationLogTests
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
                 && log.HasAttribute("ReturnValue", true)
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("Return value is `returnValue`")))),
+                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("Return value set to `returnValue`")))),
                 Times.Once());
         }
     }
@@ -475,7 +475,7 @@ public abstract class OperationLogTests
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
                 && log.HasException(ex)
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains($"Exception is `InvalidOperationException ex`")))),
+                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains($"Exception set to `InvalidOperationException ex`")))),
                 Times.Once());
         }
     }
