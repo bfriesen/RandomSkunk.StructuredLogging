@@ -28,7 +28,45 @@ public static partial class InterpolatedString
         [EditorBrowsable(Never)]
         public OperationLogEntry(int literalLength, int formattedCount, OperationLog<TNameValuePairList> operationLog, out bool isEnabled)
         {
-            if (operationLog._sb is StringBuilder sb)
+            if (operationLog.StringBuilder is StringBuilder sb)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.AppendLine();
+                }
+
+                sb.AppendFormat(CultureInfo.InvariantCulture, _logEntryTimestampFormat, DateTime.UtcNow);
+
+                _innerHandler = new(literalLength, formattedCount, sb, CultureInfo.InvariantCulture);
+                isEnabled = true;
+            }
+            else
+            {
+                isEnabled = false;
+            }
+        }
+
+        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value) => _innerHandler.AppendFormatted(value);
+        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value, string? format) => _innerHandler.AppendFormatted(value, format);
+        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value, int alignment) => _innerHandler.AppendFormatted(value, alignment);
+        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value, int alignment, string? format) => _innerHandler.AppendFormatted(value, alignment, format);
+        [EditorBrowsable(Never)] public void AppendFormatted(scoped ReadOnlySpan<char> value) => _innerHandler.AppendFormatted(value);
+        [EditorBrowsable(Never)] public void AppendFormatted(scoped ReadOnlySpan<char> value, int alignment = 0, string? format = null) => _innerHandler.AppendFormatted(value, alignment, format);
+        [EditorBrowsable(Never)] public void AppendFormatted(string? value) => _innerHandler.AppendFormatted(value);
+        [EditorBrowsable(Never)] public void AppendFormatted(string? value, int alignment = 0, string? format = null) => _innerHandler.AppendFormatted(value, alignment, format);
+        [EditorBrowsable(Never)] public void AppendFormatted(object? value, int alignment = 0, string? format = null) => _innerHandler.AppendFormatted(value, alignment, format);
+        [EditorBrowsable(Never)] public void AppendLiteral(string value) => _innerHandler.AppendLiteral(value);
+    }
+
+    [InterpolatedStringHandler]
+    public struct OperationLogEntry
+    {
+        internal StringBuilder.AppendInterpolatedStringHandler _innerHandler;
+
+        [EditorBrowsable(Never)]
+        public OperationLogEntry(int literalLength, int formattedCount, IOperationLog operationLog, out bool isEnabled)
+        {
+            if (operationLog is IOperationLogInternal operationLogInternal && operationLogInternal.StringBuilder is StringBuilder sb)
             {
                 if (sb.Length > 0)
                 {
