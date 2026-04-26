@@ -19,12 +19,12 @@ public class LogOperationExtensionsGenerator : IIncrementalGenerator
 """;
 
     private const string _eventIdParam = """
-    /// <param name="eventId">The id of the <see cref="EventId"/> associated with the operation.</param>
+    /// <param name="eventId">The <see cref="EventId"/> associated with the operation.</param>
 """;
 
-    private const string _eventIdNameParam = """
-    /// <param name="eventIdName">The name of the <see cref="EventId"/> associated with the operation, typically supplied
-    /// automatically by the compiler.</param>
+    private const string _parameterMarkerParam = """
+    /// <param name="parameterMarker">A unique, non-string parameter to divide operation parameters and operation parameter
+    /// names.</param>
 """;
 
     private const string _logLevelParam = """
@@ -134,15 +134,10 @@ partial class LogOperationExtensions
         
         sb.AppendLine(_operationNameParam);
 
-        if (genericParameterCount < 1 && eventIdParameter)
-        {
-            sb.AppendLine(_eventIdNameParam);
-        }
-        else if (genericParameterCount == 1)
+        if (genericParameterCount == 1)
         {
             sb.AppendLine(_operationParameterParam);
-            if (eventIdParameter)
-                sb.AppendLine(_eventIdNameParam);
+            sb.AppendLine(_parameterMarkerParam);
             sb.AppendLine(_operationParameterNameParam);
         }
         else
@@ -152,8 +147,7 @@ partial class LogOperationExtensions
                 sb.AppendFormat(_operationParameterNParamFormat, i, GetOridinal(i)).AppendLine();
             }
 
-            if (eventIdParameter)
-                sb.AppendLine(_eventIdNameParam);
+            sb.AppendLine(_parameterMarkerParam);
             
             for (int i = 1; i <= genericParameterCount; i++)
             {
@@ -178,7 +172,7 @@ partial class LogOperationExtensions
         if (eventIdParameter)
         {
             sb.AppendLine("""
-        int eventId,
+        EventId eventId,
 """);
         }
 
@@ -206,51 +200,21 @@ partial class LogOperationExtensions
 
         if (genericParameterCount < 0)
         {
-            if (eventIdParameter)
-            {
-                sb.AppendLine(",").AppendLine("""
-        [CallerMemberName] string eventIdName = null!)
+            sb.AppendLine(")").AppendLine("""
         where TNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>> =>
 """);
-            }
-            else
-            {
-                sb.AppendLine(")").AppendLine("""
-        where TNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>> =>
-""");
-            }
-
         }
         else if (genericParameterCount == 0)
         {
-            if (eventIdParameter)
-            {
-                sb.AppendLine(",").AppendLine("""
-        [CallerMemberName] string eventIdName = null!) =>
-""");
-            }
-            else
-            {
-                sb.AppendLine(") =>");
-            }
+            sb.AppendLine(") =>");
         }
         else if (genericParameterCount == 1)
         {
-            if (eventIdParameter)
-            {
-                sb.AppendLine(",").AppendLine("""
+            sb.AppendLine(",").AppendLine("""
         T operationParameter,
-        [CallerMemberName] string eventIdName = null!,
+        ParameterMarker parameterMarker = default,
         [CallerArgumentExpression(nameof(operationParameter))] string operationParameterName = null!) =>
 """);
-            }
-            else
-            {
-                sb.AppendLine(",").AppendLine("""
-        T operationParameter,
-        [CallerArgumentExpression(nameof(operationParameter))] string operationParameterName = null!) =>
-""");
-            }
         }
         else if (genericParameterCount > 1)
         {
@@ -263,12 +227,9 @@ partial class LogOperationExtensions
 """, i).AppendLine();
             }
 
-            if (eventIdParameter)
-            {
-                sb.AppendLine("""
-        [CallerMemberName] string eventIdName = null!,
+            sb.AppendLine("""
+        ParameterMarker parameterMarker = default,
 """);
-            }
 
             for (int i = 1; i < genericParameterCount; i++)
             {
@@ -302,7 +263,7 @@ partial class LogOperationExtensions
         if (eventIdParameter)
         {
             sb.AppendLine("""
-            new EventId(eventId, eventIdName),
+            eventId,
 """);
         }
         else

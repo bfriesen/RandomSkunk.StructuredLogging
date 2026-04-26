@@ -13,6 +13,12 @@ namespace RandomSkunk.StructuredLogging;
 /// for diagnostics and performance tracking.</remarks>
 public static partial class LogOperationExtensions
 {
+    /// <summary>
+    /// A type to be used as the first optional parameter of the generic <c>LogOperation</c> extension methods. Without these
+    /// parameters, when the last generic argument is type <see cref="string"/>, the compiler would choose the wrong overload.
+    /// </summary>
+    public struct ParameterMarker;
+
     internal static OperationLog<EmptyNameValuePairArray> LogOperation(
         this ILogger? logger,
         LogLevel logLevel,
