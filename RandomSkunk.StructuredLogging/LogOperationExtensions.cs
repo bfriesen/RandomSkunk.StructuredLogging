@@ -153,17 +153,4 @@ public static partial class LogOperationExtensions
             eventId,
             operationName,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7, in logProperty8));
-
-    internal static OperationLog<ReadOnlyNameValuePairList<TNameValuePairList>> LogOperation<TNameValuePairList>(
-        this ILogger? logger,
-        LogLevel logLevel,
-        EventId eventId,
-        TNameValuePairList? nameValuePairList,
-        string? operationName)
-        where TNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>> =>
-        new(logger,
-            logLevel,
-            eventId,
-            operationName,
-            new(nameValuePairList));
 }

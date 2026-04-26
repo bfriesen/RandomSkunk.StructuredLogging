@@ -35,10 +35,6 @@ public class LogOperationExtensionsGenerator : IIncrementalGenerator
     /// <param name="operationName">The name of the operation.</param>
 """;
 
-    private const string _nameValuePairListParam = """
-    /// <param name="nameValuePairList">A list containing the operation parameters.</param>
-""";
-
     private const string _operationParameterParam = """
     /// <param name="operationParameter">The operation parameter. If this value implements
     /// <c>IReadOnlyList&lt;KeyValuePair&lt;string, object?&gt;&gt;</c>, then it is used as operation log's parameters.</param>
@@ -99,7 +95,6 @@ partial class LogOperationExtensions
         GenerateMethods(sb, 6);
         GenerateMethods(sb, 7);
         GenerateMethods(sb, 8);
-        GenerateMethods(sb, -1);
 
         while (char.IsWhiteSpace(sb[sb.Length - 1]))
             sb.Length--;
@@ -128,9 +123,6 @@ partial class LogOperationExtensions
 
         if (eventIdParameter)
             sb.AppendLine(_eventIdParam);
-        
-        if (genericParameterCount == -1)
-            sb.AppendLine(_nameValuePairListParam);
         
         sb.AppendLine(_operationNameParam);
 
@@ -176,13 +168,6 @@ partial class LogOperationExtensions
 """);
         }
 
-        if (genericParameterCount == -1)
-        {
-            sb.AppendLine("""
-        TNameValuePairList? nameValuePairList,
-""");
-        }
-
         if (logLevelParameter)
         {
             sb.Append("""
@@ -198,13 +183,7 @@ partial class LogOperationExtensions
 """);
         }
 
-        if (genericParameterCount < 0)
-        {
-            sb.AppendLine(")").AppendLine("""
-        where TNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>> =>
-""");
-        }
-        else if (genericParameterCount == 0)
+        if (genericParameterCount == 0)
         {
             sb.AppendLine(") =>");
         }
@@ -273,13 +252,6 @@ partial class LogOperationExtensions
 """);
         }
 
-        if (genericParameterCount == -1)
-        {
-            sb.AppendLine("""
-            nameValuePairList,
-""");
-        }
-
         if (logLevelParameter)
         {
             sb.Append("""
@@ -293,7 +265,7 @@ partial class LogOperationExtensions
 """);
         }
 
-        if (genericParameterCount < 1)
+        if (genericParameterCount == 0)
         {
             sb.AppendLine(");");
         }
@@ -349,7 +321,6 @@ partial class LogOperationExtensions
             6 => "<T1, T2, T3, T4, T5, T6>",
             7 => "<T1, T2, T3, T4, T5, T6, T7>",
             8 => "<T1, T2, T3, T4, T5, T6, T7, T8>",
-            -1 => "<TNameValuePairList>",
             _ => null,
         };
 
