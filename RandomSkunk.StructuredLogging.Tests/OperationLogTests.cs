@@ -222,7 +222,7 @@ public abstract class OperationLogTests
 
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`myValue == null` is true")))),
+                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`myValue` is null")))),
                 Times.Once());
         }
     }
@@ -264,7 +264,7 @@ public abstract class OperationLogTests
 
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`string.IsNullOrEmpty(myValue)` is true")))),
+                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`myValue` is null or empty")))),
                 Times.Once());
         }
     }
@@ -309,133 +309,7 @@ public abstract class OperationLogTests
 
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`string.IsNullOrWhiteSpace(myValue)` is true")))),
-                Times.Once());
-        }
-    }
-
-    public class IsNotNullMethod : OperationLogTests
-    {
-        [Fact]
-        public void GivenNoLogger_UponDispose_DoesNothing()
-        {
-            object? myValue = null;
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
-            log.IsNotNull(myValue).Should().BeFalse();
-            log.Dispose();
-
-            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-        }
-
-        [Fact]
-        public void GivenNoOperationName_UponDispose_DoesNothing()
-        {
-            object? myValue = null;
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, null, new());
-            log.IsNotNull(myValue).Should().BeFalse();
-            log.Dispose();
-
-            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-        }
-
-        [Fact]
-        public void GivenLoggerAndOperationName_UponDispose_LogsOperationComplete()
-        {
-            object? myValue = null;
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
-            log.IsNotNull(myValue).Should().BeFalse();
-            log.Dispose();
-
-            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
-                log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`myValue != null` is false")))),
-                Times.Once());
-        }
-    }
-
-    public class IsNotNullOrEmptyMethod : OperationLogTests
-    {
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        public void GivenNoLogger_UponDispose_DoesNothing(string? myValue)
-        {
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
-            log.IsNotNullOrEmpty(myValue).Should().BeFalse();
-            log.Dispose();
-
-            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        public void GivenNoOperationName_UponDispose_DoesNothing(string? myValue)
-        {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, null, new());
-            log.IsNotNullOrEmpty(myValue).Should().BeFalse();
-            log.Dispose();
-
-            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        public void GivenLoggerAndOperationName_UponDispose_LogsOperationComplete(string? myValue)
-        {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
-            log.IsNotNullOrEmpty(myValue).Should().BeFalse();
-            log.Dispose();
-
-            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
-                log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`!string.IsNullOrEmpty(myValue)` is false")))),
-                Times.Once());
-        }
-    }
-
-    public class IsNotNullOrWhiteSpaceMethod : OperationLogTests
-    {
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        public void GivenNoLogger_UponDispose_DoesNothing(string? myValue)
-        {
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
-            log.IsNotNullOrWhiteSpace(myValue).Should().BeFalse();
-            log.Dispose();
-
-            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        public void GivenNoOperationName_UponDispose_DoesNothing(string? myValue)
-        {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, null, new());
-            log.IsNotNullOrWhiteSpace(myValue).Should().BeFalse();
-            log.Dispose();
-
-            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
-        }
-
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        [InlineData(" ")]
-        public void GivenLoggerAndOperationName_UponDispose_LogsOperationComplete(string? myValue)
-        {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
-            log.IsNotNullOrWhiteSpace(myValue).Should().BeFalse();
-            log.Dispose();
-
-            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
-                log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`!string.IsNullOrWhiteSpace(myValue)` is false")))),
+                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`myValue` is null or whitespace")))),
                 Times.Once());
         }
     }

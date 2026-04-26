@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -47,14 +46,14 @@ namespace RandomSkunk.StructuredLogging
     public interface IOperationLog : IDisposable
     {
         /// <summary>
-        /// Gets the collection of parameters associated with the operation log.
-        /// </summary>
-        IReadOnlyList<KeyValuePair<string, object?>> Parameters { get; }
-
-        /// <summary>
         /// Gets the event id associated with the operation log.
         /// </summary>
         EventId EventId { get; }
+
+        /// <summary>
+        /// Gets the collection of parameters associated with the operation log.
+        /// </summary>
+        IReadOnlyList<KeyValuePair<string, object?>> Parameters { get; }
 
         /// <summary>
         /// Appends the interpolated log entry string to the operation log.
@@ -100,6 +99,7 @@ namespace RandomSkunk.StructuredLogging
         ///     ...
         /// </code>
         /// </remarks>
+        /// <typeparam name="T">The type of the value.</typeparam>
         /// <param name="value">The value to log and return.</param>
         /// <param name="valueExpression">The string representation of the original expression passed as the value. This is
         /// automatically provided by the compiler and should not be set manually.</param>
@@ -119,6 +119,7 @@ namespace RandomSkunk.StructuredLogging
         /// log.JsonValue(contact);
         /// </code>
         /// </remarks>
+        /// <typeparam name="T">The type of the value.</typeparam>
         /// <param name="value">The value to log and return.</param>
         /// <param name="options">Options to control serialization behavior.</param>
         /// <param name="valueExpression">The string representation of the original expression passed as the value. This is
@@ -161,7 +162,8 @@ namespace RandomSkunk.StructuredLogging
         ///     ...
         /// </code>
         /// </remarks>
-        /// <param name="value">The object to check.</param>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="value">The object to test.</param>
         /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
         /// compiler.</param>
         /// <returns>true if the specified object is null; otherwise, false.</returns>
@@ -182,7 +184,8 @@ namespace RandomSkunk.StructuredLogging
         ///     ...
         /// </code>
         /// </remarks>
-        /// <param name="value">The object to check.</param>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="value">The object to test.</param>
         /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
         /// compiler.</param>
         /// <returns>true if the specified object is null; otherwise, false.</returns>
@@ -204,7 +207,7 @@ namespace RandomSkunk.StructuredLogging
         ///     ...
         /// </code>
         /// </remarks>
-        /// <param name="value">The object to check.</param>
+        /// <param name="value">The string to test.</param>
         /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
         /// compiler.</param>
         /// <returns>true if the specified object is null or empty; otherwise, false.</returns>
@@ -225,98 +228,12 @@ namespace RandomSkunk.StructuredLogging
         ///     ...
         /// </code>
         /// </remarks>
-        /// <param name="value">The object to check.</param>
+        /// <param name="value">The string to test.</param>
         /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
         /// compiler.</param>
         /// <returns>true if the specified object is null or whitespace; otherwise, false.</returns>
         bool IsNullOrWhiteSpace(
             [NotNullWhen(false)]
-            string? value,
-            [CallerArgumentExpression(nameof(value))]
-            string valueExpression = null!);
-
-        /// <summary>
-        /// Returns whether the specified value is not null. If logging is enabled for the operation, also appends a log entry to the
-        /// operation log that indicates whether the value is not null.
-        /// </summary>
-        /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `firstName != null` is true</c>" to the
-        /// operation log:
-        /// <code>
-        /// if (log.IsNotNull(firstName))
-        ///     ...
-        /// </code>
-        /// </remarks>
-        /// <param name="value">The object to check.</param>
-        /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
-        /// compiler.</param>
-        /// <returns>true if the specified object is not null; otherwise, false.</returns>
-        bool IsNotNull<T>(
-            [NotNullWhen(true)]
-            T value,
-            [CallerArgumentExpression(nameof(value))]
-            string valueExpression = null!)
-            where T : class?;
-
-        /// <summary>
-        /// Returns whether the specified value is not null. If logging is enabled for the operation, also appends a log entry to the
-        /// operation log that indicates whether the value is not null.
-        /// </summary>
-        /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `monthlyIncome != null` is true</c>" to the
-        /// operation log:
-        /// <code>
-        /// if (log.IsNotNull(monthlyIncome))
-        ///     ...
-        /// </code>
-        /// </remarks>
-        /// <param name="value">The object to check.</param>
-        /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
-        /// compiler.</param>
-        /// <returns>true if the specified object is not null; otherwise, false.</returns>
-        bool IsNotNull<T>(
-            [NotNullWhen(true)]
-            T? value,
-            [CallerArgumentExpression(nameof(value))]
-            string valueExpression = null!)
-            where T : struct;
-
-        /// <summary>
-        /// Returns whether the specified value is not null or empty. If logging is enabled for the operation, also appends a log entry to the
-        /// operation log that indicates whether the value is not null or empty.
-        /// </summary>
-        /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `!string.IsNullOrEmpty(firstName)` is true</c>"
-        /// to the operation log:
-        /// <code>
-        /// if (log.IsNotNullOrEmpty(firstName))
-        ///     ...
-        /// </code>
-        /// </remarks>
-        /// <param name="value">The object to check.</param>
-        /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
-        /// compiler.</param>
-        /// <returns>true if the specified object is not null or empty; otherwise, false.</returns>
-        bool IsNotNullOrEmpty(
-            [NotNullWhen(true)]
-            string? value,
-            [CallerArgumentExpression(nameof(value))]
-            string valueExpression = null!);
-
-        /// <summary>
-        /// Returns whether the specified value is not null or whitespace. If logging is enabled for the operation, also appends a log entry to the
-        /// operation log that indicates whether the value is not null or whitespace.
-        /// </summary>
-        /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `!string.IsNullOrWhiteSpace(firstName)` is
-        /// true</c>" to the operation log:
-        /// <code>
-        /// if (log.IsNotNullOrWhiteSpace(firstName))
-        ///     ...
-        /// </code>
-        /// </remarks>
-        /// <param name="value">The object to check.</param>
-        /// <param name="valueExpression">The expression passed for the value parameter. This is automatically provided by the
-        /// compiler.</param>
-        /// <returns>true if the specified object is not null or whitespace; otherwise, false.</returns>
-        bool IsNotNullOrWhiteSpace(
-            [NotNullWhen(true)]
             string? value,
             [CallerArgumentExpression(nameof(value))]
             string valueExpression = null!);

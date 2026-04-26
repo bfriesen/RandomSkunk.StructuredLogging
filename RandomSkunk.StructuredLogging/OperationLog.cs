@@ -1,13 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.ObjectPool;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 
 namespace RandomSkunk.StructuredLogging;
-
-using static OperationLog;
 
 /// <summary>
 /// Represents an operation log. When disposed, writes a structured log indicating that the operation is complete.
@@ -84,17 +81,17 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
             _logger = logger;
             _logLevel = logLevel;
             _operationCompleteMessage = $"Operation complete: {operationName}";
-            _stringBuilder = _stringBuilderPool.Get();
+            _stringBuilder = StringBuilderPool.Instance.Get();
         }
     }
+
+    /// <inheritdoc/>
+    public readonly EventId EventId => _eventId;
 
     /// <summary>
     /// Gets the collection of parameters associated with the operation log.
     /// </summary>
     public readonly TNameValuePairList Parameters => _parameters;
-
-    /// <inheritdoc/>
-    public readonly EventId EventId => _eventId;
 
     readonly IReadOnlyList<KeyValuePair<string, object?>> IOperationLog.Parameters => Parameters;
 
@@ -182,7 +179,7 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
         where T : class?
     {
         bool isNull = value is null;
-        Append($"`{valueExpression} == null` is {(isNull ? "true" : "false")}");
+        Append($"`{valueExpression}` is{(isNull ? null : " not")} null");
         return isNull;
     }
 
@@ -191,7 +188,7 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
         where T : struct
     {
         bool isNull = !value.HasValue;
-        Append($"`{valueExpression} == null` is {(isNull ? "true" : "false")}");
+        Append($"`{valueExpression}` is{(isNull ? null : " not")} null");
         return isNull;
     }
 
@@ -199,7 +196,7 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
     public bool IsNullOrEmpty([NotNullWhen(false)] string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
     {
         bool isNullOrEmpty = string.IsNullOrEmpty(value);
-        Append($"`string.IsNullOrEmpty({valueExpression})` is {(isNullOrEmpty ? "true" : "false")}");
+        Append($"`{valueExpression}` is{(isNullOrEmpty ? null : " not")} null or empty");
         return isNullOrEmpty;
     }
 
@@ -207,42 +204,8 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
     public bool IsNullOrWhiteSpace([NotNullWhen(false)] string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
     {
         bool isNullOrWhiteSpace = string.IsNullOrWhiteSpace(value);
-        Append($"`string.IsNullOrWhiteSpace({valueExpression})` is {(isNullOrWhiteSpace ? "true" : "false")}");
+        Append($"`{valueExpression}` is{(isNullOrWhiteSpace ? null : " not")} null or whitespace");
         return isNullOrWhiteSpace;
-    }
-
-    /// <inheritdoc/>
-    public bool IsNotNull<T>([NotNullWhen(true)] T value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
-        where T : class?
-    {
-        bool isNotNull = value is not null;
-        Append($"`{valueExpression} != null` is {(isNotNull ? "true" : "false")}");
-        return isNotNull;
-    }
-
-    /// <inheritdoc/>
-    public bool IsNotNull<T>([NotNullWhen(true)] T? value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
-        where T : struct
-    {
-        bool isNotNull = value.HasValue;
-        Append($"`{valueExpression} != null` is {(isNotNull ? "true" : "false")}");
-        return isNotNull;
-    }
-
-    /// <inheritdoc/>
-    public bool IsNotNullOrEmpty([NotNullWhen(true)] string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
-    {
-        bool isNotNullOrEmpty = !string.IsNullOrEmpty(value);
-        Append($"`!string.IsNullOrEmpty({valueExpression})` is {(isNotNullOrEmpty ? "true" : "false")}");
-        return isNotNullOrEmpty;
-    }
-
-    /// <inheritdoc/>
-    public bool IsNotNullOrWhiteSpace([NotNullWhen(true)] string? value, [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
-    {
-        bool isNotNullOrWhiteSpace = !string.IsNullOrWhiteSpace(value);
-        Append($"`!string.IsNullOrWhiteSpace({valueExpression})` is {(isNotNullOrWhiteSpace ? "true" : "false")}");
-        return isNotNullOrWhiteSpace;
     }
 
     /// <summary>
@@ -266,16 +229,9 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
                 _exception,
                 LogState<TNameValuePairList>.Formatter);
 
-            _stringBuilderPool.Return(_stringBuilder);
+            StringBuilderPool.Instance.Return(_stringBuilder);
         }
 
         this = default;
     }
-}
-
-// This class exists because the public Operation struct is generic and would have a copy of the object pool for each closed
-// generic type. We want something non-generic that can be shared among all instances of all closed generic types.
-internal static class OperationLog
-{
-    internal static readonly ObjectPool<StringBuilder> _stringBuilderPool = ObjectPool.Create(new StringBuilderPooledObjectPolicy());
 }
