@@ -28,7 +28,7 @@ public abstract class LogOperationExtensionsTests
             ILogger? logger = null;
 
             // Act
-            var log = logger!.GetOperation(_logLevel, _eventId, "My.Operation");
+            var log = logger!.LogOperation(_logLevel, _eventId, "My.Operation");
 
             // Assert
             log.EventId.Should().Be(_eventId);
@@ -42,7 +42,7 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation");
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation");
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -54,7 +54,7 @@ public abstract class LogOperationExtensionsTests
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation");
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation");
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -74,7 +74,7 @@ public abstract class LogOperationExtensionsTests
             ILogger? logger = null;
 
             // Act
-            Action act = () => logger!.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1));
+            Action act = () => logger!.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1));
 
             // Assert
             act.Should().NotThrow();
@@ -87,7 +87,7 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -99,7 +99,7 @@ public abstract class LogOperationExtensionsTests
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -120,7 +120,7 @@ public abstract class LogOperationExtensionsTests
             ILogger? logger = null;
 
             // Act
-            Action act = () => logger!.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2));
+            Action act = () => logger!.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2));
 
             // Assert
             act.Should().NotThrow();
@@ -133,7 +133,7 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -145,7 +145,7 @@ public abstract class LogOperationExtensionsTests
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -167,7 +167,7 @@ public abstract class LogOperationExtensionsTests
             ILogger? logger = null;
 
             // Act
-            Action act = () => logger!.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3));
+            Action act = () => logger!.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3));
 
             // Assert
             act.Should().NotThrow();
@@ -180,7 +180,7 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -192,7 +192,7 @@ public abstract class LogOperationExtensionsTests
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -215,7 +215,7 @@ public abstract class LogOperationExtensionsTests
             ILogger? logger = null;
 
             // Act
-            Action act = () => logger!.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4));
+            Action act = () => logger!.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4));
 
             // Assert
             act.Should().NotThrow();
@@ -228,7 +228,7 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -240,7 +240,7 @@ public abstract class LogOperationExtensionsTests
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -264,7 +264,7 @@ public abstract class LogOperationExtensionsTests
             ILogger? logger = null;
 
             // Act
-            Action act = () => logger!.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5));
+            Action act = () => logger!.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5));
 
             // Assert
             act.Should().NotThrow();
@@ -277,7 +277,7 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -289,7 +289,7 @@ public abstract class LogOperationExtensionsTests
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -314,7 +314,7 @@ public abstract class LogOperationExtensionsTests
             ILogger? logger = null;
 
             // Act
-            Action act = () => logger!.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6));
+            Action act = () => logger!.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6));
 
             // Assert
             act.Should().NotThrow();
@@ -327,7 +327,7 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -339,7 +339,7 @@ public abstract class LogOperationExtensionsTests
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -365,7 +365,7 @@ public abstract class LogOperationExtensionsTests
             ILogger? logger = null;
 
             // Act
-            Action act = () => logger!.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7));
+            Action act = () => logger!.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7));
 
             // Assert
             act.Should().NotThrow();
@@ -378,7 +378,7 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -390,7 +390,7 @@ public abstract class LogOperationExtensionsTests
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -417,7 +417,7 @@ public abstract class LogOperationExtensionsTests
             ILogger? logger = null;
 
             // Act
-            Action act = () => logger!.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7), ("P8", 8));
+            Action act = () => logger!.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7), ("P8", 8));
 
             // Assert
             act.Should().NotThrow();
@@ -430,7 +430,7 @@ public abstract class LogOperationExtensionsTests
             _logLevel = LogLevel.Debug;
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7), ("P8", 8));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7), ("P8", 8));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -442,7 +442,7 @@ public abstract class LogOperationExtensionsTests
         public void GivenLoggerIsEnabledAtTheSpecifiedLogLevel_InvokesLogMethod()
         {
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7), ("P8", 8));
+            var log = _logger.LogOperation(_logLevel, _eventId, "My.Operation", ("P1", 1), ("P2", 2), ("P3", 3), ("P4", 4), ("P5", 5), ("P6", 6), ("P7", 7), ("P8", 8));
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -471,7 +471,7 @@ public abstract class LogOperationExtensionsTests
             List<KeyValuePair<string, object?>> nameValuePairs = [new("P1", 1), new("P2", 2), new("P3", 3)];
 
             // Act
-            Action act = () => logger!.GetOperation(_logLevel, _eventId, nameValuePairs, "My.Operation");
+            Action act = () => logger!.LogOperation(_logLevel, _eventId, nameValuePairs, "My.Operation");
 
             // Assert
             act.Should().NotThrow();
@@ -485,7 +485,7 @@ public abstract class LogOperationExtensionsTests
             List<KeyValuePair<string, object?>> nameValuePairs = [new("P1", 1), new("P2", 2), new("P3", 3)];
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, nameValuePairs, "My.Operation");
+            var log = _logger.LogOperation(_logLevel, _eventId, nameValuePairs, "My.Operation");
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -500,7 +500,7 @@ public abstract class LogOperationExtensionsTests
             List<KeyValuePair<string, object?>> nameValuePairs = [new("P1", 1), new("P2", 2), new("P3", 3)];
 
             // Act
-            var log = _logger.GetOperation(_logLevel, _eventId, nameValuePairs, "My.Operation");
+            var log = _logger.LogOperation(_logLevel, _eventId, nameValuePairs, "My.Operation");
 
             // Assert
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>

@@ -283,7 +283,7 @@ partial class LogOperationExtensions
         }
 
         sb.AppendLine("""
-        logger.GetOperation(
+        logger.LogOperation(
 """);
 
         if (logLevelParameter)
