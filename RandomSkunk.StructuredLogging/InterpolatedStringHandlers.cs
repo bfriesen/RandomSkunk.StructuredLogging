@@ -73,7 +73,10 @@ public static partial class InterpolatedString
                     sb.AppendLine();
                 }
 
-                sb.AppendFormat(CultureInfo.InvariantCulture, _logEntryTimestampFormat, DateTime.UtcNow);
+                if (operationLogInternal is not TestOperationLog)
+                {
+                    sb.AppendFormat(CultureInfo.InvariantCulture, _logEntryTimestampFormat, DateTime.UtcNow);
+                }
 
                 _innerHandler = new(literalLength, formattedCount, sb, CultureInfo.InvariantCulture);
                 isEnabled = true;
