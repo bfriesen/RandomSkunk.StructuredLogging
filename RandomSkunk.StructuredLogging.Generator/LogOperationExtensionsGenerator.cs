@@ -22,11 +22,6 @@ public class LogOperationExtensionsGenerator : IIncrementalGenerator
     /// <param name="eventId">The <see cref="EventId"/> associated with the operation.</param>
 """;
 
-    private const string _parameterMarkerParam = """
-    /// <param name="parameterMarker">A unique, non-string parameter to divide operation properties and operation parameter
-    /// names.</param>
-""";
-
     private const string _logLevelParam = """
     /// <param name="logLevel">The level at which to log the operation.</param>
 """;
@@ -35,30 +30,13 @@ public class LogOperationExtensionsGenerator : IIncrementalGenerator
     /// <param name="operationName">The name of the operation.</param>
 """;
 
-    private const string _propertyParam = """
-    /// <param name="property">The operation property. If this value implements
-    /// <c>IReadOnlyList&lt;KeyValuePair&lt;string, object?&gt;&gt;</c>, then it is used as operation log's properties.</param>
-""";
-
-    private const string _propertyNParamFormat = """
-    /// <param name="property{0}">The {1} operation property.</param>
-""";
-
-    private const string _propertyNameParam = """
-    /// <param name="propertyName">The name of the operation property, typically supplied automatically by the
-    /// compiler. Ignored if <paramref name="property"/> implements
-    /// <c>IReadOnlyList&lt;KeyValuePair&lt;string, object?&gt;&gt;</c>.</param>
-""";
-
-    private const string _propertyNNameParamFormat = """
-    /// <param name="property{0}Name">The name of the {1} operation property, typically supplied automatically by the
-    /// compiler.</param>
+    private const string _propertyParamFormat = """
+    /// <param name="property{0}">The {1}name value pair associated with the operation.</param>
 """;
 
     private const string _returnsFormat = """
-    /// <returns>An <see cref="Operation{{TNameValuePairList}}"/> object that, when disposed, writes a structured log at the
-    /// {0} level indicating that the operation is complete. To include the return value of the operation in this
-    /// log, call the object's <see cref="Operation{{TNameValuePairList}}.Return"/> method before disposing it.</returns>
+    /// <returns>An <see cref="OperationLog{{TNameValuePairList}}"/> object that, when disposed, writes a structured log at the
+    /// {0} level indicating that the operation is complete.</returns>
 """;
 
     public void Initialize(IncrementalGeneratorInitializationContext context) =>
@@ -128,22 +106,13 @@ partial class LogOperationExtensions
 
         if (genericParameterCount == 1)
         {
-            sb.AppendLine(_propertyParam);
-            sb.AppendLine(_parameterMarkerParam);
-            sb.AppendLine(_propertyNameParam);
+            sb.AppendFormat(_propertyParamFormat, null, null).AppendLine();
         }
         else
         {
             for (int i = 1; i <= genericParameterCount; i++)
             {
-                sb.AppendFormat(_propertyNParamFormat, i, GetOridinal(i)).AppendLine();
-            }
-
-            sb.AppendLine(_parameterMarkerParam);
-            
-            for (int i = 1; i <= genericParameterCount; i++)
-            {
-                sb.AppendFormat(_propertyNNameParamFormat, i, GetOridinal(i)).AppendLine();
+                sb.AppendFormat(_propertyParamFormat, i, GetOridinal(i)).AppendLine();
             }
         }
         
@@ -183,43 +152,22 @@ partial class LogOperationExtensions
 """);
         }
 
-        if (genericParameterCount == 0)
-        {
-            sb.AppendLine(") =>");
-        }
-        else if (genericParameterCount == 1)
+        if (genericParameterCount == 1)
         {
             sb.AppendLine(",").AppendLine("""
-        T property,
-        ParameterMarker parameterMarker = default,
-        [CallerArgumentExpression(nameof(property))] string propertyName = null!) =>
+        (string Name, T Value) property) =>
 """);
         }
-        else if (genericParameterCount > 1)
+        else
         {
-            sb.AppendLine(",");
-
             for (int i = 1; i <= genericParameterCount; i++)
             {
-                sb.AppendFormat("""
-        T{0} property{0},
-""", i).AppendLine();
+                sb.AppendLine(",").AppendFormat("""
+        (string Name, T{0} Value) property{0}
+""", i);
             }
 
-            sb.AppendLine("""
-        ParameterMarker parameterMarker = default,
-""");
-
-            for (int i = 1; i < genericParameterCount; i++)
-            {
-                sb.AppendFormat("""
-        [CallerArgumentExpression(nameof(property{0}))] string property{0}Name = null!,
-""", i).AppendLine();
-            }
-
-            sb.AppendFormat("""
-        [CallerArgumentExpression(nameof(property{0}))] string property{0}Name = null!) =>
-""", genericParameterCount).AppendLine();
+            sb.AppendLine(") =>");
         }
 
         sb.AppendLine("""
@@ -272,23 +220,19 @@ partial class LogOperationExtensions
         else if (genericParameterCount == 1)
         {
             sb.AppendLine(",").AppendLine("""
-            (propertyName, property));
+            in property);
 """);
         }
         else if (genericParameterCount > 1)
         {
-            sb.AppendLine(",");
-
-            for (int i = 1; i < genericParameterCount; i++)
+            for (int i = 1; i <= genericParameterCount; i++)
             {
-                sb.AppendFormat("""
-            (property{0}Name, property{0}),
-""", i).AppendLine();
+                sb.AppendLine(",").AppendFormat("""
+            in property{0}
+""", i);
             }
 
-            sb.AppendFormat("""
-            (property{0}Name, property{0}));
-""", genericParameterCount).AppendLine();
+            sb.AppendLine(");");
         }
 
         sb.AppendLine();
@@ -326,14 +270,14 @@ partial class LogOperationExtensions
     private static string? GetOridinal(int i) =>
         i switch
         {
-            1 => "first",
-            2 => "second",
-            3 => "third",
-            4 => "fourth",
-            5 => "fifth",
-            6 => "sixth",
-            7 => "seventh",
-            8 => "eighth",
+            1 => "first ",
+            2 => "second ",
+            3 => "third ",
+            4 => "fourth ",
+            5 => "fifth ",
+            6 => "sixth ",
+            7 => "seventh ",
+            8 => "eighth ",
             _ => null
         };
 }

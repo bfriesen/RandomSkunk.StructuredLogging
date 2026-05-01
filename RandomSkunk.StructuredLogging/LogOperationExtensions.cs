@@ -7,12 +7,6 @@ namespace RandomSkunk.StructuredLogging;
 /// </summary>
 public static partial class LogOperationExtensions
 {
-    /// <summary>
-    /// A type to be used as the first optional parameter of the generic <c>LogOperation</c> extension methods. Without these
-    /// parameters, when the last generic argument is type <see cref="string"/>, the compiler would choose the wrong overload.
-    /// </summary>
-    public struct ParameterMarker;
-
     internal static OperationLog<EmptyNameValuePairArray> LogOperation(
         this ILogger? logger,
         LogLevel logLevel,
@@ -29,7 +23,7 @@ public static partial class LogOperationExtensions
         LogLevel logLevel,
         EventId eventId,
         string? operationName,
-        (string Name, T Value) logProperty) =>
+        ref readonly (string Name, T Value) logProperty) =>
         new(logger,
             logLevel,
             eventId,
@@ -41,8 +35,8 @@ public static partial class LogOperationExtensions
         LogLevel logLevel,
         EventId eventId,
         string? operationName,
-        (string, T1) logProperty1,
-        (string, T2) logProperty2) =>
+        ref readonly (string, T1) logProperty1,
+        ref readonly (string, T2) logProperty2) =>
         new(logger,
             logLevel,
             eventId,
@@ -54,9 +48,9 @@ public static partial class LogOperationExtensions
         LogLevel logLevel,
         EventId eventId,
         string? operationName,
-        (string, T1) logProperty1,
-        (string, T2) logProperty2,
-        (string, T3) logProperty3) =>
+        ref readonly (string, T1) logProperty1,
+        ref readonly (string, T2) logProperty2,
+        ref readonly (string, T3) logProperty3) =>
         new(logger,
             logLevel,
             eventId,
@@ -68,10 +62,10 @@ public static partial class LogOperationExtensions
         LogLevel logLevel,
         EventId eventId,
         string? operationName,
-        (string, T1) logProperty1,
-        (string, T2) logProperty2,
-        (string, T3) logProperty3,
-        (string, T4) logProperty4) =>
+        ref readonly (string, T1) logProperty1,
+        ref readonly (string, T2) logProperty2,
+        ref readonly (string, T3) logProperty3,
+        ref readonly (string, T4) logProperty4) =>
         new(logger,
             logLevel,
             eventId,
@@ -83,11 +77,11 @@ public static partial class LogOperationExtensions
         LogLevel logLevel,
         EventId eventId,
         string? operationName,
-        (string, T1) logProperty1,
-        (string, T2) logProperty2,
-        (string, T3) logProperty3,
-        (string, T4) logProperty4,
-        (string, T5) logProperty5) =>
+        ref readonly (string, T1) logProperty1,
+        ref readonly (string, T2) logProperty2,
+        ref readonly (string, T3) logProperty3,
+        ref readonly (string, T4) logProperty4,
+        ref readonly (string, T5) logProperty5) =>
         new(logger,
             logLevel,
             eventId,
@@ -99,12 +93,12 @@ public static partial class LogOperationExtensions
         LogLevel logLevel,
         EventId eventId,
         string? operationName,
-        (string, T1) logProperty1,
-        (string, T2) logProperty2,
-        (string, T3) logProperty3,
-        (string, T4) logProperty4,
-        (string, T5) logProperty5,
-        (string, T6) logProperty6) =>
+        ref readonly (string, T1) logProperty1,
+        ref readonly (string, T2) logProperty2,
+        ref readonly (string, T3) logProperty3,
+        ref readonly (string, T4) logProperty4,
+        ref readonly (string, T5) logProperty5,
+        ref readonly (string, T6) logProperty6) =>
         new(logger,
             logLevel,
             eventId,
@@ -116,13 +110,13 @@ public static partial class LogOperationExtensions
         LogLevel logLevel,
         EventId eventId,
         string? operationName,
-        (string, T1) logProperty1,
-        (string, T2) logProperty2,
-        (string, T3) logProperty3,
-        (string, T4) logProperty4,
-        (string, T5) logProperty5,
-        (string, T6) logProperty6,
-        (string, T7) logProperty7) =>
+        ref readonly (string, T1) logProperty1,
+        ref readonly (string, T2) logProperty2,
+        ref readonly (string, T3) logProperty3,
+        ref readonly (string, T4) logProperty4,
+        ref readonly (string, T5) logProperty5,
+        ref readonly (string, T6) logProperty6,
+        ref readonly (string, T7) logProperty7) =>
         new(logger,
             logLevel,
             eventId,
@@ -134,14 +128,14 @@ public static partial class LogOperationExtensions
         LogLevel logLevel,
         EventId eventId,
         string? operationName,
-        (string, T1) logProperty1,
-        (string, T2) logProperty2,
-        (string, T3) logProperty3,
-        (string, T4) logProperty4,
-        (string, T5) logProperty5,
-        (string, T6) logProperty6,
-        (string, T7) logProperty7,
-        (string, T8) logProperty8) =>
+        ref readonly (string, T1) logProperty1,
+        ref readonly (string, T2) logProperty2,
+        ref readonly (string, T3) logProperty3,
+        ref readonly (string, T4) logProperty4,
+        ref readonly (string, T5) logProperty5,
+        ref readonly (string, T6) logProperty6,
+        ref readonly (string, T7) logProperty7,
+        ref readonly (string, T8) logProperty8) =>
         new(logger,
             logLevel,
             eventId,
