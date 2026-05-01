@@ -13,7 +13,7 @@ public static partial class LogOperationExtensions
     /// </summary>
     public struct ParameterMarker;
 
-    internal static OperationLog<List<KeyValuePair<string, object?>>> LogOperation(
+    internal static OperationLog<EmptyNameValuePairArray> LogOperation(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
@@ -22,7 +22,7 @@ public static partial class LogOperationExtensions
             logLevel,
             eventId,
             operationName,
-            null!);
+            new());
 
     internal static OperationLog<LogPropertyTuple<T>> LogOperation<T>(
         this ILogger? logger,

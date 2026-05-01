@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
@@ -18,9 +16,10 @@ namespace RandomSkunk.StructuredLogging;
 /// {
 ///     public int Divide(int dividend, int divisor, int? fallbackValue = null)
 ///     {
-///         using var log = logger.LogOperation(LogLevel.Information, 1286859363, $"{typeof(Calculator)}.{nameof(Divide)}", dividend, divisor, fallbackValue);
+///         using var log = logger.LogOperation(LogLevel.Information, 1286859363, $"{typeof(Calculator)}.{nameof(Divide)}",
+///             ("Operation.Dividend", dividend), ("Operation.Divisor", divisor), ("Operation.FallbackValue", fallbackValue));
 /// 
-///         if (log.IsNotNull(fallbackValue) &amp;&amp; log.Condition(divisor == 0))
+///         if (!log.IsNull(fallbackValue) &amp;&amp; log.Condition(divisor == 0))
 ///         {
 ///             log.Append($"Cannot divide by zero. Returning fallback value, {fallbackValue}.");
 ///             return log.ReturnValue(fallbackValue.Value);
@@ -42,18 +41,13 @@ namespace RandomSkunk.StructuredLogging;
 /// <typeparam name="TNameValuePairList">A value type that implements IReadOnlyList&lt;KeyValuePair&lt;string, object?&gt;&gt;,
 /// representing the operation's properties to be included in the log.</typeparam>
 public struct OperationLog<TNameValuePairList> : IOperationLogInternal
-    where TNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>>
+    where TNameValuePairList : struct, IReadOnlyList<KeyValuePair<string, object?>>
 {
-    private delegate TNameValuePairList GetPropertiesDelegate(ref OperationLog<TNameValuePairList> log);
-    private delegate void LogDelegate(ILogger logger, LogLevel logLevel, EventId eventId, ref readonly MessageData messageData, Exception? exception, TNameValuePairList properties);
-
-    private static readonly GetPropertiesDelegate _propertiesGetter;
-    private static readonly LogDelegate _log;
-
     /// <summary>Has a non-null value only when logging is enabled for the operation.</summary>
     private StringBuilder? _stringBuilder;
 
     private TNameValuePairList _properties;
+    private List<KeyValuePair<string, object?>>? _listProperties;
     private ILogger? _logger;
     private LogLevel _logLevel;
     private EventId _eventId;
@@ -63,65 +57,6 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
 
     private object? _returnValue;
     private bool _hasReturnValue;
-
-    static OperationLog()
-    {
-        _propertiesGetter = (ref log) => log._properties;
-
-        _log = (logger, logLevel, eventId, ref readonly messageData, exception, properties) =>
-            logger.Log(
-                logLevel,
-                eventId,
-                new LogState<ReadOnlyNameValuePairList<TNameValuePairList>>(in messageData, new(properties)),
-                exception,
-                LogState<ReadOnlyNameValuePairList<TNameValuePairList>>.Formatter);
-
-        if (typeof(TNameValuePairList).IsValueType)
-        {
-            try
-            {
-                MethodInfo? openLogMethod = typeof(ILogger).GetMethod(nameof(ILogger.Log));
-                Type logStateType = typeof(LogState<>).MakeGenericType(typeof(TNameValuePairList));
-                ConstructorInfo? logStateConstructor = logStateType.GetConstructors().FirstOrDefault(ctor => ctor.GetParameters().Length > 0);
-                FieldInfo? formatterField = logStateType.GetField(nameof(LogState<>.Formatter), BindingFlags.NonPublic | BindingFlags.Static);
-
-                if (openLogMethod != null && logStateConstructor != null && formatterField != null)
-                {
-                    MethodInfo logMethod = openLogMethod.MakeGenericMethod(logStateType);
-
-                    ParameterExpression loggerParameter = Expression.Parameter(typeof(ILogger), "logger");
-                    ParameterExpression logLevelParameter = Expression.Parameter(typeof(LogLevel), "logLevel");
-                    ParameterExpression eventIdParameter = Expression.Parameter(typeof(EventId), "eventId");
-                    ParameterExpression messageDataParameter = Expression.Parameter(typeof(MessageData).MakeByRefType(), "messageData");
-                    ParameterExpression exceptionParameter = Expression.Parameter(typeof(Exception), "exception");
-                    ParameterExpression propertiesParameter = Expression.Parameter(typeof(TNameValuePairList), "properties");
-
-                    Expression body = Expression.Call(
-                        loggerParameter,
-                        logMethod,
-                        logLevelParameter,
-                        eventIdParameter,
-                        Expression.New(logStateConstructor, messageDataParameter, propertiesParameter),
-                        exceptionParameter,
-                        Expression.Field(null, formatterField));
-
-                    Expression<LogDelegate> logExpression =
-                        Expression.Lambda<LogDelegate>(
-                            body, loggerParameter, logLevelParameter, eventIdParameter, messageDataParameter, exceptionParameter, propertiesParameter);
-
-                    _log = logExpression.Compile();
-                }
-            }
-            catch
-            {
-            }
-        }
-        else if (typeof(TNameValuePairList) == typeof(List<KeyValuePair<string, object?>>))
-        {
-            _propertiesGetter = (ref log) =>
-                log._properties ??= (TNameValuePairList)(object)new List<KeyValuePair<string, object?>>();
-        }
-    }
 
     internal OperationLog(
         ILogger? logger,
@@ -137,7 +72,12 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
         if (logger != null && operationName != null)
         {
             MessageData message = new($"Operation starting: {operationName}");
-            _log(logger, logLevel, eventId, in message, null, properties);
+            logger.Log(
+                logLevel,
+                eventId,
+                new LogState<ReadOnlyNameValuePairList<TNameValuePairList>>(in message, new(properties)),
+                null,
+                LogState<ReadOnlyNameValuePairList<TNameValuePairList>>.Formatter);
 
             // Only set the rest of the fields if we know logging is enabled.
             _logger = logger;
@@ -151,11 +91,21 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
     public readonly EventId EventId => _eventId;
 
     /// <summary>
-    /// Gets the collection of properties associated with the operation log.
+    /// Gets the list of name value pairs associated with the operation.
     /// </summary>
-    public TNameValuePairList Properties => _propertiesGetter(ref this);
+    public List<KeyValuePair<string, object?>> Properties
+    {
+        get
+        {
+            if (_listProperties == null)
+            {
+                _listProperties = PropertyListPool.Instance.Get();
+                _listProperties.AddRange(_properties);
+            }
 
-    IReadOnlyList<KeyValuePair<string, object?>> IOperationLog.Properties => Properties;
+            return _listProperties;
+        }
+    }
 
     /// <summary>
     /// Gets the string builder for the operation log. Has a non-null value only when logging is enabled for the operation.
@@ -284,7 +234,27 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
                 additionalNameValuePairs.Add(new("OperationLog", _stringBuilder.ToString()));
 
             MessageData message = new(_operationCompleteMessage, in additionalNameValuePairs);
-            _log(_logger!, _logLevel, _eventId, in message, _exception, _properties);
+
+            if (_listProperties != null)
+            {
+                _logger!.Log(
+                    _logLevel,
+                    _eventId,
+                    new LogState<ReadOnlyNameValuePairList<List<KeyValuePair<string, object?>>>>(in message, new(_listProperties)),
+                    _exception,
+                    LogState<ReadOnlyNameValuePairList<List<KeyValuePair<string, object?>>>>.Formatter);
+
+                PropertyListPool.Instance.Return(_listProperties);
+            }
+            else
+            {
+                _logger!.Log(
+                    _logLevel,
+                    _eventId,
+                    new LogState<ReadOnlyNameValuePairList<TNameValuePairList>>(in message, new(_properties)),
+                    _exception,
+                    LogState<ReadOnlyNameValuePairList<TNameValuePairList>>.Formatter);
+            }
 
             StringBuilderPool.Instance.Return(_stringBuilder);
         }

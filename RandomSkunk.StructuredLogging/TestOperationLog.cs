@@ -4,6 +4,9 @@ using System.Text.Json;
 
 namespace RandomSkunk.StructuredLogging;
 
+/// <summary>
+/// Defines an implementation of the <see cref="IOperationLog"/> suitable for testing.
+/// </summary>
 public abstract class TestOperationLog : IOperationLogInternal
 {
     private StringBuilder? _stringBuilder;
@@ -17,7 +20,7 @@ public abstract class TestOperationLog : IOperationLogInternal
     /// <summary>
     /// Gets or sets the collection of properties associated with the test operation log.
     /// </summary>
-    public IReadOnlyList<KeyValuePair<string, object?>> Properties { get => field ??= []; set => field = value; }
+    public List<KeyValuePair<string, object?>> Properties { get => field ??= []; }
 
     StringBuilder? IOperationLogInternal.StringBuilder => _stringBuilder ??= new();
 

@@ -21,7 +21,7 @@ public static partial class InterpolatedString
 
     [InterpolatedStringHandler]
     public struct OperationLogEntry<TNameValuePairList>
-        where TNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>>
+        where TNameValuePairList : struct, IReadOnlyList<KeyValuePair<string, object?>>
     {
         internal StringBuilder.AppendInterpolatedStringHandler _innerHandler;
 

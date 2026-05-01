@@ -22,9 +22,10 @@ namespace RandomSkunk.StructuredLogging
     /// {
     ///     public int Divide(int dividend, int divisor, int? fallbackValue = null)
     ///     {
-    ///         using IOperationLog log = logger.LogOperation(LogLevel.Information, 1286859363, $"{typeof(Calculator)}.{nameof(Divide)}", dividend, divisor, fallbackValue);
+    ///         using IOperationLog log = logger.LogOperation(LogLevel.Information, 1286859363, $"{typeof(Calculator)}.{nameof(Divide)}",
+    ///             ("Operation.Dividend", dividend), ("Operation.Divisor", divisor), ("Operation.FallbackValue", fallbackValue));
     /// 
-    ///         if (log.IsNotNull(fallbackValue) &amp;&amp; log.Condition(divisor == 0))
+    ///         if (!log.IsNull(fallbackValue) &amp;&amp; log.Condition(divisor == 0))
     ///         {
     ///             log.Append($"Cannot divide by zero. Returning fallback value, {fallbackValue}.");
     ///             return log.ReturnValue(fallbackValue.Value);
@@ -46,14 +47,14 @@ namespace RandomSkunk.StructuredLogging
     public interface IOperationLog : IDisposable
     {
         /// <summary>
-        /// Gets the event id associated with the operation log.
+        /// Gets the event id of the operation log.
         /// </summary>
         EventId EventId { get; }
 
         /// <summary>
-        /// Gets the collection of properties associated with the operation log.
+        /// Gets the list of name value pairs associated with the operation.
         /// </summary>
-        IReadOnlyList<KeyValuePair<string, object?>> Properties { get; }
+        List<KeyValuePair<string, object?>> Properties { get; }
 
         /// <summary>
         /// Appends the interpolated log entry string to the operation log.

@@ -297,7 +297,7 @@ partial class LogOperationExtensions
     private static string? GetLogOperationType(int genericParameterCount) =>
         genericParameterCount switch
         {
-            0 => "OperationLog<List<KeyValuePair<string, object?>>>",
+            0 => "OperationLog<EmptyNameValuePairArray>",
             1 => "OperationLog<LogPropertyTuple<T>>",
             2 => "OperationLog<LogPropertyTuple<T1, T2>>",
             3 => "OperationLog<LogPropertyTuple<T1, T2, T3>>",
@@ -306,7 +306,6 @@ partial class LogOperationExtensions
             6 => "OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6>>",
             7 => "OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7>>",
             8 => "OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7, T8>>",
-            -1 => "OperationLog<ReadOnlyNameValuePairList<TNameValuePairList>>",
             _ => null,
         };
 

@@ -4,6 +4,29 @@ using System.Runtime.InteropServices;
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
+/// Represents an empty, read-only array of name/value pairs.
+/// </summary>
+[StructLayout(LayoutKind.Auto)]
+public readonly struct EmptyNameValuePairArray : IReadOnlyList<KeyValuePair<string, object?>>
+{
+    /// <inheritdoc/>
+    public int Count => 0;
+
+    /// <inheritdoc/>
+    public KeyValuePair<string, object?> this[int index] => throw new IndexOutOfRangeException();
+
+    /// <summary>
+    /// Returns an enumerator that iterates through the collection of name-value pairs.
+    /// </summary>
+    /// <returns>An enumerator that can be used to iterate through the collection of name-value pairs.</returns>
+    public NameValuePairListEnumerator<EmptyNameValuePairArray> GetEnumerator() => new(this);
+
+    IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
+/// <summary>
 /// An immutable array-like structure of name-value pairs backed by an array of <see langword="object"/> log property tuples.
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
