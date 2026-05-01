@@ -36,7 +36,7 @@ namespace RandomSkunk.StructuredLogging
     ///         }
     ///         catch (Exception ex)
     ///         {
-    ///             logger.Error(log.EventId, log.Exception(ex), "Error performing division. Rethrowing exception...", log.Parameters);
+    ///             logger.Error(log.EventId, log.Exception(ex), "Error performing division. Rethrowing exception...", log.Properties);
     ///             throw;
     ///         }
     ///     }
@@ -51,9 +51,9 @@ namespace RandomSkunk.StructuredLogging
         EventId EventId { get; }
 
         /// <summary>
-        /// Gets the collection of parameters associated with the operation log.
+        /// Gets the collection of properties associated with the operation log.
         /// </summary>
-        IReadOnlyList<KeyValuePair<string, object?>> Parameters { get; }
+        IReadOnlyList<KeyValuePair<string, object?>> Properties { get; }
 
         /// <summary>
         /// Appends the interpolated log entry string to the operation log.

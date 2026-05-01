@@ -32,7 +32,7 @@ public abstract class LogOperationExtensionsTests
 
             // Assert
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().BeEmpty();
+            log.Properties.Should().BeEmpty();
         }
 
         [Fact]
@@ -47,7 +47,7 @@ public abstract class LogOperationExtensionsTests
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().BeEmpty();
+            log.Properties.Should().BeEmpty();
         }
 
         [Fact]
@@ -61,7 +61,7 @@ public abstract class LogOperationExtensionsTests
                 log.HasLogLevel(_logLevel)
                 && log.HasMessage("Operation starting: My.Operation"))), Times.Once());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().BeEmpty();
+            log.Properties.Should().BeEmpty();
         }
     }
 
@@ -92,7 +92,7 @@ public abstract class LogOperationExtensionsTests
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(1);
+            log.Properties.Should().HaveCount(1);
         }
 
         [Fact]
@@ -107,7 +107,7 @@ public abstract class LogOperationExtensionsTests
                 && log.HasMessage("Operation starting: My.Operation")
                 && log.HasAttribute("P1", 1))), Times.Once());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(1);
+            log.Properties.Should().HaveCount(1);
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class LogOperationExtensionsTests
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(2);
+            log.Properties.Should().HaveCount(2);
         }
 
         [Fact]
@@ -154,7 +154,7 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P1", 1)
                 && log.HasAttribute("P2", 2))), Times.Once());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(2);
+            log.Properties.Should().HaveCount(2);
         }
     }
 
@@ -185,7 +185,7 @@ public abstract class LogOperationExtensionsTests
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(3);
+            log.Properties.Should().HaveCount(3);
         }
 
         [Fact]
@@ -202,7 +202,7 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P2", 2)
                 && log.HasAttribute("P3", 3))), Times.Once());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(3);
+            log.Properties.Should().HaveCount(3);
         }
     }
 
@@ -233,7 +233,7 @@ public abstract class LogOperationExtensionsTests
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(4);
+            log.Properties.Should().HaveCount(4);
         }
 
         [Fact]
@@ -251,7 +251,7 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P3", 3)
                 && log.HasAttribute("P4", 4))), Times.Once());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(4);
+            log.Properties.Should().HaveCount(4);
         }
     }
 
@@ -282,7 +282,7 @@ public abstract class LogOperationExtensionsTests
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(5);
+            log.Properties.Should().HaveCount(5);
         }
 
         [Fact]
@@ -301,7 +301,7 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P4", 4)
                 && log.HasAttribute("P5", 5))), Times.Once());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(5);
+            log.Properties.Should().HaveCount(5);
         }
     }
 
@@ -332,7 +332,7 @@ public abstract class LogOperationExtensionsTests
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(6);
+            log.Properties.Should().HaveCount(6);
         }
 
         [Fact]
@@ -352,7 +352,7 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P5", 5)
                 && log.HasAttribute("P6", 6))), Times.Once());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(6);
+            log.Properties.Should().HaveCount(6);
         }
     }
 
@@ -383,7 +383,7 @@ public abstract class LogOperationExtensionsTests
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(7);
+            log.Properties.Should().HaveCount(7);
         }
 
         [Fact]
@@ -404,7 +404,7 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P6", 6)
                 && log.HasAttribute("P7", 7))), Times.Once());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(7);
+            log.Properties.Should().HaveCount(7);
         }
     }
 
@@ -435,7 +435,7 @@ public abstract class LogOperationExtensionsTests
             // Assert
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(8);
+            log.Properties.Should().HaveCount(8);
         }
 
         [Fact]
@@ -457,7 +457,7 @@ public abstract class LogOperationExtensionsTests
                 && log.HasAttribute("P7", 7)
                 && log.HasAttribute("P8", 8))), Times.Once());
             log.EventId.Should().Be(_eventId);
-            log.Parameters.Should().HaveCount(8);
+            log.Properties.Should().HaveCount(8);
         }
     }
 }

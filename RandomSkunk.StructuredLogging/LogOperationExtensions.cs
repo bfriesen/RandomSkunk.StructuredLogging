@@ -3,14 +3,8 @@
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
-/// Provides extension methods for writing structured logs that track the start and completion of operations, including support
-/// for logging operation parameters and results.
+/// Provides extension methods for writing structured logs that track the start and completion of operations.
 /// </summary>
-/// <remarks>These extension methods enable consistent, structured logging of operations using an ILogger instance. Each method
-/// returns an IOperationLog object that logs the completion of the operation when disposed, and allows the result of the
-/// operation to be included in the completion log. The methods support various overloads for specifying operation names,
-/// parameters, and custom message formats. This approach helps correlate start and end log entries for operations, and is useful
-/// for diagnostics and performance tracking.</remarks>
 public static partial class LogOperationExtensions
 {
     /// <summary>

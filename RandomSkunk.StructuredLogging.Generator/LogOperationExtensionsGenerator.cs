@@ -23,7 +23,7 @@ public class LogOperationExtensionsGenerator : IIncrementalGenerator
 """;
 
     private const string _parameterMarkerParam = """
-    /// <param name="parameterMarker">A unique, non-string parameter to divide operation parameters and operation parameter
+    /// <param name="parameterMarker">A unique, non-string parameter to divide operation properties and operation parameter
     /// names.</param>
 """;
 
@@ -35,23 +35,23 @@ public class LogOperationExtensionsGenerator : IIncrementalGenerator
     /// <param name="operationName">The name of the operation.</param>
 """;
 
-    private const string _operationParameterParam = """
-    /// <param name="operationParameter">The operation parameter. If this value implements
-    /// <c>IReadOnlyList&lt;KeyValuePair&lt;string, object?&gt;&gt;</c>, then it is used as operation log's parameters.</param>
+    private const string _propertyParam = """
+    /// <param name="property">The operation property. If this value implements
+    /// <c>IReadOnlyList&lt;KeyValuePair&lt;string, object?&gt;&gt;</c>, then it is used as operation log's properties.</param>
 """;
 
-    private const string _operationParameterNParamFormat = """
-    /// <param name="operationParameter{0}">The {1} operation parameter.</param>
+    private const string _propertyNParamFormat = """
+    /// <param name="property{0}">The {1} operation property.</param>
 """;
 
-    private const string _operationParameterNameParam = """
-    /// <param name="operationParameterName">The name of the operation parameter, typically supplied automatically by the
-    /// compiler. Ignored if <paramref name="operationParameter"/> implements
+    private const string _propertyNameParam = """
+    /// <param name="propertyName">The name of the operation property, typically supplied automatically by the
+    /// compiler. Ignored if <paramref name="property"/> implements
     /// <c>IReadOnlyList&lt;KeyValuePair&lt;string, object?&gt;&gt;</c>.</param>
 """;
 
-    private const string _operationParameterNNameParamFormat = """
-    /// <param name="operationParameter{0}Name">The name of the {1} operation parameter, typically supplied automatically by the
+    private const string _propertyNNameParamFormat = """
+    /// <param name="property{0}Name">The name of the {1} operation property, typically supplied automatically by the
     /// compiler.</param>
 """;
 
@@ -128,22 +128,22 @@ partial class LogOperationExtensions
 
         if (genericParameterCount == 1)
         {
-            sb.AppendLine(_operationParameterParam);
+            sb.AppendLine(_propertyParam);
             sb.AppendLine(_parameterMarkerParam);
-            sb.AppendLine(_operationParameterNameParam);
+            sb.AppendLine(_propertyNameParam);
         }
         else
         {
             for (int i = 1; i <= genericParameterCount; i++)
             {
-                sb.AppendFormat(_operationParameterNParamFormat, i, GetOridinal(i)).AppendLine();
+                sb.AppendFormat(_propertyNParamFormat, i, GetOridinal(i)).AppendLine();
             }
 
             sb.AppendLine(_parameterMarkerParam);
             
             for (int i = 1; i <= genericParameterCount; i++)
             {
-                sb.AppendFormat(_operationParameterNNameParamFormat, i, GetOridinal(i)).AppendLine();
+                sb.AppendFormat(_propertyNNameParamFormat, i, GetOridinal(i)).AppendLine();
             }
         }
         
@@ -190,9 +190,9 @@ partial class LogOperationExtensions
         else if (genericParameterCount == 1)
         {
             sb.AppendLine(",").AppendLine("""
-        T operationParameter,
+        T property,
         ParameterMarker parameterMarker = default,
-        [CallerArgumentExpression(nameof(operationParameter))] string operationParameterName = null!) =>
+        [CallerArgumentExpression(nameof(property))] string propertyName = null!) =>
 """);
         }
         else if (genericParameterCount > 1)
@@ -202,7 +202,7 @@ partial class LogOperationExtensions
             for (int i = 1; i <= genericParameterCount; i++)
             {
                 sb.AppendFormat("""
-        T{0} operationParameter{0},
+        T{0} property{0},
 """, i).AppendLine();
             }
 
@@ -213,12 +213,12 @@ partial class LogOperationExtensions
             for (int i = 1; i < genericParameterCount; i++)
             {
                 sb.AppendFormat("""
-        [CallerArgumentExpression(nameof(operationParameter{0}))] string operationParameter{0}Name = null!,
+        [CallerArgumentExpression(nameof(property{0}))] string property{0}Name = null!,
 """, i).AppendLine();
             }
 
             sb.AppendFormat("""
-        [CallerArgumentExpression(nameof(operationParameter{0}))] string operationParameter{0}Name = null!) =>
+        [CallerArgumentExpression(nameof(property{0}))] string property{0}Name = null!) =>
 """, genericParameterCount).AppendLine();
         }
 
@@ -272,7 +272,7 @@ partial class LogOperationExtensions
         else if (genericParameterCount == 1)
         {
             sb.AppendLine(",").AppendLine("""
-            (operationParameterName, operationParameter));
+            (propertyName, property));
 """);
         }
         else if (genericParameterCount > 1)
@@ -282,12 +282,12 @@ partial class LogOperationExtensions
             for (int i = 1; i < genericParameterCount; i++)
             {
                 sb.AppendFormat("""
-            (operationParameter{0}Name, operationParameter{0}),
+            (property{0}Name, property{0}),
 """, i).AppendLine();
             }
 
             sb.AppendFormat("""
-            (operationParameter{0}Name, operationParameter{0}));
+            (property{0}Name, property{0}));
 """, genericParameterCount).AppendLine();
         }
 

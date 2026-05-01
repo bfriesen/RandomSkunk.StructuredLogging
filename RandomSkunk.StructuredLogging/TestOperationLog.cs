@@ -15,9 +15,9 @@ public abstract class TestOperationLog : IOperationLogInternal
     public EventId EventId { get; set; }
 
     /// <summary>
-    /// Gets or sets the collection of parameters associated with the test operation log.
+    /// Gets or sets the collection of properties associated with the test operation log.
     /// </summary>
-    public IReadOnlyList<KeyValuePair<string, object?>> Parameters { get => field ??= []; set => field = value; }
+    public IReadOnlyList<KeyValuePair<string, object?>> Properties { get => field ??= []; set => field = value; }
 
     StringBuilder? IOperationLogInternal.StringBuilder => _stringBuilder ??= new();
 

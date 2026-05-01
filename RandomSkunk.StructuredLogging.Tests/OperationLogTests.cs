@@ -84,42 +84,42 @@ public abstract class OperationLogTests
         }
     }
 
-    public class ParametersProperty : OperationLogTests
+    public class PropertiesProperty : OperationLogTests
     {
         [Fact]
-        public void GivenNoLogger_ReturnsParameters()
+        public void GivenNoLogger_ReturnsProperties()
         {
             var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
 
-            log.Parameters.Should().HaveCount(2);
-            log.Parameters[0].Key.Should().Be("Foo");
-            log.Parameters[0].Value.Should().Be("abc");
-            log.Parameters[1].Key.Should().Be("Bar");
-            log.Parameters[1].Value.Should().Be(123);
+            log.Properties.Should().HaveCount(2);
+            log.Properties[0].Key.Should().Be("Foo");
+            log.Properties[0].Value.Should().Be("abc");
+            log.Properties[1].Key.Should().Be("Bar");
+            log.Properties[1].Value.Should().Be(123);
         }
 
         [Fact]
-        public void GivenNoOperationName_ReturnsParameters()
+        public void GivenNoOperationName_ReturnsProperties()
         {
             var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, null, new());
 
-            log.Parameters.Should().HaveCount(2);
-            log.Parameters[0].Key.Should().Be("Foo");
-            log.Parameters[0].Value.Should().Be("abc");
-            log.Parameters[1].Key.Should().Be("Bar");
-            log.Parameters[1].Value.Should().Be(123);
+            log.Properties.Should().HaveCount(2);
+            log.Properties[0].Key.Should().Be("Foo");
+            log.Properties[0].Value.Should().Be("abc");
+            log.Properties[1].Key.Should().Be("Bar");
+            log.Properties[1].Value.Should().Be(123);
         }
 
         [Fact]
-        public void GivenLoggerAndOperationName_ReturnsParameters()
+        public void GivenLoggerAndOperationName_ReturnsProperties()
         {
             var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
 
-            log.Parameters.Should().HaveCount(2);
-            log.Parameters[0].Key.Should().Be("Foo");
-            log.Parameters[0].Value.Should().Be("abc");
-            log.Parameters[1].Key.Should().Be("Bar");
-            log.Parameters[1].Value.Should().Be(123);
+            log.Properties.Should().HaveCount(2);
+            log.Properties[0].Key.Should().Be("Foo");
+            log.Properties[0].Value.Should().Be("abc");
+            log.Properties[1].Key.Should().Be("Bar");
+            log.Properties[1].Value.Should().Be(123);
         }
     }
 
