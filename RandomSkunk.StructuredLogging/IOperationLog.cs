@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.Json;
 
 namespace RandomSkunk.StructuredLogging
 {
@@ -12,38 +11,8 @@ namespace RandomSkunk.StructuredLogging
     }
 
     /// <summary>
-    /// Defines the interface for an operation log. When disposed, writes a structured log indicating that the operation is
-    /// complete.
+    /// Defines the interface for an operation log that writes its contents when disposed.
     /// </summary>
-    /// <remarks>
-    /// Example:
-    /// <code>
-    /// public class Calculator(ILogger&lt;Calculator> logger)
-    /// {
-    ///     public int Divide(int dividend, int divisor, int? fallbackValue = null)
-    ///     {
-    ///         using IOperationLog log = logger.LogOperation(LogLevel.Information, 1286859363, $"{typeof(Calculator)}.{nameof(Divide)}",
-    ///             ("Operation.Dividend", dividend), ("Operation.Divisor", divisor), ("Operation.FallbackValue", fallbackValue));
-    /// 
-    ///         if (!log.IsNull(fallbackValue) &amp;&amp; log.Condition(divisor == 0))
-    ///         {
-    ///             log.Append($"Cannot divide by zero. Returning fallback value, {fallbackValue}.");
-    ///             return log.ReturnValue(fallbackValue.Value);
-    ///         }
-    /// 
-    ///         try
-    ///         {
-    ///             return log.ReturnValue(dividend / divisor);
-    ///         }
-    ///         catch (Exception ex)
-    ///         {
-    ///             logger.Error(log.EventId, log.Exception(ex), "Error performing division. Rethrowing exception...", log.Properties);
-    ///             throw;
-    ///         }
-    ///     }
-    /// }
-    /// </code>
-    /// </remarks>
     public interface IOperationLog : IDisposable
     {
         /// <summary>
@@ -65,7 +34,7 @@ namespace RandomSkunk.StructuredLogging
             ref InterpolatedString.OperationLogEntry logEntry);
 
         /// <summary>
-        /// Sets the <c>ReturnValue</c> property of the operation complete log and returns the same value.
+        /// Sets the <c>Operation.ReturnValue</c> property of the operation log and returns the same value.
         /// </summary>
         /// <typeparam name="T">The type of the return value.</typeparam>
         /// <param name="returnValue">The return value of the operation.</param>
@@ -77,7 +46,7 @@ namespace RandomSkunk.StructuredLogging
             [CallerArgumentExpression(nameof(returnValue))] string returnValueExpression = null!);
 
         /// <summary>
-        /// Sets the exception of the operation complete log and returns the same exception.
+        /// Sets the exception of the operation log and returns the same exception.
         /// </summary>
         /// <typeparam name="TException">The type of exception to set and return. Must derive from Exception.</typeparam>
         /// <param name="exception">The exception instance to set as the current error.</param>
@@ -90,7 +59,7 @@ namespace RandomSkunk.StructuredLogging
             where TException : Exception;
 
         /// <summary>
-        /// Adds a log entry containing the specified value and its original expression to the completion log's <c>OperationLog</c>
+        /// Adds a log entry containing the specified value and its original expression to the operation log's <c>Operation.Log</c>
         /// property, then returns the same value.
         /// </summary>
         /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `httpResponse.StatusCode` is NotFound</c>" to
@@ -111,11 +80,11 @@ namespace RandomSkunk.StructuredLogging
             string valueExpression = null!);
 
         /// <summary>
-        /// Adds a log entry containing the specified boolean condition and its original expression to the completion log's
-        /// <c>OperationLog</c> property, then returns the same value.
+        /// Adds a log entry containing the specified boolean value and its original expression to the operation log's
+        /// <c>Operation.Log</c> property, then returns the same value.
         /// </summary>
-        /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `divisor == 0` is true</c>" to the operation
-        /// log:
+        /// <remarks>The following example adds an entry in the format "<c>[20:57:24.615Z] `divisor == 0` is [true|false]</c>" to
+        /// the operation log:
         /// <code>
         /// if (log.Condition(divisor == 0))
         ///     ...
@@ -131,10 +100,10 @@ namespace RandomSkunk.StructuredLogging
             string conditionExpression = null!);
 
         /// <summary>
-        /// Returns whether the specified value is null. If logging is enabled for the operation, also appends a log entry to the
-        /// operation log that indicates whether the value is null.
+        /// Returns whether the specified value is null and adds a log entry to the operation log's <c>Operation.Log</c> property
+        /// indicating as such.
         /// </summary>
-        /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `firstName == null` is true</c>" to the
+        /// <remarks>The following example adds an entry in the format "<c>[20:57:24.615Z] `firstName` is [not] null</c>" to the
         /// operation log:
         /// <code>
         /// if (log.IsNull(firstName))
@@ -153,11 +122,11 @@ namespace RandomSkunk.StructuredLogging
             where T : class?;
 
         /// <summary>
-        /// Returns whether the specified value is null. If logging is enabled for the operation, also appends a log entry to the
-        /// operation log that indicates whether the value is null.
+        /// Returns whether the specified value is null and adds a log entry to the operation log's <c>Operation.Log</c> property
+        /// indicating as such.
         /// </summary>
-        /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `monthlyIncome == null` is true</c>" to the
-        /// operation log:
+        /// <remarks>The following example adds an entry in the format "<c>[20:57:24.615Z] `monthlyIncome` is [not] null</c>" to
+        /// the operation log:
         /// <code>
         /// if (log.IsNull(monthlyIncome))
         ///     ...
@@ -176,11 +145,11 @@ namespace RandomSkunk.StructuredLogging
             where T : struct;
 
         /// <summary>
-        /// Returns whether the specified value is null or empty. If logging is enabled for the operation, also appends a log entry
-        /// to the operation log that indicates whether the value is null or empty.
+        /// Returns whether the specified value is null or empty and adds a log entry to the operation log's <c>Operation.Log</c>
+        /// property indicating as such.
         /// </summary>
-        /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `string.IsNullOrEmpty(firstName)` is true</c>"
-        /// to the operation log:
+        /// <remarks>The following example adds an entry in the format "<c>[20:57:24.615Z] `firstName` is [not] null or
+        /// empty</c>" to the operation log:
         /// <code>
         /// if (log.IsNullOrEmpty(firstName))
         ///     ...
@@ -197,11 +166,11 @@ namespace RandomSkunk.StructuredLogging
             string valueExpression = null!);
 
         /// <summary>
-        /// Returns whether the specified value is null or whitespace. If logging is enabled for the operation, also appends a log entry
-        /// to the operation log that indicates whether the value is null or whitespace.
+        /// Returns whether the specified value is null or whitespace and adds a log entry to the operation log's
+        /// <c>Operation.Log</c> property indicating as such.
         /// </summary>
-        /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `string.IsNullOrWhiteSpace(firstName)` is
-        /// true</c>" to the operation log:
+        /// <remarks>The following example adds an entry in the format "<c>[20:57:24.615Z] `firstName` is [not] null or
+        /// whitespace</c>" to the operation log:
         /// <code>
         /// if (log.IsNullOrWhiteSpace(firstName))
         ///     ...
