@@ -111,28 +111,6 @@ namespace RandomSkunk.StructuredLogging
             string valueExpression = null!);
 
         /// <summary>
-        /// Adds a log entry containing the specified value, JSON serialized, and its original expression to the completion log's
-        /// <c>OperationLog</c> property, then returns the same value.
-        /// </summary>
-        /// <remarks>The following example adds an entry similar to "<c>[20:57:24.615Z] `contact` is
-        /// {"firstName":"Joe","lastName":"Public"}</c>" to the operation log:
-        /// <code>
-        /// log.JsonValue(contact);
-        /// </code>
-        /// </remarks>
-        /// <typeparam name="T">The type of the value.</typeparam>
-        /// <param name="value">The value to log and return.</param>
-        /// <param name="options">Options to control serialization behavior.</param>
-        /// <param name="valueExpression">The string representation of the original expression passed as the value. This is
-        /// automatically provided by the compiler and should not be set manually.</param>
-        /// <returns>The <paramref name="value"/> parameter.</returns>
-        T JsonValue<T>(
-            T value,
-            JsonSerializerOptions? options = null,
-            [CallerArgumentExpression(nameof(value))]
-            string valueExpression = null!);
-
-        /// <summary>
         /// Adds a log entry containing the specified boolean condition and its original expression to the completion log's
         /// <c>OperationLog</c> property, then returns the same value.
         /// </summary>

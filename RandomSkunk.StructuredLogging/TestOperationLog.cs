@@ -56,13 +56,6 @@ public abstract class TestOperationLog : IOperationLogInternal
     public abstract void Value<T>(T value);
 
     /// <summary>
-    /// Invoked when the test operation log's <see cref="IOperationLog.JsonValue"/> method is called.
-    /// </summary>
-    /// <typeparam name="T">The type of the value.</typeparam>
-    /// <param name="value">The value to log.</param>
-    public abstract void JsonValue<T>(T value);
-
-    /// <summary>
     /// Invoked when the test operation log's <see cref="IOperationLog.Condition"/> method is called.
     /// </summary>
     /// <param name="condition">The boolean condition to log.</param>
@@ -138,15 +131,6 @@ public abstract class TestOperationLog : IOperationLogInternal
         if (!_isDisposed)
         {
             Value(value);
-        }
-        return value;
-    }
-
-    T IOperationLog.JsonValue<T>(T value, JsonSerializerOptions? options, string valueExpression)
-    {
-        if (!_isDisposed)
-        {
-            JsonValue(value);
         }
         return value;
     }

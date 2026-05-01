@@ -53,16 +53,6 @@ public class TestOperationLogTests
         Assert.Equal(expectedValue, actualValue);
     }
 
-    [Fact]
-    public void InterfaceJsonValueMethod_PassesValueToAbstractJsonValueMethod()
-    {
-        const int expectedJsonValue = 123;
-        int actualJsonValue = _log.JsonValue(expectedJsonValue);
-
-        _mockLog.Verify(m => m.JsonValue(expectedJsonValue), Times.Once());
-        Assert.Equal(expectedJsonValue, actualJsonValue);
-    }
-
     [Theory]
     [InlineData(true)]
     [InlineData(false)]

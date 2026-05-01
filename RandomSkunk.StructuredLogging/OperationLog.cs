@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.Json;
 
 namespace RandomSkunk.StructuredLogging;
 
@@ -158,16 +157,6 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
         [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
     {
         Append($"`{valueExpression}` is {value?.ToString() ?? "null"}");
-        return value;
-    }
-
-    /// <inheritdoc/>
-    public readonly T JsonValue<T>(
-        T value,
-        JsonSerializerOptions? options = null,
-        [CallerArgumentExpression(nameof(value))] string valueExpression = null!)
-    {
-        Append($"`{valueExpression}` is {JsonSerializer.Serialize(value, options)}");
         return value;
     }
 
