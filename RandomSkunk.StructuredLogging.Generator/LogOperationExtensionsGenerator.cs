@@ -10,20 +10,20 @@ public class LogOperationExtensionsGenerator : IIncrementalGenerator
 {
     private const string _summaryFormat = """
     /// <summary>
-    /// Writes a structured log at the {0} level indicating that the specified operation is starting.
+    /// Creates an operation log that writes its contents when disposed.
     /// </summary>
 """;
 
     private const string _loggerParam = """
-    /// <param name="logger">The <see cref="ILogger"/> to write to.</param>
+    /// <param name="logger">The <see cref="ILogger"/> to write to when the operation log is disposed.</param>
 """;
 
     private const string _eventIdParam = """
-    /// <param name="eventId">The <see cref="EventId"/> associated with the operation.</param>
+    /// <param name="eventId">The <see cref="EventId"/> associated with the operation log.</param>
 """;
 
     private const string _logLevelParam = """
-    /// <param name="logLevel">The level at which to log the operation.</param>
+    /// <param name="logLevel">The level at which the operation log is written.</param>
 """;
 
     private const string _operationNameParam = """
@@ -35,8 +35,7 @@ public class LogOperationExtensionsGenerator : IIncrementalGenerator
 """;
 
     private const string _returnsFormat = """
-    /// <returns>An <see cref="OperationLog{{TNameValuePairList}}"/> object that, when disposed, writes a structured log at the
-    /// {0} level indicating that the operation is complete.</returns>
+    /// <returns>An <see cref="OperationLog{{TNameValuePairList}}"/> object that writes its contents when disposed.</returns>
 """;
 
     public void Initialize(IncrementalGeneratorInitializationContext context) =>
@@ -171,7 +170,7 @@ partial class LogOperationExtensions
         }
 
         sb.AppendLine("""
-        logger.LogOperation(
+        new(logger,
 """);
 
         if (logLevelParameter)
@@ -202,40 +201,37 @@ partial class LogOperationExtensions
 
         if (logLevelParameter)
         {
-            sb.Append("""
-            operationName.ToStringAndClear()
+            sb.AppendLine("""
+            operationName.ToStringAndClear(),
 """);
         }
         else
         {
-            sb.Append("""
-            operationName._innerHandler.ToStringAndClear()
+            sb.AppendLine("""
+            operationName._innerHandler.ToStringAndClear(),
 """);
         }
 
-        if (genericParameterCount == 0)
-        {
-            sb.AppendLine(");");
-        }
-        else if (genericParameterCount == 1)
-        {
-            sb.AppendLine(",").AppendLine("""
-            in property);
+        sb.Append("""
+            new(
 """);
+
+        if (genericParameterCount == 1)
+        {
+            sb.Append("in property");
         }
-        else if (genericParameterCount > 1)
+        else
         {
             for (int i = 1; i <= genericParameterCount; i++)
             {
-                sb.AppendLine(",").AppendFormat("""
-            in property{0}
-""", i);
-            }
+                if (i > 1)
+                    sb.Append(", ");
 
-            sb.AppendLine(");");
+                sb.AppendFormat("in property{0}", i);
+            }
         }
 
-        sb.AppendLine();
+        sb.AppendLine("));").AppendLine();
     }
 
     private static string? GetLogOperationType(int genericParameterCount) =>
