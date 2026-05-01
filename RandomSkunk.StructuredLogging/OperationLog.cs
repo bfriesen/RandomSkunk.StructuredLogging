@@ -62,28 +62,22 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
         ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationName,
+        string? operationCompleteMessage,
         TNameValuePairList properties)
     {
         // Always set the properties and event id fields.
         _properties = properties;
         _eventId = eventId;
 
-        if (logger != null && operationName != null)
+        if (logger != null && operationCompleteMessage != null)
         {
-            MessageData message = new($"Operation starting: {operationName}");
-            logger.Log(
-                logLevel,
-                eventId,
-                new LogState<ReadOnlyNameValuePairList<TNameValuePairList>>(in message, new(properties)),
-                null,
-                LogState<ReadOnlyNameValuePairList<TNameValuePairList>>.Formatter);
-
             // Only set the rest of the fields if we know logging is enabled.
             _logger = logger;
             _logLevel = logLevel;
-            _operationCompleteMessage = $"Operation complete: {operationName}";
+            _operationCompleteMessage = operationCompleteMessage;
             _stringBuilder = StringBuilderPool.Instance.Get();
+
+            Append($"Operation started");
         }
     }
 
@@ -227,11 +221,13 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
     {
         if (_stringBuilder != null)
         {
+            Append($"Operation complete");
+
             NameValuePairList2 additionalNameValuePairs = new();
             if (_hasReturnValue)
                 additionalNameValuePairs.Add(new("ReturnValue", _returnValue));
-            if (_stringBuilder.Length > 0)
-                additionalNameValuePairs.Add(new("OperationLog", _stringBuilder.ToString()));
+
+            additionalNameValuePairs.Add(new("OperationLog", _stringBuilder.ToString()));
 
             MessageData message = new(_operationCompleteMessage, in additionalNameValuePairs);
 

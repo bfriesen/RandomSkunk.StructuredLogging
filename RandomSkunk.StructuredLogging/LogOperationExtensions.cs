@@ -11,57 +11,57 @@ public static partial class LogOperationExtensions
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationName) =>
+        string? operationCompleteMessage) =>
         new(logger,
             logLevel,
             eventId,
-            operationName,
+            operationCompleteMessage,
             new());
 
     internal static OperationLog<LogPropertyTuple<T>> LogOperation<T>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationName,
+        string? operationCompleteMessage,
         ref readonly (string Name, T Value) logProperty) =>
         new(logger,
             logLevel,
             eventId,
-            operationName,
+            operationCompleteMessage,
             new(in logProperty));
 
     internal static OperationLog<LogPropertyTuple<T1, T2>> LogOperation<T1, T2>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationName,
+        string? operationCompleteMessage,
         ref readonly (string, T1) logProperty1,
         ref readonly (string, T2) logProperty2) =>
         new(logger,
             logLevel,
             eventId,
-            operationName,
+            operationCompleteMessage,
             new(in logProperty1, in logProperty2));
 
     internal static OperationLog<LogPropertyTuple<T1, T2, T3>> LogOperation<T1, T2, T3>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationName,
+        string? operationCompleteMessage,
         ref readonly (string, T1) logProperty1,
         ref readonly (string, T2) logProperty2,
         ref readonly (string, T3) logProperty3) =>
         new(logger,
             logLevel,
             eventId,
-            operationName,
+            operationCompleteMessage,
             new(in logProperty1, in logProperty2, in logProperty3));
 
     internal static OperationLog<LogPropertyTuple<T1, T2, T3, T4>> LogOperation<T1, T2, T3, T4>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationName,
+        string? operationCompleteMessage,
         ref readonly (string, T1) logProperty1,
         ref readonly (string, T2) logProperty2,
         ref readonly (string, T3) logProperty3,
@@ -69,14 +69,14 @@ public static partial class LogOperationExtensions
         new(logger,
             logLevel,
             eventId,
-            operationName,
+            operationCompleteMessage,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4));
 
     internal static OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5>> LogOperation<T1, T2, T3, T4, T5>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationName,
+        string? operationCompleteMessage,
         ref readonly (string, T1) logProperty1,
         ref readonly (string, T2) logProperty2,
         ref readonly (string, T3) logProperty3,
@@ -85,14 +85,14 @@ public static partial class LogOperationExtensions
         new(logger,
             logLevel,
             eventId,
-            operationName,
+            operationCompleteMessage,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5));
 
     internal static OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6>> LogOperation<T1, T2, T3, T4, T5, T6>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationName,
+        string? operationCompleteMessage,
         ref readonly (string, T1) logProperty1,
         ref readonly (string, T2) logProperty2,
         ref readonly (string, T3) logProperty3,
@@ -102,14 +102,14 @@ public static partial class LogOperationExtensions
         new(logger,
             logLevel,
             eventId,
-            operationName,
+            operationCompleteMessage,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6));
 
     internal static OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7>> LogOperation<T1, T2, T3, T4, T5, T6, T7>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationName,
+        string? operationCompleteMessage,
         ref readonly (string, T1) logProperty1,
         ref readonly (string, T2) logProperty2,
         ref readonly (string, T3) logProperty3,
@@ -120,14 +120,14 @@ public static partial class LogOperationExtensions
         new(logger,
             logLevel,
             eventId,
-            operationName,
+            operationCompleteMessage,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7));
 
     internal static OperationLog<LogPropertyTuple<T1, T2, T3, T4, T5, T6, T7, T8>> LogOperation<T1, T2, T3, T4, T5, T6, T7, T8>(
         this ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationName,
+        string? operationCompleteMessage,
         ref readonly (string, T1) logProperty1,
         ref readonly (string, T2) logProperty2,
         ref readonly (string, T3) logProperty3,
@@ -139,6 +139,6 @@ public static partial class LogOperationExtensions
         new(logger,
             logLevel,
             eventId,
-            operationName,
+            operationCompleteMessage,
             new(in logProperty1, in logProperty2, in logProperty3, in logProperty4, in logProperty5, in logProperty6, in logProperty7, in logProperty8));
 }

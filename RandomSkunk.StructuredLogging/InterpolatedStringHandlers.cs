@@ -116,7 +116,10 @@ public static partial class InterpolatedString
         {
             _isEnabled = isEnabled = logger != null && logger.IsEnabled(logLevel);
             if (isEnabled)
-                _innerHandler = new(literalLength, formattedCount, CultureInfo.InvariantCulture);
+            {
+                _innerHandler = new(literalLength + 20, formattedCount, CultureInfo.InvariantCulture);
+                _innerHandler.AppendLiteral("Operation complete: ");
+            }
         }
 
         [EditorBrowsable(Never)] public void AppendFormatted<T>(T value) => _innerHandler.AppendFormatted(value);

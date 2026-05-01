@@ -7,8 +7,8 @@ namespace RandomSkunk.StructuredLogging.Tests;
 
 public abstract class OperationLogTests
 {
-    private readonly Mock<EasyLogger<LogOperationExtensionsTests>> _mockLogger = new();
-    private readonly ILogger<LogOperationExtensionsTests> _logger;
+    private readonly Mock<EasyLogger> _mockLogger = new();
+    private readonly ILogger _logger;
 
     public OperationLogTests()
     {
@@ -20,9 +20,9 @@ public abstract class OperationLogTests
         [Fact]
         public void GivenNoLogger_DoesNothing()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "Operation complete: My.Operation", new());
 
-            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+            Assert.Null(log.StringBuilder);
         }
 
         [Fact]
@@ -30,21 +30,16 @@ public abstract class OperationLogTests
         {
             var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, null, new());
 
-            _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
+            Assert.Null(log.StringBuilder);
         }
 
         [Fact]
         public void GivenLoggerAndOperationName_WritesOperationStartingLog()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "Operation complete: My.Operation", new());
 
-            _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
-                log.IsInformation()
-                && log.EventId.Id == 456
-                && log.HasMessage("Operation starting: My.Operation")
-                && log.HasNoException()
-                && log.HasAttribute("Foo", "abc")
-                && log.HasAttribute("Bar", 123))), Times.Once());
+            Assert.NotNull(log.StringBuilder);
+            Assert.Contains("Operation started", log.StringBuilder.ToString());
         }
     }
 
@@ -53,7 +48,7 @@ public abstract class OperationLogTests
         [Fact]
         public void GivenNoLogger_DoesNothing()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.Dispose();
 
             _mockLogger.Verify(m => m.Write(It.IsAny<LogEntry>()), Times.Never());
@@ -71,7 +66,7 @@ public abstract class OperationLogTests
         [Fact]
         public void GivenLoggerAndOperationName_WritesOperationStartingLog()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.Dispose();
 
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
@@ -89,7 +84,7 @@ public abstract class OperationLogTests
         [Fact]
         public void GivenNoLogger_ReturnsProperties()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "Operation complete: My.Operation", new());
 
             log.Properties.Should().HaveCount(2);
             log.Properties[0].Key.Should().Be("Foo");
@@ -113,7 +108,7 @@ public abstract class OperationLogTests
         [Fact]
         public void GivenLoggerAndOperationName_ReturnsProperties()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "Operation complete: My.Operation", new());
 
             log.Properties.Should().HaveCount(2);
             log.Properties[0].Key.Should().Be("Foo");
@@ -128,7 +123,7 @@ public abstract class OperationLogTests
         [Fact]
         public void GivenNoLogger_ReturnsEventId()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 123, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 123, "Operation complete: My.Operation", new());
 
             log.EventId.Id.Should().Be(123);
         }
@@ -144,7 +139,7 @@ public abstract class OperationLogTests
         [Fact]
         public void GivenLoggerAndOperationName_ReturnsEventId()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 123, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 123, "Operation complete: My.Operation", new());
 
             log.EventId.Id.Should().Be(123);
         }
@@ -155,7 +150,7 @@ public abstract class OperationLogTests
         [Fact]
         public void GivenNoLogger_UponDispose_DoesNothing()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.ReturnValue(true).Should().BeTrue();
             log.Dispose();
 
@@ -176,7 +171,7 @@ public abstract class OperationLogTests
         public void GivenLoggerAndOperationName_UponDispose_LogsOperationComplete()
         {
             const bool returnValue = true;
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.ReturnValue(returnValue).Should().BeTrue();
             log.Dispose();
 
@@ -194,7 +189,7 @@ public abstract class OperationLogTests
         public void GivenNoLogger_UponDispose_DoesNothing()
         {
             object? myValue = null;
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.IsNull(myValue).Should().BeTrue();
             log.Dispose();
 
@@ -216,7 +211,7 @@ public abstract class OperationLogTests
         public void GivenLoggerAndOperationName_UponDispose_LogsOperationComplete()
         {
             object? myValue = null;
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.IsNull(myValue).Should().BeTrue();
             log.Dispose();
 
@@ -234,7 +229,7 @@ public abstract class OperationLogTests
         [InlineData("")]
         public void GivenNoLogger_UponDispose_DoesNothing(string? myValue)
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.IsNullOrEmpty(myValue).Should().BeTrue();
             log.Dispose();
 
@@ -258,7 +253,7 @@ public abstract class OperationLogTests
         [InlineData("")]
         public void GivenLoggerAndOperationName_UponDispose_LogsOperationComplete(string? myValue)
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.IsNullOrEmpty(myValue).Should().BeTrue();
             log.Dispose();
 
@@ -277,7 +272,7 @@ public abstract class OperationLogTests
         [InlineData(" ")]
         public void GivenNoLogger_UponDispose_DoesNothing(string? myValue)
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.IsNullOrWhiteSpace(myValue).Should().BeTrue();
             log.Dispose();
 
@@ -303,7 +298,7 @@ public abstract class OperationLogTests
         [InlineData(" ")]
         public void GivenLoggerAndOperationName_UponDispose_LogsOperationComplete(string? myValue)
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.IsNullOrWhiteSpace(myValue).Should().BeTrue();
             log.Dispose();
 
@@ -320,7 +315,7 @@ public abstract class OperationLogTests
         public void GivenNoLogger_UponDispose_DoesNothing()
         {
             var ex = new Exception();
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.Exception(ex).Should().BeSameAs(ex);
             log.Dispose();
 
@@ -342,7 +337,7 @@ public abstract class OperationLogTests
         public void GivenLoggerAndOperationName_UponDispose_LogsOperationComplete()
         {
             InvalidOperationException ex = new();
-            OperationLog<TwoItemNameValuePairList> log = new(_logger, LogLevel.Information, 456, "My.Operation", new());
+            OperationLog<TwoItemNameValuePairList> log = new(_logger, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.Exception(ex).Should().BeSameAs(ex);
             log.Dispose();
 
@@ -360,7 +355,7 @@ public abstract class OperationLogTests
         public void GivenNoLogger_UponDispose_DoesNothing()
         {
             const int x = 12345;
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.Condition(x == 12345).Should().Be(true);
             log.Dispose();
 
@@ -382,7 +377,7 @@ public abstract class OperationLogTests
         public void GivenLoggerAndOperationName_UponDispose_LogsOperationComplete()
         {
             const int x = 12345;
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.Condition(x == 12345).Should().Be(true);
             log.Dispose();
 
@@ -398,7 +393,7 @@ public abstract class OperationLogTests
         [Fact]
         public void GivenNoLogger_UponDispose_DoesNothing()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(null, LogLevel.Information, 456, "Operation complete: My.Operation", new());
 
             log.Dispose();
             log.Append($"Hello, world!");
@@ -418,7 +413,7 @@ public abstract class OperationLogTests
         [Fact]
         public void GivenLoggerAndOperationName_UponDispose_LogsOperationComplete()
         {
-            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "My.Operation", new());
+            var log = new OperationLog<TwoItemNameValuePairList>(_logger, LogLevel.Information, 456, "Operation complete: My.Operation", new());
             log.Append($"Hello, world!");
             log.Dispose();
 
