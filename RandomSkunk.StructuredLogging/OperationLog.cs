@@ -214,9 +214,9 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
 
             NameValuePairList2 additionalNameValuePairs = new();
             if (_hasReturnValue)
-                additionalNameValuePairs.Add(new("ReturnValue", _returnValue));
+                additionalNameValuePairs.Add(new("Operation.ReturnValue", _returnValue));
 
-            additionalNameValuePairs.Add(new("OperationLog", _stringBuilder.ToString()));
+            additionalNameValuePairs.Add(new("Operation.Log", _stringBuilder.ToString()));
 
             MessageData message = new(_operationCompleteMessage, in additionalNameValuePairs);
 

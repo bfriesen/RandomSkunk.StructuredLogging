@@ -177,8 +177,8 @@ public abstract class OperationLogTests
 
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("ReturnValue", true)
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("Return value set to `returnValue`")))),
+                && log.HasAttribute("Operation.ReturnValue", true)
+                && log.HasAttribute("Operation.Log", value => value is string && ((string)value).Contains("Return value set to `returnValue`")))),
                 Times.Once());
         }
     }
@@ -217,7 +217,7 @@ public abstract class OperationLogTests
 
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`myValue` is null")))),
+                && log.HasAttribute("Operation.Log", value => value is string && ((string)value).Contains("`myValue` is null")))),
                 Times.Once());
         }
     }
@@ -259,7 +259,7 @@ public abstract class OperationLogTests
 
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`myValue` is null or empty")))),
+                && log.HasAttribute("Operation.Log", value => value is string && ((string)value).Contains("`myValue` is null or empty")))),
                 Times.Once());
         }
     }
@@ -304,7 +304,7 @@ public abstract class OperationLogTests
 
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains("`myValue` is null or whitespace")))),
+                && log.HasAttribute("Operation.Log", value => value is string && ((string)value).Contains("`myValue` is null or whitespace")))),
                 Times.Once());
         }
     }
@@ -344,7 +344,7 @@ public abstract class OperationLogTests
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
                 && log.HasException(ex)
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains($"Exception set to `InvalidOperationException ex`")))),
+                && log.HasAttribute("Operation.Log", value => value is string && ((string)value).Contains($"Exception set to `InvalidOperationException ex`")))),
                 Times.Once());
         }
     }
@@ -383,7 +383,7 @@ public abstract class OperationLogTests
 
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains($"`x == 12345` is true")))),
+                && log.HasAttribute("Operation.Log", value => value is string && ((string)value).Contains($"`x == 12345` is true")))),
                 Times.Once());
         }
     }
@@ -419,7 +419,7 @@ public abstract class OperationLogTests
 
             _mockLogger.Verify(m => m.Write(It.Is<LogEntry>(log =>
                 log.HasMessage("Operation complete: My.Operation")
-                && log.HasAttribute("OperationLog", value => value is string && ((string)value).Contains($"Hello, world!")))),
+                && log.HasAttribute("Operation.Log", value => value is string && ((string)value).Contains($"Hello, world!")))),
                 Times.Once());
         }
     }
