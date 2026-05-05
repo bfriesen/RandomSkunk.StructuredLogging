@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog],
 and this project adheres to [Semantic Versioning].
 
+## [0.9.5] - 2026-05-05
+
+- Bug fix: don't pool property lists. It interferes with testing.
+
 ## [0.9.4] - 2026-05-05
 
 - Rename `Parameters` property in `OperationLog` and `IOperationLog` to `Properties` and change its type to `List<KeyValuePair<string, object?>>`, which is lazily initialized.
@@ -38,6 +42,7 @@ Initial implementation of RandomSkunk.StructuredLogging.
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
+[0.9.5]: ../../compare/v0.9.4...v0.9.5
 [0.9.4]: ../../compare/v0.9.3...v0.9.4
 [0.9.3]: ../../compare/v0.9.2...v0.9.3
 [0.9.2]: ../../compare/v0.9.1...v0.9.2
