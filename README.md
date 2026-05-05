@@ -1,12 +1,9 @@
 ﻿# RandomSkunk.StructuredLogging
 
-[![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.svg)]
-(https://www.nuget.org/packages/RandomSkunk.StructuredLogging/)
+[![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Modern, high-performance structured logging extensions for .NET that cleanly separate human-readable messages from
-machine-readable properties. Stop cluttering your message templates with structured data and start writing logs that are easier
-to read and query.
+RandomSkunk.StructuredLogging provides structured logging extensions for .NET, designed to separate human-readable messages from machine-readable properties. This approach helps keep your logs clear, maintainable, and easy to query, without mixing data into message templates.
 
 ## Why Choose RandomSkunk.StructuredLogging?
 
@@ -40,11 +37,12 @@ dotnet add package RandomSkunk.StructuredLogging
 
 ### 2. Start Logging
 
-Use the extension methods on `Microsoft.Extensions.Logging.ILogger`.
+
+Use the extension methods provided by RandomSkunk.StructuredLogging on `Microsoft.Extensions.Logging.ILogger`.
 
 #### Basic Logging with Properties
 
-Pass properties as a list of `(string, object)` tuples. The message remains clean and readable.
+Pass properties as a list of `(string, object?)` tuples. The message remains clean and readable, and properties are attached as structured data.
 
 ```csharp
 logger.Information("User logged in successfully",
@@ -52,7 +50,8 @@ logger.Information("User logged in successfully",
     ("SessionId", sessionId),
     ("LoginTime", DateTime.UtcNow));
 ```
-*Output Log (conceptual JSON):*
+
+*Example output (conceptual JSON):*
 ```json
 {
   "Message": "User logged in successfully",
@@ -62,13 +61,12 @@ logger.Information("User logged in successfully",
 }
 ```
 
+
 #### Property Extraction from Interpolated Strings
 
-For ultimate convenience, extract properties directly from an interpolated string. The syntax `{value:<PropertyName>}` captures
-the value as a property and embeds it in the message.
+You can extract properties directly from an interpolated string using the syntax `{value:<PropertyName>}`. This captures the value as a property and embeds it in the message.
 
-This is not just a simple `string.Format`. The library uses a custom interpolated string handler that **only evaluates the
-arguments and formats the string if the log level is enabled**.
+The library uses a custom interpolated string handler, so arguments and formatting only occur if the log level is enabled.
 
 ```csharp
 // The values for username, attemptCount, and clientIp are captured as properties.
@@ -76,7 +74,8 @@ logger.Warning($"Failed login attempt for {username:<Username>}",
     ("AttemptCount", attemptCount),
     ("IPAddress", clientIp));
 ```
-*Output Log (conceptual JSON):*
+
+*Example output (conceptual JSON):*
 ```json
 {
   "Message": "Failed login attempt for brian",
@@ -86,50 +85,52 @@ logger.Warning($"Failed login attempt for {username:<Username>}",
 }
 ```
 
+
 #### Operation Logging
 
-Use `LogOperation` to automatically write an "operation starting" log when an operation begins, and an "operation complete"
-log when it ends. Both logs include the same operation parameters.
+Use `LogOperation` to create an operation log that writes a single structured log entry when disposed. The returned `IOperationLog` instance provides methods to log values, conditions, and return values within the operation. This log summarizes the operation's context and any details you record during its execution.
 
 ```csharp
 public int Divide(int dividend, int divisor, int? fallbackValue = null)
 {
     using var log = logger.LogOperation(
         $"{typeof(Calculator)}.{nameof(Divide)}",
-        dividend,
-        divisor,
-        fallbackValue);
+        ("Dividend", dividend),
+        ("Divisor", divisor),
+        ("FallbackValue", fallbackValue));
 
-    if (log.IsNotNull(fallbackValue) && log.Condition(divisor == 0))
+    if (!log.IsNull(fallbackValue) && log.Condition(divisor == 0))
     {
+        log.Append($"Cannot divide by zero. Returning fallback value, {fallbackValue}.");
         return log.ReturnValue(fallbackValue.Value);
     }
 
-    return log.ReturnValue(dividend / divisor);
+    try
+    {
+        return log.ReturnValue(dividend / divisor);
+    }
+    catch (Exception ex)
+    {
+        logger.Error(log.EventId, log.Exception(ex), "Error performing division. Rethrowing exception...", log.Properties);
+        throw;
+    }
 }
 ```
 
-*Output Logs (conceptual JSON):*
-
-```json
-{
-  "Message": "Operation starting: MathUtilities.Calculator.Divide",
-  "dividend": 10,
-  "divisor": 2,
-  "fallbackValue": -2147483648
-}
-```
+*Example output (conceptual JSON):*
 
 ```json
 {
   "Message": "Operation complete: MathUtilities.Calculator.Divide",
-  "dividend": 10,
-  "divisor": 2,
-  "fallbackValue": -2147483648,
-  "ReturnValue": 5,
-  "OperationLog": "[12:34:56.787Z] `fallbackValue != null` is true
-[12:34:56.788Z] `divisor == 0` is false
-[12:34:56.789Z] Return value is `dividend / divisor`"
+  "Dividend": 10,
+  "Divisor": 2,
+  "FallbackValue": null,
+  "Operation.ReturnValue": 5,
+  "Operation.Log": "[12:34:56.785Z] Operation started
+[12:34:56.786Z] `fallbackValue` is not null
+[12:34:56.787Z] `divisor == 0` is false
+[12:34:56.788Z] Return value set to `dividend / divisor`
+[12:34:56.789Z] Operation complete"
 }
 ```
 
@@ -154,11 +155,15 @@ with managing a cache, making it ideal for dynamic log messages.
 
 ## Advanced Usage
 
-The library is flexible enough to handle any scenario.
 
-### Logging with Exceptions and Event IDs
+### Additional Features
 
-All overloads support standard `EventId` and `Exception` arguments.
+RandomSkunk.StructuredLogging supports a variety of advanced scenarios for structured logging.
+
+
+#### Logging with Exceptions and Event IDs
+
+All logging methods support `EventId` and `Exception` parameters, allowing you to attach additional context to your logs.
 
 ```csharp
 logger.Error(new EventId(500, "DatabaseError"), exception, "Database connection failed",
@@ -166,9 +171,10 @@ logger.Error(new EventId(500, "DatabaseError"), exception, "Database connection 
     ("RetryCount", retryCount));
 ```
 
-### Using Dictionaries for Properties
 
-You can pass properties in any `IReadOnlyCollection<KeyValuePair<string, object?>>`, including a `Dictionary`.
+#### Using Dictionaries for Properties
+
+You can pass properties as any `IReadOnlyCollection<KeyValuePair<string, object?>>`, such as a `Dictionary`:
 
 ```csharp
 var metadata = new Dictionary<string, object?>
@@ -196,13 +202,20 @@ intercept string formatting.
 
 ## Compatibility
 
-- **.NET 8.0**
-- **.NET 9.0**
-- **.NET 10.0**
-- Compatible with all `Microsoft.Extensions.Logging` providers (OpenTelemetry, Serilog, Console, etc.)
+
+RandomSkunk.StructuredLogging targets:
+- .NET 8.0
+- .NET 9.0
+- .NET 10.0
+
+It is compatible with all `Microsoft.Extensions.Logging` providers, including OpenTelemetry, Serilog, and the built-in Console logger.
 
 ## License
 
 This project is licensed under the MIT License.
 
-Copyright (c) 2025-2026 Brian Friesen. All rights reserved.
+---
+
+## Contributing & Support
+
+Contributions, issues, and suggestions are welcome. Please open an issue or pull request on GitHub if you have feedback or need help.
