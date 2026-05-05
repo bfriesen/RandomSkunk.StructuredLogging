@@ -92,7 +92,7 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
         {
             if (_listProperties == null)
             {
-                _listProperties = PropertyListPool.Instance.Get();
+                _listProperties = new(4);
                 _listProperties.AddRange(_properties);
             }
 
@@ -228,8 +228,6 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
                     new LogState<ReadOnlyNameValuePairList<List<KeyValuePair<string, object?>>>>(in message, new(_listProperties)),
                     _exception,
                     LogState<ReadOnlyNameValuePairList<List<KeyValuePair<string, object?>>>>.Formatter);
-
-                PropertyListPool.Instance.Return(_listProperties);
             }
             else
             {
