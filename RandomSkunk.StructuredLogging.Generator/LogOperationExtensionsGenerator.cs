@@ -34,6 +34,10 @@ public class LogOperationExtensionsGenerator : IIncrementalGenerator
     /// <param name="property{0}">The {1}name value pair associated with the operation.</param>
 """;
 
+    private const string _propertyArrayParam = """
+    /// <param name="properties">The name value pairs associated with the operation.</param>
+""";
+
     private const string _returnsFormat = """
     /// <returns>An <see cref="OperationLog{{TNameValuePairList}}"/> object that writes its contents when disposed.</returns>
 """;
@@ -56,10 +60,10 @@ using System.Runtime.CompilerServices;
 
 namespace RandomSkunk.StructuredLogging;
 
-/// <content>
-/// Defines the LogOperation extension methods. Each method returns the result of a call to one of the non-public GetOperation methods.
-/// </content>
-partial class LogOperationExtensions
+/// <summary>
+/// Provides extension methods for writing structured logs that track operations.
+/// </summary>
+public static class LogOperationExtensions
 {
 """);
 
@@ -72,6 +76,7 @@ partial class LogOperationExtensions
         GenerateMethods(sb, 6);
         GenerateMethods(sb, 7);
         GenerateMethods(sb, 8);
+        GenerateMethods(sb, -1);
 
         while (char.IsWhiteSpace(sb[sb.Length - 1]))
             sb.Length--;
@@ -103,7 +108,11 @@ partial class LogOperationExtensions
         
         sb.AppendLine(_operationNameParam);
 
-        if (genericParameterCount == 1)
+        if (genericParameterCount == -1)
+        {
+            sb.AppendLine(_propertyArrayParam);
+        }
+        else if (genericParameterCount == 1)
         {
             sb.AppendFormat(_propertyParamFormat, null, null).AppendLine();
         }
@@ -136,22 +145,17 @@ partial class LogOperationExtensions
 """);
         }
 
-        if (logLevelParameter)
-        {
-            sb.Append("""
-        [InterpolatedStringHandlerArgument(nameof(logger), nameof(logLevel))]
-        ref InterpolatedString.OperationName operationName
+        sb.Append("""
+        string operationName
 """);
-        }
-        else
-        {
-            sb.Append("""
-        [InterpolatedStringHandlerArgument(nameof(logger))]
-        ref InterpolatedString.DebugOperationName operationName
-""");
-        }
 
-        if (genericParameterCount == 1)
+        if (genericParameterCount == -1)
+        {
+            sb.AppendLine(",").AppendLine("""
+        params (string Name, object? Value)[] properties) =>
+""");
+        }
+        else if (genericParameterCount == 1)
         {
             sb.AppendLine(",").AppendLine("""
         (string Name, T Value) property) =>
@@ -199,24 +203,19 @@ partial class LogOperationExtensions
 """);
         }
 
-        if (logLevelParameter)
-        {
-            sb.AppendLine("""
-            operationName.ToStringAndClear(),
+        sb.AppendLine("""
+            operationName,
 """);
-        }
-        else
-        {
-            sb.AppendLine("""
-            operationName._innerHandler.ToStringAndClear(),
-""");
-        }
 
         sb.Append("""
             new(
 """);
 
-        if (genericParameterCount == 1)
+        if (genericParameterCount == -1)
+        {
+            sb.Append("properties");
+        }
+        else if (genericParameterCount == 1)
         {
             sb.Append("in property");
         }
@@ -237,6 +236,7 @@ partial class LogOperationExtensions
     private static string? GetLogOperationType(int genericParameterCount) =>
         genericParameterCount switch
         {
+            -1 => "OperationLog<LogPropertyArray>",
             0 => "OperationLog<EmptyNameValuePairArray>",
             1 => "OperationLog<LogPropertyTuple<T>>",
             2 => "OperationLog<LogPropertyTuple<T1, T2>>",

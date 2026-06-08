@@ -1,13 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Text;
-using System.Text.Json;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Testing;
 
 /// <summary>
-/// Defines an implementation of the <see cref="IOperationLog"/> suitable for testing.
+/// Defines an implementation of the <see cref="IOperationLog"/> interface suitable for use as a mock or stub.
 /// </summary>
-public abstract class TestOperationLog : IOperationLogInternal
+public class TestOperationLog : IOperationLogInternal
 {
     private StringBuilder? _stringBuilder;
     private bool _isDisposed;
@@ -24,77 +23,99 @@ public abstract class TestOperationLog : IOperationLogInternal
 
     StringBuilder? IOperationLogInternal.StringBuilder => _stringBuilder ??= new();
 
+    /// <summary>
     /// Invoked when the test operation log's <see cref="IDisposable.Dispose"/> method is called.
-    public abstract void Dispose();
+    /// </summary>
+    public virtual void OnDispose()
+    {
+    }
 
     /// <summary>
     /// Invoked when the test operation log's <see cref="IOperationLog.Append"/> method is called.
     /// </summary>
     /// <param name="logEntry">The log entry to add to the operation log.</param>
-    public abstract void Append(string logEntry);
+    public virtual void OnAppend(string logEntry)
+    {
+    }
 
     /// <summary>
     /// Invoked when the test operation log's <see cref="IOperationLog.ReturnValue"/> method is called.
     /// </summary>
     /// <typeparam name="T">The type of the return value.</typeparam>
     /// <param name="returnValue">The return value of the operation.</param>
-    public abstract void ReturnValue<T>(T returnValue);
+    public virtual void OnReturnValue<T>(T returnValue)
+    {
+    }
 
     /// <summary>
     /// Invoked when the test operation log's <see cref="IOperationLog.Exception"/> method is called.
     /// </summary>
     /// <typeparam name="TException">The type of exception to set. Must derive from Exception.</typeparam>
     /// <param name="exception">The exception instance to set as the current error.</param>
-    public abstract void Exception<TException>(TException exception)
-        where TException : Exception;
+    public virtual void OnException<TException>(TException exception)
+        where TException : Exception
+    {
+    }
 
     /// <summary>
     /// Invoked when the test operation log's <see cref="IOperationLog.Value"/> method is called.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="value">The value to log.</param>
-    public abstract void Value<T>(T value);
+    public virtual void OnValue<T>(T value)
+    {
+    }
 
     /// <summary>
     /// Invoked when the test operation log's <see cref="IOperationLog.Condition"/> method is called.
     /// </summary>
     /// <param name="condition">The boolean condition to log.</param>
-    public abstract void Condition(bool condition);
+    public virtual void OnCondition(bool condition)
+    {
+    }
 
     /// <summary>
     /// Invoked when the test operation log's <see cref="IOperationLog.IsNull{T}(T, string)"/> method is called.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="value">The object to test.</param>
-    public abstract void IsNull<T>(T value)
-        where T : class?;
+    public virtual void OnIsNull<T>(T value)
+        where T : class?
+    {
+    }
 
     /// <summary>
     /// Invoked when the test operation log's <see cref="IOperationLog.IsNull{T}(T?, string)"/> method is called.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="value">The object to test.</param>
-    public abstract void IsNull<T>(T? value)
-        where T : struct;
+    public virtual void OnIsNull<T>(T? value)
+        where T : struct
+    {
+    }
 
     /// <summary>
     /// Invoked when the test operation log's <see cref="IOperationLog.IsNullOrEmpty"/> method is called.
     /// </summary>
     /// <param name="value">The string to test.</param>
-    public abstract void IsNullOrEmpty(string? value);
+    public virtual void OnIsNullOrEmpty(string? value)
+    {
+    }
 
     /// <summary>
     /// Invoked when test operation log's the <see cref="IOperationLog.IsNullOrWhiteSpace"/> method is called.
     /// </summary>
     /// <param name="value">The string to test.</param>
-    public abstract void IsNullOrWhiteSpace(string? value);
+    public virtual void OnIsNullOrWhiteSpace(string? value)
+    {
+    }
 
     void IDisposable.Dispose()
     {
         if (!_isDisposed)
         {
             _isDisposed = true;
-            Dispose();
+            OnDispose();
             GC.SuppressFinalize(this);
         }
     }
@@ -103,7 +124,7 @@ public abstract class TestOperationLog : IOperationLogInternal
     {
         if (!_isDisposed)
         {
-            Append(_stringBuilder?.ToString() ?? "");
+            OnAppend(_stringBuilder?.ToString() ?? "");
         }
         _stringBuilder?.Clear();
     }
@@ -112,7 +133,7 @@ public abstract class TestOperationLog : IOperationLogInternal
     {
         if (!_isDisposed)
         {
-            ReturnValue(returnValue);
+            OnReturnValue(returnValue);
         }
         return returnValue;
     }
@@ -121,7 +142,7 @@ public abstract class TestOperationLog : IOperationLogInternal
     {
         if (!_isDisposed)
         {
-            Exception(exception);
+            OnException(exception);
         }
         return exception;
     }
@@ -130,7 +151,7 @@ public abstract class TestOperationLog : IOperationLogInternal
     {
         if (!_isDisposed)
         {
-            Value(value);
+            OnValue(value);
         }
         return value;
     }
@@ -139,7 +160,7 @@ public abstract class TestOperationLog : IOperationLogInternal
     {
         if (!_isDisposed)
         {
-            Condition(condition);
+            OnCondition(condition);
         }
         return condition;
     }
@@ -148,7 +169,7 @@ public abstract class TestOperationLog : IOperationLogInternal
     {
         if (!_isDisposed)
         {
-            IsNull(value);
+            OnIsNull(value);
         }
         return value is null;
     }
@@ -157,7 +178,7 @@ public abstract class TestOperationLog : IOperationLogInternal
     {
         if (!_isDisposed)
         {
-            IsNull(value);
+            OnIsNull(value);
         }
         return !value.HasValue;
     }
@@ -166,7 +187,7 @@ public abstract class TestOperationLog : IOperationLogInternal
     {
         if (!_isDisposed)
         {
-            IsNullOrEmpty(value);
+            OnIsNullOrEmpty(value);
         }
         return string.IsNullOrEmpty(value);
     }
@@ -175,7 +196,7 @@ public abstract class TestOperationLog : IOperationLogInternal
     {
         if (!_isDisposed)
         {
-            IsNullOrWhiteSpace(value);
+            OnIsNullOrWhiteSpace(value);
         }
         return string.IsNullOrWhiteSpace(value);
     }

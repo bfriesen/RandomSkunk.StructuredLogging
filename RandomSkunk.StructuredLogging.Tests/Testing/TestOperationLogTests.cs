@@ -1,6 +1,6 @@
 ﻿using Moq;
 
-namespace RandomSkunk.StructuredLogging.Tests;
+namespace RandomSkunk.StructuredLogging.Testing;
 
 public class TestOperationLogTests
 {
@@ -19,8 +19,8 @@ public class TestOperationLogTests
         _log.Append($"Hello, {who}!");
         _log.Append($"Good-bye, cruel {who}!");
 
-        _mockLog.Verify(m => m.Append("Hello, world!"), Times.Once());
-        _mockLog.Verify(m => m.Append("Good-bye, cruel world!"), Times.Once());
+        _mockLog.Verify(m => m.OnAppend("Hello, world!"), Times.Once());
+        _mockLog.Verify(m => m.OnAppend("Good-bye, cruel world!"), Times.Once());
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class TestOperationLogTests
         const int expectedReturnValue = 123;
         int actualReturnValue = _log.ReturnValue(expectedReturnValue);
 
-        _mockLog.Verify(m => m.ReturnValue(expectedReturnValue), Times.Once());
+        _mockLog.Verify(m => m.OnReturnValue(expectedReturnValue), Times.Once());
         Assert.Equal(expectedReturnValue, actualReturnValue);
     }
 
@@ -39,7 +39,7 @@ public class TestOperationLogTests
         Exception expectedException = new();
         Exception actualException = _log.Exception(expectedException);
 
-        _mockLog.Verify(m => m.Exception(expectedException), Times.Once());
+        _mockLog.Verify(m => m.OnException(expectedException), Times.Once());
         Assert.Equal(expectedException, actualException);
     }
 
@@ -49,7 +49,7 @@ public class TestOperationLogTests
         const int expectedValue = 123;
         int actualValue = _log.Value(expectedValue);
 
-        _mockLog.Verify(m => m.Value(expectedValue), Times.Once());
+        _mockLog.Verify(m => m.OnValue(expectedValue), Times.Once());
         Assert.Equal(expectedValue, actualValue);
     }
 
@@ -60,7 +60,7 @@ public class TestOperationLogTests
     {
         bool actualCondition = _log.Condition(expectedCondition);
 
-        _mockLog.Verify(m => m.Condition(expectedCondition), Times.Once());
+        _mockLog.Verify(m => m.OnCondition(expectedCondition), Times.Once());
         Assert.Equal(expectedCondition, actualCondition);
     }
 
@@ -71,7 +71,7 @@ public class TestOperationLogTests
     {
         bool actualIsNull = _log.IsNull(value);
 
-        _mockLog.Verify(m => m.IsNull(value), Times.Once());
+        _mockLog.Verify(m => m.OnIsNull(value), Times.Once());
         Assert.Equal(value is null, actualIsNull);
     }
 
@@ -82,7 +82,7 @@ public class TestOperationLogTests
     {
         bool actualIsNull = _log.IsNull(value);
 
-        _mockLog.Verify(m => m.IsNull(value), Times.Once());
+        _mockLog.Verify(m => m.OnIsNull(value), Times.Once());
         Assert.Equal(!value.HasValue, actualIsNull);
     }
 
@@ -94,7 +94,7 @@ public class TestOperationLogTests
     {
         bool actualIsNullOrEmpty = _log.IsNullOrEmpty(value);
 
-        _mockLog.Verify(m => m.IsNullOrEmpty(value), Times.Once());
+        _mockLog.Verify(m => m.OnIsNullOrEmpty(value), Times.Once());
         Assert.Equal(string.IsNullOrEmpty(value), actualIsNullOrEmpty);
     }
 
@@ -107,7 +107,7 @@ public class TestOperationLogTests
     {
         bool actualIsNullOrWhiteSpace = _log.IsNullOrWhiteSpace(value);
 
-        _mockLog.Verify(m => m.IsNullOrWhiteSpace(value), Times.Once());
+        _mockLog.Verify(m => m.OnIsNullOrWhiteSpace(value), Times.Once());
         Assert.Equal(string.IsNullOrWhiteSpace(value), actualIsNullOrWhiteSpace);
     }
 }

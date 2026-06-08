@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using RandomSkunk.StructuredLogging.Testing;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -86,79 +87,6 @@ public static partial class InterpolatedString
                 isEnabled = false;
             }
         }
-
-        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value) => _innerHandler.AppendFormatted(value);
-        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value, string? format) => _innerHandler.AppendFormatted(value, format);
-        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value, int alignment) => _innerHandler.AppendFormatted(value, alignment);
-        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value, int alignment, string? format) => _innerHandler.AppendFormatted(value, alignment, format);
-        [EditorBrowsable(Never)] public void AppendFormatted(scoped ReadOnlySpan<char> value) => _innerHandler.AppendFormatted(value);
-        [EditorBrowsable(Never)] public void AppendFormatted(scoped ReadOnlySpan<char> value, int alignment = 0, string? format = null) => _innerHandler.AppendFormatted(value, alignment, format);
-        [EditorBrowsable(Never)] public void AppendFormatted(string? value) => _innerHandler.AppendFormatted(value);
-        [EditorBrowsable(Never)] public void AppendFormatted(string? value, int alignment = 0, string? format = null) => _innerHandler.AppendFormatted(value, alignment, format);
-        [EditorBrowsable(Never)] public void AppendFormatted(object? value, int alignment = 0, string? format = null) => _innerHandler.AppendFormatted(value, alignment, format);
-        [EditorBrowsable(Never)] public void AppendLiteral(string value) => _innerHandler.AppendLiteral(value);
-    }
-
-    /// <summary>
-    /// An interpolated string handler for the <c>ILogger.LogOperation</c> extension methods' operation name parameter. Given the
-    /// specified <c>logger</c> and <c>logLevel</c> parameters, the interpolated string will only be evaluated if the logger is
-    /// enabled at that log level.
-    /// </summary>
-    [InterpolatedStringHandler]
-    public ref struct OperationName
-    {
-        internal bool _isEnabled;
-
-        private DefaultInterpolatedStringHandler _innerHandler;
-
-        [EditorBrowsable(Never)]
-        public OperationName(int literalLength, int formattedCount, ILogger? logger, LogLevel logLevel, out bool isEnabled)
-        {
-            _isEnabled = isEnabled = logger != null && logger.IsEnabled(logLevel);
-            if (isEnabled)
-            {
-                _innerHandler = new(literalLength + 20, formattedCount, CultureInfo.InvariantCulture);
-                _innerHandler.AppendLiteral("Operation complete: ");
-            }
-        }
-
-        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value) => _innerHandler.AppendFormatted(value);
-        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value, string? format) => _innerHandler.AppendFormatted(value, format);
-        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value, int alignment) => _innerHandler.AppendFormatted(value, alignment);
-        [EditorBrowsable(Never)] public void AppendFormatted<T>(T value, int alignment, string? format) => _innerHandler.AppendFormatted(value, alignment, format);
-        [EditorBrowsable(Never)] public void AppendFormatted(scoped ReadOnlySpan<char> value) => _innerHandler.AppendFormatted(value);
-        [EditorBrowsable(Never)] public void AppendFormatted(scoped ReadOnlySpan<char> value, int alignment = 0, string? format = null) => _innerHandler.AppendFormatted(value, alignment, format);
-        [EditorBrowsable(Never)] public void AppendFormatted(string? value) => _innerHandler.AppendFormatted(value);
-        [EditorBrowsable(Never)] public void AppendFormatted(string? value, int alignment = 0, string? format = null) => _innerHandler.AppendFormatted(value, alignment, format);
-        [EditorBrowsable(Never)] public void AppendFormatted(object? value, int alignment = 0, string? format = null) => _innerHandler.AppendFormatted(value, alignment, format);
-        [EditorBrowsable(Never)] public void AppendLiteral(string value) => _innerHandler.AppendLiteral(value);
-
-        internal string? ToStringAndClear()
-        {
-            if (_isEnabled)
-            {
-                string operationName = _innerHandler.ToStringAndClear();
-                this = default;
-                return operationName;
-            }
-
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// An interpolated string handler for the <c>ILogger.LogOperation</c> extension methods' operation name parameter. Given the
-    /// specified <c>logger</c> parameter, the interpolated string will only be evaluated if the logger is enabled at the debug
-    /// log level.
-    /// </summary>
-    [InterpolatedStringHandler]
-    public ref struct DebugOperationName
-    {
-        internal OperationName _innerHandler;
-
-        [EditorBrowsable(Never)]
-        public DebugOperationName(int literalLength, int formattedCount, ILogger? logger, out bool isEnabled) =>
-            _innerHandler = new OperationName(literalLength, formattedCount, logger, LogLevel.Debug, out isEnabled);
 
         [EditorBrowsable(Never)] public void AppendFormatted<T>(T value) => _innerHandler.AppendFormatted(value);
         [EditorBrowsable(Never)] public void AppendFormatted<T>(T value, string? format) => _innerHandler.AppendFormatted(value, format);

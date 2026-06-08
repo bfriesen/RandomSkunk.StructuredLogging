@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
-		<RootNamespace>RandomSkunk.StructuredLogging.Tests</RootNamespace>
+		<RootNamespace>RandomSkunk.StructuredLogging</RootNamespace>
 
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>

@@ -36,24 +36,24 @@ internal readonly struct LogState<TNameValuePairList>(ref readonly MessageData m
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static KeyValuePair<string, object?> GetItem(
         TNameValuePairList nameValuePairs,
-        NameValuePairList2 interpolationNameValuePairs,
+        NameValuePairList2 additionalNameValuePairs,
         int index) =>
         index < nameValuePairs.Count
             ? nameValuePairs[index]
-            : interpolationNameValuePairs[index - nameValuePairs.Count];
+            : additionalNameValuePairs[index - nameValuePairs.Count];
 
     [StructLayout(LayoutKind.Auto)]
     public struct Enumerator(ref readonly LogState<TNameValuePairList> logState) : IEnumerator<KeyValuePair<string, object?>>
     {
         private TNameValuePairList _nameValuePairs = logState._nameValuePairs;
-        private NameValuePairList2 _additionalLogProperties = logState._additionalNameValuePairs;
+        private NameValuePairList2 _additionalNameValuePairs = logState._additionalNameValuePairs;
         private int _index = -1;
 
-        public readonly KeyValuePair<string, object?> Current => GetItem(_nameValuePairs, _additionalLogProperties, _index);
+        public readonly KeyValuePair<string, object?> Current => GetItem(_nameValuePairs, _additionalNameValuePairs, _index);
 
         readonly object IEnumerator.Current => Current;
 
-        public bool MoveNext() => ++_index < _nameValuePairs.Count + _additionalLogProperties.Count;
+        public bool MoveNext() => ++_index < _nameValuePairs.Count + _additionalNameValuePairs.Count;
 
         public void Dispose() => this = default;
 

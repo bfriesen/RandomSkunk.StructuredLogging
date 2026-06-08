@@ -45,14 +45,15 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
     /// <summary>Has a non-null value only when logging is enabled for the operation.</summary>
     private StringBuilder? _stringBuilder;
 
-    private TNameValuePairList _properties;
-    private List<KeyValuePair<string, object?>>? _listProperties;
+    private TNameValuePairList _unboxedProperties;
+    private List<KeyValuePair<string, object?>>? _boxedProperties;
     private ILogger? _logger;
     private LogLevel _logLevel;
     private EventId _eventId;
     private Exception? _exception;
+    private DateTime _startTime;
 
-    private string? _operationCompleteMessage;
+    private string? _operationName;
 
     private object? _returnValue;
     private bool _hasReturnValue;
@@ -61,20 +62,21 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
         ILogger? logger,
         LogLevel logLevel,
         EventId eventId,
-        string? operationCompleteMessage,
+        string operationName,
         TNameValuePairList properties)
     {
         // Always set the properties and event id fields.
-        _properties = properties;
+        _unboxedProperties = properties;
         _eventId = eventId;
 
-        if (logger != null && operationCompleteMessage != null)
+        if (logger != null && logger.IsEnabled(logLevel) && !string.IsNullOrEmpty(operationName))
         {
             // Only set the rest of the fields if we know logging is enabled.
             _logger = logger;
             _logLevel = logLevel;
-            _operationCompleteMessage = operationCompleteMessage;
+            _operationName = operationName;
             _stringBuilder = StringBuilderPool.Instance.Get();
+            _startTime = DateTime.UtcNow;
 
             Append($"Operation started");
         }
@@ -90,13 +92,13 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
     {
         get
         {
-            if (_listProperties == null)
+            if (_boxedProperties == null)
             {
-                _listProperties = new(4);
-                _listProperties.AddRange(_properties);
+                _boxedProperties = new(_unboxedProperties.Count + 4);
+                _boxedProperties.AddRange(_unboxedProperties);
             }
 
-            return _listProperties;
+            return _boxedProperties;
         }
     }
 
@@ -117,7 +119,6 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
         _stringBuilder?.Append(ref logEntry._innerHandler);
 
     readonly void IOperationLog.Append(
-        [InterpolatedStringHandlerArgument("")]
         ref InterpolatedString.OperationLogEntry logEntry) =>
         _stringBuilder?.Append(ref logEntry._innerHandler);
 
@@ -210,7 +211,7 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
     {
         if (_stringBuilder != null)
         {
-            Append($"Operation complete");
+            Append($"Operation completed in {(int)(DateTime.UtcNow - _startTime).TotalMilliseconds} milliseconds");
 
             NameValuePairList2 additionalNameValuePairs = new();
             if (_hasReturnValue)
@@ -218,14 +219,14 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
 
             additionalNameValuePairs.Add(new("Operation.Log", _stringBuilder.ToString()));
 
-            MessageData message = new(_operationCompleteMessage, in additionalNameValuePairs);
+            MessageData message = new($"Operation complete: {_operationName}", in additionalNameValuePairs);
 
-            if (_listProperties != null)
+            if (_boxedProperties != null)
             {
                 _logger!.Log(
                     _logLevel,
                     _eventId,
-                    new LogState<ReadOnlyNameValuePairList<List<KeyValuePair<string, object?>>>>(in message, new(_listProperties)),
+                    new LogState<ReadOnlyNameValuePairList<List<KeyValuePair<string, object?>>>>(in message, new(_boxedProperties)),
                     _exception,
                     LogState<ReadOnlyNameValuePairList<List<KeyValuePair<string, object?>>>>.Formatter);
             }
@@ -234,7 +235,7 @@ public struct OperationLog<TNameValuePairList> : IOperationLogInternal
                 _logger!.Log(
                     _logLevel,
                     _eventId,
-                    new LogState<ReadOnlyNameValuePairList<TNameValuePairList>>(in message, new(_properties)),
+                    new LogState<ReadOnlyNameValuePairList<TNameValuePairList>>(in message, new(_unboxedProperties)),
                     _exception,
                     LogState<ReadOnlyNameValuePairList<TNameValuePairList>>.Formatter);
             }

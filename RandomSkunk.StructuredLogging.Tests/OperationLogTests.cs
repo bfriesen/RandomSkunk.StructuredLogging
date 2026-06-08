@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using RandomSkunk.Logging;
+using System.Collections;
+using static RandomSkunk.StructuredLogging.Tests.OperationLogTests;
 
 namespace RandomSkunk.StructuredLogging.Tests;
 
@@ -15,8 +17,37 @@ public abstract class OperationLogTests
         _logger = _mockLogger.Object;
     }
 
+    [TypeMatcher]
+    public struct IsNameValuePairList : IReadOnlyList<KeyValuePair<string, object?>>, ITypeMatcher
+    {
+        bool ITypeMatcher.Matches(Type typeArgument) =>
+            typeArgument.IsValueType
+            && typeof(IReadOnlyList<KeyValuePair<string, object?>>).IsAssignableFrom(typeArgument);
+
+        KeyValuePair<string, object?> IReadOnlyList<KeyValuePair<string, object?>>.this[int index] => throw new NotImplementedException();
+
+        int IReadOnlyCollection<KeyValuePair<string, object?>>.Count => throw new NotImplementedException();
+
+        IEnumerator<KeyValuePair<string, object?>> IEnumerable<KeyValuePair<string, object?>>.GetEnumerator() => throw new NotImplementedException();
+
+        IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
+    }
+
     public class Constructor : OperationLogTests
     {
+        [Fact]
+        public void Foobar()
+        {
+            Mock<IOperationLogger> mockOperationLogger = new(MockBehavior.Strict);
+            Mock<IOperationLog> mockOperationLog = new();
+
+            mockOperationLogger.Setup(m => m.LogOperation("Foo")).Returns(mockOperationLog.Object);
+
+            IOperationLog log = mockOperationLogger.Object.LogOperation("Foo");
+
+            Assert.Same(log, mockOperationLog.Object);
+        }
+
         [Fact]
         public void GivenNoLogger_DoesNothing()
         {
