@@ -83,8 +83,8 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
         : "logger.IsEnabled(level)";
 
     string typeSummary = fixedLevel is not null
-        ? $"Interpolated string handler for the message parameter of the {fixedLevel}-level <see cref=\"StructuredLoggerExtensions\"/> methods. Building the message is skipped when the {fixedLevel} level is not enabled for the target <see cref=\"ILogger\"/>."
-        : "Interpolated string handler for the message parameter of the <see cref=\"StructuredLoggerExtensions\"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref=\"ILogger\"/>.";
+        ? $"Interpolated string handler for the message parameter of the {fixedLevel}-level <see cref=\"StructuredLoggerExtensions\"/> methods. Building the message is skipped when the {fixedLevel} level is not enabled for the target <see cref=\"ILogger\"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'."
+        : "Interpolated string handler for the message parameter of the <see cref=\"StructuredLoggerExtensions\"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref=\"ILogger\"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.";
 
     string ctorSummary = fixedLevel is not null
         ? $"Initializes the handler and checks whether the {fixedLevel} level is enabled for <paramref name=\"logger\"/>."
@@ -117,6 +117,7 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine($"public ref struct {typeName}");
     sb.AppendLine("{");
     sb.AppendLine("    private DefaultInterpolatedStringHandler _handler;");
+    sb.AppendLine("    private List<KeyValuePair<string, object?>>? _capturedProperties;");
     sb.AppendLine();
     WriteDocComment(sb, "    ", ctorSummary, parameters: ctorParamDocs);
     sb.AppendLine($"    public {typeName}({ctorParams})");
@@ -125,12 +126,14 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("        _handler = handlerIsValid");
     sb.AppendLine("            ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)");
     sb.AppendLine("            : default;");
+    sb.AppendLine("        _capturedProperties = null;");
     sb.AppendLine("    }");
     sb.AppendLine();
     sb.AppendLine($"    private {typeName}(string message)");
     sb.AppendLine("    {");
     sb.AppendLine("        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);");
     sb.AppendLine("        _handler.AppendLiteral(message);");
+    sb.AppendLine("        _capturedProperties = null;");
     sb.AppendLine("    }");
     sb.AppendLine();
     WriteDocComment(
@@ -158,14 +161,21 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     WriteDocComment(
         sb,
         "    ",
-        "Appends the formatted value of an interpolation expression to the message.",
+        "Appends the formatted value of an interpolation expression to the message. If <paramref name=\"format\"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name=\"value\"/> is also captured as a structured property.",
         typeParams: [("T", "The type of the value to append.")],
         parameters:
         [
             ("value", "The value to format and append."),
-            ("format", "A standard or custom format string supported by <paramref name=\"value\"/>'s type."),
+            ("format", "A standard or custom format string supported by <paramref name=\"value\"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag."),
         ]);
-    sb.AppendLine("    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);");
+    sb.AppendLine("    public void AppendFormatted<T>(T value, string? format)");
+    sb.AppendLine("    {");
+    sb.AppendLine("        var tag = LogPropertyTagFormat.Parse(format);");
+    sb.AppendLine("        if (tag.PropertyName is not null)");
+    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
+    sb.AppendLine();
+    sb.AppendLine("        _handler.AppendFormatted(value, tag.Format);");
+    sb.AppendLine("    }");
     sb.AppendLine();
     WriteDocComment(
         sb,
@@ -182,15 +192,22 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     WriteDocComment(
         sb,
         "    ",
-        "Appends the formatted value of an interpolation expression to the message.",
+        "Appends the formatted value of an interpolation expression to the message. If <paramref name=\"format\"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name=\"value\"/> is also captured as a structured property.",
         typeParams: [("T", "The type of the value to append.")],
         parameters:
         [
             ("value", "The value to format and append."),
             ("alignment", alignmentDoc),
-            ("format", "A standard or custom format string supported by <paramref name=\"value\"/>'s type."),
+            ("format", "A standard or custom format string supported by <paramref name=\"value\"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag."),
         ]);
-    sb.AppendLine("    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);");
+    sb.AppendLine("    public void AppendFormatted<T>(T value, int alignment, string? format)");
+    sb.AppendLine("    {");
+    sb.AppendLine("        var tag = LogPropertyTagFormat.Parse(format);");
+    sb.AppendLine("        if (tag.PropertyName is not null)");
+    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
+    sb.AppendLine();
+    sb.AppendLine("        _handler.AppendFormatted(value, alignment, tag.Format);");
+    sb.AppendLine("    }");
     sb.AppendLine();
     WriteDocComment(
         sb,
@@ -211,6 +228,9 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);");
     sb.AppendLine();
     sb.AppendLine("    internal string GetFormattedText() => _handler.ToStringAndClear();");
+    sb.AppendLine();
+    sb.AppendLine("    internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>");
+    sb.AppendLine("        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();");
     sb.AppendLine("}");
 }
 
@@ -240,13 +260,16 @@ static void AppendGenericState(StringBuilder sb, int arity)
     var ctorParams = string.Join(", ", Enumerable.Range(1, arity).Select(i => $"(string Name, T{i} Value) property{i}"));
 
     sb.AppendLine("/// <summary>");
-    sb.AppendLine($"/// Logger state for the {arity}-property generic structured-logging overloads.");
+    sb.AppendLine($"/// Logger state for the {arity}-property generic structured-logging overloads. Combines the properties");
+    sb.AppendLine("/// explicitly passed by the caller with any the message's interpolated string handler captured via");
+    sb.AppendLine("/// &lt;PropertyName&gt; format tags.");
     sb.AppendLine("/// </summary>");
     sb.AppendLine($"internal readonly struct LogPropertiesState<{typeParams}> : IReadOnlyList<KeyValuePair<string, object?>>");
     sb.AppendLine("{");
     sb.AppendLine($"    public static readonly Func<LogPropertiesState<{typeParams}>, Exception?, string> Formatter = static (state, _) => state._message;");
     sb.AppendLine();
     sb.AppendLine("    private readonly string _message;");
+    sb.AppendLine("    private readonly IReadOnlyList<KeyValuePair<string, object?>> _capturedProperties;");
 
     foreach (var i in Enumerable.Range(1, arity))
     {
@@ -255,9 +278,10 @@ static void AppendGenericState(StringBuilder sb, int arity)
     }
 
     sb.AppendLine();
-    sb.AppendLine($"    public LogPropertiesState(string message, {ctorParams})");
+    sb.AppendLine($"    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> capturedProperties, {ctorParams})");
     sb.AppendLine("    {");
     sb.AppendLine("        _message = message;");
+    sb.AppendLine("        _capturedProperties = capturedProperties;");
 
     foreach (var i in Enumerable.Range(1, arity))
     {
@@ -267,16 +291,25 @@ static void AppendGenericState(StringBuilder sb, int arity)
 
     sb.AppendLine("    }");
     sb.AppendLine();
-    sb.AppendLine($"    public int Count => {arity};");
+    sb.AppendLine($"    public int Count => _capturedProperties.Count + {arity};");
     sb.AppendLine();
-    sb.AppendLine("    public KeyValuePair<string, object?> this[int index] => index switch");
+    sb.AppendLine("    public KeyValuePair<string, object?> this[int index]");
     sb.AppendLine("    {");
+    sb.AppendLine("        get");
+    sb.AppendLine("        {");
+    sb.AppendLine("            if (index < _capturedProperties.Count)");
+    sb.AppendLine("                return _capturedProperties[index];");
+    sb.AppendLine();
+    sb.AppendLine("            return (index - _capturedProperties.Count) switch");
+    sb.AppendLine("            {");
 
     foreach (var i in Enumerable.Range(1, arity))
-        sb.AppendLine($"        {i - 1} => new(_name{i}, _value{i}),");
+        sb.AppendLine($"                {i - 1} => new(_name{i}, _value{i}),");
 
-    sb.AppendLine("        _ => throw new ArgumentOutOfRangeException(nameof(index)),");
-    sb.AppendLine("    };");
+    sb.AppendLine("                _ => throw new ArgumentOutOfRangeException(nameof(index)),");
+    sb.AppendLine("            };");
+    sb.AppendLine("        }");
+    sb.AppendLine("    }");
     sb.AppendLine();
     sb.AppendLine("    public override string ToString() => _message;");
     sb.AppendLine();
@@ -408,14 +441,16 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     sb.AppendLine("            return;");
     sb.AppendLine();
 
+    sb.AppendLine("        var capturedProperties = message.GetCapturedProperties();");
+
     if (arity == 0)
     {
-        sb.AppendLine($"        var state = new {stateType}(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());");
+        sb.AppendLine($"        var state = new {stateType}(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());");
     }
     else
     {
         var propArgs = string.Join(", ", Enumerable.Range(1, arity).Select(i => $"logProperty{i}"));
-        sb.AppendLine($"        var state = new {stateType}(message.GetFormattedText(), {propArgs});");
+        sb.AppendLine($"        var state = new {stateType}(message.GetFormattedText(), capturedProperties, {propArgs});");
     }
 
     sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, {stateType}.Formatter);");
@@ -436,7 +471,7 @@ static void AppendParamsMethod(StringBuilder sb, MethodGroup group, Combo combo)
     sb.AppendLine($"        if (!logger.IsEnabled({group.LevelExpr}))");
     sb.AppendLine("            return;");
     sb.AppendLine();
-    sb.AppendLine("        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));");
+    sb.AppendLine("        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));");
     sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, LogPropertiesState.Formatter);");
     sb.AppendLine("    }");
 }
@@ -456,7 +491,7 @@ static void AppendCollectionMethod(StringBuilder sb, MethodGroup group, Combo co
     sb.AppendLine("            return;");
     sb.AppendLine();
     sb.AppendLine("        var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();");
-    sb.AppendLine("        var state = new LogPropertiesState(message.GetFormattedText(), properties);");
+    sb.AppendLine("        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);");
     sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, LogPropertiesState.Formatter);");
     sb.AppendLine("    }");
 }

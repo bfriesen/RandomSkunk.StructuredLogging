@@ -7,12 +7,13 @@ using Microsoft.Extensions.Logging;
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Trace-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Trace level is not enabled for the target <see cref="ILogger"/>.
+/// Interpolated string handler for the message parameter of the Trace-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Trace level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct TraceInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
+    private List<KeyValuePair<string, object?>>? _capturedProperties;
 
     /// <summary>
     /// Initializes the handler and checks whether the Trace level is enabled for <paramref name="logger"/>.
@@ -27,12 +28,14 @@ public ref struct TraceInterpolatedStringHandler
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
+        _capturedProperties = null;
     }
 
     private TraceInterpolatedStringHandler(string message)
     {
         _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
         _handler.AppendLiteral(message);
+        _capturedProperties = null;
     }
 
     /// <summary>
@@ -55,12 +58,19 @@ public ref struct TraceInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, tag.Format);
+    }
 
     /// <summary>
     /// Appends the formatted value of an interpolation expression to the message.
@@ -71,13 +81,20 @@ public ref struct TraceInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, int alignment, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
+    }
 
     /// <summary>
     /// Appends a string interpolation value to the message.
@@ -93,15 +110,19 @@ public ref struct TraceInterpolatedStringHandler
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
+
+    internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Debug-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Debug level is not enabled for the target <see cref="ILogger"/>.
+/// Interpolated string handler for the message parameter of the Debug-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Debug level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct DebugInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
+    private List<KeyValuePair<string, object?>>? _capturedProperties;
 
     /// <summary>
     /// Initializes the handler and checks whether the Debug level is enabled for <paramref name="logger"/>.
@@ -116,12 +137,14 @@ public ref struct DebugInterpolatedStringHandler
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
+        _capturedProperties = null;
     }
 
     private DebugInterpolatedStringHandler(string message)
     {
         _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
         _handler.AppendLiteral(message);
+        _capturedProperties = null;
     }
 
     /// <summary>
@@ -144,12 +167,19 @@ public ref struct DebugInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, tag.Format);
+    }
 
     /// <summary>
     /// Appends the formatted value of an interpolation expression to the message.
@@ -160,13 +190,20 @@ public ref struct DebugInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, int alignment, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
+    }
 
     /// <summary>
     /// Appends a string interpolation value to the message.
@@ -182,15 +219,19 @@ public ref struct DebugInterpolatedStringHandler
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
+
+    internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Information-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Information level is not enabled for the target <see cref="ILogger"/>.
+/// Interpolated string handler for the message parameter of the Information-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Information level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct InformationInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
+    private List<KeyValuePair<string, object?>>? _capturedProperties;
 
     /// <summary>
     /// Initializes the handler and checks whether the Information level is enabled for <paramref name="logger"/>.
@@ -205,12 +246,14 @@ public ref struct InformationInterpolatedStringHandler
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
+        _capturedProperties = null;
     }
 
     private InformationInterpolatedStringHandler(string message)
     {
         _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
         _handler.AppendLiteral(message);
+        _capturedProperties = null;
     }
 
     /// <summary>
@@ -233,12 +276,19 @@ public ref struct InformationInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, tag.Format);
+    }
 
     /// <summary>
     /// Appends the formatted value of an interpolation expression to the message.
@@ -249,13 +299,20 @@ public ref struct InformationInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, int alignment, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
+    }
 
     /// <summary>
     /// Appends a string interpolation value to the message.
@@ -271,15 +328,19 @@ public ref struct InformationInterpolatedStringHandler
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
+
+    internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Warning-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Warning level is not enabled for the target <see cref="ILogger"/>.
+/// Interpolated string handler for the message parameter of the Warning-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Warning level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct WarningInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
+    private List<KeyValuePair<string, object?>>? _capturedProperties;
 
     /// <summary>
     /// Initializes the handler and checks whether the Warning level is enabled for <paramref name="logger"/>.
@@ -294,12 +355,14 @@ public ref struct WarningInterpolatedStringHandler
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
+        _capturedProperties = null;
     }
 
     private WarningInterpolatedStringHandler(string message)
     {
         _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
         _handler.AppendLiteral(message);
+        _capturedProperties = null;
     }
 
     /// <summary>
@@ -322,12 +385,19 @@ public ref struct WarningInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, tag.Format);
+    }
 
     /// <summary>
     /// Appends the formatted value of an interpolation expression to the message.
@@ -338,13 +408,20 @@ public ref struct WarningInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, int alignment, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
+    }
 
     /// <summary>
     /// Appends a string interpolation value to the message.
@@ -360,15 +437,19 @@ public ref struct WarningInterpolatedStringHandler
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
+
+    internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Error-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Error level is not enabled for the target <see cref="ILogger"/>.
+/// Interpolated string handler for the message parameter of the Error-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Error level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct ErrorInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
+    private List<KeyValuePair<string, object?>>? _capturedProperties;
 
     /// <summary>
     /// Initializes the handler and checks whether the Error level is enabled for <paramref name="logger"/>.
@@ -383,12 +464,14 @@ public ref struct ErrorInterpolatedStringHandler
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
+        _capturedProperties = null;
     }
 
     private ErrorInterpolatedStringHandler(string message)
     {
         _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
         _handler.AppendLiteral(message);
+        _capturedProperties = null;
     }
 
     /// <summary>
@@ -411,12 +494,19 @@ public ref struct ErrorInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, tag.Format);
+    }
 
     /// <summary>
     /// Appends the formatted value of an interpolation expression to the message.
@@ -427,13 +517,20 @@ public ref struct ErrorInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, int alignment, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
+    }
 
     /// <summary>
     /// Appends a string interpolation value to the message.
@@ -449,15 +546,19 @@ public ref struct ErrorInterpolatedStringHandler
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
+
+    internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Critical-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Critical level is not enabled for the target <see cref="ILogger"/>.
+/// Interpolated string handler for the message parameter of the Critical-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Critical level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct CriticalInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
+    private List<KeyValuePair<string, object?>>? _capturedProperties;
 
     /// <summary>
     /// Initializes the handler and checks whether the Critical level is enabled for <paramref name="logger"/>.
@@ -472,12 +573,14 @@ public ref struct CriticalInterpolatedStringHandler
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
+        _capturedProperties = null;
     }
 
     private CriticalInterpolatedStringHandler(string message)
     {
         _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
         _handler.AppendLiteral(message);
+        _capturedProperties = null;
     }
 
     /// <summary>
@@ -500,12 +603,19 @@ public ref struct CriticalInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, tag.Format);
+    }
 
     /// <summary>
     /// Appends the formatted value of an interpolation expression to the message.
@@ -516,13 +626,20 @@ public ref struct CriticalInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, int alignment, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
+    }
 
     /// <summary>
     /// Appends a string interpolation value to the message.
@@ -538,15 +655,19 @@ public ref struct CriticalInterpolatedStringHandler
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
+
+    internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the <see cref="StructuredLoggerExtensions"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref="ILogger"/>.
+/// Interpolated string handler for the message parameter of the <see cref="StructuredLoggerExtensions"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct LogInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
+    private List<KeyValuePair<string, object?>>? _capturedProperties;
 
     /// <summary>
     /// Initializes the handler and checks whether <paramref name="level"/> is enabled for <paramref name="logger"/>.
@@ -562,12 +683,14 @@ public ref struct LogInterpolatedStringHandler
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
+        _capturedProperties = null;
     }
 
     private LogInterpolatedStringHandler(string message)
     {
         _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
         _handler.AppendLiteral(message);
+        _capturedProperties = null;
     }
 
     /// <summary>
@@ -590,12 +713,19 @@ public ref struct LogInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, tag.Format);
+    }
 
     /// <summary>
     /// Appends the formatted value of an interpolation expression to the message.
@@ -606,13 +736,20 @@ public ref struct LogInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
-    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
-    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
+    public void AppendFormatted<T>(T value, int alignment, string? format)
+    {
+        var tag = LogPropertyTagFormat.Parse(format);
+        if (tag.PropertyName is not null)
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
+    }
 
     /// <summary>
     /// Appends a string interpolation value to the message.
@@ -628,4 +765,7 @@ public ref struct LogInterpolatedStringHandler
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
+
+    internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
 }

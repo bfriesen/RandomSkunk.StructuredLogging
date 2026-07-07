@@ -22,7 +22,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -40,7 +41,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -60,7 +62,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -82,7 +85,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -106,7 +110,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -132,7 +137,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -160,7 +166,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -177,7 +184,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -195,7 +202,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -210,7 +217,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -227,7 +235,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -246,7 +255,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -267,7 +277,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -290,7 +301,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -315,7 +327,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -342,7 +355,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -358,7 +372,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -375,7 +389,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -390,7 +404,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -407,7 +422,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -426,7 +442,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -447,7 +464,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -470,7 +488,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -495,7 +514,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -522,7 +542,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -538,7 +559,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -555,7 +576,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -569,7 +590,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -585,7 +607,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -603,7 +626,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -623,7 +647,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -645,7 +670,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -669,7 +695,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -695,7 +722,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -710,7 +738,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -726,7 +754,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -742,7 +770,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -760,7 +789,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -780,7 +810,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -802,7 +833,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -826,7 +858,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -852,7 +885,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -880,7 +914,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -897,7 +932,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -915,7 +950,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -930,7 +965,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -947,7 +983,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -966,7 +1003,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -987,7 +1025,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1010,7 +1049,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1035,7 +1075,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1062,7 +1103,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1078,7 +1120,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1095,7 +1137,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1110,7 +1152,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1127,7 +1170,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -1146,7 +1190,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -1167,7 +1212,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1190,7 +1236,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1215,7 +1262,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1242,7 +1290,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1258,7 +1307,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1275,7 +1324,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1289,7 +1338,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1305,7 +1355,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -1323,7 +1374,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -1343,7 +1395,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1365,7 +1418,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1389,7 +1443,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1415,7 +1470,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1430,7 +1486,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1446,7 +1502,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1462,7 +1518,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1480,7 +1537,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -1500,7 +1558,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -1522,7 +1581,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1546,7 +1606,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1572,7 +1633,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1600,7 +1662,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1617,7 +1680,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1635,7 +1698,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1650,7 +1713,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1667,7 +1731,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -1686,7 +1751,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -1707,7 +1773,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1730,7 +1797,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1755,7 +1823,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1782,7 +1851,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1798,7 +1868,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1815,7 +1885,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1830,7 +1900,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1847,7 +1918,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -1866,7 +1938,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -1887,7 +1960,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1910,7 +1984,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1935,7 +2010,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1962,7 +2038,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1978,7 +2055,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1995,7 +2072,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2009,7 +2086,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2025,7 +2103,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2043,7 +2122,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2063,7 +2143,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2085,7 +2166,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -2109,7 +2191,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -2135,7 +2218,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -2150,7 +2234,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2166,7 +2250,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2182,7 +2266,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2200,7 +2285,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2220,7 +2306,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2242,7 +2329,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2266,7 +2354,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -2292,7 +2381,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -2320,7 +2410,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -2337,7 +2428,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2355,7 +2446,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2370,7 +2461,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2387,7 +2479,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2406,7 +2499,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2427,7 +2521,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2450,7 +2545,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -2475,7 +2571,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -2502,7 +2599,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -2518,7 +2616,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2535,7 +2633,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2550,7 +2648,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2567,7 +2666,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2586,7 +2686,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2607,7 +2708,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2630,7 +2732,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -2655,7 +2758,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -2682,7 +2786,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -2698,7 +2803,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2715,7 +2820,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2729,7 +2834,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2745,7 +2851,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2763,7 +2870,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2783,7 +2891,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2805,7 +2914,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -2829,7 +2939,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -2855,7 +2966,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -2870,7 +2982,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2886,7 +2998,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2902,7 +3014,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2920,7 +3033,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2940,7 +3054,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2962,7 +3077,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2986,7 +3102,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3012,7 +3129,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3040,7 +3158,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3057,7 +3176,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3075,7 +3194,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3090,7 +3209,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3107,7 +3227,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -3126,7 +3247,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -3147,7 +3269,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -3170,7 +3293,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3195,7 +3319,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3222,7 +3347,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3238,7 +3364,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3255,7 +3381,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3270,7 +3396,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3287,7 +3414,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -3306,7 +3434,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -3327,7 +3456,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -3350,7 +3480,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3375,7 +3506,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3402,7 +3534,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3418,7 +3551,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3435,7 +3568,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3449,7 +3582,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3465,7 +3599,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -3483,7 +3618,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -3503,7 +3639,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -3525,7 +3662,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3549,7 +3687,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3575,7 +3714,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3590,7 +3730,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3606,7 +3746,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3622,7 +3762,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3640,7 +3781,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -3660,7 +3802,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -3682,7 +3825,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -3706,7 +3850,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3732,7 +3877,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3760,7 +3906,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3777,7 +3924,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3795,7 +3942,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3810,7 +3957,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3827,7 +3975,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -3846,7 +3995,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -3867,7 +4017,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -3890,7 +4041,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3915,7 +4067,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3942,7 +4095,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3958,7 +4112,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3975,7 +4129,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3990,7 +4144,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4007,7 +4162,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4026,7 +4182,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4047,7 +4204,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4070,7 +4228,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -4095,7 +4254,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -4122,7 +4282,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -4138,7 +4299,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4155,7 +4316,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4169,7 +4330,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4185,7 +4347,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4203,7 +4366,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4223,7 +4387,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4245,7 +4410,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -4269,7 +4435,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -4295,7 +4462,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -4310,7 +4478,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4326,7 +4494,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4343,7 +4511,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(level, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4362,7 +4531,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4383,7 +4553,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4406,7 +4577,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4431,7 +4603,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -4458,7 +4631,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -4487,7 +4661,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -4505,7 +4680,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(level, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4524,7 +4699,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(level, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4540,7 +4715,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(level, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4558,7 +4734,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4578,7 +4755,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4600,7 +4778,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4624,7 +4803,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -4650,7 +4830,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -4678,7 +4859,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -4695,7 +4877,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(level, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4713,7 +4895,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(level, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4729,7 +4911,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(level, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4747,7 +4930,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(level, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4767,7 +4951,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(level, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4789,7 +4974,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(level, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4813,7 +4999,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(level, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -4839,7 +5026,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(level, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -4867,7 +5055,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(level, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -4884,7 +5073,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(level, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4902,7 +5091,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(level, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4917,7 +5106,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), Array.Empty<KeyValuePair<string, object?>>());
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(level, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4934,7 +5124,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), logProperty1);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1>(message.GetFormattedText(), capturedProperties, logProperty1);
         logger.Log(level, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4953,7 +5144,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), logProperty1, logProperty2);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2);
         logger.Log(level, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4974,7 +5166,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3);
         logger.Log(level, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4997,7 +5190,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(level, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -5022,7 +5216,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(level, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -5049,7 +5244,8 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var capturedProperties = message.GetCapturedProperties();
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), capturedProperties, logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(level, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -5065,7 +5261,7 @@ public static class StructuredLoggerExtensions
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(level, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -5082,7 +5278,7 @@ public static class StructuredLoggerExtensions
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), properties);
+        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
         logger.Log(level, default, state, null, LogPropertiesState.Formatter);
     }
 }
