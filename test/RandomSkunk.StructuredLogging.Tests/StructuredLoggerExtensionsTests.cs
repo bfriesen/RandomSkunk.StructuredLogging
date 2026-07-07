@@ -130,7 +130,7 @@ public class StructuredLoggerExtensionsTests
     }
 
     [Fact]
-    public void CollectionOverload_AcceptsList()
+    public void CollectionOverload_AcceptsListWithNoAdditionalProperties()
     {
         var logger = new RecordingLogger();
         var properties = new List<KeyValuePair<string, object?>>
@@ -139,13 +139,13 @@ public class StructuredLoggerExtensionsTests
             new("B", "two"),
         };
 
-        logger.Debug($"msg", properties);
+        logger.Debug(properties, $"msg");
 
         logger.LastProperties.Should().BeEquivalentTo(properties);
     }
 
     [Fact]
-    public void CollectionOverload_AcceptsDictionary()
+    public void CollectionOverload_AcceptsDictionaryWithNoAdditionalProperties()
     {
         var logger = new RecordingLogger();
         var properties = new Dictionary<string, object?>
@@ -154,9 +154,36 @@ public class StructuredLoggerExtensionsTests
             ["B"] = "two",
         };
 
-        logger.Debug($"msg", properties);
+        logger.Debug(properties, $"msg");
 
         logger.LastProperties.Should().BeEquivalentTo(properties);
+    }
+
+    [Fact]
+    public void CollectionOverload_CombinesWithSingleStaticProperty()
+    {
+        var logger = new RecordingLogger();
+        var properties = new Dictionary<string, object?> { ["A"] = 1 };
+
+        logger.Debug(properties, $"msg", ("B", "two"));
+
+        logger.LastProperties.Should().Equal(
+            new KeyValuePair<string, object?>("A", 1),
+            new KeyValuePair<string, object?>("B", "two"));
+    }
+
+    [Fact]
+    public void CollectionOverload_CombinesWithParamsProperties()
+    {
+        var logger = new RecordingLogger();
+        var properties = new Dictionary<string, object?> { ["A"] = 1 };
+
+        logger.Debug(properties, $"msg", ("B", "two"), ("C", 3.0));
+
+        logger.LastProperties.Should().Equal(
+            new KeyValuePair<string, object?>("A", 1),
+            new KeyValuePair<string, object?>("B", "two"),
+            new KeyValuePair<string, object?>("C", 3.0));
     }
 
     [Fact]

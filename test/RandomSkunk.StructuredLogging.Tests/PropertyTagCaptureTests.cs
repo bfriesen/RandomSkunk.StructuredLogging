@@ -122,7 +122,7 @@ public class PropertyTagCaptureTests
         var name = "Alice";
         var extraProperties = new Dictionary<string, object?> { ["RequestId"] = 7 };
 
-        logger.Debug($"Hello, {name:<UserName>}!", extraProperties);
+        logger.Debug(extraProperties, $"Hello, {name:<UserName>}!");
 
         logger.LastProperties.Should().HaveCount(2);
         logger.LastProperties![0].Should().Be(new KeyValuePair<string, object?>("UserName", "Alice"));
