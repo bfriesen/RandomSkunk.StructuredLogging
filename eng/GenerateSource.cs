@@ -420,6 +420,19 @@ static List<(string Name, string Text)> BaseParameterDocs(MethodGroup group, Com
     return docs;
 }
 
+static void AppendMethodSignature(StringBuilder sb, string indent, string prefix, List<string> parameters)
+{
+    sb.AppendLine($"{indent}{prefix}(");
+
+    for (int i = 0; i < parameters.Count; i++)
+    {
+        var suffix = i == parameters.Count - 1 ? ")" : ",";
+        sb.AppendLine($"{indent}    {parameters[i]}{suffix}");
+    }
+
+    sb.AppendLine($"{indent}{{");
+}
+
 static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, int arity)
 {
     string typeParamList = arity == 0 ? string.Empty : $"<{string.Join(", ", Enumerable.Range(1, arity).Select(i => $"T{i}"))}>";
@@ -435,8 +448,7 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
         parameterDocs.Add(($"logProperty{i}", $"The {Ordinal(i)} structured log property, as a name/value pair."));
 
     WriteDocComment(sb, "    ", $"Writes a log message{PropertyCountSummaryFragment(arity)} {LevelPhrase(group)}.", typeParamDocs, parameterDocs);
-    sb.AppendLine($"    public static void {group.MethodName}{typeParamList}({string.Join(", ", parameters)})");
-    sb.AppendLine("    {");
+    AppendMethodSignature(sb, "    ", $"public static void {group.MethodName}{typeParamList}", parameters);
     // ToStringAndClear() must run unconditionally: it returns the handler's rented buffer to
     // ArrayPool<char>.Shared, and skipping that when the level is disabled would leak the buffer.
     sb.AppendLine("        var messageText = message.ToStringAndClear();");
@@ -468,8 +480,7 @@ static void AppendParamsMethod(StringBuilder sb, MethodGroup group, Combo combo)
     parameterDocs.Add(("logProperties", "The structured log properties, as name/value pairs."));
 
     WriteDocComment(sb, "    ", $"Writes a log message with any number of structured properties {LevelPhrase(group)}.", parameters: parameterDocs);
-    sb.AppendLine($"    public static void {group.MethodName}({string.Join(", ", parameters)})");
-    sb.AppendLine("    {");
+    AppendMethodSignature(sb, "    ", $"public static void {group.MethodName}", parameters);
     // ToStringAndClear() must run unconditionally: it returns the handler's rented buffer to
     // ArrayPool<char>.Shared, and skipping that when the level is disabled would leak the buffer.
     sb.AppendLine("        var messageText = message.ToStringAndClear();");
@@ -491,8 +502,7 @@ static void AppendCollectionMethod(StringBuilder sb, MethodGroup group, Combo co
     parameterDocs.Add(("logProperties", "The structured log properties."));
 
     WriteDocComment(sb, "    ", $"Writes a log message with a collection of structured properties {LevelPhrase(group)}.", parameters: parameterDocs);
-    sb.AppendLine($"    public static void {group.MethodName}({string.Join(", ", parameters)})");
-    sb.AppendLine("    {");
+    AppendMethodSignature(sb, "    ", $"public static void {group.MethodName}", parameters);
     // ToStringAndClear() must run unconditionally: it returns the handler's rented buffer to
     // ArrayPool<char>.Shared, and skipping that when the level is disabled would leak the buffer.
     sb.AppendLine("        var messageText = message.ToStringAndClear();");
