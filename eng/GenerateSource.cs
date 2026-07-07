@@ -25,7 +25,6 @@ static string GenerateHandlers(string[] levels)
     sb.AppendLine("#nullable enable");
     sb.AppendLine("using System.Globalization;");
     sb.AppendLine("using System.Runtime.CompilerServices;");
-    sb.AppendLine("using System.Text;");
     sb.AppendLine("using Microsoft.Extensions.Logging;");
     sb.AppendLine();
     sb.AppendLine("namespace RandomSkunk.StructuredLogging;");
@@ -52,65 +51,46 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
         ? $"logger.IsEnabled(LogLevel.{fixedLevel})"
         : "logger.IsEnabled(level)";
 
+    // DefaultInterpolatedStringHandler is a ref struct (it's backed by a pooled Span<char>
+    // buffer), so this wrapper must be a ref struct too, and it can't be readonly: readonly
+    // struct fields of mutable-struct type get defensive-copied on every method call, which
+    // would silently make Append* calls mutate a throwaway copy instead of `_handler`.
     sb.AppendLine("[InterpolatedStringHandler]");
-    sb.AppendLine($"public readonly struct {typeName}");
+    sb.AppendLine($"public ref struct {typeName}");
     sb.AppendLine("{");
-    sb.AppendLine("    private readonly StringBuilder? _builder;");
+    sb.AppendLine("    private DefaultInterpolatedStringHandler _handler;");
     sb.AppendLine();
     sb.AppendLine($"    public {typeName}({ctorParams})");
     sb.AppendLine("    {");
     sb.AppendLine($"        handlerIsValid = {enabledCheck};");
-    sb.AppendLine("        _builder = handlerIsValid ? new StringBuilder(literalLength + (formattedCount * 11)) : null;");
+    sb.AppendLine("        _handler = handlerIsValid");
+    sb.AppendLine("            ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)");
+    sb.AppendLine("            : default;");
     sb.AppendLine("    }");
     sb.AppendLine();
-    sb.AppendLine($"    private {typeName}(string message) => _builder = new StringBuilder(message);");
+    sb.AppendLine($"    private {typeName}(string message)");
+    sb.AppendLine("    {");
+    sb.AppendLine("        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);");
+    sb.AppendLine("        _handler.AppendLiteral(message);");
+    sb.AppendLine("    }");
     sb.AppendLine();
     sb.AppendLine($"    public static implicit operator {typeName}(string message) => new(message);");
     sb.AppendLine();
-    sb.AppendLine("    public void AppendLiteral(string value) => _builder?.Append(value);");
+    sb.AppendLine("    public void AppendLiteral(string value) => _handler.AppendLiteral(value);");
     sb.AppendLine();
-    sb.AppendLine("    public void AppendFormatted<T>(T value) => AppendFormatted(value, 0, null);");
+    sb.AppendLine("    public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);");
     sb.AppendLine();
-    sb.AppendLine("    public void AppendFormatted<T>(T value, string? format) => AppendFormatted(value, 0, format);");
+    sb.AppendLine("    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);");
     sb.AppendLine();
-    sb.AppendLine("    public void AppendFormatted<T>(T value, int alignment) => AppendFormatted(value, alignment, null);");
+    sb.AppendLine("    public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);");
     sb.AppendLine();
-    sb.AppendLine("    public void AppendFormatted<T>(T value, int alignment, string? format)");
-    sb.AppendLine("    {");
-    sb.AppendLine("        string? text = value is IFormattable formattable");
-    sb.AppendLine("            ? formattable.ToString(format, CultureInfo.InvariantCulture)");
-    sb.AppendLine("            : value?.ToString();");
+    sb.AppendLine("    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);");
     sb.AppendLine();
-    sb.AppendLine("        AppendAligned(text, alignment);");
-    sb.AppendLine("    }");
+    sb.AppendLine("    public void AppendFormatted(string? value) => _handler.AppendFormatted(value);");
     sb.AppendLine();
-    sb.AppendLine("    public void AppendFormatted(string? value) => _builder?.Append(value);");
+    sb.AppendLine("    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);");
     sb.AppendLine();
-    sb.AppendLine("    public void AppendFormatted(string? value, int alignment) => AppendAligned(value, alignment);");
-    sb.AppendLine();
-    sb.AppendLine("    private void AppendAligned(string? text, int alignment)");
-    sb.AppendLine("    {");
-    sb.AppendLine("        if (_builder is null)");
-    sb.AppendLine("            return;");
-    sb.AppendLine();
-    sb.AppendLine("        text ??= string.Empty;");
-    sb.AppendLine("        int padding = Math.Abs(alignment) - text.Length;");
-    sb.AppendLine();
-    sb.AppendLine("        if (padding <= 0)");
-    sb.AppendLine("        {");
-    sb.AppendLine("            _builder.Append(text);");
-    sb.AppendLine("        }");
-    sb.AppendLine("        else if (alignment < 0)");
-    sb.AppendLine("        {");
-    sb.AppendLine("            _builder.Append(text).Append(' ', padding);");
-    sb.AppendLine("        }");
-    sb.AppendLine("        else");
-    sb.AppendLine("        {");
-    sb.AppendLine("            _builder.Append(' ', padding).Append(text);");
-    sb.AppendLine("        }");
-    sb.AppendLine("    }");
-    sb.AppendLine();
-    sb.AppendLine("    internal string GetFormattedText() => _builder?.ToString() ?? string.Empty;");
+    sb.AppendLine("    internal string GetFormattedText() => _handler.ToStringAndClear();");
     sb.AppendLine("}");
 }
 

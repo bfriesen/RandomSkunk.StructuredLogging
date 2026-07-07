@@ -2,434 +2,272 @@
 #nullable enable
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging;
 
 [InterpolatedStringHandler]
-public readonly struct TraceInterpolatedStringHandler
+public ref struct TraceInterpolatedStringHandler
 {
-    private readonly StringBuilder? _builder;
+    private DefaultInterpolatedStringHandler _handler;
 
     public TraceInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Trace);
-        _builder = handlerIsValid ? new StringBuilder(literalLength + (formattedCount * 11)) : null;
+        _handler = handlerIsValid
+            ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
+            : default;
     }
 
-    private TraceInterpolatedStringHandler(string message) => _builder = new StringBuilder(message);
+    private TraceInterpolatedStringHandler(string message)
+    {
+        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
+        _handler.AppendLiteral(message);
+    }
 
     public static implicit operator TraceInterpolatedStringHandler(string message) => new(message);
 
-    public void AppendLiteral(string value) => _builder?.Append(value);
+    public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
-    public void AppendFormatted<T>(T value) => AppendFormatted(value, 0, null);
+    public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted<T>(T value, string? format) => AppendFormatted(value, 0, format);
+    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
-    public void AppendFormatted<T>(T value, int alignment) => AppendFormatted(value, alignment, null);
+    public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted<T>(T value, int alignment, string? format)
-    {
-        string? text = value is IFormattable formattable
-            ? formattable.ToString(format, CultureInfo.InvariantCulture)
-            : value?.ToString();
+    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
-        AppendAligned(text, alignment);
-    }
+    public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted(string? value) => _builder?.Append(value);
+    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted(string? value, int alignment) => AppendAligned(value, alignment);
-
-    private void AppendAligned(string? text, int alignment)
-    {
-        if (_builder is null)
-            return;
-
-        text ??= string.Empty;
-        int padding = Math.Abs(alignment) - text.Length;
-
-        if (padding <= 0)
-        {
-            _builder.Append(text);
-        }
-        else if (alignment < 0)
-        {
-            _builder.Append(text).Append(' ', padding);
-        }
-        else
-        {
-            _builder.Append(' ', padding).Append(text);
-        }
-    }
-
-    internal string GetFormattedText() => _builder?.ToString() ?? string.Empty;
+    internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
 [InterpolatedStringHandler]
-public readonly struct DebugInterpolatedStringHandler
+public ref struct DebugInterpolatedStringHandler
 {
-    private readonly StringBuilder? _builder;
+    private DefaultInterpolatedStringHandler _handler;
 
     public DebugInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Debug);
-        _builder = handlerIsValid ? new StringBuilder(literalLength + (formattedCount * 11)) : null;
+        _handler = handlerIsValid
+            ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
+            : default;
     }
 
-    private DebugInterpolatedStringHandler(string message) => _builder = new StringBuilder(message);
+    private DebugInterpolatedStringHandler(string message)
+    {
+        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
+        _handler.AppendLiteral(message);
+    }
 
     public static implicit operator DebugInterpolatedStringHandler(string message) => new(message);
 
-    public void AppendLiteral(string value) => _builder?.Append(value);
+    public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
-    public void AppendFormatted<T>(T value) => AppendFormatted(value, 0, null);
+    public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted<T>(T value, string? format) => AppendFormatted(value, 0, format);
+    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
-    public void AppendFormatted<T>(T value, int alignment) => AppendFormatted(value, alignment, null);
+    public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted<T>(T value, int alignment, string? format)
-    {
-        string? text = value is IFormattable formattable
-            ? formattable.ToString(format, CultureInfo.InvariantCulture)
-            : value?.ToString();
+    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
-        AppendAligned(text, alignment);
-    }
+    public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted(string? value) => _builder?.Append(value);
+    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted(string? value, int alignment) => AppendAligned(value, alignment);
-
-    private void AppendAligned(string? text, int alignment)
-    {
-        if (_builder is null)
-            return;
-
-        text ??= string.Empty;
-        int padding = Math.Abs(alignment) - text.Length;
-
-        if (padding <= 0)
-        {
-            _builder.Append(text);
-        }
-        else if (alignment < 0)
-        {
-            _builder.Append(text).Append(' ', padding);
-        }
-        else
-        {
-            _builder.Append(' ', padding).Append(text);
-        }
-    }
-
-    internal string GetFormattedText() => _builder?.ToString() ?? string.Empty;
+    internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
 [InterpolatedStringHandler]
-public readonly struct InformationInterpolatedStringHandler
+public ref struct InformationInterpolatedStringHandler
 {
-    private readonly StringBuilder? _builder;
+    private DefaultInterpolatedStringHandler _handler;
 
     public InformationInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Information);
-        _builder = handlerIsValid ? new StringBuilder(literalLength + (formattedCount * 11)) : null;
+        _handler = handlerIsValid
+            ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
+            : default;
     }
 
-    private InformationInterpolatedStringHandler(string message) => _builder = new StringBuilder(message);
+    private InformationInterpolatedStringHandler(string message)
+    {
+        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
+        _handler.AppendLiteral(message);
+    }
 
     public static implicit operator InformationInterpolatedStringHandler(string message) => new(message);
 
-    public void AppendLiteral(string value) => _builder?.Append(value);
+    public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
-    public void AppendFormatted<T>(T value) => AppendFormatted(value, 0, null);
+    public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted<T>(T value, string? format) => AppendFormatted(value, 0, format);
+    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
-    public void AppendFormatted<T>(T value, int alignment) => AppendFormatted(value, alignment, null);
+    public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted<T>(T value, int alignment, string? format)
-    {
-        string? text = value is IFormattable formattable
-            ? formattable.ToString(format, CultureInfo.InvariantCulture)
-            : value?.ToString();
+    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
-        AppendAligned(text, alignment);
-    }
+    public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted(string? value) => _builder?.Append(value);
+    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted(string? value, int alignment) => AppendAligned(value, alignment);
-
-    private void AppendAligned(string? text, int alignment)
-    {
-        if (_builder is null)
-            return;
-
-        text ??= string.Empty;
-        int padding = Math.Abs(alignment) - text.Length;
-
-        if (padding <= 0)
-        {
-            _builder.Append(text);
-        }
-        else if (alignment < 0)
-        {
-            _builder.Append(text).Append(' ', padding);
-        }
-        else
-        {
-            _builder.Append(' ', padding).Append(text);
-        }
-    }
-
-    internal string GetFormattedText() => _builder?.ToString() ?? string.Empty;
+    internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
 [InterpolatedStringHandler]
-public readonly struct WarningInterpolatedStringHandler
+public ref struct WarningInterpolatedStringHandler
 {
-    private readonly StringBuilder? _builder;
+    private DefaultInterpolatedStringHandler _handler;
 
     public WarningInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Warning);
-        _builder = handlerIsValid ? new StringBuilder(literalLength + (formattedCount * 11)) : null;
+        _handler = handlerIsValid
+            ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
+            : default;
     }
 
-    private WarningInterpolatedStringHandler(string message) => _builder = new StringBuilder(message);
+    private WarningInterpolatedStringHandler(string message)
+    {
+        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
+        _handler.AppendLiteral(message);
+    }
 
     public static implicit operator WarningInterpolatedStringHandler(string message) => new(message);
 
-    public void AppendLiteral(string value) => _builder?.Append(value);
+    public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
-    public void AppendFormatted<T>(T value) => AppendFormatted(value, 0, null);
+    public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted<T>(T value, string? format) => AppendFormatted(value, 0, format);
+    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
-    public void AppendFormatted<T>(T value, int alignment) => AppendFormatted(value, alignment, null);
+    public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted<T>(T value, int alignment, string? format)
-    {
-        string? text = value is IFormattable formattable
-            ? formattable.ToString(format, CultureInfo.InvariantCulture)
-            : value?.ToString();
+    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
-        AppendAligned(text, alignment);
-    }
+    public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted(string? value) => _builder?.Append(value);
+    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted(string? value, int alignment) => AppendAligned(value, alignment);
-
-    private void AppendAligned(string? text, int alignment)
-    {
-        if (_builder is null)
-            return;
-
-        text ??= string.Empty;
-        int padding = Math.Abs(alignment) - text.Length;
-
-        if (padding <= 0)
-        {
-            _builder.Append(text);
-        }
-        else if (alignment < 0)
-        {
-            _builder.Append(text).Append(' ', padding);
-        }
-        else
-        {
-            _builder.Append(' ', padding).Append(text);
-        }
-    }
-
-    internal string GetFormattedText() => _builder?.ToString() ?? string.Empty;
+    internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
 [InterpolatedStringHandler]
-public readonly struct ErrorInterpolatedStringHandler
+public ref struct ErrorInterpolatedStringHandler
 {
-    private readonly StringBuilder? _builder;
+    private DefaultInterpolatedStringHandler _handler;
 
     public ErrorInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Error);
-        _builder = handlerIsValid ? new StringBuilder(literalLength + (formattedCount * 11)) : null;
+        _handler = handlerIsValid
+            ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
+            : default;
     }
 
-    private ErrorInterpolatedStringHandler(string message) => _builder = new StringBuilder(message);
+    private ErrorInterpolatedStringHandler(string message)
+    {
+        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
+        _handler.AppendLiteral(message);
+    }
 
     public static implicit operator ErrorInterpolatedStringHandler(string message) => new(message);
 
-    public void AppendLiteral(string value) => _builder?.Append(value);
+    public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
-    public void AppendFormatted<T>(T value) => AppendFormatted(value, 0, null);
+    public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted<T>(T value, string? format) => AppendFormatted(value, 0, format);
+    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
-    public void AppendFormatted<T>(T value, int alignment) => AppendFormatted(value, alignment, null);
+    public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted<T>(T value, int alignment, string? format)
-    {
-        string? text = value is IFormattable formattable
-            ? formattable.ToString(format, CultureInfo.InvariantCulture)
-            : value?.ToString();
+    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
-        AppendAligned(text, alignment);
-    }
+    public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted(string? value) => _builder?.Append(value);
+    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted(string? value, int alignment) => AppendAligned(value, alignment);
-
-    private void AppendAligned(string? text, int alignment)
-    {
-        if (_builder is null)
-            return;
-
-        text ??= string.Empty;
-        int padding = Math.Abs(alignment) - text.Length;
-
-        if (padding <= 0)
-        {
-            _builder.Append(text);
-        }
-        else if (alignment < 0)
-        {
-            _builder.Append(text).Append(' ', padding);
-        }
-        else
-        {
-            _builder.Append(' ', padding).Append(text);
-        }
-    }
-
-    internal string GetFormattedText() => _builder?.ToString() ?? string.Empty;
+    internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
 [InterpolatedStringHandler]
-public readonly struct CriticalInterpolatedStringHandler
+public ref struct CriticalInterpolatedStringHandler
 {
-    private readonly StringBuilder? _builder;
+    private DefaultInterpolatedStringHandler _handler;
 
     public CriticalInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Critical);
-        _builder = handlerIsValid ? new StringBuilder(literalLength + (formattedCount * 11)) : null;
+        _handler = handlerIsValid
+            ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
+            : default;
     }
 
-    private CriticalInterpolatedStringHandler(string message) => _builder = new StringBuilder(message);
+    private CriticalInterpolatedStringHandler(string message)
+    {
+        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
+        _handler.AppendLiteral(message);
+    }
 
     public static implicit operator CriticalInterpolatedStringHandler(string message) => new(message);
 
-    public void AppendLiteral(string value) => _builder?.Append(value);
+    public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
-    public void AppendFormatted<T>(T value) => AppendFormatted(value, 0, null);
+    public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted<T>(T value, string? format) => AppendFormatted(value, 0, format);
+    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
-    public void AppendFormatted<T>(T value, int alignment) => AppendFormatted(value, alignment, null);
+    public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted<T>(T value, int alignment, string? format)
-    {
-        string? text = value is IFormattable formattable
-            ? formattable.ToString(format, CultureInfo.InvariantCulture)
-            : value?.ToString();
+    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
-        AppendAligned(text, alignment);
-    }
+    public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted(string? value) => _builder?.Append(value);
+    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted(string? value, int alignment) => AppendAligned(value, alignment);
-
-    private void AppendAligned(string? text, int alignment)
-    {
-        if (_builder is null)
-            return;
-
-        text ??= string.Empty;
-        int padding = Math.Abs(alignment) - text.Length;
-
-        if (padding <= 0)
-        {
-            _builder.Append(text);
-        }
-        else if (alignment < 0)
-        {
-            _builder.Append(text).Append(' ', padding);
-        }
-        else
-        {
-            _builder.Append(' ', padding).Append(text);
-        }
-    }
-
-    internal string GetFormattedText() => _builder?.ToString() ?? string.Empty;
+    internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
 [InterpolatedStringHandler]
-public readonly struct LogInterpolatedStringHandler
+public ref struct LogInterpolatedStringHandler
 {
-    private readonly StringBuilder? _builder;
+    private DefaultInterpolatedStringHandler _handler;
 
     public LogInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, LogLevel level, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(level);
-        _builder = handlerIsValid ? new StringBuilder(literalLength + (formattedCount * 11)) : null;
+        _handler = handlerIsValid
+            ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
+            : default;
     }
 
-    private LogInterpolatedStringHandler(string message) => _builder = new StringBuilder(message);
+    private LogInterpolatedStringHandler(string message)
+    {
+        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
+        _handler.AppendLiteral(message);
+    }
 
     public static implicit operator LogInterpolatedStringHandler(string message) => new(message);
 
-    public void AppendLiteral(string value) => _builder?.Append(value);
+    public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
-    public void AppendFormatted<T>(T value) => AppendFormatted(value, 0, null);
+    public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted<T>(T value, string? format) => AppendFormatted(value, 0, format);
+    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
-    public void AppendFormatted<T>(T value, int alignment) => AppendFormatted(value, alignment, null);
+    public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted<T>(T value, int alignment, string? format)
-    {
-        string? text = value is IFormattable formattable
-            ? formattable.ToString(format, CultureInfo.InvariantCulture)
-            : value?.ToString();
+    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
-        AppendAligned(text, alignment);
-    }
+    public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
-    public void AppendFormatted(string? value) => _builder?.Append(value);
+    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    public void AppendFormatted(string? value, int alignment) => AppendAligned(value, alignment);
-
-    private void AppendAligned(string? text, int alignment)
-    {
-        if (_builder is null)
-            return;
-
-        text ??= string.Empty;
-        int padding = Math.Abs(alignment) - text.Length;
-
-        if (padding <= 0)
-        {
-            _builder.Append(text);
-        }
-        else if (alignment < 0)
-        {
-            _builder.Append(text).Append(' ', padding);
-        }
-        else
-        {
-            _builder.Append(' ', padding).Append(text);
-        }
-    }
-
-    internal string GetFormattedText() => _builder?.ToString() ?? string.Empty;
+    internal string GetFormattedText() => _handler.ToStringAndClear();
 }
