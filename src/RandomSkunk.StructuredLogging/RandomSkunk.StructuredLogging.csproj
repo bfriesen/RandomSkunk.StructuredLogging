@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>RandomSkunk.StructuredLogging</PackageId>
+    <Authors>Brian Friesen</Authors>
+    <Description>Modern structured logging extensions for .NET that separate human-readable messages from machine-readable attributes. Include contextual data (user IDs, correlation IDs, metrics) in logs without forcing them into message templates.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>logging;structured-logging;dotnet</PackageTags>
+    <Copyright>Copyright (c) 2025 Brian Friesen</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
