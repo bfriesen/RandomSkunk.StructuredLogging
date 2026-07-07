@@ -18,6 +18,37 @@ File.WriteAllText(Path.Combine(outputDir, "StructuredLoggerExtensions.g.cs"), Ge
 
 Console.WriteLine($"Generated files written to {outputDir}");
 
+static string Ordinal(int n) => n switch
+{
+    1 => "first",
+    2 => "second",
+    3 => "third",
+    4 => "fourth",
+    5 => "fifth",
+    6 => "sixth",
+    _ => $"{n}th",
+};
+
+static void WriteDocComment(
+    StringBuilder sb,
+    string indent,
+    string summary,
+    IEnumerable<(string Name, string Text)>? typeParams = null,
+    IEnumerable<(string Name, string Text)>? parameters = null)
+{
+    sb.AppendLine($"{indent}/// <summary>");
+    sb.AppendLine($"{indent}/// {summary}");
+    sb.AppendLine($"{indent}/// </summary>");
+
+    if (typeParams is not null)
+        foreach (var (name, text) in typeParams)
+            sb.AppendLine($"{indent}/// <typeparam name=\"{name}\">{text}</typeparam>");
+
+    if (parameters is not null)
+        foreach (var (name, text) in parameters)
+            sb.AppendLine($"{indent}/// <param name=\"{name}\">{text}</param>");
+}
+
 static string GenerateHandlers(string[] levels)
 {
     var sb = new StringBuilder();
@@ -51,15 +82,43 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
         ? $"logger.IsEnabled(LogLevel.{fixedLevel})"
         : "logger.IsEnabled(level)";
 
+    string typeSummary = fixedLevel is not null
+        ? $"Interpolated string handler for the message parameter of the {fixedLevel}-level <see cref=\"StructuredLoggerExtensions\"/> methods. Building the message is skipped when the {fixedLevel} level is not enabled for the target <see cref=\"ILogger\"/>."
+        : "Interpolated string handler for the message parameter of the <see cref=\"StructuredLoggerExtensions\"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref=\"ILogger\"/>.";
+
+    string ctorSummary = fixedLevel is not null
+        ? $"Initializes the handler and checks whether the {fixedLevel} level is enabled for <paramref name=\"logger\"/>."
+        : "Initializes the handler and checks whether <paramref name=\"level\"/> is enabled for <paramref name=\"logger\"/>.";
+
+    string handlerIsValidDoc = fixedLevel is not null
+        ? $"Set to <see langword=\"false\"/> when the {fixedLevel} level is not enabled for <paramref name=\"logger\"/>, so the compiler skips evaluating and appending the interpolated string's arguments."
+        : "Set to <see langword=\"false\"/> when <paramref name=\"level\"/> is not enabled for <paramref name=\"logger\"/>, so the compiler skips evaluating and appending the interpolated string's arguments.";
+
+    var ctorParamDocs = new List<(string, string)>
+    {
+        ("literalLength", "The total number of characters in the interpolated string's literal text."),
+        ("formattedCount", "The number of interpolation expressions in the interpolated string."),
+        ("logger", "The logger the message is being built for."),
+    };
+
+    if (fixedLevel is null)
+        ctorParamDocs.Add(("level", "The severity level the message is being built for."));
+
+    ctorParamDocs.Add(("handlerIsValid", handlerIsValidDoc));
+
+    const string alignmentDoc = "The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.";
+
     // DefaultInterpolatedStringHandler is a ref struct (it's backed by a pooled Span<char>
     // buffer), so this wrapper must be a ref struct too, and it can't be readonly: readonly
     // struct fields of mutable-struct type get defensive-copied on every method call, which
     // would silently make Append* calls mutate a throwaway copy instead of `_handler`.
+    WriteDocComment(sb, string.Empty, typeSummary);
     sb.AppendLine("[InterpolatedStringHandler]");
     sb.AppendLine($"public ref struct {typeName}");
     sb.AppendLine("{");
     sb.AppendLine("    private DefaultInterpolatedStringHandler _handler;");
     sb.AppendLine();
+    WriteDocComment(sb, "    ", ctorSummary, parameters: ctorParamDocs);
     sb.AppendLine($"    public {typeName}({ctorParams})");
     sb.AppendLine("    {");
     sb.AppendLine($"        handlerIsValid = {enabledCheck};");
@@ -74,20 +133,81 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("        _handler.AppendLiteral(message);");
     sb.AppendLine("    }");
     sb.AppendLine();
+    WriteDocComment(
+        sb,
+        "    ",
+        $"Converts a plain string message to a <see cref=\"{typeName}\"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.",
+        parameters: [("message", "The literal message text.")]);
     sb.AppendLine($"    public static implicit operator {typeName}(string message) => new(message);");
     sb.AppendLine();
+    WriteDocComment(
+        sb,
+        "    ",
+        "Appends a literal text segment of the interpolated string to the message.",
+        parameters: [("value", "The literal text to append.")]);
     sb.AppendLine("    public void AppendLiteral(string value) => _handler.AppendLiteral(value);");
     sb.AppendLine();
+    WriteDocComment(
+        sb,
+        "    ",
+        "Appends the formatted value of an interpolation expression to the message.",
+        typeParams: [("T", "The type of the value to append.")],
+        parameters: [("value", "The value to format and append.")]);
     sb.AppendLine("    public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);");
     sb.AppendLine();
+    WriteDocComment(
+        sb,
+        "    ",
+        "Appends the formatted value of an interpolation expression to the message.",
+        typeParams: [("T", "The type of the value to append.")],
+        parameters:
+        [
+            ("value", "The value to format and append."),
+            ("format", "A standard or custom format string supported by <paramref name=\"value\"/>'s type."),
+        ]);
     sb.AppendLine("    public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);");
     sb.AppendLine();
+    WriteDocComment(
+        sb,
+        "    ",
+        "Appends the formatted value of an interpolation expression to the message.",
+        typeParams: [("T", "The type of the value to append.")],
+        parameters:
+        [
+            ("value", "The value to format and append."),
+            ("alignment", alignmentDoc),
+        ]);
     sb.AppendLine("    public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);");
     sb.AppendLine();
+    WriteDocComment(
+        sb,
+        "    ",
+        "Appends the formatted value of an interpolation expression to the message.",
+        typeParams: [("T", "The type of the value to append.")],
+        parameters:
+        [
+            ("value", "The value to format and append."),
+            ("alignment", alignmentDoc),
+            ("format", "A standard or custom format string supported by <paramref name=\"value\"/>'s type."),
+        ]);
     sb.AppendLine("    public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);");
     sb.AppendLine();
+    WriteDocComment(
+        sb,
+        "    ",
+        "Appends a string interpolation value to the message.",
+        parameters: [("value", "The string to append.")]);
     sb.AppendLine("    public void AppendFormatted(string? value) => _handler.AppendFormatted(value);");
     sb.AppendLine();
+    WriteDocComment(
+        sb,
+        "    ",
+        "Appends a string interpolation value to the message.",
+        parameters:
+        [
+            ("value", "The string to append."),
+            ("alignment", alignmentDoc),
+        ]);
     sb.AppendLine("    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);");
     sb.AppendLine();
     sb.AppendLine("    internal string GetFormattedText() => _handler.ToStringAndClear();");
@@ -237,6 +357,36 @@ static List<string> BaseParameters(MethodGroup group, Combo combo)
     return parameters;
 }
 
+static string LevelPhrase(MethodGroup group) => group.MethodName == "Write" ? "at the specified level" : $"at the {group.MethodName} level";
+
+static string PropertyCountSummaryFragment(int arity) => arity switch
+{
+    0 => string.Empty,
+    1 => " with 1 structured property",
+    _ => $" with {arity} structured properties",
+};
+
+static string MessageParamDoc(MethodGroup group) => group.MethodName == "Write"
+    ? "The log message. Its interpolated arguments are only evaluated if <paramref name=\"level\"/> is enabled for <paramref name=\"logger\"/>."
+    : $"The log message. Its interpolated arguments are only evaluated if the {group.MethodName} level is enabled for <paramref name=\"logger\"/>.";
+
+static List<(string Name, string Text)> BaseParameterDocs(MethodGroup group, Combo combo)
+{
+    var docs = new List<(string, string)> { ("logger", "The logger to write to.") };
+
+    if (group.LevelParam is not null)
+        docs.Add(("level", "The severity level of the log message."));
+
+    if (combo.Params.Any(p => p.StartsWith("EventId")))
+        docs.Add(("eventId", "The event id associated with the log message."));
+
+    if (combo.Params.Any(p => p.StartsWith("Exception")))
+        docs.Add(("exception", "The exception to associate with the log message."));
+
+    docs.Add(("message", MessageParamDoc(group)));
+    return docs;
+}
+
 static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, int arity)
 {
     string typeParamList = arity == 0 ? string.Empty : $"<{string.Join(", ", Enumerable.Range(1, arity).Select(i => $"T{i}"))}>";
@@ -246,6 +396,12 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     for (int i = 1; i <= arity; i++)
         parameters.Add($"(string Name, T{i} Value) logProperty{i}");
 
+    var typeParamDocs = Enumerable.Range(1, arity).Select(i => ($"T{i}", $"The type of the {Ordinal(i)} structured log property's value."));
+    var parameterDocs = BaseParameterDocs(group, combo);
+    foreach (var i in Enumerable.Range(1, arity))
+        parameterDocs.Add(($"logProperty{i}", $"The {Ordinal(i)} structured log property, as a name/value pair."));
+
+    WriteDocComment(sb, "    ", $"Writes a log message{PropertyCountSummaryFragment(arity)} {LevelPhrase(group)}.", typeParamDocs, parameterDocs);
     sb.AppendLine($"    public static void {group.MethodName}{typeParamList}({string.Join(", ", parameters)})");
     sb.AppendLine("    {");
     sb.AppendLine($"        if (!logger.IsEnabled({group.LevelExpr}))");
@@ -271,6 +427,10 @@ static void AppendParamsMethod(StringBuilder sb, MethodGroup group, Combo combo)
     var parameters = BaseParameters(group, combo);
     parameters.Add("params (string Name, object? Value)[] logProperties");
 
+    var parameterDocs = BaseParameterDocs(group, combo);
+    parameterDocs.Add(("logProperties", "The structured log properties, as name/value pairs."));
+
+    WriteDocComment(sb, "    ", $"Writes a log message with any number of structured properties {LevelPhrase(group)}.", parameters: parameterDocs);
     sb.AppendLine($"    public static void {group.MethodName}({string.Join(", ", parameters)})");
     sb.AppendLine("    {");
     sb.AppendLine($"        if (!logger.IsEnabled({group.LevelExpr}))");
@@ -286,6 +446,10 @@ static void AppendCollectionMethod(StringBuilder sb, MethodGroup group, Combo co
     var parameters = BaseParameters(group, combo);
     parameters.Add("IReadOnlyCollection<KeyValuePair<string, object?>> logProperties");
 
+    var parameterDocs = BaseParameterDocs(group, combo);
+    parameterDocs.Add(("logProperties", "The structured log properties."));
+
+    WriteDocComment(sb, "    ", $"Writes a log message with a collection of structured properties {LevelPhrase(group)}.", parameters: parameterDocs);
     sb.AppendLine($"    public static void {group.MethodName}({string.Join(", ", parameters)})");
     sb.AppendLine("    {");
     sb.AppendLine($"        if (!logger.IsEnabled({group.LevelExpr}))");

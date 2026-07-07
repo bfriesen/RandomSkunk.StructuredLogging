@@ -6,11 +6,21 @@ using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging;
 
+/// <summary>
+/// Interpolated string handler for the message parameter of the Trace-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Trace level is not enabled for the target <see cref="ILogger"/>.
+/// </summary>
 [InterpolatedStringHandler]
 public ref struct TraceInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
 
+    /// <summary>
+    /// Initializes the handler and checks whether the Trace level is enabled for <paramref name="logger"/>.
+    /// </summary>
+    /// <param name="literalLength">The total number of characters in the interpolated string's literal text.</param>
+    /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
+    /// <param name="logger">The logger the message is being built for.</param>
+    /// <param name="handlerIsValid">Set to <see langword="false"/> when the Trace level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public TraceInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Trace);
@@ -25,30 +35,81 @@ public ref struct TraceInterpolatedStringHandler
         _handler.AppendLiteral(message);
     }
 
+    /// <summary>
+    /// Converts a plain string message to a <see cref="TraceInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
+    /// </summary>
+    /// <param name="message">The literal message text.</param>
     public static implicit operator TraceInterpolatedStringHandler(string message) => new(message);
 
+    /// <summary>
+    /// Appends a literal text segment of the interpolated string to the message.
+    /// </summary>
+    /// <param name="value">The literal text to append.</param>
     public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
     public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
+/// <summary>
+/// Interpolated string handler for the message parameter of the Debug-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Debug level is not enabled for the target <see cref="ILogger"/>.
+/// </summary>
 [InterpolatedStringHandler]
 public ref struct DebugInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
 
+    /// <summary>
+    /// Initializes the handler and checks whether the Debug level is enabled for <paramref name="logger"/>.
+    /// </summary>
+    /// <param name="literalLength">The total number of characters in the interpolated string's literal text.</param>
+    /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
+    /// <param name="logger">The logger the message is being built for.</param>
+    /// <param name="handlerIsValid">Set to <see langword="false"/> when the Debug level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public DebugInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Debug);
@@ -63,30 +124,81 @@ public ref struct DebugInterpolatedStringHandler
         _handler.AppendLiteral(message);
     }
 
+    /// <summary>
+    /// Converts a plain string message to a <see cref="DebugInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
+    /// </summary>
+    /// <param name="message">The literal message text.</param>
     public static implicit operator DebugInterpolatedStringHandler(string message) => new(message);
 
+    /// <summary>
+    /// Appends a literal text segment of the interpolated string to the message.
+    /// </summary>
+    /// <param name="value">The literal text to append.</param>
     public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
     public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
+/// <summary>
+/// Interpolated string handler for the message parameter of the Information-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Information level is not enabled for the target <see cref="ILogger"/>.
+/// </summary>
 [InterpolatedStringHandler]
 public ref struct InformationInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
 
+    /// <summary>
+    /// Initializes the handler and checks whether the Information level is enabled for <paramref name="logger"/>.
+    /// </summary>
+    /// <param name="literalLength">The total number of characters in the interpolated string's literal text.</param>
+    /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
+    /// <param name="logger">The logger the message is being built for.</param>
+    /// <param name="handlerIsValid">Set to <see langword="false"/> when the Information level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public InformationInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Information);
@@ -101,30 +213,81 @@ public ref struct InformationInterpolatedStringHandler
         _handler.AppendLiteral(message);
     }
 
+    /// <summary>
+    /// Converts a plain string message to a <see cref="InformationInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
+    /// </summary>
+    /// <param name="message">The literal message text.</param>
     public static implicit operator InformationInterpolatedStringHandler(string message) => new(message);
 
+    /// <summary>
+    /// Appends a literal text segment of the interpolated string to the message.
+    /// </summary>
+    /// <param name="value">The literal text to append.</param>
     public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
     public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
+/// <summary>
+/// Interpolated string handler for the message parameter of the Warning-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Warning level is not enabled for the target <see cref="ILogger"/>.
+/// </summary>
 [InterpolatedStringHandler]
 public ref struct WarningInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
 
+    /// <summary>
+    /// Initializes the handler and checks whether the Warning level is enabled for <paramref name="logger"/>.
+    /// </summary>
+    /// <param name="literalLength">The total number of characters in the interpolated string's literal text.</param>
+    /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
+    /// <param name="logger">The logger the message is being built for.</param>
+    /// <param name="handlerIsValid">Set to <see langword="false"/> when the Warning level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public WarningInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Warning);
@@ -139,30 +302,81 @@ public ref struct WarningInterpolatedStringHandler
         _handler.AppendLiteral(message);
     }
 
+    /// <summary>
+    /// Converts a plain string message to a <see cref="WarningInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
+    /// </summary>
+    /// <param name="message">The literal message text.</param>
     public static implicit operator WarningInterpolatedStringHandler(string message) => new(message);
 
+    /// <summary>
+    /// Appends a literal text segment of the interpolated string to the message.
+    /// </summary>
+    /// <param name="value">The literal text to append.</param>
     public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
     public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
+/// <summary>
+/// Interpolated string handler for the message parameter of the Error-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Error level is not enabled for the target <see cref="ILogger"/>.
+/// </summary>
 [InterpolatedStringHandler]
 public ref struct ErrorInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
 
+    /// <summary>
+    /// Initializes the handler and checks whether the Error level is enabled for <paramref name="logger"/>.
+    /// </summary>
+    /// <param name="literalLength">The total number of characters in the interpolated string's literal text.</param>
+    /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
+    /// <param name="logger">The logger the message is being built for.</param>
+    /// <param name="handlerIsValid">Set to <see langword="false"/> when the Error level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public ErrorInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Error);
@@ -177,30 +391,81 @@ public ref struct ErrorInterpolatedStringHandler
         _handler.AppendLiteral(message);
     }
 
+    /// <summary>
+    /// Converts a plain string message to a <see cref="ErrorInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
+    /// </summary>
+    /// <param name="message">The literal message text.</param>
     public static implicit operator ErrorInterpolatedStringHandler(string message) => new(message);
 
+    /// <summary>
+    /// Appends a literal text segment of the interpolated string to the message.
+    /// </summary>
+    /// <param name="value">The literal text to append.</param>
     public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
     public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
+/// <summary>
+/// Interpolated string handler for the message parameter of the Critical-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Critical level is not enabled for the target <see cref="ILogger"/>.
+/// </summary>
 [InterpolatedStringHandler]
 public ref struct CriticalInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
 
+    /// <summary>
+    /// Initializes the handler and checks whether the Critical level is enabled for <paramref name="logger"/>.
+    /// </summary>
+    /// <param name="literalLength">The total number of characters in the interpolated string's literal text.</param>
+    /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
+    /// <param name="logger">The logger the message is being built for.</param>
+    /// <param name="handlerIsValid">Set to <see langword="false"/> when the Critical level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public CriticalInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(LogLevel.Critical);
@@ -215,30 +480,82 @@ public ref struct CriticalInterpolatedStringHandler
         _handler.AppendLiteral(message);
     }
 
+    /// <summary>
+    /// Converts a plain string message to a <see cref="CriticalInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
+    /// </summary>
+    /// <param name="message">The literal message text.</param>
     public static implicit operator CriticalInterpolatedStringHandler(string message) => new(message);
 
+    /// <summary>
+    /// Appends a literal text segment of the interpolated string to the message.
+    /// </summary>
+    /// <param name="value">The literal text to append.</param>
     public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
     public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
 }
 
+/// <summary>
+/// Interpolated string handler for the message parameter of the <see cref="StructuredLoggerExtensions"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref="ILogger"/>.
+/// </summary>
 [InterpolatedStringHandler]
 public ref struct LogInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
 
+    /// <summary>
+    /// Initializes the handler and checks whether <paramref name="level"/> is enabled for <paramref name="logger"/>.
+    /// </summary>
+    /// <param name="literalLength">The total number of characters in the interpolated string's literal text.</param>
+    /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
+    /// <param name="logger">The logger the message is being built for.</param>
+    /// <param name="level">The severity level the message is being built for.</param>
+    /// <param name="handlerIsValid">Set to <see langword="false"/> when <paramref name="level"/> is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public LogInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, LogLevel level, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(level);
@@ -253,20 +570,61 @@ public ref struct LogInterpolatedStringHandler
         _handler.AppendLiteral(message);
     }
 
+    /// <summary>
+    /// Converts a plain string message to a <see cref="LogInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
+    /// </summary>
+    /// <param name="message">The literal message text.</param>
     public static implicit operator LogInterpolatedStringHandler(string message) => new(message);
 
+    /// <summary>
+    /// Appends a literal text segment of the interpolated string to the message.
+    /// </summary>
+    /// <param name="value">The literal text to append.</param>
     public void AppendLiteral(string value) => _handler.AppendLiteral(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
+    /// <summary>
+    /// Appends the formatted value of an interpolation expression to the message.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to append.</typeparam>
+    /// <param name="value">The value to format and append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
+    /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
     public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
 
+    /// <summary>
+    /// Appends a string interpolation value to the message.
+    /// </summary>
+    /// <param name="value">The string to append.</param>
+    /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     internal string GetFormattedText() => _handler.ToStringAndClear();
