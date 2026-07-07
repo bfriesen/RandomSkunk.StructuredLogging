@@ -441,16 +441,14 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     sb.AppendLine("            return;");
     sb.AppendLine();
 
-    sb.AppendLine("        var capturedProperties = message.GetCapturedProperties();");
-
     if (arity == 0)
     {
-        sb.AppendLine($"        var state = new {stateType}(message.GetFormattedText(), capturedProperties, Array.Empty<KeyValuePair<string, object?>>());");
+        sb.AppendLine($"        var state = new {stateType}(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());");
     }
     else
     {
         var propArgs = string.Join(", ", Enumerable.Range(1, arity).Select(i => $"logProperty{i}"));
-        sb.AppendLine($"        var state = new {stateType}(message.GetFormattedText(), capturedProperties, {propArgs});");
+        sb.AppendLine($"        var state = new {stateType}(message.GetFormattedText(), message.GetCapturedProperties(), {propArgs});");
     }
 
     sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, {stateType}.Formatter);");
