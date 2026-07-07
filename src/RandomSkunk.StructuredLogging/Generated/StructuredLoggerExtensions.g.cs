@@ -19,10 +19,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     public static void Trace(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -37,10 +39,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Trace<T1>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -57,10 +61,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -79,10 +85,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -103,10 +111,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -129,10 +139,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -157,10 +169,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -174,10 +188,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Trace(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -191,11 +207,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Trace(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Trace, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -207,10 +225,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     public static void Trace(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -224,10 +244,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Trace<T1>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -243,10 +265,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -264,10 +288,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -287,10 +313,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -312,10 +340,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -339,10 +369,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -355,10 +387,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Trace(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -371,11 +405,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Trace(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Trace, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -387,10 +423,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     public static void Trace(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -404,10 +442,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Trace<T1>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -423,10 +463,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -444,10 +486,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -467,10 +511,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -492,10 +538,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4, T5>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -519,10 +567,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4, T5, T6>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -535,10 +585,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Trace(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -551,11 +603,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Trace(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Trace, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -566,10 +620,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     public static void Trace(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -582,10 +638,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Trace<T1>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -600,10 +658,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -620,10 +680,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -642,10 +704,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -666,10 +730,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4, T5>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -692,10 +758,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Trace<T1, T2, T3, T4, T5, T6>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -707,10 +775,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Trace(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -722,11 +792,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Trace(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] TraceInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Trace, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -739,10 +811,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     public static void Debug(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -757,10 +831,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Debug<T1>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -777,10 +853,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -799,10 +877,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -823,10 +903,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -849,10 +931,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -877,10 +961,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -894,10 +980,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Debug(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -911,11 +999,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Debug(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Debug, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -927,10 +1017,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     public static void Debug(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -944,10 +1036,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Debug<T1>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -963,10 +1057,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -984,10 +1080,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1007,10 +1105,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1032,10 +1132,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1059,10 +1161,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1075,10 +1179,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Debug(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1091,11 +1197,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Debug(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Debug, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1107,10 +1215,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     public static void Debug(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1124,10 +1234,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Debug<T1>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -1143,10 +1255,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -1164,10 +1278,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1187,10 +1303,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1212,10 +1330,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4, T5>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1239,10 +1359,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4, T5, T6>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1255,10 +1377,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Debug(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1271,11 +1395,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Debug(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Debug, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1286,10 +1412,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     public static void Debug(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1302,10 +1430,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Debug<T1>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -1320,10 +1450,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -1340,10 +1472,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1362,10 +1496,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1386,10 +1522,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4, T5>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1412,10 +1550,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Debug<T1, T2, T3, T4, T5, T6>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1427,10 +1567,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Debug(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1442,11 +1584,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Debug(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] DebugInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Debug, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1459,10 +1603,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     public static void Information(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1477,10 +1623,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Information<T1>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -1497,10 +1645,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Information<T1, T2>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -1519,10 +1669,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1543,10 +1695,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1569,10 +1723,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1597,10 +1753,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1614,10 +1772,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Information(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1631,11 +1791,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Information(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Information, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1647,10 +1809,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     public static void Information(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1664,10 +1828,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Information<T1>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -1683,10 +1849,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Information<T1, T2>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -1704,10 +1872,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1727,10 +1897,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1752,10 +1924,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1779,10 +1953,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1795,10 +1971,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Information(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1811,11 +1989,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Information(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Information, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -1827,10 +2007,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     public static void Information(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1844,10 +2026,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Information<T1>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -1863,10 +2047,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Information<T1, T2>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -1884,10 +2070,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -1907,10 +2095,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -1932,10 +2122,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4, T5>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -1959,10 +2151,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4, T5, T6>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -1975,10 +2169,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Information(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -1991,11 +2187,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Information(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Information, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2006,10 +2204,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     public static void Information(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2022,10 +2222,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Information<T1>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2040,10 +2242,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Information<T1, T2>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2060,10 +2264,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2082,10 +2288,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -2106,10 +2314,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4, T5>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -2132,10 +2342,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Information<T1, T2, T3, T4, T5, T6>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -2147,10 +2359,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Information(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2162,11 +2376,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Information(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] InformationInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Information, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2179,10 +2395,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     public static void Warning(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2197,10 +2415,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Warning<T1>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2217,10 +2437,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2239,10 +2461,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2263,10 +2487,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -2289,10 +2515,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -2317,10 +2545,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -2334,10 +2564,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Warning(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2351,11 +2583,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Warning(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Warning, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2367,10 +2601,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     public static void Warning(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2384,10 +2620,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Warning<T1>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2403,10 +2641,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2424,10 +2664,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2447,10 +2689,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -2472,10 +2716,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -2499,10 +2745,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -2515,10 +2763,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Warning(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2531,11 +2781,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Warning(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Warning, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2547,10 +2799,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     public static void Warning(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2564,10 +2818,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Warning<T1>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2583,10 +2839,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2604,10 +2862,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2627,10 +2887,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -2652,10 +2914,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4, T5>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -2679,10 +2943,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4, T5, T6>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -2695,10 +2961,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Warning(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2711,11 +2979,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Warning(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Warning, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2726,10 +2996,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     public static void Warning(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2742,10 +3014,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Warning<T1>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2760,10 +3034,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2780,10 +3056,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2802,10 +3080,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -2826,10 +3106,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4, T5>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -2852,10 +3134,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Warning<T1, T2, T3, T4, T5, T6>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -2867,10 +3151,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Warning(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2882,11 +3168,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Warning(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] WarningInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Warning, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -2899,10 +3187,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     public static void Error(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -2917,10 +3207,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Error<T1>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -2937,10 +3229,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Error<T1, T2>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -2959,10 +3253,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -2983,10 +3279,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3009,10 +3307,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3037,10 +3337,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3054,10 +3356,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Error(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3071,11 +3375,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Error(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Error, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3087,10 +3393,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     public static void Error(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3104,10 +3412,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Error<T1>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -3123,10 +3433,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Error<T1, T2>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -3144,10 +3456,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -3167,10 +3481,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3192,10 +3508,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3219,10 +3537,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3235,10 +3555,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Error(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3251,11 +3573,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Error(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Error, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3267,10 +3591,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     public static void Error(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3284,10 +3610,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Error<T1>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -3303,10 +3631,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Error<T1, T2>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -3324,10 +3654,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -3347,10 +3679,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3372,10 +3706,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4, T5>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3399,10 +3735,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4, T5, T6>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3415,10 +3753,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Error(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3431,11 +3771,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Error(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Error, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3446,10 +3788,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     public static void Error(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3462,10 +3806,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Error<T1>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -3480,10 +3826,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Error<T1, T2>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -3500,10 +3848,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -3522,10 +3872,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3546,10 +3898,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4, T5>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3572,10 +3926,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Error<T1, T2, T3, T4, T5, T6>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3587,10 +3943,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Error(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3602,11 +3960,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Error(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] ErrorInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Error, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3619,10 +3979,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     public static void Critical(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3637,10 +3999,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Critical<T1>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -3657,10 +4021,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -3679,10 +4045,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -3703,10 +4071,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3729,10 +4099,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3757,10 +4129,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3774,10 +4148,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Critical(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3791,11 +4167,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Critical(this ILogger logger, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Critical, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -3807,10 +4185,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     public static void Critical(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3824,10 +4204,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Critical<T1>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -3843,10 +4225,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -3864,10 +4248,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -3887,10 +4273,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -3912,10 +4300,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4, T5>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -3939,10 +4329,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4, T5, T6>(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -3955,10 +4347,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Critical(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3971,11 +4365,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Critical(this ILogger logger, EventId eventId, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Critical, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -3987,10 +4383,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     public static void Critical(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4004,10 +4402,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Critical<T1>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4023,10 +4423,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4044,10 +4446,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4067,10 +4471,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -4092,10 +4498,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4, T5>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -4119,10 +4527,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4, T5, T6>(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -4135,10 +4545,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Critical(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4151,11 +4563,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Critical(this ILogger logger, Exception? exception, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Critical, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4166,10 +4580,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     public static void Critical(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4182,10 +4598,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Critical<T1>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4200,10 +4618,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4220,10 +4640,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4242,10 +4664,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -4266,10 +4690,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4, T5>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -4292,10 +4718,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Critical<T1, T2, T3, T4, T5, T6>(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -4307,10 +4735,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Critical(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4322,11 +4752,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Critical(this ILogger logger, [InterpolatedStringHandlerArgument("logger")] CriticalInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(LogLevel.Critical, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4340,10 +4772,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     public static void Write(this ILogger logger, LogLevel level, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(level, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4359,10 +4793,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Write<T1>(this ILogger logger, LogLevel level, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4380,10 +4816,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Write<T1, T2>(this ILogger logger, LogLevel level, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4403,10 +4841,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3>(this ILogger logger, LogLevel level, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4428,10 +4868,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4>(this ILogger logger, LogLevel level, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -4455,10 +4897,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4, T5>(this ILogger logger, LogLevel level, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -4484,10 +4928,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4, T5, T6>(this ILogger logger, LogLevel level, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(level, eventId, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -4502,10 +4948,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Write(this ILogger logger, LogLevel level, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(level, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4520,11 +4968,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Write(this ILogger logger, LogLevel level, EventId eventId, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(level, eventId, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4537,10 +4987,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     public static void Write(this ILogger logger, LogLevel level, EventId eventId, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(level, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4555,10 +5007,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Write<T1>(this ILogger logger, LogLevel level, EventId eventId, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4575,10 +5029,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Write<T1, T2>(this ILogger logger, LogLevel level, EventId eventId, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4597,10 +5053,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3>(this ILogger logger, LogLevel level, EventId eventId, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4621,10 +5079,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4>(this ILogger logger, LogLevel level, EventId eventId, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -4647,10 +5107,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4, T5>(this ILogger logger, LogLevel level, EventId eventId, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -4675,10 +5137,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4, T5, T6>(this ILogger logger, LogLevel level, EventId eventId, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(level, eventId, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -4692,10 +5156,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Write(this ILogger logger, LogLevel level, EventId eventId, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(level, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4709,11 +5175,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Write(this ILogger logger, LogLevel level, EventId eventId, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(level, eventId, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4726,10 +5194,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     public static void Write(this ILogger logger, LogLevel level, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(level, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4744,10 +5214,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Write<T1>(this ILogger logger, LogLevel level, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(level, default, state, exception, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4764,10 +5236,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Write<T1, T2>(this ILogger logger, LogLevel level, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(level, default, state, exception, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4786,10 +5260,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3>(this ILogger logger, LogLevel level, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(level, default, state, exception, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4810,10 +5286,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4>(this ILogger logger, LogLevel level, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(level, default, state, exception, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -4836,10 +5314,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4, T5>(this ILogger logger, LogLevel level, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(level, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -4864,10 +5344,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4, T5, T6>(this ILogger logger, LogLevel level, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(level, default, state, exception, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -4881,10 +5363,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Write(this ILogger logger, LogLevel level, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(level, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4898,11 +5382,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Write(this ILogger logger, LogLevel level, Exception? exception, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(level, default, state, exception, LogPropertiesState.Formatter);
     }
 
@@ -4914,10 +5400,12 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     public static void Write(this ILogger logger, LogLevel level, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
         logger.Log(level, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -4931,10 +5419,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty1">The first structured log property, as a name/value pair.</param>
     public static void Write<T1>(this ILogger logger, LogLevel level, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1);
+        var state = new LogPropertiesState<T1>(messageText, message.GetCapturedProperties(), logProperty1);
         logger.Log(level, default, state, null, LogPropertiesState<T1>.Formatter);
     }
 
@@ -4950,10 +5440,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty2">The second structured log property, as a name/value pair.</param>
     public static void Write<T1, T2>(this ILogger logger, LogLevel level, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2);
+        var state = new LogPropertiesState<T1, T2>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
         logger.Log(level, default, state, null, LogPropertiesState<T1, T2>.Formatter);
     }
 
@@ -4971,10 +5463,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty3">The third structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3>(this ILogger logger, LogLevel level, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
+        var state = new LogPropertiesState<T1, T2, T3>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
         logger.Log(level, default, state, null, LogPropertiesState<T1, T2, T3>.Formatter);
     }
 
@@ -4994,10 +5488,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty4">The fourth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4>(this ILogger logger, LogLevel level, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
+        var state = new LogPropertiesState<T1, T2, T3, T4>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
         logger.Log(level, default, state, null, LogPropertiesState<T1, T2, T3, T4>.Formatter);
     }
 
@@ -5019,10 +5515,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty5">The fifth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4, T5>(this ILogger logger, LogLevel level, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
         logger.Log(level, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5>.Formatter);
     }
 
@@ -5046,10 +5544,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperty6">The sixth structured log property, as a name/value pair.</param>
     public static void Write<T1, T2, T3, T4, T5, T6>(this ILogger logger, LogLevel level, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, (string Name, T1 Value) logProperty1, (string Name, T2 Value) logProperty2, (string Name, T3 Value) logProperty3, (string Name, T4 Value) logProperty4, (string Name, T5 Value) logProperty5, (string Name, T6 Value) logProperty6)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(message.GetFormattedText(), message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
+        var state = new LogPropertiesState<T1, T2, T3, T4, T5, T6>(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
         logger.Log(level, default, state, null, LogPropertiesState<T1, T2, T3, T4, T5, T6>.Formatter);
     }
 
@@ -5062,10 +5562,12 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties, as name/value pairs.</param>
     public static void Write(this ILogger logger, LogLevel level, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, params (string Name, object? Value)[] logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));
         logger.Log(level, default, state, null, LogPropertiesState.Formatter);
     }
 
@@ -5078,11 +5580,13 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">The structured log properties.</param>
     public static void Write(this ILogger logger, LogLevel level, [InterpolatedStringHandlerArgument("logger", "level")] LogInterpolatedStringHandler message, IReadOnlyCollection<KeyValuePair<string, object?>> logProperties)
     {
+        var messageText = message.ToStringAndClear();
+
         if (!logger.IsEnabled(level))
             return;
 
         var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
-        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);
+        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);
         logger.Log(level, default, state, null, LogPropertiesState.Formatter);
     }
 }

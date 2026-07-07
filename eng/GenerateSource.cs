@@ -227,7 +227,7 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
         ]);
     sb.AppendLine("    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);");
     sb.AppendLine();
-    sb.AppendLine("    internal string GetFormattedText() => _handler.ToStringAndClear();");
+    sb.AppendLine("    internal string ToStringAndClear() => _handler.ToStringAndClear();");
     sb.AppendLine();
     sb.AppendLine("    internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>");
     sb.AppendLine("        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();");
@@ -437,18 +437,22 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     WriteDocComment(sb, "    ", $"Writes a log message{PropertyCountSummaryFragment(arity)} {LevelPhrase(group)}.", typeParamDocs, parameterDocs);
     sb.AppendLine($"    public static void {group.MethodName}{typeParamList}({string.Join(", ", parameters)})");
     sb.AppendLine("    {");
+    // ToStringAndClear() must run unconditionally: it returns the handler's rented buffer to
+    // ArrayPool<char>.Shared, and skipping that when the level is disabled would leak the buffer.
+    sb.AppendLine("        var messageText = message.ToStringAndClear();");
+    sb.AppendLine();
     sb.AppendLine($"        if (!logger.IsEnabled({group.LevelExpr}))");
     sb.AppendLine("            return;");
     sb.AppendLine();
 
     if (arity == 0)
     {
-        sb.AppendLine($"        var state = new {stateType}(message.GetFormattedText(), message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());");
+        sb.AppendLine($"        var state = new {stateType}(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());");
     }
     else
     {
         var propArgs = string.Join(", ", Enumerable.Range(1, arity).Select(i => $"logProperty{i}"));
-        sb.AppendLine($"        var state = new {stateType}(message.GetFormattedText(), message.GetCapturedProperties(), {propArgs});");
+        sb.AppendLine($"        var state = new {stateType}(messageText, message.GetCapturedProperties(), {propArgs});");
     }
 
     sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, {stateType}.Formatter);");
@@ -466,10 +470,14 @@ static void AppendParamsMethod(StringBuilder sb, MethodGroup group, Combo combo)
     WriteDocComment(sb, "    ", $"Writes a log message with any number of structured properties {LevelPhrase(group)}.", parameters: parameterDocs);
     sb.AppendLine($"    public static void {group.MethodName}({string.Join(", ", parameters)})");
     sb.AppendLine("    {");
+    // ToStringAndClear() must run unconditionally: it returns the handler's rented buffer to
+    // ArrayPool<char>.Shared, and skipping that when the level is disabled would leak the buffer.
+    sb.AppendLine("        var messageText = message.ToStringAndClear();");
+    sb.AppendLine();
     sb.AppendLine($"        if (!logger.IsEnabled({group.LevelExpr}))");
     sb.AppendLine("            return;");
     sb.AppendLine();
-    sb.AppendLine("        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), new TuplePropertyList(logProperties));");
+    sb.AppendLine("        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), new TuplePropertyList(logProperties));");
     sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, LogPropertiesState.Formatter);");
     sb.AppendLine("    }");
 }
@@ -485,11 +493,15 @@ static void AppendCollectionMethod(StringBuilder sb, MethodGroup group, Combo co
     WriteDocComment(sb, "    ", $"Writes a log message with a collection of structured properties {LevelPhrase(group)}.", parameters: parameterDocs);
     sb.AppendLine($"    public static void {group.MethodName}({string.Join(", ", parameters)})");
     sb.AppendLine("    {");
+    // ToStringAndClear() must run unconditionally: it returns the handler's rented buffer to
+    // ArrayPool<char>.Shared, and skipping that when the level is disabled would leak the buffer.
+    sb.AppendLine("        var messageText = message.ToStringAndClear();");
+    sb.AppendLine();
     sb.AppendLine($"        if (!logger.IsEnabled({group.LevelExpr}))");
     sb.AppendLine("            return;");
     sb.AppendLine();
     sb.AppendLine("        var properties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();");
-    sb.AppendLine("        var state = new LogPropertiesState(message.GetFormattedText(), message.GetCapturedProperties(), properties);");
+    sb.AppendLine("        var state = new LogPropertiesState(messageText, message.GetCapturedProperties(), properties);");
     sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, LogPropertiesState.Formatter);");
     sb.AppendLine("    }");
 }

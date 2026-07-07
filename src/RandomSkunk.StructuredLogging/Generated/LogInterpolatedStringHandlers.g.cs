@@ -109,7 +109,7 @@ public ref struct TraceInterpolatedStringHandler
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    internal string GetFormattedText() => _handler.ToStringAndClear();
+    internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
         _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
@@ -218,7 +218,7 @@ public ref struct DebugInterpolatedStringHandler
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    internal string GetFormattedText() => _handler.ToStringAndClear();
+    internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
         _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
@@ -327,7 +327,7 @@ public ref struct InformationInterpolatedStringHandler
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    internal string GetFormattedText() => _handler.ToStringAndClear();
+    internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
         _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
@@ -436,7 +436,7 @@ public ref struct WarningInterpolatedStringHandler
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    internal string GetFormattedText() => _handler.ToStringAndClear();
+    internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
         _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
@@ -545,7 +545,7 @@ public ref struct ErrorInterpolatedStringHandler
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    internal string GetFormattedText() => _handler.ToStringAndClear();
+    internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
         _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
@@ -654,7 +654,7 @@ public ref struct CriticalInterpolatedStringHandler
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    internal string GetFormattedText() => _handler.ToStringAndClear();
+    internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
         _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
@@ -764,7 +764,7 @@ public ref struct LogInterpolatedStringHandler
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
-    internal string GetFormattedText() => _handler.ToStringAndClear();
+    internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
         _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
