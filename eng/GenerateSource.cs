@@ -280,7 +280,7 @@ static void AppendGenericState(StringBuilder sb, int arity)
     sb.AppendLine($"    public static readonly Func<LogPropertiesState<{typeParams}>, Exception?, string> Formatter = static (state, _) => state._message;");
     sb.AppendLine();
     sb.AppendLine("    private readonly string _message;");
-    sb.AppendLine("    private readonly IReadOnlyList<KeyValuePair<string, object?>> _capturedProperties;");
+    sb.AppendLine("    private readonly IReadOnlyList<KeyValuePair<string, object?>> _explicitProperties;");
 
     foreach (var i in Enumerable.Range(1, arity))
     {
@@ -289,10 +289,10 @@ static void AppendGenericState(StringBuilder sb, int arity)
     }
 
     sb.AppendLine();
-    sb.AppendLine($"    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> capturedProperties, {ctorParams})");
+    sb.AppendLine($"    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> explicitProperties, {ctorParams})");
     sb.AppendLine("    {");
     sb.AppendLine("        _message = message;");
-    sb.AppendLine("        _capturedProperties = capturedProperties;");
+    sb.AppendLine("        _explicitProperties = explicitProperties;");
 
     foreach (var i in Enumerable.Range(1, arity))
     {
@@ -302,16 +302,16 @@ static void AppendGenericState(StringBuilder sb, int arity)
 
     sb.AppendLine("    }");
     sb.AppendLine();
-    sb.AppendLine($"    public int Count => _capturedProperties.Count + {arity};");
+    sb.AppendLine($"    public int Count => _explicitProperties.Count + {arity};");
     sb.AppendLine();
     sb.AppendLine("    public KeyValuePair<string, object?> this[int index]");
     sb.AppendLine("    {");
     sb.AppendLine("        get");
     sb.AppendLine("        {");
-    sb.AppendLine("            if (index < _capturedProperties.Count)");
-    sb.AppendLine("                return _capturedProperties[index];");
+    sb.AppendLine("            if (index < _explicitProperties.Count)");
+    sb.AppendLine("                return _explicitProperties[index];");
     sb.AppendLine();
-    sb.AppendLine("            return (index - _capturedProperties.Count) switch");
+    sb.AppendLine("            return (index - _explicitProperties.Count) switch");
     sb.AppendLine("            {");
 
     foreach (var i in Enumerable.Range(1, arity))
@@ -492,17 +492,17 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
 
     if (includeCollection)
     {
-        sb.AppendLine("        var explicitProperties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();");
+        sb.AppendLine("        var logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();");
 
         if (arity == 0)
         {
-            sb.AppendLine($"        var state = new {stateType}(messageText, message.GetCapturedProperties(), explicitProperties);");
+            sb.AppendLine($"        var state = new {stateType}(messageText, message.GetCapturedProperties(), logPropertiesList);");
         }
         else
         {
-            sb.AppendLine("        var capturedProperties = new ConcatPropertyList(message.GetCapturedProperties(), explicitProperties);");
+            sb.AppendLine("        var explicitProperties = new ConcatPropertyList(logPropertiesList, message.GetCapturedProperties());");
             var propArgs = string.Join(", ", Enumerable.Range(1, arity).Select(i => $"{propertyParamPrefix}{i}"));
-            sb.AppendLine($"        var state = new {stateType}(messageText, capturedProperties, {propArgs});");
+            sb.AppendLine($"        var state = new {stateType}(messageText, explicitProperties, {propArgs});");
         }
     }
     else if (arity == 0)
@@ -547,9 +547,9 @@ static void AppendParamsMethod(StringBuilder sb, MethodGroup group, Combo combo,
 
     if (includeCollection)
     {
-        sb.AppendLine("        var explicitProperties = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();");
-        sb.AppendLine("        var capturedProperties = new ConcatPropertyList(message.GetCapturedProperties(), explicitProperties);");
-        sb.AppendLine($"        var state = new LogPropertiesState(messageText, capturedProperties, new TuplePropertyList({arrayParamName}));");
+        sb.AppendLine("        var logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();");
+        sb.AppendLine("        var explicitProperties = new ConcatPropertyList(logPropertiesList, message.GetCapturedProperties());");
+        sb.AppendLine($"        var state = new LogPropertiesState(messageText, explicitProperties, new TuplePropertyList({arrayParamName}));");
     }
     else
     {

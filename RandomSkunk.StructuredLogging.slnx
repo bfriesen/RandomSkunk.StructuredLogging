@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/eng/">
+    <File Path="eng/GenerateSource.cs" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/RandomSkunk.StructuredLogging/RandomSkunk.StructuredLogging.csproj" />
   </Folder>
