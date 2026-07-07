@@ -8,29 +8,20 @@ namespace RandomSkunk.StructuredLogging;
 /// explicitly passed by the caller with any the message's interpolated string handler captured
 /// via &lt;PropertyName&gt; format tags.
 /// </summary>
-internal readonly struct LogPropertiesState : IReadOnlyList<KeyValuePair<string, object?>>
+internal readonly struct LogPropertiesState(
+    string message,
+    IReadOnlyList<KeyValuePair<string, object?>> capturedProperties,
+    IReadOnlyList<KeyValuePair<string, object?>> explicitProperties) : IReadOnlyList<KeyValuePair<string, object?>>
 {
     public static readonly Func<LogPropertiesState, Exception?, string> Formatter = static (state, _) => state._message;
 
-    private readonly string _message;
-    private readonly IReadOnlyList<KeyValuePair<string, object?>> _capturedProperties;
-    private readonly IReadOnlyList<KeyValuePair<string, object?>> _explicitProperties;
+    private readonly string _message = message;
 
-    public LogPropertiesState(
-        string message,
-        IReadOnlyList<KeyValuePair<string, object?>> capturedProperties,
-        IReadOnlyList<KeyValuePair<string, object?>> explicitProperties)
-    {
-        _message = message;
-        _capturedProperties = capturedProperties;
-        _explicitProperties = explicitProperties;
-    }
+    public int Count => capturedProperties.Count + explicitProperties.Count;
 
-    public int Count => _capturedProperties.Count + _explicitProperties.Count;
-
-    public KeyValuePair<string, object?> this[int index] => index < _capturedProperties.Count
-        ? _capturedProperties[index]
-        : _explicitProperties[index - _capturedProperties.Count];
+    public KeyValuePair<string, object?> this[int index] => index < capturedProperties.Count
+        ? capturedProperties[index]
+        : explicitProperties[index - capturedProperties.Count];
 
     public override string ToString() => _message;
 

@@ -33,7 +33,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Trace level.
+    /// Writes a log message with one structured property at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -58,7 +58,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Trace level.
+    /// Writes a log message with two structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -86,7 +86,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Trace level.
+    /// Writes a log message with three structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -117,7 +117,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Trace level.
+    /// Writes a log message with four structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -151,7 +151,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Trace level.
+    /// Writes a log message with five structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -188,7 +188,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Trace level.
+    /// Writes a log message with six structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -297,7 +297,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Trace level.
+    /// Writes a log message with one structured property at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -320,7 +320,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Trace level.
+    /// Writes a log message with two structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -346,7 +346,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Trace level.
+    /// Writes a log message with three structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -375,7 +375,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Trace level.
+    /// Writes a log message with four structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -407,7 +407,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Trace level.
+    /// Writes a log message with five structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -442,7 +442,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Trace level.
+    /// Writes a log message with six structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -545,7 +545,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Trace level.
+    /// Writes a log message with one structured property at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -568,7 +568,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Trace level.
+    /// Writes a log message with two structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -594,7 +594,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Trace level.
+    /// Writes a log message with three structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -623,7 +623,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Trace level.
+    /// Writes a log message with four structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -655,7 +655,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Trace level.
+    /// Writes a log message with five structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -690,7 +690,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Trace level.
+    /// Writes a log message with six structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -791,7 +791,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Trace level.
+    /// Writes a log message with one structured property at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -812,7 +812,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Trace level.
+    /// Writes a log message with two structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -836,7 +836,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Trace level.
+    /// Writes a log message with three structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -863,7 +863,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Trace level.
+    /// Writes a log message with four structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -893,7 +893,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Trace level.
+    /// Writes a log message with five structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -926,7 +926,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Trace level.
+    /// Writes a log message with six structured properties at the Trace level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1025,7 +1025,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Debug level.
+    /// Writes a log message with one structured property at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -1050,7 +1050,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Debug level.
+    /// Writes a log message with two structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1078,7 +1078,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Debug level.
+    /// Writes a log message with three structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1109,7 +1109,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Debug level.
+    /// Writes a log message with four structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1143,7 +1143,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Debug level.
+    /// Writes a log message with five structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1180,7 +1180,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Debug level.
+    /// Writes a log message with six structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1289,7 +1289,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Debug level.
+    /// Writes a log message with one structured property at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -1312,7 +1312,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Debug level.
+    /// Writes a log message with two structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1338,7 +1338,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Debug level.
+    /// Writes a log message with three structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1367,7 +1367,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Debug level.
+    /// Writes a log message with four structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1399,7 +1399,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Debug level.
+    /// Writes a log message with five structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1434,7 +1434,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Debug level.
+    /// Writes a log message with six structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1537,7 +1537,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Debug level.
+    /// Writes a log message with one structured property at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -1560,7 +1560,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Debug level.
+    /// Writes a log message with two structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1586,7 +1586,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Debug level.
+    /// Writes a log message with three structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1615,7 +1615,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Debug level.
+    /// Writes a log message with four structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1647,7 +1647,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Debug level.
+    /// Writes a log message with five structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1682,7 +1682,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Debug level.
+    /// Writes a log message with six structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1783,7 +1783,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Debug level.
+    /// Writes a log message with one structured property at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -1804,7 +1804,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Debug level.
+    /// Writes a log message with two structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1828,7 +1828,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Debug level.
+    /// Writes a log message with three structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1855,7 +1855,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Debug level.
+    /// Writes a log message with four structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1885,7 +1885,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Debug level.
+    /// Writes a log message with five structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -1918,7 +1918,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Debug level.
+    /// Writes a log message with six structured properties at the Debug level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2017,7 +2017,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Information level.
+    /// Writes a log message with one structured property at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -2042,7 +2042,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Information level.
+    /// Writes a log message with two structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2070,7 +2070,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Information level.
+    /// Writes a log message with three structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2101,7 +2101,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Information level.
+    /// Writes a log message with four structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2135,7 +2135,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Information level.
+    /// Writes a log message with five structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2172,7 +2172,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Information level.
+    /// Writes a log message with six structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2281,7 +2281,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Information level.
+    /// Writes a log message with one structured property at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -2304,7 +2304,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Information level.
+    /// Writes a log message with two structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2330,7 +2330,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Information level.
+    /// Writes a log message with three structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2359,7 +2359,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Information level.
+    /// Writes a log message with four structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2391,7 +2391,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Information level.
+    /// Writes a log message with five structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2426,7 +2426,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Information level.
+    /// Writes a log message with six structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2529,7 +2529,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Information level.
+    /// Writes a log message with one structured property at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -2552,7 +2552,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Information level.
+    /// Writes a log message with two structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2578,7 +2578,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Information level.
+    /// Writes a log message with three structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2607,7 +2607,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Information level.
+    /// Writes a log message with four structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2639,7 +2639,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Information level.
+    /// Writes a log message with five structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2674,7 +2674,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Information level.
+    /// Writes a log message with six structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2775,7 +2775,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Information level.
+    /// Writes a log message with one structured property at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -2796,7 +2796,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Information level.
+    /// Writes a log message with two structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2820,7 +2820,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Information level.
+    /// Writes a log message with three structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2847,7 +2847,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Information level.
+    /// Writes a log message with four structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2877,7 +2877,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Information level.
+    /// Writes a log message with five structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -2910,7 +2910,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Information level.
+    /// Writes a log message with six structured properties at the Information level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3009,7 +3009,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Warning level.
+    /// Writes a log message with one structured property at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -3034,7 +3034,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Warning level.
+    /// Writes a log message with two structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3062,7 +3062,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Warning level.
+    /// Writes a log message with three structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3093,7 +3093,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Warning level.
+    /// Writes a log message with four structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3127,7 +3127,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Warning level.
+    /// Writes a log message with five structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3164,7 +3164,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Warning level.
+    /// Writes a log message with six structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3273,7 +3273,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Warning level.
+    /// Writes a log message with one structured property at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -3296,7 +3296,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Warning level.
+    /// Writes a log message with two structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3322,7 +3322,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Warning level.
+    /// Writes a log message with three structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3351,7 +3351,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Warning level.
+    /// Writes a log message with four structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3383,7 +3383,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Warning level.
+    /// Writes a log message with five structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3418,7 +3418,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Warning level.
+    /// Writes a log message with six structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3521,7 +3521,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Warning level.
+    /// Writes a log message with one structured property at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -3544,7 +3544,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Warning level.
+    /// Writes a log message with two structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3570,7 +3570,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Warning level.
+    /// Writes a log message with three structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3599,7 +3599,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Warning level.
+    /// Writes a log message with four structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3631,7 +3631,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Warning level.
+    /// Writes a log message with five structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3666,7 +3666,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Warning level.
+    /// Writes a log message with six structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3767,7 +3767,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Warning level.
+    /// Writes a log message with one structured property at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -3788,7 +3788,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Warning level.
+    /// Writes a log message with two structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3812,7 +3812,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Warning level.
+    /// Writes a log message with three structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3839,7 +3839,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Warning level.
+    /// Writes a log message with four structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3869,7 +3869,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Warning level.
+    /// Writes a log message with five structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -3902,7 +3902,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Warning level.
+    /// Writes a log message with six structured properties at the Warning level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4001,7 +4001,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Error level.
+    /// Writes a log message with one structured property at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -4026,7 +4026,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Error level.
+    /// Writes a log message with two structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4054,7 +4054,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Error level.
+    /// Writes a log message with three structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4085,7 +4085,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Error level.
+    /// Writes a log message with four structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4119,7 +4119,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Error level.
+    /// Writes a log message with five structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4156,7 +4156,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Error level.
+    /// Writes a log message with six structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4265,7 +4265,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Error level.
+    /// Writes a log message with one structured property at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -4288,7 +4288,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Error level.
+    /// Writes a log message with two structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4314,7 +4314,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Error level.
+    /// Writes a log message with three structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4343,7 +4343,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Error level.
+    /// Writes a log message with four structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4375,7 +4375,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Error level.
+    /// Writes a log message with five structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4410,7 +4410,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Error level.
+    /// Writes a log message with six structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4513,7 +4513,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Error level.
+    /// Writes a log message with one structured property at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -4536,7 +4536,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Error level.
+    /// Writes a log message with two structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4562,7 +4562,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Error level.
+    /// Writes a log message with three structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4591,7 +4591,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Error level.
+    /// Writes a log message with four structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4623,7 +4623,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Error level.
+    /// Writes a log message with five structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4658,7 +4658,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Error level.
+    /// Writes a log message with six structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4759,7 +4759,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Error level.
+    /// Writes a log message with one structured property at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -4780,7 +4780,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Error level.
+    /// Writes a log message with two structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4804,7 +4804,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Error level.
+    /// Writes a log message with three structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4831,7 +4831,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Error level.
+    /// Writes a log message with four structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4861,7 +4861,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Error level.
+    /// Writes a log message with five structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4894,7 +4894,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Error level.
+    /// Writes a log message with six structured properties at the Error level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -4993,7 +4993,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Critical level.
+    /// Writes a log message with one structured property at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -5018,7 +5018,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Critical level.
+    /// Writes a log message with two structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5046,7 +5046,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Critical level.
+    /// Writes a log message with three structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5077,7 +5077,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Critical level.
+    /// Writes a log message with four structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5111,7 +5111,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Critical level.
+    /// Writes a log message with five structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5148,7 +5148,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Critical level.
+    /// Writes a log message with six structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5257,7 +5257,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Critical level.
+    /// Writes a log message with one structured property at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -5280,7 +5280,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Critical level.
+    /// Writes a log message with two structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5306,7 +5306,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Critical level.
+    /// Writes a log message with three structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5335,7 +5335,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Critical level.
+    /// Writes a log message with four structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5367,7 +5367,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Critical level.
+    /// Writes a log message with five structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5402,7 +5402,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Critical level.
+    /// Writes a log message with six structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5505,7 +5505,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Critical level.
+    /// Writes a log message with one structured property at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -5528,7 +5528,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Critical level.
+    /// Writes a log message with two structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5554,7 +5554,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Critical level.
+    /// Writes a log message with three structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5583,7 +5583,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Critical level.
+    /// Writes a log message with four structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5615,7 +5615,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Critical level.
+    /// Writes a log message with five structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5650,7 +5650,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Critical level.
+    /// Writes a log message with six structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5751,7 +5751,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the Critical level.
+    /// Writes a log message with one structured property at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -5772,7 +5772,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the Critical level.
+    /// Writes a log message with two structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5796,7 +5796,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the Critical level.
+    /// Writes a log message with three structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5823,7 +5823,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the Critical level.
+    /// Writes a log message with four structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5853,7 +5853,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the Critical level.
+    /// Writes a log message with five structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5886,7 +5886,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the Critical level.
+    /// Writes a log message with six structured properties at the Critical level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -5987,7 +5987,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the specified level.
+    /// Writes a log message with one structured property at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -6014,7 +6014,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the specified level.
+    /// Writes a log message with two structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6044,7 +6044,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the specified level.
+    /// Writes a log message with three structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6077,7 +6077,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the specified level.
+    /// Writes a log message with four structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6113,7 +6113,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the specified level.
+    /// Writes a log message with five structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6152,7 +6152,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the specified level.
+    /// Writes a log message with six structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6269,7 +6269,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the specified level.
+    /// Writes a log message with one structured property at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -6294,7 +6294,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the specified level.
+    /// Writes a log message with two structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6322,7 +6322,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the specified level.
+    /// Writes a log message with three structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6353,7 +6353,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the specified level.
+    /// Writes a log message with four structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6387,7 +6387,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the specified level.
+    /// Writes a log message with five structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6424,7 +6424,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the specified level.
+    /// Writes a log message with six structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6535,7 +6535,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the specified level.
+    /// Writes a log message with one structured property at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -6560,7 +6560,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the specified level.
+    /// Writes a log message with two structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6588,7 +6588,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the specified level.
+    /// Writes a log message with three structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6619,7 +6619,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the specified level.
+    /// Writes a log message with four structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6653,7 +6653,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the specified level.
+    /// Writes a log message with five structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6690,7 +6690,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the specified level.
+    /// Writes a log message with six structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6799,7 +6799,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 1 structured property at the specified level.
+    /// Writes a log message with one structured property at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <param name="logger">The logger to write to.</param>
@@ -6822,7 +6822,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 2 structured properties at the specified level.
+    /// Writes a log message with two structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6848,7 +6848,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 3 structured properties at the specified level.
+    /// Writes a log message with three structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6877,7 +6877,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 4 structured properties at the specified level.
+    /// Writes a log message with four structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6909,7 +6909,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 5 structured properties at the specified level.
+    /// Writes a log message with five structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>
@@ -6944,7 +6944,7 @@ public static class StructuredLoggerExtensions
     }
 
     /// <summary>
-    /// Writes a log message with 6 structured properties at the specified level.
+    /// Writes a log message with six structured properties at the specified level.
     /// </summary>
     /// <typeparam name="T1">The type of the first structured log property's value.</typeparam>
     /// <typeparam name="T2">The type of the second structured log property's value.</typeparam>

@@ -29,6 +29,17 @@ static string Ordinal(int n) => n switch
     _ => $"{n}th",
 };
 
+static string NumberWord(int n) => n switch
+{
+    1 => "one",
+    2 => "two",
+    3 => "three",
+    4 => "four",
+    5 => "five",
+    6 => "six",
+    _ => n.ToString(),
+};
+
 static void WriteDocComment(
     StringBuilder sb,
     string indent,
@@ -395,8 +406,8 @@ static string LevelPhrase(MethodGroup group) => group.MethodName == "Write" ? "a
 static string PropertyCountSummaryFragment(int arity) => arity switch
 {
     0 => string.Empty,
-    1 => " with 1 structured property",
-    _ => $" with {arity} structured properties",
+    1 => " with one structured property",
+    _ => $" with {NumberWord(arity)} structured properties",
 };
 
 static string MessageParamDoc(MethodGroup group) => group.MethodName == "Write"

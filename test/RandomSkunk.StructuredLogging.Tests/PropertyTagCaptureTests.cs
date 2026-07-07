@@ -1,5 +1,4 @@
 using AwesomeAssertions;
-using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging.Tests;
 
@@ -134,10 +133,12 @@ public class PropertyTagCaptureTests
     public void Disabled_DoesNotCaptureProperties()
     {
         var logger = new RecordingLogger { Enabled = false };
-        var name = "World";
 
-        logger.Debug($"Hello, {name:<UserName>}!");
+        string? capturedName = null;
+        string GetName() => capturedName = "World";
 
-        logger.LogCallCount.Should().Be(0);
+        logger.Debug($"Hello, {GetName():<UserName>}!");
+
+        capturedName.Should().BeNull();
     }
 }

@@ -117,13 +117,13 @@ public class StructuredLoggerExtensionsTests
 
         logger.Debug(
             $"msg",
-            ("P1", (object?)1),
-            ("P2", (object?)2),
-            ("P3", (object?)3),
-            ("P4", (object?)4),
-            ("P5", (object?)5),
-            ("P6", (object?)6),
-            ("P7", (object?)7));
+            ("P1", 1),
+            ("P2", "two"),
+            ("P3", 3.0),
+            ("P4", true),
+            ("P5", 'c'),
+            ("P6", 6L),
+            ("P7", 7));
 
         logger.LastProperties.Should().HaveCount(7);
         logger.LastProperties![6].Should().Be(new KeyValuePair<string, object?>("P7", 7));
