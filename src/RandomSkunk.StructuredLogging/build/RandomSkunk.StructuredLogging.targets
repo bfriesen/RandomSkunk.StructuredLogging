@@ -1,0 +1,25 @@
+<Project>
+
+  <!--
+    Installs this package's Claude Code skill file into the consuming project's
+    .claude/skills directory, so Claude Code can automatically pick up guidance on using
+    RandomSkunk.StructuredLogging's API. Set RandomSkunkStructuredLoggingSkipSkillInstall to
+    true in the consuming project to opt out.
+  -->
+
+  <PropertyGroup>
+    <_RandomSkunkStructuredLoggingSkillSource>$(MSBuildThisFileDirectory)../skillfiles/randomskunk-structuredlogging/SKILL.md</_RandomSkunkStructuredLoggingSkillSource>
+    <_RandomSkunkStructuredLoggingSkillDestination>$(MSBuildProjectDirectory)/.claude/skills/randomskunk-structuredlogging/SKILL.md</_RandomSkunkStructuredLoggingSkillDestination>
+  </PropertyGroup>
+
+  <Target Name="InstallRandomSkunkStructuredLoggingSkill"
+          BeforeTargets="Build"
+          AfterTargets="Restore"
+          Condition="'$(RandomSkunkStructuredLoggingSkipSkillInstall)' != 'true' and Exists('$(_RandomSkunkStructuredLoggingSkillSource)')">
+    <Copy
+      SourceFiles="$(_RandomSkunkStructuredLoggingSkillSource)"
+      DestinationFiles="$(_RandomSkunkStructuredLoggingSkillDestination)"
+      SkipUnchangedFiles="true" />
+  </Target>
+
+</Project>

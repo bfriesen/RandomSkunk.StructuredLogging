@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="skill/SKILL.md" Pack="true" PackagePath="skillfiles/randomskunk-structuredlogging/SKILL.md" />
+    <None Include="build/RandomSkunk.StructuredLogging.targets" Pack="true" PackagePath="buildTransitive/RandomSkunk.StructuredLogging.targets" />
   </ItemGroup>
 
   <ItemGroup>
