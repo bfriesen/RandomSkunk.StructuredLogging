@@ -21,7 +21,7 @@ public class AvoidLoggerExtensionsAnalyzerTests
     {
         var source = TestSource.WrapInMethodBody(call);
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source);
+        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
 
         diagnostics.Should().ContainSingle();
         var diagnostic = diagnostics[0];
@@ -36,7 +36,7 @@ public class AvoidLoggerExtensionsAnalyzerTests
         var source = TestSource.WrapInMethodBody(
             """logger.Log(LogLevel.Information, new EventId(1, "Name"), "state", null, (state, exception) => state);""");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source);
+        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }
@@ -63,7 +63,7 @@ public class AvoidLoggerExtensionsAnalyzerTests
             }
             """;
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source);
+        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }
@@ -73,7 +73,7 @@ public class AvoidLoggerExtensionsAnalyzerTests
     {
         var source = TestSource.WrapInMethodBody("logger.IsEnabled(LogLevel.Information);");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source);
+        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }

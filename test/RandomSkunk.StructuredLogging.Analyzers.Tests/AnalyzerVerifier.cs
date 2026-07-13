@@ -6,13 +6,13 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace RandomSkunk.StructuredLogging.Analyzers.Tests;
 
 /// <summary>
-/// Compiles a C# source snippet against Microsoft.Extensions.Logging.Abstractions and runs
-/// <see cref="AvoidLoggerExtensionsAnalyzer"/> against it, so tests can assert on the resulting
-/// diagnostics without pulling in a separate analyzer-testing framework.
+/// Compiles a C# source snippet against Microsoft.Extensions.Logging.Abstractions and
+/// RandomSkunk.StructuredLogging and runs a given analyzer against it, so tests can assert on the
+/// resulting diagnostics without pulling in a separate analyzer-testing framework.
 /// </summary>
 internal static class AnalyzerVerifier
 {
-    public static async Task<ImmutableArray<Diagnostic>> GetDiagnosticsAsync(string source)
+    public static async Task<ImmutableArray<Diagnostic>> GetDiagnosticsAsync(string source, DiagnosticAnalyzer analyzer)
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Latest));
 
@@ -29,7 +29,7 @@ internal static class AnalyzerVerifier
         if (compilerErrors.Length > 0)
             throw new InvalidOperationException($"Test source failed to compile: {string.Join(Environment.NewLine, compilerErrors.Select(d => d.ToString()))}");
 
-        var withAnalyzers = compilation.WithAnalyzers([new AvoidLoggerExtensionsAnalyzer()]);
+        var withAnalyzers = compilation.WithAnalyzers([analyzer]);
 
         return await withAnalyzers.GetAnalyzerDiagnosticsAsync();
     }

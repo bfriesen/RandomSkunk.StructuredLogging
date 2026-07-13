@@ -9,6 +9,7 @@ internal static class TestSource
     public static string WrapInMethodBody(string statement) => $$"""
         using System;
         using Microsoft.Extensions.Logging;
+        using RandomSkunk.StructuredLogging;
 
         namespace TestNamespace;
 
@@ -16,6 +17,8 @@ internal static class TestSource
         {
             public void TestMethod(
                 ILogger logger,
+                object who,
+                object userName,
                 object userId,
                 object ipAddress,
                 object value,

@@ -33,7 +33,7 @@ public class AvoidLoggerExtensionsCodeFixProviderTests
     {
         var source = TestSource.WrapInMethodBody(call);
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source);
+        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
 
         fixedSource.Should().NotBeNull();
         fixedSource.Should().Be(TestSource.WrapInMethodBody(expectedCall));
@@ -45,7 +45,7 @@ public class AvoidLoggerExtensionsCodeFixProviderTests
         var source = TestSource.WrapInMethodBody(
             """logger.LogInformation("User {UserId} did {Action}", userId);""");
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source);
+        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
 
         fixedSource.Should().BeNull();
     }
@@ -55,7 +55,7 @@ public class AvoidLoggerExtensionsCodeFixProviderTests
     {
         var source = TestSource.WrapInMethodBody("logger.LogInformation(GetMessage());");
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source);
+        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
 
         fixedSource.Should().BeNull();
     }
@@ -66,7 +66,7 @@ public class AvoidLoggerExtensionsCodeFixProviderTests
         var source = TestSource.WrapInMethodBody(
             """logger.LogInformation("User {UserId}", new object[] { userId });""");
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source);
+        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
 
         fixedSource.Should().BeNull();
     }

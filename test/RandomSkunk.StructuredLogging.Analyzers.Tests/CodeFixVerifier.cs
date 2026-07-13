@@ -8,10 +8,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace RandomSkunk.StructuredLogging.Analyzers.Tests;
 
 /// <summary>
-/// Runs <see cref="AvoidLoggerExtensionsAnalyzer"/> and then <see cref="AvoidLoggerExtensionsCodeFixProvider"/>
-/// against a C# source snippet inside a minimal <see cref="AdhocWorkspace"/>, so tests can assert
-/// on the fixed source (or on there being no fix offered) without pulling in a separate
-/// analyzer-testing framework.
+/// Runs a given analyzer and then a given code fix provider against a C# source snippet inside a
+/// minimal <see cref="AdhocWorkspace"/>, so tests can assert on the fixed source (or on there
+/// being no fix offered) without pulling in a separate analyzer-testing framework.
 /// </summary>
 internal static class CodeFixVerifier
 {
@@ -19,7 +18,7 @@ internal static class CodeFixVerifier
     /// Applies the code fix to the single diagnostic expected from <paramref name="source"/> and
     /// returns the resulting source text, or <see langword="null"/> if no fix was offered.
     /// </summary>
-    public static async Task<string?> TryApplyFixAsync(string source)
+    public static async Task<string?> TryApplyFixAsync(string source, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider)
     {
         using var workspace = new AdhocWorkspace();
         var projectId = ProjectId.CreateNewId();
@@ -39,13 +38,13 @@ internal static class CodeFixVerifier
         if (compilerErrors.Length > 0)
             throw new InvalidOperationException($"Test source failed to compile: {string.Join(Environment.NewLine, compilerErrors.Select(d => d.ToString()))}");
 
-        var withAnalyzers = compilation.WithAnalyzers([new AvoidLoggerExtensionsAnalyzer()]);
+        var withAnalyzers = compilation.WithAnalyzers([analyzer]);
         var diagnostics = await withAnalyzers.GetAnalyzerDiagnosticsAsync();
         var diagnostic = diagnostics.Single();
 
         var actions = new List<CodeAction>();
         var context = new CodeFixContext(document, diagnostic, (action, _) => actions.Add(action), CancellationToken.None);
-        await new AvoidLoggerExtensionsCodeFixProvider().RegisterCodeFixesAsync(context);
+        await codeFixProvider.RegisterCodeFixesAsync(context);
 
         if (actions.Count == 0)
             return null;

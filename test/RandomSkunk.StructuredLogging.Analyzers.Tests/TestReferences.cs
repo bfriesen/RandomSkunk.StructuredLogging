@@ -5,8 +5,8 @@ namespace RandomSkunk.StructuredLogging.Analyzers.Tests;
 
 /// <summary>
 /// The metadata references needed to compile a test source snippet that uses
-/// Microsoft.Extensions.Logging.Abstractions, shared by <see cref="AnalyzerVerifier"/> and
-/// <see cref="CodeFixVerifier"/>.
+/// Microsoft.Extensions.Logging.Abstractions and RandomSkunk.StructuredLogging, shared by
+/// <see cref="AnalyzerVerifier"/> and <see cref="CodeFixVerifier"/>.
 /// </summary>
 internal static class TestReferences
 {
@@ -19,6 +19,7 @@ internal static class TestReferences
 
         var paths = trustedPlatformAssemblies
             .Append(typeof(Microsoft.Extensions.Logging.ILogger).Assembly.Location)
+            .Append(typeof(RandomSkunk.StructuredLogging.StructuredLoggerExtensions).Assembly.Location)
             .Distinct();
 
         return [.. paths.Select(path => (MetadataReference)MetadataReference.CreateFromFile(path))];
