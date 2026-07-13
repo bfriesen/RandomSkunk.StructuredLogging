@@ -5,22 +5,14 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
-  <!--
-    RandomSkunk.StructuredLogging references RandomSkunk.StructuredLogging.Analyzers as a real
-    project reference (so its nuspec declares a <dependency> on it - see that project's csproj),
-    which transitively surfaces a benign MSB3277 (assembly-version-unification) warning here too.
-    See the comment in RandomSkunk.StructuredLogging.csproj for the full explanation.
-  -->
-  <PropertyGroup>
-    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="AwesomeAssertions" />
     <PackageReference Include="coverlet.collector">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio">
@@ -34,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\RandomSkunk.StructuredLogging\RandomSkunk.StructuredLogging.csproj" />
+    <ProjectReference Include="..\..\src\RandomSkunk.StructuredLogging.Analyzers\RandomSkunk.StructuredLogging.Analyzers.csproj" />
   </ItemGroup>
 
 </Project>

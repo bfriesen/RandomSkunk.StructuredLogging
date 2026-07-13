@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <!-- Overrides Directory.Build.props' multi-targeted TargetFrameworks: analyzers must target
+         netstandard2.0 alone to load into any host (VS, VS Code/Roslyn, `dotnet build`). -->
+    <TargetFrameworks></TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -17,12 +20,51 @@
     <Copyright>Copyright (c) 2025 Brian Friesen</Copyright>
   </PropertyGroup>
 
+  <!--
+    Standard packaging for an analyzer-only NuGet package: the assembly is not a normal
+    lib/ dependency (IncludeBuildOutput=false, and NU5128 - "no lib/ref assemblies" - is
+    expected and suppressed), it's a build-time-only tool (DevelopmentDependency=true, so it
+    doesn't flow as a transitive dependency to a consumer's consumers), and its dll is placed
+    under analyzers/dotnet/cs so both classic and SDK-style projects pick it up automatically
+    from a PackageReference.
+  -->
+  <PropertyGroup>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <!--
+      NU5128: expected, see the packaging comment below.
+      RS1036/RS1038: this assembly ships a DiagnosticAnalyzer and a CodeFixProvider side by side
+      (a common, supported combination - see the Workspaces PackageReference comment below),
+      which necessarily means the analyzer type lives in an assembly that also references
+      Workspaces; EnforceExtendedAnalyzerRules (set below) flags that combination even though
+      it's intentional here. That's fine: csc.exe only ever loads the DiagnosticAnalyzer part
+      (which doesn't itself use any Workspaces API), and the CodeFixProvider part - the only part
+      that needs Workspaces - is only ever loaded by IDE/workspace-capable hosts, which do
+      provide it.
+    -->
+    <NoWarn>$(NoWarn);NU5128;RS1036;RS1038</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="$(OutputPath)\$(AssemblyName).pdb" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+    <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
+    <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+  </ItemGroup>
+
+  <!--
+    CSharp.Workspaces (rather than just CSharp) because the code fix provider needs
+    CodeFixProvider/CodeAction/CodeFixContext, which live in the Workspaces layer - the compiler
+    (csc.exe) never loads it since it only hosts DiagnosticAnalyzers, not CodeFixProviders; only
+    an IDE/workspace-capable host (VS, VS Code, etc.) loads this assembly for its code fix.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

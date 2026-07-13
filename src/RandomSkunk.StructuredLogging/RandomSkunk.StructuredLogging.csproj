@@ -26,8 +26,39 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 
+  <!--
+    MSB3277 is expected and benign: it's netstandard2.0-vs-net8.0/net10.0 System.Collections.Immutable
+    unification noise from referencing the analyzer project's own (unused-here) Roslyn dependency
+    closure, not a real conflict in this library's compiled output. It also surfaces in any other
+    in-repo project that references this one (see RandomSkunk.StructuredLogging.Tests.csproj),
+    since the reference is real; it does not surface for actual package consumers, since the
+    published Analyzers package has no lib/ref assembly to conflict with in the first place.
+  -->
+  <PropertyGroup>
+    <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+
+  <!--
+    Referenced as a real (non-ReferenceOutputAssembly=false) project reference purely so that
+    packing this project declares a corresponding <dependency> on
+    RandomSkunk.StructuredLogging.Analyzers in this package's nuspec, auto-versioned to whatever
+    version that project currently has — so installing this package also installs the analyzer.
+    This does NOT run the analyzer against this project's own code (no OutputItemType=Analyzer).
+
+    PrivateAssets=none keeps the "analyzers" asset from being marked private, so the dependency
+    stays active for whoever installs this package (the SDK's default PrivateAssets for any
+    reference excludes "build" and "analyzers" from flowing to consumers, which would otherwise
+    silently defeat the whole point of this dependency).
+
+    Private=false stops the analyzer assembly (a build-time-only tool, irrelevant to this
+    library's own compiled output) from being copied to this project's own output directory. Note
+    this only covers this project's own output; any other in-repo project that references this
+    one (e.g. RandomSkunk.StructuredLogging.Tests) will still get the analyzer dll copied to its
+    own (unpacked, gitignored) output directory as a transitive side effect - harmless, but not
+    worth fighting further given it never ships anywhere.
+  -->
   <ItemGroup>
-    <ProjectReference Include="../RandomSkunk.StructuredLogging.Analyzers/RandomSkunk.StructuredLogging.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="../RandomSkunk.StructuredLogging.Analyzers/RandomSkunk.StructuredLogging.Analyzers.csproj" Private="false" PrivateAssets="none" />
   </ItemGroup>
 
 </Project>

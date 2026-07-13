@@ -7,6 +7,7 @@
     <Project Path="src/RandomSkunk.StructuredLogging.Analyzers/RandomSkunk.StructuredLogging.Analyzers.csproj" />
   </Folder>
   <Folder Name="/test/">
+    <Project Path="test/RandomSkunk.StructuredLogging.Analyzers.Tests/RandomSkunk.StructuredLogging.Analyzers.Tests.csproj" />
     <Project Path="test/RandomSkunk.StructuredLogging.Tests/RandomSkunk.StructuredLogging.Tests.csproj" />
   </Folder>
 </Solution>

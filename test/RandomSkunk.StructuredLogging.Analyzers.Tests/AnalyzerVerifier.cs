@@ -1,0 +1,36 @@
+using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace RandomSkunk.StructuredLogging.Analyzers.Tests;
+
+/// <summary>
+/// Compiles a C# source snippet against Microsoft.Extensions.Logging.Abstractions and runs
+/// <see cref="AvoidLoggerExtensionsAnalyzer"/> against it, so tests can assert on the resulting
+/// diagnostics without pulling in a separate analyzer-testing framework.
+/// </summary>
+internal static class AnalyzerVerifier
+{
+    public static async Task<ImmutableArray<Diagnostic>> GetDiagnosticsAsync(string source)
+    {
+        var syntaxTree = CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Latest));
+
+        var compilation = CSharpCompilation.Create(
+            "AnalyzerTestAssembly",
+            [syntaxTree],
+            TestReferences.All,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        var compilerErrors = compilation.GetDiagnostics()
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .ToArray();
+
+        if (compilerErrors.Length > 0)
+            throw new InvalidOperationException($"Test source failed to compile: {string.Join(Environment.NewLine, compilerErrors.Select(d => d.ToString()))}");
+
+        var withAnalyzers = compilation.WithAnalyzers([new AvoidLoggerExtensionsAnalyzer()]);
+
+        return await withAnalyzers.GetAnalyzerDiagnosticsAsync();
+    }
+}

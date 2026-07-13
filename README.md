@@ -156,6 +156,21 @@ using Microsoft.Extensions.Logging;      // for LogLevel, EventId, ILogger, etc.
 using RandomSkunk.StructuredLogging;     // brings the Trace/Debug/.../Write extension methods into scope
 ```
 
+## Analyzers
+
+```bash
+dotnet add package RandomSkunk.StructuredLogging.Analyzers
+```
+
+`RandomSkunk.StructuredLogging.Analyzers` is a separate, optional package of Roslyn analyzers
+that ship as a build-time-only dependency (it adds nothing to your published output). It's
+independent of the main package — install it in any project where you'd like the analysis, even
+one that doesn't reference `RandomSkunk.StructuredLogging` itself.
+
+| ID | Severity | Description |
+| --- | --- | --- |
+| `RSSL0001` | Suggestion | Flags a call to one of `Microsoft.Extensions.Logging.LoggerExtensions`'s `Log`/`LogTrace`/`LogDebug`/`LogInformation`/`LogWarning`/`LogError`/`LogCritical` extension methods and suggests the equivalent `RandomSkunk.StructuredLogging` extension method — see [Migrating from `Microsoft.Extensions.Logging`](#migrating-from-microsoftextensionslogging) above. |
+
 ## Claude Code skill
 
 The package ships a [Claude Code](https://claude.com/claude-code) skill file describing this
