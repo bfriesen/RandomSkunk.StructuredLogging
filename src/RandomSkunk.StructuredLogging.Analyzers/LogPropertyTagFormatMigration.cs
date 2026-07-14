@@ -20,6 +20,9 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 /// tuple argument is always the raw value (same as a non-destructuring tag) - the destructured
 /// message rendering is discarded along with the rest of the hole, consistent with how this fix
 /// already discards any formatting (destructured or not) when moving a value out of the message.
+/// The '@' prefix itself is preserved in the tuple's property name (e.g. <c>("@PropertyName", value)</c>),
+/// so this fix is the exact inverse of <see cref="MoveLogPropertyTupleArgumentMigration"/>, which
+/// treats a leading '@' in a tuple argument's name as literal text to carry back into the tag.
 /// </summary>
 internal static class LogPropertyTagFormatMigration
 {
@@ -35,9 +38,13 @@ internal static class LogPropertyTagFormatMigration
         if (formatClause is null)
             return null;
 
-        var propertyName = LogPropertyTagFormatParsing.TryGetPropertyName(formatClause.FormatStringToken.ValueText);
+        var format = formatClause.FormatStringToken.ValueText;
+        var propertyName = LogPropertyTagFormatParsing.TryGetPropertyName(format);
         if (propertyName is null)
             return null;
+
+        if (LogPropertyTagFormatParsing.IsDestructuring(format))
+            propertyName = "@" + propertyName;
 
         if (hole.Parent is not InterpolatedStringExpressionSyntax interpolatedString ||
             interpolatedString.Parent is not ArgumentSyntax messageArgument ||
