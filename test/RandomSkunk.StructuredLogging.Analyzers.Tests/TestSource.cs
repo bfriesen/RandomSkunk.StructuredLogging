@@ -15,6 +15,10 @@ internal static class TestSource
 
         public class TestClass
         {
+            private object _userScore = null!;
+
+            public object UserScore { get; set; } = null!;
+
             public void TestMethod(
                 ILogger logger,
                 object who,

@@ -1,0 +1,49 @@
+using AwesomeAssertions;
+
+namespace RandomSkunk.StructuredLogging.Analyzers.Tests;
+
+public class NonCapturingInterpolationHoleCodeFixProviderTests
+{
+    [Theory]
+    // Parameter (local): plain name capitalized.
+    [InlineData(
+        """logger.Debug($"[{ts:HH:mm:ss}]");""",
+        """logger.Debug($"[{ts:<Ts>HH:mm:ss}]");""")]
+    // No format at all.
+    [InlineData(
+        """logger.Debug($"Hello, {who}!");""",
+        """logger.Debug($"Hello, {who:<Who>}!");""")]
+    // Non-tag format, no leading '<'.
+    [InlineData(
+        """logger.Debug($"Value: {userId:N2}");""",
+        """logger.Debug($"Value: {userId:<UserId>N2}");""")]
+    // Empty tag opt-out is still a non-capturing hole.
+    [InlineData(
+        """logger.Debug($"Value: {orderId:<>N2}");""",
+        """logger.Debug($"Value: {orderId:<OrderId>N2}");""")]
+    // Field with a leading underscore: stripped, then capitalized.
+    [InlineData(
+        """logger.Debug($"Score: {_userScore}");""",
+        """logger.Debug($"Score: {_userScore:<UserScore>}");""")]
+    // Property, already capitalized.
+    [InlineData(
+        """logger.Debug($"Score: {UserScore}");""",
+        """logger.Debug($"Score: {UserScore:<UserScore>}");""")]
+    // Not a variable/parameter/field/property: falls back to "PropertyName".
+    [InlineData(
+        """logger.Debug($"Message: {GetMessage()}");""",
+        """logger.Debug($"Message: {GetMessage():<PropertyName>}");""")]
+    [InlineData(
+        """logger.Debug($"Cast: {(string)userId}");""",
+        """logger.Debug($"Cast: {(string)userId:<PropertyName>}");""")]
+    public async Task NonCapturingHole_HasTagAdded(string call, string expectedCall)
+    {
+        var source = TestSource.WrapInMethodBody(call);
+
+        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(
+            source, new NonCapturingInterpolationHoleAnalyzer(), new NonCapturingInterpolationHoleCodeFixProvider());
+
+        fixedSource.Should().NotBeNull();
+        fixedSource.Should().Be(TestSource.WrapInMethodBody(expectedCall));
+    }
+}

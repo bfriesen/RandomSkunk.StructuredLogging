@@ -36,4 +36,20 @@ public static class DiagnosticDescriptors
         defaultSeverity: DiagnosticSeverity.Hidden,
         isEnabledByDefault: true,
         description: "Marks an interpolation hole (e.g. {who:<Recipient>} in $\"Hello, {who:<Recipient>}!\") in a RandomSkunk.StructuredLogging message argument that captures its value as a structured property via the <PropertyName> tag format. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these holes.");
+
+    /// <summary>
+    /// Reported on an interpolation hole in a RandomSkunk.StructuredLogging message argument that
+    /// does <em>not</em> use the <c>&lt;PropertyName&gt;</c> tag format to capture the interpolated
+    /// value as a structured property. This diagnostic is "silent" (<see cref="DiagnosticSeverity.Hidden"/>)
+    /// by design - it exists purely as an anchor location for code fixes (added separately) that
+    /// operate on these holes, not to flag anything wrong with the code.
+    /// </summary>
+    public static readonly DiagnosticDescriptor NonCapturingInterpolationHole = new(
+        id: "RSSL0003",
+        title: "Interpolation hole does not capture a structured property",
+        messageFormat: "This interpolation hole does not capture '{0}' as a structured property",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Hidden,
+        isEnabledByDefault: true,
+        description: "Marks an interpolation hole (e.g. {who} in $\"Hello, {who}!\") in a RandomSkunk.StructuredLogging message argument whose value is not captured as a structured property via the <PropertyName> tag format. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these holes.");
 }
