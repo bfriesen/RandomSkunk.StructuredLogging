@@ -18,6 +18,7 @@ internal static class TestSource
             public void TestMethod(
                 ILogger logger,
                 object who,
+                object ts,
                 object userName,
                 object userId,
                 object ipAddress,

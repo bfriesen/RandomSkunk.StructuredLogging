@@ -16,9 +16,12 @@ internal static class CodeFixVerifier
 {
     /// <summary>
     /// Applies the code fix to the single diagnostic expected from <paramref name="source"/> and
-    /// returns the resulting source text, or <see langword="null"/> if no fix was offered.
+    /// returns the resulting source text, or <see langword="null"/> if no fix was offered. When
+    /// the provider registers more than one code action for the diagnostic, <paramref name="selectAction"/>
+    /// picks which one to apply; it's required in that case and otherwise ignored.
     /// </summary>
-    public static async Task<string?> TryApplyFixAsync(string source, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider)
+    public static async Task<string?> TryApplyFixAsync(
+        string source, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, Func<CodeAction, bool>? selectAction = null)
     {
         using var workspace = new AdhocWorkspace();
         var projectId = ProjectId.CreateNewId();
@@ -49,7 +52,9 @@ internal static class CodeFixVerifier
         if (actions.Count == 0)
             return null;
 
-        var operations = await actions.Single().GetOperationsAsync(CancellationToken.None);
+        var selectedAction = selectAction is null ? actions.Single() : actions.Single(selectAction);
+
+        var operations = await selectedAction.GetOperationsAsync(CancellationToken.None);
         var applyChanges = operations.OfType<ApplyChangesOperation>().Single();
         var newDocument = applyChanges.ChangedSolution.GetDocument(documentId)!;
         var newRoot = await newDocument.GetSyntaxRootAsync();

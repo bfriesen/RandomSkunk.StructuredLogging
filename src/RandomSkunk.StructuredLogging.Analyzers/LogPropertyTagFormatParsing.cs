@@ -26,4 +26,17 @@ internal static class LogPropertyTagFormatParsing
         var propertyName = format.Substring(1, closeIndex - 1);
         return propertyName.Length == 0 ? null : propertyName;
     }
+
+    /// <summary>
+    /// Returns the format text remaining after the <c>&lt;PropertyName&gt;</c> tag, or
+    /// <see langword="null"/> if nothing follows the tag. Only meaningful when
+    /// <see cref="TryGetPropertyName"/> already returned non-<see langword="null"/> for
+    /// <paramref name="format"/> (so it's known to start with '&lt;' and contain a matching '&gt;').
+    /// </summary>
+    public static string? GetRemainingFormat(string format)
+    {
+        var closeIndex = format.IndexOf('>', 1);
+        var remainingFormat = format.Substring(closeIndex + 1);
+        return remainingFormat.Length == 0 ? null : remainingFormat;
+    }
 }

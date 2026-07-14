@@ -8,9 +8,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace RandomSkunk.StructuredLogging.Analyzers;
 
 /// <summary>
-/// Rewrites an interpolation hole flagged by <see cref="LogPropertyTagFormatAnalyzer"/> (RSSL0002)
-/// by removing it from the message's interpolated string and appending its value as a trailing
-/// <c>(string Name, object? Value)</c> tuple argument instead - see <see cref="LogPropertyTagFormatMigration"/>.
+/// Offers two rewrites for an interpolation hole flagged by <see cref="LogPropertyTagFormatAnalyzer"/>
+/// (RSSL0002): extracting it from the message's interpolated string into a trailing
+/// <c>(string Name, object? Value)</c> tuple argument (see <see cref="LogPropertyTagFormatMigration"/>),
+/// or simply stripping the <c>&lt;PropertyName&gt;</c> tag so the value stays in the message but is
+/// no longer captured as a structured property (see <see cref="RemoveLogPropertyTagFormatMigration"/>).
 /// </summary>
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LogPropertyTagFormatCodeFixProvider))]
 [Shared]
@@ -34,18 +36,32 @@ public sealed class LogPropertyTagFormatCodeFixProvider : CodeFixProvider
         if (root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is not InterpolationSyntax hole)
             return;
 
-        var replacement = LogPropertyTagFormatMigration.TryCreateReplacement(hole);
-        if (replacement is null)
-            return;
+        var extractReplacement = LogPropertyTagFormatMigration.TryCreateReplacement(hole);
+        if (extractReplacement is not null)
+        {
+            var (oldInvocation, newInvocation, propertyName) = extractReplacement.Value;
 
-        var (oldInvocation, newInvocation, propertyName) = replacement.Value;
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    title: $"Extract '{propertyName}' to a structured property argument",
+                    createChangedDocument: _ => Task.FromResult(
+                        context.Document.WithSyntaxRoot(root.ReplaceNode(oldInvocation, newInvocation))),
+                    equivalenceKey: $"{nameof(LogPropertyTagFormatCodeFixProvider)}.Extract"),
+                diagnostic);
+        }
 
-        context.RegisterCodeFix(
-            CodeAction.Create(
-                title: $"Extract '{propertyName}' to a structured property argument",
-                createChangedDocument: _ => Task.FromResult(
-                    context.Document.WithSyntaxRoot(root.ReplaceNode(oldInvocation, newInvocation))),
-                equivalenceKey: nameof(LogPropertyTagFormatCodeFixProvider)),
-            diagnostic);
+        var removeReplacement = RemoveLogPropertyTagFormatMigration.TryCreateReplacement(hole);
+        if (removeReplacement is not null)
+        {
+            var (oldHole, newHole, propertyName) = removeReplacement.Value;
+
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    title: $"Remove the '{propertyName}' tag format, keeping it in the message only",
+                    createChangedDocument: _ => Task.FromResult(
+                        context.Document.WithSyntaxRoot(root.ReplaceNode(oldHole, newHole))),
+                    equivalenceKey: $"{nameof(LogPropertyTagFormatCodeFixProvider)}.Remove"),
+                diagnostic);
+        }
     }
 }
