@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -11,8 +12,11 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 /// interpolation hole from the message's interpolated string and appends its value as a trailing
 /// <c>(string Name, object? Value)</c> tuple argument instead, e.g.
 /// <c>logger.Debug($"User logged in: {userName:&lt;UserName&gt;}")</c> becomes
-/// <c>logger.Debug($"User logged in: ", ("UserName", userName))</c> - the hole is removed as-is,
-/// with no attempt to clean up whitespace it leaves behind.
+/// <c>logger.Debug($"User logged in:", ("UserName", userName))</c> - trailing whitespace left behind
+/// in the text piece immediately preceding the removed hole is trimmed (dropping that text piece
+/// entirely if it becomes empty), so <c>logger.Debug($"Hello {who:&lt;Who&gt;} how are you?")</c>
+/// becomes <c>logger.Debug($"Hello how are you?", ("Who", who))</c> rather than leaving a doubled
+/// space behind.
 /// </summary>
 internal static class LogPropertyTagFormatMigration
 {
@@ -63,6 +67,36 @@ internal static class LogPropertyTagFormatMigration
     }
 
     private static InterpolatedStringExpressionSyntax RemoveHole(
-        InterpolatedStringExpressionSyntax interpolatedString, InterpolationSyntax hole) =>
-        interpolatedString.WithContents(SyntaxFactory.List(interpolatedString.Contents.Where(c => c != hole)));
+        InterpolatedStringExpressionSyntax interpolatedString, InterpolationSyntax hole)
+    {
+        var contents = interpolatedString.Contents;
+        var holeIndex = contents.IndexOf(hole);
+
+        var newContents = new List<InterpolatedStringContentSyntax>();
+        for (var i = 0; i < contents.Count; i++)
+        {
+            if (i == holeIndex)
+                continue;
+
+            var content = contents[i];
+            if (i == holeIndex - 1 && content is InterpolatedStringTextSyntax precedingText)
+            {
+                var trimmedValue = precedingText.TextToken.ValueText.TrimEnd();
+                if (trimmedValue.Length == 0)
+                    continue;
+
+                content = precedingText.WithTextToken(CreateTextToken(trimmedValue));
+            }
+
+            newContents.Add(content);
+        }
+
+        return interpolatedString.WithContents(SyntaxFactory.List(newContents));
+    }
+
+    private static SyntaxToken CreateTextToken(string rawValue)
+    {
+        var escapedText = SymbolDisplay.FormatLiteral(rawValue, quote: false).Replace("{", "{{").Replace("}", "}}");
+        return SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, escapedText, rawValue, default);
+    }
 }
