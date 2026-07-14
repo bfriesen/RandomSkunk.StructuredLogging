@@ -93,9 +93,11 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
         ? $"logger.IsEnabled(LogLevel.{fixedLevel})"
         : "logger.IsEnabled(level)";
 
+    const string destructureDoc = " A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref=\"IFormattable\"/>/<see cref=\"object.ToString\"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.";
+
     string typeSummary = fixedLevel is not null
-        ? $"Interpolated string handler for the message parameter of the {fixedLevel}-level <see cref=\"StructuredLoggerExtensions\"/> methods. Building the message is skipped when the {fixedLevel} level is not enabled for the target <see cref=\"ILogger\"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'."
-        : "Interpolated string handler for the message parameter of the <see cref=\"StructuredLoggerExtensions\"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref=\"ILogger\"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.";
+        ? $"Interpolated string handler for the message parameter of the {fixedLevel}-level <see cref=\"StructuredLoggerExtensions\"/> methods. Building the message is skipped when the {fixedLevel} level is not enabled for the target <see cref=\"ILogger\"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.{destructureDoc}"
+        : $"Interpolated string handler for the message parameter of the <see cref=\"StructuredLoggerExtensions\"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref=\"ILogger\"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.{destructureDoc}";
 
     string ctorSummary = fixedLevel is not null
         ? $"Initializes the handler and checks whether the {fixedLevel} level is enabled for <paramref name=\"logger\"/>."
@@ -172,7 +174,7 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     WriteDocComment(
         sb,
         "    ",
-        "Appends the formatted value of an interpolation expression to the message. If <paramref name=\"format\"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name=\"value\"/> is also captured as a structured property.",
+        $"Appends the formatted value of an interpolation expression to the message. If <paramref name=\"format\"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name=\"value\"/> is also captured as a structured property.{destructureDoc}",
         typeParams: [("T", "The type of the value to append.")],
         parameters:
         [
@@ -185,7 +187,10 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("        if (tag.PropertyName is not null)");
     sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
     sb.AppendLine();
-    sb.AppendLine("        _handler.AppendFormatted(value, tag.Format);");
+    sb.AppendLine("        if (tag.Destructure)");
+    sb.AppendLine("            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));");
+    sb.AppendLine("        else");
+    sb.AppendLine("            _handler.AppendFormatted(value, tag.Format);");
     sb.AppendLine("    }");
     sb.AppendLine();
     WriteDocComment(
@@ -203,7 +208,7 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     WriteDocComment(
         sb,
         "    ",
-        "Appends the formatted value of an interpolation expression to the message. If <paramref name=\"format\"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name=\"value\"/> is also captured as a structured property.",
+        $"Appends the formatted value of an interpolation expression to the message. If <paramref name=\"format\"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name=\"value\"/> is also captured as a structured property.{destructureDoc}",
         typeParams: [("T", "The type of the value to append.")],
         parameters:
         [
@@ -217,7 +222,10 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("        if (tag.PropertyName is not null)");
     sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
     sb.AppendLine();
-    sb.AppendLine("        _handler.AppendFormatted(value, alignment, tag.Format);");
+    sb.AppendLine("        if (tag.Destructure)");
+    sb.AppendLine("            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);");
+    sb.AppendLine("        else");
+    sb.AppendLine("            _handler.AppendFormatted(value, alignment, tag.Format);");
     sb.AppendLine("    }");
     sb.AppendLine();
     WriteDocComment(

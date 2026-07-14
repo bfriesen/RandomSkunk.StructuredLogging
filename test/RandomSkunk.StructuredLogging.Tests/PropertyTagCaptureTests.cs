@@ -141,4 +141,58 @@ public class PropertyTagCaptureTests
 
         capturedName.Should().BeNull();
     }
+
+    [Fact]
+    public void TaggedDestructuringFormat_CapturesRawValue_AndRendersDestructuredMessage()
+    {
+        var logger = new RecordingLogger();
+        var item = new OrderItem(123, 456, 1);
+
+        logger.Trace($"Item added to cart: {item:<@Item>}");
+
+        logger.LastMessage.Should().Be("Item added to cart: OrderItem { CartId: 123, ItemId: 456, Quantity: 1 }");
+        var property = logger.LastProperties.Should().ContainSingle().Which;
+        property.Key.Should().Be("Item");
+        property.Value.Should().BeSameAs(item);
+    }
+
+    [Fact]
+    public void EmptyDestructuringTag_DoesNotCapture_ButRendersDestructuredMessage()
+    {
+        var logger = new RecordingLogger();
+        var item = new OrderItem(123, 456, 1);
+
+        logger.Trace($"Item added to cart: {item:<@>}");
+
+        logger.LastMessage.Should().Be("Item added to cart: OrderItem { CartId: 123, ItemId: 456, Quantity: 1 }");
+        logger.LastProperties.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void TaggedDestructuringFormat_IgnoresTrailingFormatText()
+    {
+        var logger = new RecordingLogger();
+        var item = new OrderItem(123, 456, 1);
+
+        logger.Trace($"Item: {item:<@Item>SomeIgnoredText}");
+
+        logger.LastMessage.Should().Be("Item: OrderItem { CartId: 123, ItemId: 456, Quantity: 1 }");
+    }
+
+    [Fact]
+    public void Disabled_DoesNotCaptureOrRenderDestructuredMessage()
+    {
+        var logger = new RecordingLogger { Enabled = false };
+
+        OrderItem? captured = null;
+        OrderItem GetItem()
+        {
+            captured = new OrderItem(1, 2, 3);
+            return captured;
+        }
+
+        logger.Trace($"Item: {GetItem():<@Item>}");
+
+        captured.Should().BeNull();
+    }
 }

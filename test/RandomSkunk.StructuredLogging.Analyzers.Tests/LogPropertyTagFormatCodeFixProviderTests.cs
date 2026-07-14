@@ -38,6 +38,9 @@ public class LogPropertyTagFormatCodeFixProviderTests
     [InlineData(
         """logger.Debug($"Hello {who:<Who>} how are you?");""",
         """logger.Debug($"Hello how are you?", ("Who", who));""")]
+    [InlineData(
+        """logger.Debug($"Item {value:<@Value>} added");""",
+        """logger.Debug($"Item added", ("Value", value));""")]
     public async Task TagFormatHole_IsExtractedToTrailingTupleArgument(string call, string expectedCall)
     {
         var source = TestSource.WrapInMethodBody(call);

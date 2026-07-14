@@ -14,6 +14,8 @@ public class LogPropertyTagFormatAnalyzerTests
     [InlineData("""logger.Critical($"Hello, {who:<Recipient>}!");""", "{who:<Recipient>}", "Recipient")]
     [InlineData("""logger.Write(LogLevel.Information, $"Hello, {who:<Recipient>}!");""", "{who:<Recipient>}", "Recipient")]
     [InlineData("""logger.Debug($"[{who:<Timestamp>HH:mm:ss}]");""", "{who:<Timestamp>HH:mm:ss}", "Timestamp")]
+    [InlineData("""logger.Debug($"Hello, {who:<@Recipient>}!");""", "{who:<@Recipient>}", "Recipient")]
+    [InlineData("""logger.Debug($"[{who:<@Timestamp>HH:mm:ss}]");""", "{who:<@Timestamp>HH:mm:ss}", "Timestamp")]
     public async Task TagFormatHole_IsFlagged(string call, string expectedText, string expectedPropertyName)
     {
         var source = TestSource.WrapInMethodBody(call);
@@ -68,6 +70,16 @@ public class LogPropertyTagFormatAnalyzerTests
     public async Task EmptyTag_OptsOutAndIsNotFlagged()
     {
         var source = TestSource.WrapInMethodBody("""logger.Debug($"Value: {who:<>N2}");""");
+
+        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTagFormatAnalyzer());
+
+        diagnostics.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task DestructuringEmptyTag_OptsOutAndIsNotFlagged()
+    {
+        var source = TestSource.WrapInMethodBody("""logger.Debug($"Value: {who:<@>N2}");""");
 
         var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTagFormatAnalyzer());
 

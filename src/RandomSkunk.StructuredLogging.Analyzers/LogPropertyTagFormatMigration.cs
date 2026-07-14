@@ -16,7 +16,10 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 /// in the text piece immediately preceding the removed hole is trimmed (dropping that text piece
 /// entirely if it becomes empty), so <c>logger.Debug($"Hello {who:&lt;Who&gt;} how are you?")</c>
 /// becomes <c>logger.Debug($"Hello how are you?", ("Who", who))</c> rather than leaving a doubled
-/// space behind.
+/// space behind. For a destructuring tag (<c>&lt;@PropertyName&gt;</c>), the value moved into the
+/// tuple argument is always the raw value (same as a non-destructuring tag) - the destructured
+/// message rendering is discarded along with the rest of the hole, consistent with how this fix
+/// already discards any formatting (destructured or not) when moving a value out of the message.
 /// </summary>
 internal static class LogPropertyTagFormatMigration
 {

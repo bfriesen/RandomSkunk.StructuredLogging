@@ -5,14 +5,17 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 /// shared by <see cref="LogPropertyTagFormatAnalyzer"/> and <see cref="LogPropertyTagFormatMigration"/>.
 /// Mirrors the tag-detection half of the runtime's own parsing (RandomSkunk.StructuredLogging's
 /// Internal/LogPropertyTagFormat.cs), which this netstandard2.0-only project can't reference
-/// directly since it doesn't depend on that library.
+/// directly since it doesn't depend on that library. A tag whose name starts with '@' (e.g.
+/// <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) requests Serilog-style destructured message
+/// formatting - see <see cref="IsDestructuring"/>.
 /// </summary>
 internal static class LogPropertyTagFormatParsing
 {
     /// <summary>
     /// Returns the captured property name if <paramref name="format"/> is a non-empty
-    /// <c>&lt;PropertyName&gt;...</c> tag, or <see langword="null"/> if it isn't a tag at all, or
-    /// is the empty (<c>&lt;&gt;</c>) opt-out tag.
+    /// <c>&lt;PropertyName&gt;...</c> or <c>&lt;@PropertyName&gt;...</c> tag, or
+    /// <see langword="null"/> if it isn't a tag at all, or is the empty (<c>&lt;&gt;</c> or
+    /// <c>&lt;@&gt;</c>) opt-out tag.
     /// </summary>
     public static string? TryGetPropertyName(string format)
     {
@@ -23,9 +26,17 @@ internal static class LogPropertyTagFormatParsing
         if (closeIndex < 0)
             return null;
 
-        var propertyName = format.Substring(1, closeIndex - 1);
+        var nameStart = format.Length > 1 && format[1] == '@' ? 2 : 1;
+        var propertyName = format.Substring(nameStart, closeIndex - nameStart);
         return propertyName.Length == 0 ? null : propertyName;
     }
+
+    /// <summary>
+    /// Returns whether <paramref name="format"/> is a <c>&lt;@...&gt;</c> tag - one whose name
+    /// starts with '@', requesting Serilog-style destructured message formatting.
+    /// </summary>
+    public static bool IsDestructuring(string format) =>
+        format.Length > 1 && format[0] == '<' && format[1] == '@' && format.IndexOf('>', 1) >= 0;
 
     /// <summary>
     /// Returns the format text remaining after the <c>&lt;PropertyName&gt;</c> tag, or

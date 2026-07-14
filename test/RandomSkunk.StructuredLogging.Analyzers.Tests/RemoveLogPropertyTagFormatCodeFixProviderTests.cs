@@ -20,6 +20,12 @@ public class RemoveLogPropertyTagFormatCodeFixProviderTests
     [InlineData(
         """logger.Debug($"Order {orderId:<OrderId>}", ("Total", value));""",
         """logger.Debug($"Order {orderId}", ("Total", value));""")]
+    [InlineData(
+        """logger.Debug($"Item: {value:<@Value>}");""",
+        """logger.Debug($"Item: {value:<@>}");""")]
+    [InlineData(
+        """logger.Debug($"Item: {value:<@Value>N2}");""",
+        """logger.Debug($"Item: {value:<@>N2}");""")]
     public async Task TagFormatHole_HasTagRemoved(string call, string expectedCall)
     {
         var source = TestSource.WrapInMethodBody(call);

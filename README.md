@@ -91,6 +91,31 @@ logger.Debug($"[{ts:<Timestamp>HH:mm:ss}] tick");
 An empty tag (`<>`) strips itself out without capturing anything — use it when a real format
 string happens to start with `<`: `{value:<>therealformat}`.
 
+#### `<@PropertyName>` — Serilog-style destructured message text
+
+A tag whose name starts with `@` renders the value into the *message text* using Serilog-style
+destructured formatting instead of `ToString()`/`IFormattable` formatting, while still capturing
+the raw, undestructured value as the structured property (destructuring never changes what gets
+captured — only how it's rendered into the message):
+
+```csharp
+logger.Trace($"Item added to cart: {item:<@Item>}");
+// message text:          "Item added to cart: OrderItem { CartId: 123, ItemId: 456, Quantity: 1 }"
+// structured properties: Item = <the raw OrderItem instance>
+
+logger.Trace($"Item added to cart: {item:<@>}");
+// same message text, but the empty destructuring tag doesn't capture a structured property
+```
+
+Rendering rules: objects render as `TypeName { Prop1: Value1, Prop2: Value2 }` (anonymous types
+omit the type name); collections render as `[item1, item2]`; dictionaries render as
+`{ [key1]: value1, [key2]: value2 }`; strings and chars are quoted, other scalars (numbers,
+`bool`, enums, `DateTime`, `Guid`, etc.) render unquoted using invariant culture; `null` renders as
+`null`. Nested objects/collections are capped at 10 levels deep and 10 items per
+collection/dictionary (both shown as `...` when exceeded), and a self-referencing object renders
+`<circular reference>` instead of recursing forever. Any format text after a `<@...>` tag's
+closing `>` is ignored, since destructured rendering fully replaces ordinary formatting.
+
 ### 3. Dynamic properties, or more than 6 — `params` array
 
 ```csharp
@@ -170,7 +195,7 @@ one that doesn't reference `RandomSkunk.StructuredLogging` itself.
 | ID | Severity | Description |
 | --- | --- | --- |
 | `RSSL0001` | Suggestion | Flags a call to one of `Microsoft.Extensions.Logging.LoggerExtensions`'s `Log`/`LogTrace`/`LogDebug`/`LogInformation`/`LogWarning`/`LogError`/`LogCritical` extension methods and suggests the equivalent `RandomSkunk.StructuredLogging` extension method — see [Migrating from `Microsoft.Extensions.Logging`](#migrating-from-microsoftextensionslogging) above. |
-| `RSSL0002` | Silent | Marks an interpolation hole that uses the [`<PropertyName>` tag format](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) (e.g. `{who:<Recipient>}`) to capture a structured property. Silent by default — it exists to anchor code fixes that act on these holes, not to warn about anything. |
+| `RSSL0002` | Silent | Marks an interpolation hole that uses the [`<PropertyName>` tag format](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) (e.g. `{who:<Recipient>}`, including the destructuring `<@PropertyName>` form) to capture a structured property. Silent by default — it exists to anchor code fixes that act on these holes, not to warn about anything. |
 | `RSSL0003` | Silent | Marks an interpolation hole that does *not* use the [`<PropertyName>` tag format](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) (e.g. `{who}`) to capture a structured property. Silent by default — it exists to anchor code fixes that act on these holes, not to warn about anything. |
 | `RSSL0004` | Silent | Marks a name/value tuple argument (e.g. `("UserId", userId)`) passed at the end of a `RandomSkunk.StructuredLogging` extension method call to attach a structured property, when the name is a compile-time constant string (a literal, a constant concatenation, or an interpolated string whose holes are themselves constant strings). Silent by default — it exists to anchor code fixes that act on these arguments, not to warn about anything. |
 

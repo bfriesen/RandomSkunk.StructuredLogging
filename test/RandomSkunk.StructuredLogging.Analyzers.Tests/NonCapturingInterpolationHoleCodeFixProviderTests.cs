@@ -36,6 +36,10 @@ public class NonCapturingInterpolationHoleCodeFixProviderTests
     [InlineData(
         """logger.Debug($"Cast: {(string)userId}");""",
         """logger.Debug($"Cast: {(string)userId:<PropertyName>}");""")]
+    // Existing destructuring opt-out tag: '@' is preserved, capture added, trailing format kept.
+    [InlineData(
+        """logger.Debug($"Value: {value:<@>N2}");""",
+        """logger.Debug($"Value: {value:<@Value>N2}");""")]
     public async Task NonCapturingHole_HasTagAdded(string call, string expectedCall)
     {
         var source = TestSource.WrapInMethodBody(call);

@@ -10,7 +10,10 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 /// <c>&lt;PropertyName&gt;</c> tag prefix from the hole's format specifier, leaving the value
 /// formatted in the message text as before but no longer captured as a structured property, e.g.
 /// <c>{ts:&lt;Timestamp&gt;O}</c> becomes <c>{ts:O}</c>, and <c>{ts:&lt;Timestamp&gt;}</c> (nothing
-/// after the tag) becomes <c>{ts}</c>.
+/// after the tag) becomes <c>{ts}</c>. For a destructuring tag (<c>&lt;@PropertyName&gt;</c>), the
+/// '@' is preserved as the empty <c>&lt;@&gt;</c> tag instead of stripping the tag entirely, so the
+/// message keeps rendering with Serilog-style destructured formatting exactly as before - only the
+/// capture is removed, e.g. <c>{item:&lt;@Item&gt;}</c> becomes <c>{item:&lt;@&gt;}</c>.
 /// </summary>
 internal static class RemoveLogPropertyTagFormatMigration
 {
@@ -31,11 +34,22 @@ internal static class RemoveLogPropertyTagFormatMigration
             return null;
 
         var remainingFormat = LogPropertyTagFormatParsing.GetRemainingFormat(format);
+        var destructure = LogPropertyTagFormatParsing.IsDestructuring(format);
 
-        var newHole = remainingFormat is null
-            ? hole.WithFormatClause(null)
-            : hole.WithFormatClause(formatClause.WithFormatStringToken(
-                SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, remainingFormat, remainingFormat, default)));
+        InterpolationSyntax newHole;
+        if (destructure)
+        {
+            var newFormatText = remainingFormat is null ? "<@>" : $"<@>{remainingFormat}";
+            newHole = hole.WithFormatClause(formatClause.WithFormatStringToken(
+                SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, newFormatText, newFormatText, default)));
+        }
+        else
+        {
+            newHole = remainingFormat is null
+                ? hole.WithFormatClause(null)
+                : hole.WithFormatClause(formatClause.WithFormatStringToken(
+                    SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, remainingFormat, remainingFormat, default)));
+        }
 
         return (hole, newHole, propertyName);
     }

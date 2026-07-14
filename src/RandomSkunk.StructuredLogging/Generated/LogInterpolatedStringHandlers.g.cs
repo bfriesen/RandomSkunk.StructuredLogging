@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Trace-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Trace level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
+/// Interpolated string handler for the message parameter of the Trace-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Trace level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct TraceInterpolatedStringHandler
@@ -58,7 +58,7 @@ public ref struct TraceInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -69,7 +69,10 @@ public ref struct TraceInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+        else
+            _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -81,7 +84,7 @@ public ref struct TraceInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -93,7 +96,10 @@ public ref struct TraceInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, alignment, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
+        else
+            _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -116,7 +122,7 @@ public ref struct TraceInterpolatedStringHandler
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Debug-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Debug level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
+/// Interpolated string handler for the message parameter of the Debug-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Debug level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct DebugInterpolatedStringHandler
@@ -167,7 +173,7 @@ public ref struct DebugInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -178,7 +184,10 @@ public ref struct DebugInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+        else
+            _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -190,7 +199,7 @@ public ref struct DebugInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -202,7 +211,10 @@ public ref struct DebugInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, alignment, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
+        else
+            _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -225,7 +237,7 @@ public ref struct DebugInterpolatedStringHandler
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Information-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Information level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
+/// Interpolated string handler for the message parameter of the Information-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Information level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct InformationInterpolatedStringHandler
@@ -276,7 +288,7 @@ public ref struct InformationInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -287,7 +299,10 @@ public ref struct InformationInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+        else
+            _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -299,7 +314,7 @@ public ref struct InformationInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -311,7 +326,10 @@ public ref struct InformationInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, alignment, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
+        else
+            _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -334,7 +352,7 @@ public ref struct InformationInterpolatedStringHandler
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Warning-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Warning level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
+/// Interpolated string handler for the message parameter of the Warning-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Warning level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct WarningInterpolatedStringHandler
@@ -385,7 +403,7 @@ public ref struct WarningInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -396,7 +414,10 @@ public ref struct WarningInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+        else
+            _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -408,7 +429,7 @@ public ref struct WarningInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -420,7 +441,10 @@ public ref struct WarningInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, alignment, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
+        else
+            _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -443,7 +467,7 @@ public ref struct WarningInterpolatedStringHandler
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Error-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Error level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
+/// Interpolated string handler for the message parameter of the Error-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Error level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct ErrorInterpolatedStringHandler
@@ -494,7 +518,7 @@ public ref struct ErrorInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -505,7 +529,10 @@ public ref struct ErrorInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+        else
+            _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -517,7 +544,7 @@ public ref struct ErrorInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -529,7 +556,10 @@ public ref struct ErrorInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, alignment, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
+        else
+            _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -552,7 +582,7 @@ public ref struct ErrorInterpolatedStringHandler
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the Critical-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Critical level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
+/// Interpolated string handler for the message parameter of the Critical-level <see cref="StructuredLoggerExtensions"/> methods. Building the message is skipped when the Critical level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct CriticalInterpolatedStringHandler
@@ -603,7 +633,7 @@ public ref struct CriticalInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -614,7 +644,10 @@ public ref struct CriticalInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+        else
+            _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -626,7 +659,7 @@ public ref struct CriticalInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -638,7 +671,10 @@ public ref struct CriticalInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, alignment, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
+        else
+            _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -661,7 +697,7 @@ public ref struct CriticalInterpolatedStringHandler
 }
 
 /// <summary>
-/// Interpolated string handler for the message parameter of the <see cref="StructuredLoggerExtensions"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.
+/// Interpolated string handler for the message parameter of the <see cref="StructuredLoggerExtensions"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
 /// </summary>
 [InterpolatedStringHandler]
 public ref struct LogInterpolatedStringHandler
@@ -713,7 +749,7 @@ public ref struct LogInterpolatedStringHandler
     public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -724,7 +760,10 @@ public ref struct LogInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+        else
+            _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -736,7 +775,7 @@ public ref struct LogInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
-    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property.
+    /// Appends the formatted value of an interpolation expression to the message. If <paramref name="format"/> starts with an <c>&lt;PropertyName&gt;</c> tag, <paramref name="value"/> is also captured as a structured property. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
@@ -748,7 +787,10 @@ public ref struct LogInterpolatedStringHandler
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
-        _handler.AppendFormatted(value, alignment, tag.Format);
+        if (tag.Destructure)
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
+        else
+            _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>

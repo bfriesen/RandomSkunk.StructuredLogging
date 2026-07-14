@@ -42,11 +42,15 @@ public sealed class NonCapturingInterpolationHoleCodeFixProvider : CodeFixProvid
         if (replacement is null)
             return;
 
-        var (oldHole, newHole, propertyName) = replacement.Value;
+        var (oldHole, newHole, propertyName, destructure) = replacement.Value;
+
+        var title = destructure
+            ? $"Capture as a destructured structured property named '{propertyName}'"
+            : $"Capture as a structured property named '{propertyName}'";
 
         context.RegisterCodeFix(
             CodeAction.Create(
-                title: $"Capture as a structured property named '{propertyName}'",
+                title: title,
                 createChangedDocument: _ => Task.FromResult(
                     context.Document.WithSyntaxRoot(root.ReplaceNode(oldHole, newHole))),
                 equivalenceKey: nameof(NonCapturingInterpolationHoleCodeFixProvider)),

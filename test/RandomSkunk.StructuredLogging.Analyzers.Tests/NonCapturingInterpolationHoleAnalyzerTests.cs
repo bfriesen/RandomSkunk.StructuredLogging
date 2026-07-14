@@ -68,9 +68,30 @@ public class NonCapturingInterpolationHoleAnalyzerTests
     }
 
     [Fact]
+    public async Task DestructuringEmptyTag_OptsOutAndIsFlagged()
+    {
+        var source = TestSource.WrapInMethodBody("""logger.Debug($"Value: {who:<@>N2}");""");
+
+        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new NonCapturingInterpolationHoleAnalyzer());
+
+        diagnostics.Should().ContainSingle();
+        diagnostics[0].Id.Should().Be("RSSL0003");
+    }
+
+    [Fact]
     public async Task TagFormatHole_IsNotFlagged()
     {
         var source = TestSource.WrapInMethodBody("""logger.Debug($"Hello, {who:<Recipient>}!");""");
+
+        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new NonCapturingInterpolationHoleAnalyzer());
+
+        diagnostics.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task DestructuringTagFormatHole_IsNotFlagged()
+    {
+        var source = TestSource.WrapInMethodBody("""logger.Debug($"Hello, {who:<@Recipient>}!");""");
 
         var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new NonCapturingInterpolationHoleAnalyzer());
 
