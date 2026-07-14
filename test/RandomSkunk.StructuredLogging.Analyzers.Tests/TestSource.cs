@@ -15,6 +15,8 @@ internal static class TestSource
 
         public class TestClass
         {
+            private const string ConstantPart = "Const";
+
             private object _userScore = null!;
 
             public object UserScore { get; set; } = null!;
@@ -29,7 +31,8 @@ internal static class TestSource
                 object value,
                 object path,
                 object orderId,
-                object code)
+                object code,
+                string dynamicName)
             {
                 {{statement}}
             }

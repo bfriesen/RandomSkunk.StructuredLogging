@@ -43,7 +43,7 @@ public sealed class LogPropertyTagFormatCodeFixProvider : CodeFixProvider
 
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    title: $"Extract '{propertyName}' to a structured property argument",
+                    title: $"Move '{propertyName}' to a structured property argument",
                     createChangedDocument: _ => Task.FromResult(
                         context.Document.WithSyntaxRoot(root.ReplaceNode(oldInvocation, newInvocation))),
                     equivalenceKey: $"{nameof(LogPropertyTagFormatCodeFixProvider)}.Extract"),

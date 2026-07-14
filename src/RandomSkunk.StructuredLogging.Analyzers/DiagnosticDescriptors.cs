@@ -52,4 +52,21 @@ public static class DiagnosticDescriptors
         defaultSeverity: DiagnosticSeverity.Hidden,
         isEnabledByDefault: true,
         description: "Marks an interpolation hole (e.g. {who} in $\"Hello, {who}!\") in a RandomSkunk.StructuredLogging message argument whose value is not captured as a structured property via the <PropertyName> tag format. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these holes.");
+
+    /// <summary>
+    /// Reported on a name/value tuple argument (e.g. <c>("UserId", userId)</c>) passed at the end
+    /// of a RandomSkunk.StructuredLogging Trace/Debug/Information/Warning/Error/Critical/Write
+    /// extension method call to attach a structured property. This diagnostic is "silent"
+    /// (<see cref="DiagnosticSeverity.Hidden"/>) by design - it exists purely as an anchor
+    /// location for code fixes (added separately) that operate on these arguments, not to flag
+    /// anything wrong with the code.
+    /// </summary>
+    public static readonly DiagnosticDescriptor LogPropertyTupleArgument = new(
+        id: "RSSL0004",
+        title: "Tuple argument passes a structured property",
+        messageFormat: "This name/value tuple argument passes '{0}' as a structured property named '{1}'",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Hidden,
+        isEnabledByDefault: true,
+        description: "Marks a name/value tuple argument (e.g. (\"UserId\", userId) in logger.Debug($\"...\", (\"UserId\", userId))) passed at the end of a RandomSkunk.StructuredLogging extension method call to attach a structured property, when the name is a compile-time constant string (a literal, a constant concatenation, or an interpolated string whose holes are themselves constant strings). Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these arguments.");
 }

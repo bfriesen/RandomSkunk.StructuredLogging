@@ -20,8 +20,16 @@ internal static class CodeFixVerifier
     /// the provider registers more than one code action for the diagnostic, <paramref name="selectAction"/>
     /// picks which one to apply; it's required in that case and otherwise ignored.
     /// </summary>
+    /// <param name="allowCompilerErrors">
+    /// By default, <paramref name="source"/> is required to compile cleanly, same as
+    /// <see cref="AnalyzerVerifier"/>, to catch accidentally-broken test sources. Pass
+    /// <see langword="true"/> for the rare fix that targets code a developer would only have
+    /// written mid-edit - e.g. an empty <c>{}</c> interpolation hole, which doesn't compile on its
+    /// own (CS1733) but is still a well-formed syntax tree a code fix can act on.
+    /// </param>
     public static async Task<string?> TryApplyFixAsync(
-        string source, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, Func<CodeAction, bool>? selectAction = null)
+        string source, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider,
+        Func<CodeAction, bool>? selectAction = null, bool allowCompilerErrors = false)
     {
         using var workspace = new AdhocWorkspace();
         var projectId = ProjectId.CreateNewId();
@@ -37,9 +45,12 @@ internal static class CodeFixVerifier
         var document = solution.GetDocument(documentId)!;
 
         var compilation = (await document.Project.GetCompilationAsync())!;
-        var compilerErrors = compilation.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error).ToArray();
-        if (compilerErrors.Length > 0)
-            throw new InvalidOperationException($"Test source failed to compile: {string.Join(Environment.NewLine, compilerErrors.Select(d => d.ToString()))}");
+        if (!allowCompilerErrors)
+        {
+            var compilerErrors = compilation.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error).ToArray();
+            if (compilerErrors.Length > 0)
+                throw new InvalidOperationException($"Test source failed to compile: {string.Join(Environment.NewLine, compilerErrors.Select(d => d.ToString()))}");
+        }
 
         var withAnalyzers = compilation.WithAnalyzers([analyzer]);
         var diagnostics = await withAnalyzers.GetAnalyzerDiagnosticsAsync();

@@ -41,7 +41,7 @@ public class LogPropertyTagFormatCodeFixProviderTests
 
         var fixedSource = await CodeFixVerifier.TryApplyFixAsync(
             source, new LogPropertyTagFormatAnalyzer(), new LogPropertyTagFormatCodeFixProvider(),
-            action => action.Title.StartsWith("Extract", StringComparison.Ordinal));
+            action => action.Title.StartsWith("Move", StringComparison.Ordinal));
 
         fixedSource.Should().NotBeNull();
         fixedSource.Should().Be(TestSource.WrapInMethodBody(expectedCall));
