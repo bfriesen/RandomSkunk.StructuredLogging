@@ -17,10 +17,13 @@ internal static class LoggerExtensionsMigration
     // format component, unlike string.Format) - matches LogValuesFormatter's own parsing.
     private static readonly Regex TemplateHolePattern = new(@"\{([^{}]+)\}", RegexOptions.Compiled);
 
-    // Property names captured by the <PropertyName> tag format must be simple identifiers -
-    // LogPropertyTagFormat finds the tag by scanning for the next '>', so a name containing one
-    // would corrupt the tag; requiring a plain identifier keeps the rewritten call unambiguous.
-    private static readonly Regex ValidPropertyName = new(@"^[A-Za-z_][A-Za-z0-9_]*$", RegexOptions.Compiled);
+    // Property names captured by the <PropertyName> tag format must be simple identifiers
+    // (optionally prefixed with '@' or '$', which MEL's own LogValuesFormatter treats as literal
+    // name characters rather than stripping - verified against Microsoft.Extensions.Logging.Abstractions
+    // directly, e.g. "{@Foo}" produces a property literally named "@Foo") - LogPropertyTagFormat
+    // finds the tag by scanning for the next '>', so a name containing one would corrupt the tag;
+    // requiring this shape keeps the rewritten call unambiguous.
+    private static readonly Regex ValidPropertyName = new(@"^[@$]?[A-Za-z_][A-Za-z0-9_]*$", RegexOptions.Compiled);
 
     /// <summary>
     /// Returns the RandomSkunk.StructuredLogging equivalent of <paramref name="invocation"/>, or
@@ -152,11 +155,6 @@ internal static class LoggerExtensionsMigration
         for (var i = 0; i < matches.Count; i++)
         {
             var name = matches[i].Groups[1].Value;
-
-            // MEL's "@"/"$" destructuring/stringification prefixes have no equivalent here (the
-            // tag always captures the raw value) - drop the prefix and capture under the bare name.
-            if (name.Length > 0 && (name[0] == '@' || name[0] == '$'))
-                name = name.Substring(1);
 
             if (!ValidPropertyName.IsMatch(name))
                 return null;

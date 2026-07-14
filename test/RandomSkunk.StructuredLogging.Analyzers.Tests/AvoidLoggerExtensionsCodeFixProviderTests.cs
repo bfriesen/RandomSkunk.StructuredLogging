@@ -29,6 +29,12 @@ public class AvoidLoggerExtensionsCodeFixProviderTests
     [InlineData(
         """LoggerExtensions.LogInformation(logger, "User {UserId}", userId);""",
         """logger.Information($"User {userId:<UserId>}");""")]
+    [InlineData(
+        """logger.LogInformation("Weather forecast data generated successfully. {@WeatherForecast}", value);""",
+        """logger.Information($"Weather forecast data generated successfully. {value:<@WeatherForecast>}");""")]
+    [InlineData(
+        """logger.LogInformation("Raw value {$Value}", value);""",
+        """logger.Information($"Raw value {value:<$Value>}");""")]
     public async Task LiteralMessageWithMatchingArgs_IsFixed(string call, string expectedCall)
     {
         var source = TestSource.WrapInMethodBody(call);
