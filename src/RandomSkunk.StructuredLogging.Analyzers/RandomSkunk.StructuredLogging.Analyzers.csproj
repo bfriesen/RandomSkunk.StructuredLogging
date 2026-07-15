@@ -16,6 +16,7 @@
     <Description>Roslyn analyzers for RandomSkunk.StructuredLogging.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageTags>logging;structured-logging;dotnet;analyzers;roslyn</PackageTags>
     <Copyright>Copyright (c) 2025-2026 Brian Friesen</Copyright>
   </PropertyGroup>
@@ -48,6 +49,7 @@
 
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="../../icon.png" Pack="true" PackagePath="\" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="$(OutputPath)\$(AssemblyName).pdb" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>

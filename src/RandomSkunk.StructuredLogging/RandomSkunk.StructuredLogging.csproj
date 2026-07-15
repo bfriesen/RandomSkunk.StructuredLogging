@@ -12,12 +12,14 @@
     <Description>Modern structured logging extensions for .NET that separate human-readable messages from machine-readable attributes. Include contextual data (user IDs, correlation IDs, metrics) in logs without forcing them into message templates.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageTags>logging;structured-logging;dotnet</PackageTags>
     <Copyright>Copyright (c) 2025-2026 Brian Friesen</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="../../icon.png" Pack="true" PackagePath="\" />
     <None Include="skill/SKILL.md" Pack="true" PackagePath="skillfiles/randomskunk-structuredlogging/SKILL.md" />
     <None Include="build/RandomSkunk.StructuredLogging.targets" Pack="true" PackagePath="buildTransitive/RandomSkunk.StructuredLogging.targets" />
   </ItemGroup>
