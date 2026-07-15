@@ -29,10 +29,12 @@ public class NonCapturingInterpolationHoleCodeFixProviderTests
     [InlineData(
         """logger.Debug($"Score: {UserScore}");""",
         """logger.Debug($"Score: {UserScore:<UserScore>}");""")]
-    // Not a variable/parameter/field/property: falls back to "PropertyName".
+    // Static "Get"-prefixed method declared in the same type as the call site: guesses just the
+    // stripped method name (the declaring type name is omitted since it matches the call site).
     [InlineData(
         """logger.Debug($"Message: {GetMessage()}");""",
-        """logger.Debug($"Message: {GetMessage():<PropertyName>}");""")]
+        """logger.Debug($"Message: {GetMessage():<Message>}");""")]
+    // Not a variable/parameter/field/property/guessable method call: falls back to "PropertyName".
     [InlineData(
         """logger.Debug($"Cast: {(string)userId}");""",
         """logger.Debug($"Cast: {(string)userId:<PropertyName>}");""")]

@@ -69,4 +69,20 @@ public static class DiagnosticDescriptors
         defaultSeverity: DiagnosticSeverity.Hidden,
         isEnabledByDefault: true,
         description: "Marks a name/value tuple argument (e.g. (\"UserId\", userId) in logger.Debug($\"...\", (\"UserId\", userId))) passed at the end of a RandomSkunk.StructuredLogging extension method call to attach a structured property, when the name is a compile-time constant string (a literal, a constant concatenation, or an interpolated string whose holes are themselves constant strings). Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these arguments.");
+
+    /// <summary>
+    /// Reported on a call to any of the RandomSkunk.StructuredLogging
+    /// Trace/Debug/Information/Warning/Error/Critical/Write extension methods. This diagnostic is
+    /// "silent" (<see cref="DiagnosticSeverity.Hidden"/>) by design - it exists purely as an anchor
+    /// location for code fixes (added separately) that operate on these calls, not to flag anything
+    /// wrong with the code.
+    /// </summary>
+    public static readonly DiagnosticDescriptor StructuredLoggerExtensionsInvocation = new(
+        id: "RSSL0005",
+        title: "Call to a RandomSkunk.StructuredLogging extension method",
+        messageFormat: "This is a call to the RandomSkunk.StructuredLogging '{0}' extension method",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Hidden,
+        isEnabledByDefault: true,
+        description: "Marks a call to one of the RandomSkunk.StructuredLogging Trace/Debug/Information/Warning/Error/Critical/Write extension methods. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these calls.");
 }

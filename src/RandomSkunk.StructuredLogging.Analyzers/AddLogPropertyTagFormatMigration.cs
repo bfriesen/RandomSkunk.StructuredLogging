@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -67,27 +66,11 @@ internal static class AddLogPropertyTagFormatMigration
     }
 
     /// <summary>
-    /// Guesses a property name for the value captured from <paramref name="expression"/>: the name
-    /// of the local/parameter/field/property it resolves to (with a single leading underscore
-    /// stripped and the first letter capitalized), or <c>"PropertyName"</c> if it doesn't resolve
-    /// to one of those, or its name isn't a plain identifier (e.g. an indexer's <c>this[]</c>).
+    /// Guesses a property name for the value captured from <paramref name="expression"/> - see
+    /// <see cref="PropertyNameGuessing.TryGuessPropertyName"/> - falling back to the generic
+    /// <c>"PropertyName"</c> placeholder when nothing can be guessed, since this only ever seeds a
+    /// tag the developer can rename afterward.
     /// </summary>
-    private static string GuessPropertyName(ExpressionSyntax expression, SemanticModel semanticModel)
-    {
-        var symbol = semanticModel.GetSymbolInfo(expression).Symbol;
-
-        if (symbol is ILocalSymbol or IParameterSymbol or IFieldSymbol or IPropertySymbol && IsSimpleIdentifier(symbol.Name))
-        {
-            var strippedName = symbol.Name.Length > 1 && symbol.Name[0] == '_' ? symbol.Name.Substring(1) : symbol.Name;
-            if (strippedName.Length > 0)
-                return char.IsUpper(strippedName[0]) ? strippedName : char.ToUpperInvariant(strippedName[0]) + strippedName.Substring(1);
-        }
-
-        return "PropertyName";
-    }
-
-    private static bool IsSimpleIdentifier(string name) =>
-        name.Length > 0 &&
-        (char.IsLetter(name[0]) || name[0] == '_') &&
-        name.All(c => char.IsLetterOrDigit(c) || c == '_');
+    private static string GuessPropertyName(ExpressionSyntax expression, SemanticModel semanticModel) =>
+        PropertyNameGuessing.TryGuessPropertyName(expression, semanticModel) ?? "PropertyName";
 }

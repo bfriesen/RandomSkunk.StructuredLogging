@@ -38,6 +38,8 @@ internal static class TestSource
             }
 
             public static string GetMessage() => "message";
+
+            public static object CreateDefault() => "default";
         }
         """;
 }
