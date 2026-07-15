@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Configure this environment in the repo's Settings > Environments to require manual
+    # approval before the publish step below runs.
+    environment: nuget-publish
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Verify tag matches project version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PROJECT_VERSION="$(grep -oP '(?<=<Version>)[^<]+' Directory.Build.props)"
+          if [ "$TAG_VERSION" != "$PROJECT_VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match <Version>$PROJECT_VERSION</Version> in Directory.Build.props"
+            exit 1
+          fi
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
+      - name: Pack
+        run: |
+          dotnet pack src/RandomSkunk.StructuredLogging.Analyzers/RandomSkunk.StructuredLogging.Analyzers.csproj --configuration Release --no-build --output ./artifacts/nupkg
+          dotnet pack src/RandomSkunk.StructuredLogging/RandomSkunk.StructuredLogging.csproj --configuration Release --no-build --output ./artifacts/nupkg
+
+      - name: Push to NuGet.org
+        run: dotnet nuget push ./artifacts/nupkg/*.nupkg --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate

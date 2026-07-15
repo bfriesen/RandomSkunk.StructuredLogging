@@ -17,7 +17,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>logging;structured-logging;dotnet;analyzers;roslyn</PackageTags>
-    <Copyright>Copyright (c) 2025 Brian Friesen</Copyright>
+    <Copyright>Copyright (c) 2025-2026 Brian Friesen</Copyright>
   </PropertyGroup>
 
   <!--
@@ -65,6 +65,7 @@
   -->
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
