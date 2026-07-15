@@ -1,6 +1,7 @@
-# RandomSkunk.StructuredLogging
+# <img src="icon.png" alt="" width="32" height="32" valign="middle" /> RandomSkunk.StructuredLogging
 
 [![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging)
+[![CI](https://github.com/bfriesen/RandomSkunk.StructuredLogging/actions/workflows/ci.yml/badge.svg)](https://github.com/bfriesen/RandomSkunk.StructuredLogging/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Modern structured logging extensions for .NET that separate human-readable messages from
@@ -183,14 +184,19 @@ using RandomSkunk.StructuredLogging;     // brings the Trace/Debug/.../Write ext
 
 ## Analyzers
 
+[![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.Analyzers.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging.Analyzers)
+
 ```bash
 dotnet add package RandomSkunk.StructuredLogging.Analyzers
 ```
 
-`RandomSkunk.StructuredLogging.Analyzers` is a separate, optional package of Roslyn analyzers
-that ship as a build-time-only dependency (it adds nothing to your published output). It's
-independent of the main package — install it in any project where you'd like the analysis, even
-one that doesn't reference `RandomSkunk.StructuredLogging` itself.
+`RandomSkunk.StructuredLogging.Analyzers` is a separate package of Roslyn analyzers that ship as
+a build-time-only dependency (it adds nothing to your published output). Installing
+`RandomSkunk.StructuredLogging` automatically brings it in as a dependency, so you get these
+analyzers for free — the `dotnet add package` command above is only needed to install the
+analyzers by themselves, in a project that doesn't reference `RandomSkunk.StructuredLogging`
+itself (or doesn't need the runtime library at all, e.g. one that only calls
+`Microsoft.Extensions.Logging` and wants RSSL0001's suggestion to switch).
 
 | ID | Severity | Description |
 | --- | --- | --- |
@@ -199,6 +205,22 @@ one that doesn't reference `RandomSkunk.StructuredLogging` itself.
 | `RSSL0003` | Silent | Marks an interpolation hole that does *not* use the [`<PropertyName>` tag format](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) (e.g. `{who}`) to capture a structured property. Silent by default — it exists to anchor code fixes that act on these holes, not to warn about anything. |
 | `RSSL0004` | Silent | Marks a name/value tuple argument (e.g. `("UserId", userId)`) passed at the end of a `RandomSkunk.StructuredLogging` extension method call to attach a structured property, when the name is a compile-time constant string (a literal, a constant concatenation, or an interpolated string whose holes are themselves constant strings). Silent by default — it exists to anchor code fixes that act on these arguments, not to warn about anything. |
 | `RSSL0005` | Silent | Marks a call to any of the `RandomSkunk.StructuredLogging` `Trace`/`Debug`/`Information`/`Warning`/`Error`/`Critical`/`Write` extension methods, regardless of overload. Its code fix rewrites the call to the roughly equivalent `Microsoft.Extensions.Logging` call (the inverse of `RSSL0001`), moving each structured property into a `{PropertyName}` message-template placeholder — since a hole that isn't already tagged with a name (including a bare `<@>` destructuring tag) gets one guessed from its expression (the same guess RSSL0003's fix uses), most calls convert cleanly. A call is left unconverted only when a name truly can't be pinned down: a hole whose expression isn't a simple identifier, a tuple argument with a dynamically-computed name, or the leading collection-parameter overload. Silent by default — it exists to anchor code fixes that act on these calls, not to warn about anything. |
+
+### Code fixes
+
+Most of the value of the analyzers package is in its code fixes (lightbulb ⚡ actions in the
+IDE), several of which are offered even on the silent `RSSL0002`–`RSSL0005` diagnostics — look
+for the lightbulb on any `RandomSkunk.StructuredLogging` logging call, not just on visible
+warnings.
+
+| Fix | Anchor diagnostic | What it does |
+| --- | --- | --- |
+| Use the equivalent `RandomSkunk.StructuredLogging` extension method | `RSSL0001` | Converts a `Microsoft.Extensions.Logging` `Log`/`LogTrace`/`LogDebug`/`LogInformation`/`LogWarning`/`LogError`/`LogCritical` call to the equivalent `RandomSkunk.StructuredLogging` call, turning each `{PropertyName}` message-template placeholder into a `<PropertyName>` tag on the corresponding interpolation hole. |
+| Move `'PropertyName'` to a structured property argument | `RSSL0002` | Takes an interpolation hole already using the `<PropertyName>` tag format and moves it out of the message text into a trailing `("PropertyName", value)` tuple argument, leaving the value's default formatting in the message (or removing it from the message entirely if it wasn't otherwise referenced). |
+| Remove the `'PropertyName'` tag format, keeping it in the message only | `RSSL0002` | The inverse: strips the `<PropertyName>` tag from an interpolation hole so the value stays in the message text but is no longer captured as a structured property. |
+| Capture as a structured property named `'PropertyName'` / Capture as a destructured structured property named `'PropertyName'` | `RSSL0003` | Adds a `<PropertyName>` (or destructuring `<@PropertyName>`) tag to an interpolation hole that isn't currently capturing a structured property, guessing the property name from the hole's expression (e.g. `{user.Id}` → `<Id>`). |
+| Move `'PropertyName'` into the message | `RSSL0004` | Takes a trailing `("PropertyName", value)` tuple argument and inlines it into the message as a `{value:<PropertyName>}` interpolation hole, removing the separate tuple argument. |
+| Use the equivalent `Microsoft.Extensions.Logging` extension method | `RSSL0005` | The inverse of the `RSSL0001` fix: converts a `RandomSkunk.StructuredLogging` call back to the equivalent `Microsoft.Extensions.Logging` call, described in the `RSSL0005` row above. |
 
 ## Claude Code skill
 
