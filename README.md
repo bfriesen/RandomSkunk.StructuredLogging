@@ -222,13 +222,29 @@ warnings.
 | Move `'PropertyName'` into the message | `RSSL0004` | Takes a trailing `("PropertyName", value)` tuple argument and inlines it into the message as a `{value:<PropertyName>}` interpolation hole, removing the separate tuple argument. |
 | Use the equivalent `Microsoft.Extensions.Logging` extension method | `RSSL0005` | The inverse of the `RSSL0001` fix: converts a `RandomSkunk.StructuredLogging` call back to the equivalent `Microsoft.Extensions.Logging` call, described in the `RSSL0005` row above. |
 
-## Claude Code skill
+## Coding agent integration
 
-The package ships a [Claude Code](https://claude.com/claude-code) skill file describing this
-API. When you build a project that references `RandomSkunk.StructuredLogging`, the skill is
-copied automatically to `.claude/skills/randomskunk-structuredlogging/SKILL.md`, so Claude Code
-picks it up when writing or reviewing logging code in that project. Set
-`RandomSkunkStructuredLoggingSkipSkillInstall` to `true` in your project to opt out.
+The package ships guidance for this API in the format each of several coding agents expects, all
+derived from the same source text. When you build a project that references
+`RandomSkunk.StructuredLogging`, the appropriate files are installed automatically so the agent
+picks up guidance on preferring these extension methods over `Microsoft.Extensions.Logging`'s
+`Log*` methods when writing or reviewing logging code in that project:
+
+| Tool | Installed file | Opt out with |
+| --- | --- | --- |
+| [Claude Code](https://claude.com/claude-code) | `.claude/skills/randomskunk-structuredlogging/SKILL.md` | `RandomSkunkStructuredLoggingSkipSkillInstall` |
+| [Cursor](https://cursor.com) | `.cursor/rules/randomskunk-structuredlogging.mdc` (auto-attached whenever a `.cs` file is being edited) | `RandomSkunkStructuredLoggingSkipCursorRulesInstall` |
+| [GitHub Copilot](https://github.com/features/copilot) | `.github/instructions/randomskunk-structuredlogging.instructions.md` (`applyTo: **/*.cs`) | `RandomSkunkStructuredLoggingSkipCopilotInstructionsInstall` |
+| [Codex](https://developers.openai.com/codex) and other [AGENTS.md](https://agents.md)-convention tools | a delimited block in `AGENTS.md` | `RandomSkunkStructuredLoggingSkipAgentsMdInstall` |
+
+Each of the first three is a standalone file the package owns outright — installing or removing
+the package never touches anything else in the project. `AGENTS.md` is different: it's a single
+file most projects already own and edit themselves, so instead of overwriting it, the build
+merges an idempotent, delimited block (`<!-- BEGIN randomskunk-structuredlogging -->` /
+`<!-- END randomskunk-structuredlogging -->`) into it — creating the file if it doesn't exist yet,
+updating just that block on later builds (e.g. after upgrading to a version with revised
+guidance), and leaving everything else in the file untouched. Don't hand-edit the content inside
+the markers — it's overwritten on the next build; edits outside the markers are always preserved.
 
 ## License
 

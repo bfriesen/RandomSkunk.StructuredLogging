@@ -1,0 +1,5 @@
+---
+description: How to write and review log calls using the RandomSkunk.StructuredLogging library (the Trace/Debug/Information/Warning/Error/Critical/Write extension methods on ILogger, in namespace RandomSkunk.StructuredLogging). Use this whenever adding or editing logging code in a project that references the RandomSkunk.StructuredLogging NuGet package, instead of Microsoft.Extensions.Logging's LogInformation/LogDebug/LogError/etc. extension methods.
+globs: **/*.cs
+alwaysApply: false
+---
