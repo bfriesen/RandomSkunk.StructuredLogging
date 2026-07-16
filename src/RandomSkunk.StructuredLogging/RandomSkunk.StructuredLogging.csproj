@@ -20,11 +20,6 @@
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="\" />
     <None Include="../../icon.png" Pack="true" PackagePath="\" />
-    <None Include="skill/SKILL.md" Pack="true" PackagePath="skillfiles/randomskunk-structuredlogging/SKILL.md" />
-    <None Include="skillfiles-src/randomskunk-structuredlogging.cursor.mdc" Pack="true" PackagePath="skillfiles/randomskunk-structuredlogging/cursor-rule.mdc" />
-    <None Include="skillfiles-src/randomskunk-structuredlogging.copilot.instructions.md" Pack="true" PackagePath="skillfiles/randomskunk-structuredlogging/copilot-instructions.md" />
-    <None Include="skillfiles-src/randomskunk-structuredlogging.agentsmd.block" Pack="true" PackagePath="skillfiles/randomskunk-structuredlogging/AGENTS.md.block" />
-    <None Include="build/RandomSkunk.StructuredLogging.targets" Pack="true" PackagePath="buildTransitive/RandomSkunk.StructuredLogging.targets" />
   </ItemGroup>
 
   <ItemGroup>
