@@ -50,7 +50,7 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
         lock (state)
         {
             state.StartLine();
-            state.Journal.Append('`').Append(name).Append("` failed: ").Append(exception.Message);
+            state.Journal.Append('`').Append(name).Append("` failed:").Append('\n').Append(exception.ToString());
 
             if (propagateToRoot)
                 state.Exception = exception;
