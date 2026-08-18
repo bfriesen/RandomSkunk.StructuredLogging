@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging;
@@ -10,84 +9,46 @@ namespace RandomSkunk.StructuredLogging;
 /// Applies no synchronization of its own - see <see cref="SynchronizedOperationLog"/> for the decorator
 /// that wraps this type when an operation is begun with <c>threadSafe: true</c>.
 /// </summary>
-internal sealed class RootOperationLog(OperationLogState state, string name) : IOperationLog
+internal sealed class RootOperationLog(OperationLogState state, string name)
+    : OperationLog<RootOperationLog>(state, name), IOperationLog
 {
-    private bool _disposed;
-
     public IOperationLog SetException(Exception exception, bool propagateToRoot = false)
     {
-        state.Exception = exception;
+        _state.Exception = exception;
         return this;
     }
 
     public IOperationLog SetResult<T>(T value)
     {
-        state.Result = value;
-        state.HasResult = true;
+        _state.Result = value;
+        _state.HasResult = true;
         return this;
-    }
-
-    public IOperationLog SetProperty<T>(string propertyName, T value)
-    {
-        state.Properties.Add((propertyName, value));
-        return this;
-    }
-
-    public IOperationLog Append(string text)
-    {
-        state.AppendLine(text);
-        return this;
-    }
-
-    public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
-    {
-        state.StartLine();
-        state.Journal.Append('`').Append(valueName).Append("`: ").Append(ValueFormatting.Format(value));
-        return this;
-    }
-
-    public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
-    {
-        state.StartLine();
-        state.Journal.Append('`').Append(valueName).Append("`: ");
-        ValueFormatting.AppendJson(state.Journal, value);
-        return this;
-    }
-
-    public IOperationLog BeginSubOperation(string subOperationName)
-    {
-        state.StartLine();
-        state.Journal.Append('`').Append(subOperationName).Append("` started.");
-
-        return new ChildOperationLog(state, subOperationName);
     }
 
     public void Dispose()
     {
-        if (_disposed)
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
             return;
 
-        _disposed = true;
-
-        state.Stopwatch.Stop();
+        _state.Stopwatch.Stop();
 
         var i = 0;
-        var logProperties = new KeyValuePair<string, object?>[state.Properties.Count + 3 + (state.HasResult ? 1 : 0)];
-        logProperties[i++] = new("Operation.StartTime", state.StartTime);
-        logProperties[i++] = new("Operation.DurationMs", state.Stopwatch.Elapsed.TotalMilliseconds);
-        logProperties[i++] = new("Operation.Journal", state.Journal.ToString());
+        var logProperties = new KeyValuePair<string, object?>[_state.Properties.Count + 3 + (_state.HasResult ? 1 : 0)];
+        logProperties[i++] = new("Operation.StartTime", _state.StartTime);
+        logProperties[i++] = new("Operation.DurationMs", _state.Stopwatch.Elapsed.TotalMilliseconds);
+        logProperties[i++] = new("Operation.Journal", _state.Journal.ToString());
 
-        if (state.HasResult)
-            logProperties[i++] = new("Operation.Result", state.Result);
+        if (_state.HasResult)
+            logProperties[i++] = new("Operation.Result", _state.Result);
 
-        foreach (var (propertyName, propertyValue) in state.Properties)
+        foreach (var (propertyName, propertyValue) in _state.Properties)
             logProperties[i++] = new(propertyName, propertyValue);
 
-        var exception = state.Exception;
+        var exception = _state.Exception;
 
-        OperationLogPools.Journals.Return(state.Journal);
-        OperationLogPools.PropertyLists.Return(state.Properties);
+        OperationLogPools.Journals.Return(_state.Journal);
+        OperationLogPools.PropertyLists.Return(_state.Properties);
 
-        state.Logger.Write(logProperties, state.Level, state.EventId, exception, $"Operation complete: {name}");
+        _state.Logger.Write(logProperties, _state.Level, _state.EventId, exception, $"Operation complete: {_operationName}");
     }
 }

@@ -55,10 +55,10 @@ public static class LoggerOperationExtensions
         var state = new OperationLogState(logger, level, eventId);
         state.AppendLine("Operation started.");
 
-        var operationLog = new RootOperationLog(state, name);
+        IOperationLog operationLog = new RootOperationLog(state, name);
 
         if (threadSafe)
-            return new SynchronizedOperationLog(operationLog, state);
+            operationLog = new SynchronizedOperationLog(operationLog, state);
 
         return operationLog;
     }
