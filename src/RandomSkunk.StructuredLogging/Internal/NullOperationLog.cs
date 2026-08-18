@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
@@ -22,6 +24,10 @@ internal sealed class NullOperationLog : ISubOperationLog
     public ISubOperationLog Append(string text) => this;
 
     IOperationLog IOperationLog.Append(string text) => this;
+
+    public ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
+
+    IOperationLog IOperationLog.AppendValue<T>(T value, string? valueName) => this;
 
     public ISubOperationLog BeginSubOperation(string name) => this;
 

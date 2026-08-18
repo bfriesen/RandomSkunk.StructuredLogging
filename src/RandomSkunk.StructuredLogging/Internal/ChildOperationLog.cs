@@ -1,4 +1,4 @@
-using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace RandomSkunk.StructuredLogging;
 
@@ -30,6 +30,15 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
 
     IOperationLog IOperationLog.Append(string text) => Append(text);
 
+    public ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        state.StartLine();
+        state.Journal.Append('`').Append(valueName).Append("`: ").Append(ValueFormatting.Format(value));
+        return this;
+    }
+
+    IOperationLog IOperationLog.AppendValue<T>(T value, string? valueName) => AppendValue(value, valueName);
+
     public ISubOperationLog BeginSubOperation(string subOperationName)
     {
         state.StartLine();
@@ -56,7 +65,7 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
     public ISubOperationLog SetResult<T>(T value)
     {
         state.StartLine();
-        state.Journal.Append('`').Append(name).Append("` result: ").Append(Format(value));
+        state.Journal.Append('`').Append(name).Append("` result: ").Append(ValueFormatting.Format(value));
         return this;
     }
 
@@ -72,11 +81,4 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
         state.StartLine();
         state.Journal.Append('`').Append(name).Append("` complete.");
     }
-
-    private static string Format<T>(T value) => value switch
-    {
-        null => "null",
-        IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
-        _ => value.ToString() ?? "null",
-    };
 }

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging;
@@ -22,6 +23,13 @@ internal sealed class RootOperationLog(OperationLogState state, string name) : I
     public IOperationLog Append(string text)
     {
         state.AppendLine(text);
+        return this;
+    }
+
+    public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        state.StartLine();
+        state.Journal.Append('`').Append(valueName).Append("`: ").Append(ValueFormatting.Format(value));
         return this;
     }
 

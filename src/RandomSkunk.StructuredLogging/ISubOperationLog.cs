@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
@@ -22,6 +24,19 @@ public interface ISubOperationLog : IOperationLog
     /// <param name="text">The text to append.</param>
     /// <returns>This <see cref="ISubOperationLog"/>, so calls can be chained.</returns>
     new ISubOperationLog Append(string text);
+
+    /// <summary>
+    /// Appends a line of free text to the operation's journal in the form <c>`valueName`: value</c>. See
+    /// <see cref="IOperationLog.AppendValue{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the value.</typeparam>
+    /// <param name="value">The value to append.</param>
+    /// <param name="valueName">
+    /// The name to label the value with. Defaults to the source text of the <paramref name="value"/>
+    /// argument expression, via <see cref="CallerArgumentExpressionAttribute"/>.
+    /// </param>
+    /// <returns>This <see cref="ISubOperationLog"/>, so calls can be chained.</returns>
+    new ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
 
     /// <summary>
     /// Records the exception for this sub-operation, appending a "failed" line to the journal. See

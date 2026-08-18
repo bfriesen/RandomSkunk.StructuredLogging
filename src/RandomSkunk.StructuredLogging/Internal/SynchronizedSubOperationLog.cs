@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
@@ -27,6 +29,15 @@ internal sealed class SynchronizedSubOperationLog(ISubOperationLog inner, object
     }
 
     IOperationLog IOperationLog.Append(string text) => Append(text);
+
+    public ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        lock (gate)
+            inner.AppendValue(value, valueName);
+        return this;
+    }
+
+    IOperationLog IOperationLog.AppendValue<T>(T value, string? valueName) => AppendValue(value, valueName);
 
     public ISubOperationLog BeginSubOperation(string name)
     {

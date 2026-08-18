@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
@@ -23,6 +25,13 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
     {
         lock (gate)
             inner.Append(text);
+        return this;
+    }
+
+    public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        lock (gate)
+            inner.AppendValue(value, valueName);
         return this;
     }
 
