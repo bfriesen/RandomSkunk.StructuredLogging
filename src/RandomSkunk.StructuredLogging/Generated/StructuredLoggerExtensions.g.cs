@@ -22343,7 +22343,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message)
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
         var messageText = message.ToStringAndClear();
 
@@ -22369,7 +22369,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1)
     {
         var messageText = message.ToStringAndClear();
@@ -22398,7 +22398,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2)
     {
@@ -22430,7 +22430,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3)
@@ -22465,7 +22465,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -22503,7 +22503,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -22544,7 +22544,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -22575,7 +22575,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         params (string Name, object? Value)[] logProperties)
     {
         var messageText = message.ToStringAndClear();
@@ -22602,7 +22602,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message)
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
         var messageText = message.ToStringAndClear();
 
@@ -22631,7 +22631,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
         var messageText = message.ToStringAndClear();
@@ -22664,7 +22664,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
@@ -22700,7 +22700,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
@@ -22739,7 +22739,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -22781,7 +22781,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -22826,7 +22826,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -22861,7 +22861,7 @@ public static class StructuredLoggerExtensions
         LogLevel level,
         EventId eventId,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         params (string Name, object? Value)[] additionalLogProperties)
     {
         var messageText = message.ToStringAndClear();
@@ -23399,7 +23399,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message)
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
         var messageText = message.ToStringAndClear();
 
@@ -23423,7 +23423,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1)
     {
         var messageText = message.ToStringAndClear();
@@ -23450,7 +23450,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2)
     {
@@ -23480,7 +23480,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3)
@@ -23513,7 +23513,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -23549,7 +23549,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -23588,7 +23588,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -23617,7 +23617,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         params (string Name, object? Value)[] logProperties)
     {
         var messageText = message.ToStringAndClear();
@@ -23642,7 +23642,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message)
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
         var messageText = message.ToStringAndClear();
 
@@ -23669,7 +23669,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
         var messageText = message.ToStringAndClear();
@@ -23700,7 +23700,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
@@ -23734,7 +23734,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
@@ -23771,7 +23771,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -23811,7 +23811,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -23854,7 +23854,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -23887,7 +23887,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         EventId eventId,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         params (string Name, object? Value)[] additionalLogProperties)
     {
         var messageText = message.ToStringAndClear();
@@ -24393,7 +24393,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message)
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
         var messageText = message.ToStringAndClear();
 
@@ -24417,7 +24417,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1)
     {
         var messageText = message.ToStringAndClear();
@@ -24444,7 +24444,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2)
     {
@@ -24474,7 +24474,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3)
@@ -24507,7 +24507,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -24543,7 +24543,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -24582,7 +24582,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -24611,7 +24611,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         params (string Name, object? Value)[] logProperties)
     {
         var messageText = message.ToStringAndClear();
@@ -24636,7 +24636,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message)
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
         var messageText = message.ToStringAndClear();
 
@@ -24663,7 +24663,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
         var messageText = message.ToStringAndClear();
@@ -24694,7 +24694,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
@@ -24728,7 +24728,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
@@ -24765,7 +24765,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -24805,7 +24805,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -24848,7 +24848,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -24881,7 +24881,7 @@ public static class StructuredLoggerExtensions
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         Exception? exception,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         params (string Name, object? Value)[] additionalLogProperties)
     {
         var messageText = message.ToStringAndClear();
@@ -25385,7 +25385,7 @@ public static class StructuredLoggerExtensions
     public static void Write(
         this ILogger logger,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message)
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
         var messageText = message.ToStringAndClear();
 
@@ -25407,7 +25407,7 @@ public static class StructuredLoggerExtensions
     public static void Write<T1>(
         this ILogger logger,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1)
     {
         var messageText = message.ToStringAndClear();
@@ -25432,7 +25432,7 @@ public static class StructuredLoggerExtensions
     public static void Write<T1, T2>(
         this ILogger logger,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2)
     {
@@ -25460,7 +25460,7 @@ public static class StructuredLoggerExtensions
     public static void Write<T1, T2, T3>(
         this ILogger logger,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3)
@@ -25491,7 +25491,7 @@ public static class StructuredLoggerExtensions
     public static void Write<T1, T2, T3, T4>(
         this ILogger logger,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -25525,7 +25525,7 @@ public static class StructuredLoggerExtensions
     public static void Write<T1, T2, T3, T4, T5>(
         this ILogger logger,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -25562,7 +25562,7 @@ public static class StructuredLoggerExtensions
     public static void Write<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) logProperty1,
         (string Name, T2 Value) logProperty2,
         (string Name, T3 Value) logProperty3,
@@ -25589,7 +25589,7 @@ public static class StructuredLoggerExtensions
     public static void Write(
         this ILogger logger,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         params (string Name, object? Value)[] logProperties)
     {
         var messageText = message.ToStringAndClear();
@@ -25612,7 +25612,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message)
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
         var messageText = message.ToStringAndClear();
 
@@ -25637,7 +25637,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
         var messageText = message.ToStringAndClear();
@@ -25666,7 +25666,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
@@ -25698,7 +25698,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
@@ -25733,7 +25733,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -25771,7 +25771,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -25812,7 +25812,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3,
@@ -25843,7 +25843,7 @@ public static class StructuredLoggerExtensions
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
-        [InterpolatedStringHandlerArgument("logger", "level")] ref LogInterpolatedStringHandler message,
+        [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         params (string Name, object? Value)[] additionalLogProperties)
     {
         var messageText = message.ToStringAndClear();

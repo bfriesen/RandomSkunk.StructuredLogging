@@ -78,7 +78,7 @@ static string GenerateHandlers(string[] levels)
         sb.AppendLine();
     }
 
-    AppendHandler(sb, "LogInterpolatedStringHandler", null);
+    AppendHandler(sb, "WriteInterpolatedStringHandler", null);
 
     return sb.ToString();
 }
@@ -332,7 +332,7 @@ static string GenerateExtensionMethods(string[] levels, int maxArity)
 {
     var groups = levels
         .Select(level => new MethodGroup(level, $"{level}InterpolatedStringHandler", $"LogLevel.{level}", ["logger"], null))
-        .Append(new MethodGroup("Write", "LogInterpolatedStringHandler", "level", ["logger", "level"], "LogLevel level"))
+        .Append(new MethodGroup("Write", "WriteInterpolatedStringHandler", "level", ["logger", "level"], "LogLevel level"))
         .ToArray();
 
     Combo[] combos =

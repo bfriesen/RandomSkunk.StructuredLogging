@@ -622,7 +622,7 @@ public ref struct CriticalInterpolatedStringHandler
 /// Interpolated string handler for the message parameter of the <see cref="StructuredLoggerExtensions"/> Write methods. Building the message is skipped when the specified level is not enabled for the target <see cref="ILogger"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'. A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.
 /// </summary>
 [InterpolatedStringHandler]
-public ref struct LogInterpolatedStringHandler
+public ref struct WriteInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
     private List<KeyValuePair<string, object?>>? _capturedProperties;
@@ -635,7 +635,7 @@ public ref struct LogInterpolatedStringHandler
     /// <param name="logger">The logger the message is being built for.</param>
     /// <param name="level">The severity level the message is being built for.</param>
     /// <param name="handlerIsValid">Set to <see langword="false"/> when <paramref name="level"/> is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
-    public LogInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, LogLevel level, out bool handlerIsValid)
+    public WriteInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, LogLevel level, out bool handlerIsValid)
     {
         handlerIsValid = logger.IsEnabled(level);
         _handler = handlerIsValid

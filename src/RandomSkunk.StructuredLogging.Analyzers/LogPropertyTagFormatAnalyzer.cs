@@ -18,7 +18,7 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 public sealed class LogPropertyTagFormatAnalyzer : DiagnosticAnalyzer
 {
     // The ref struct interpolated string handler types declared in
-    // Generated/LogInterpolatedStringHandlers.g.cs - one per level, plus LogInterpolatedStringHandler
+    // Generated/LogInterpolatedStringHandlers.g.cs - one per level, plus WriteInterpolatedStringHandler
     // for Write. An interpolated string argument is only ever parsed for the <PropertyName> tag
     // format (by AppendFormatted, at run time) when it's converted to one of these types, so that
     // conversion is exactly what scopes this analyzer to RandomSkunk.StructuredLogging message
@@ -30,7 +30,7 @@ public sealed class LogPropertyTagFormatAnalyzer : DiagnosticAnalyzer
         "RandomSkunk.StructuredLogging.WarningInterpolatedStringHandler",
         "RandomSkunk.StructuredLogging.ErrorInterpolatedStringHandler",
         "RandomSkunk.StructuredLogging.CriticalInterpolatedStringHandler",
-        "RandomSkunk.StructuredLogging.LogInterpolatedStringHandler");
+        "RandomSkunk.StructuredLogging.WriteInterpolatedStringHandler");
 
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
