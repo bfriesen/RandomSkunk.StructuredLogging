@@ -10,9 +10,9 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger { Enabled = false };
 
-        using (var operation = logger.BeginOperation("Test"))
+        using (var log = logger.BeginOperation("Test"))
         {
-            operation
+            log
                 .SetProperty("x", 1)
                 .Append("hi")
                 .AppendValue(5)
@@ -20,8 +20,8 @@ public class OperationLoggingTests
                 .SetResult(1)
                 .SetException(new InvalidOperationException());
 
-            using var sub = operation.BeginSubOperation("Sub");
-            sub.SetProperty("y", 2).SetResult(3).SetException(new InvalidOperationException());
+            using var subLog = log.BeginSubOperation("Sub");
+            subLog.SetProperty("y", 2).SetResult(3).SetException(new InvalidOperationException());
         }
 
         logger.LogCallCount.Should().Be(0);
@@ -94,9 +94,9 @@ public class OperationLoggingTests
         {
         }
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
 
-        log.Should().Contain("Operation started.");
+        journal.Should().Contain("Operation started.");
     }
 
     [Fact]
@@ -104,8 +104,8 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name"))
-            operation.SetProperty("UserId", 123);
+        using (var log = logger.BeginOperation("Name"))
+            log.SetProperty("UserId", 123);
 
         logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("UserId", 123));
     }
@@ -115,8 +115,8 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name"))
-            operation.SetResult("done");
+        using (var log = logger.BeginOperation("Name"))
+            log.SetResult("done");
 
         logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Operation.Result", "done"));
     }
@@ -127,8 +127,8 @@ public class OperationLoggingTests
         var logger = new RecordingLogger();
         var exception = new InvalidOperationException("boom");
 
-        using (var operation = logger.BeginOperation("Name"))
-            operation.SetException(exception);
+        using (var log = logger.BeginOperation("Name"))
+            log.SetException(exception);
 
         logger.LastException.Should().BeSameAs(exception);
     }
@@ -138,11 +138,11 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name"))
-            operation.Append("custom line");
+        using (var log = logger.BeginOperation("Name"))
+            log.Append("custom line");
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("custom line");
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("custom line");
     }
 
     [Fact]
@@ -151,11 +151,11 @@ public class OperationLoggingTests
         var logger = new RecordingLogger();
         var total = 42.5m;
 
-        using (var operation = logger.BeginOperation("Name"))
-            operation.AppendValue(total);
+        using (var log = logger.BeginOperation("Name"))
+            log.AppendValue(total);
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("`total`: 42.5");
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`total`: 42.5");
     }
 
     [Fact]
@@ -163,11 +163,11 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name"))
-            operation.AppendValue(42, "Count");
+        using (var log = logger.BeginOperation("Name"))
+            log.AppendValue(42, "Count");
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("`Count`: 42");
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`Count`: 42");
     }
 
     [Fact]
@@ -175,13 +175,13 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name"))
-            operation.AppendJson(new { A = 1, B = "x" }, "Payload");
+        using (var log = logger.BeginOperation("Name"))
+            log.AppendJson(new { A = 1, B = "x" }, "Payload");
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("`Payload`:");
-        log.Should().Contain("\"A\": 1");
-        log.Should().Contain("\"B\": \"x\"");
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`Payload`:");
+        journal.Should().Contain("\"A\": 1");
+        journal.Should().Contain("\"B\": \"x\"");
     }
 
     [Fact]
@@ -189,14 +189,14 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name"))
+        using (var log = logger.BeginOperation("Name"))
         {
-            using var sub = operation.BeginSubOperation("Fetch");
+            using var subLog = log.BeginSubOperation("Fetch");
         }
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("`Fetch` started.");
-        log.Should().Contain("`Fetch` complete.");
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`Fetch` started.");
+        journal.Should().Contain("`Fetch` complete.");
     }
 
     [Fact]
@@ -204,10 +204,10 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name"))
+        using (var log = logger.BeginOperation("Name"))
         {
-            using var sub = operation.BeginSubOperation("Fetch");
-            sub.SetProperty("Count", 5);
+            using var subLog = log.BeginSubOperation("Fetch");
+            subLog.SetProperty("Count", 5);
         }
 
         logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Count", 5));
@@ -218,14 +218,14 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name"))
+        using (var log = logger.BeginOperation("Name"))
         {
-            using var sub = operation.BeginSubOperation("Fetch");
-            sub.SetResult(99);
+            using var subLog = log.BeginSubOperation("Fetch");
+            subLog.SetResult(99);
         }
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("`Fetch` result: 99");
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`Fetch` result: 99");
         logger.LastProperties!.Any(kvp => kvp.Key == "Operation.Result").Should().BeFalse();
     }
 
@@ -235,17 +235,17 @@ public class OperationLoggingTests
         var logger = new RecordingLogger();
         var exception = new InvalidOperationException("boom");
 
-        using (var operation = logger.BeginOperation("Name"))
+        using (var log = logger.BeginOperation("Name"))
         {
-            using var sub = operation.BeginSubOperation("Fetch");
-            sub.SetException(exception);
+            using var subLog = log.BeginSubOperation("Fetch");
+            subLog.SetException(exception);
         }
 
         logger.LastException.Should().BeNull();
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("`Fetch` failed:");
-        log.Should().Contain(exception.ToString());
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`Fetch` failed:");
+        journal.Should().Contain(exception.ToString());
     }
 
     [Fact]
@@ -254,10 +254,10 @@ public class OperationLoggingTests
         var logger = new RecordingLogger();
         var exception = new InvalidOperationException("boom");
 
-        using (var operation = logger.BeginOperation("Name"))
+        using (var log = logger.BeginOperation("Name"))
         {
-            using var sub = operation.BeginSubOperation("Fetch");
-            sub.SetException(exception, propagateToRoot: true);
+            using var subLog = log.BeginSubOperation("Fetch");
+            subLog.SetException(exception, propagateToRoot: true);
         }
 
         logger.LastException.Should().BeSameAs(exception);
@@ -268,17 +268,17 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name"))
+        using (var log = logger.BeginOperation("Name"))
         {
-            using var outer = operation.BeginSubOperation("Outer");
-            using var inner = outer.BeginSubOperation("Inner");
+            using var outerLog = log.BeginSubOperation("Outer");
+            using var innerLog = outerLog.BeginSubOperation("Inner");
         }
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("`Outer` started.");
-        log.Should().Contain("`Inner` started.");
-        log.Should().Contain("`Inner` complete.");
-        log.Should().Contain("`Outer` complete.");
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`Outer` started.");
+        journal.Should().Contain("`Inner` started.");
+        journal.Should().Contain("`Inner` complete.");
+        journal.Should().Contain("`Outer` complete.");
     }
 
     [Fact]
@@ -286,9 +286,9 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        var operation = logger.BeginOperation("Name");
-        operation.Dispose();
-        operation.Dispose();
+        var log = logger.BeginOperation("Name");
+        log.Dispose();
+        log.Dispose();
 
         logger.LogCallCount.Should().Be(1);
     }
@@ -298,15 +298,15 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name"))
+        using (var log = logger.BeginOperation("Name"))
         {
-            var sub = operation.BeginSubOperation("Fetch");
-            sub.Dispose();
-            sub.Dispose();
+            var subLog = log.BeginSubOperation("Fetch");
+            subLog.Dispose();
+            subLog.Dispose();
         }
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        CountOccurrences(log, "`Fetch` complete.").Should().Be(1);
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        CountOccurrences(journal, "`Fetch` complete.").Should().Be(1);
     }
 
     [Fact]
@@ -314,13 +314,13 @@ public class OperationLoggingTests
     {
         var logger = new RecordingLogger();
 
-        using (var operation = logger.BeginOperation("Name", threadSafe: true))
+        using (var log = logger.BeginOperation("Name", threadSafe: true))
         {
             var tasks = Enumerable.Range(0, 20).Select(i => Task.Run(() =>
             {
-                using var sub = operation.BeginSubOperation($"Sub{i}");
-                sub.SetProperty($"P{i}", i);
-                sub.AppendValue(i, "value");
+                using var subLog = log.BeginSubOperation($"Sub{i}");
+                subLog.SetProperty($"P{i}", i);
+                subLog.AppendValue(i, "value");
             }));
 
             await Task.WhenAll(tasks);
@@ -329,11 +329,11 @@ public class OperationLoggingTests
         logger.LogCallCount.Should().Be(1);
         logger.LastProperties!.Count(kvp => kvp.Key.StartsWith('P')).Should().Be(20);
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
         for (var i = 0; i < 20; i++)
         {
-            log.Should().Contain($"`Sub{i}` started.");
-            log.Should().Contain($"`Sub{i}` complete.");
+            journal.Should().Contain($"`Sub{i}` started.");
+            journal.Should().Contain($"`Sub{i}` complete.");
         }
     }
 

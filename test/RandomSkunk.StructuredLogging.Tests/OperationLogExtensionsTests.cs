@@ -10,8 +10,8 @@ public class OperationLogExtensionsTests
         var logger = new RecordingLogger();
 
         string result;
-        using (var operation = logger.BeginOperation("Name"))
-            result = "shipped".RecordResultTo(operation);
+        using (var log = logger.BeginOperation("Name"))
+            result = "shipped".RecordResultTo(log);
 
         result.Should().Be("shipped");
         logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Operation.Result", "shipped"));
@@ -31,8 +31,8 @@ public class OperationLogExtensionsTests
         var logger = new RecordingLogger();
 
         int orderId;
-        using (var operation = logger.BeginOperation("Name"))
-            orderId = 42.RecordPropertyTo(operation, "OrderId");
+        using (var log = logger.BeginOperation("Name"))
+            orderId = 42.RecordPropertyTo(log, "OrderId");
 
         orderId.Should().Be(42);
         logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("OrderId", 42));
@@ -52,12 +52,12 @@ public class OperationLogExtensionsTests
         var logger = new RecordingLogger();
 
         int value;
-        using (var operation = logger.BeginOperation("Name"))
-            value = 7.RecordValueTo(operation, "Count");
+        using (var log = logger.BeginOperation("Name"))
+            value = 7.RecordValueTo(log, "Count");
 
         value.Should().Be(7);
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("`Count`: 7");
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`Count`: 7");
     }
 
     [Fact]
@@ -66,11 +66,11 @@ public class OperationLogExtensionsTests
         var logger = new RecordingLogger();
         var order = new { Total = 42.5m };
 
-        using (var operation = logger.BeginOperation("Name"))
-            order.Total.RecordValueTo(operation);
+        using (var log = logger.BeginOperation("Name"))
+            order.Total.RecordValueTo(log);
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("`order.Total`: 42.5");
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`order.Total`: 42.5");
     }
 
     [Fact]
@@ -87,13 +87,13 @@ public class OperationLogExtensionsTests
         var logger = new RecordingLogger();
 
         object value;
-        using (var operation = logger.BeginOperation("Name"))
-            value = new { A = 1 }.RecordJsonTo(operation, "Payload");
+        using (var log = logger.BeginOperation("Name"))
+            value = new { A = 1 }.RecordJsonTo(log, "Payload");
 
         value.Should().BeEquivalentTo(new { A = 1 });
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
-        log.Should().Contain("`Payload`:");
-        log.Should().Contain("\"A\": 1");
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`Payload`:");
+        journal.Should().Contain("\"A\": 1");
     }
 
     [Fact]
