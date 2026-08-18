@@ -36,9 +36,9 @@ internal sealed class RootOperationLog(OperationLogState state, string name)
     {
         _state.Stopwatch.Stop();
         string journal = _state.BeginJournalEntry()
-            .Append("Operation completed in ")
-            .Append(_state.Stopwatch.Elapsed.TotalSeconds.ToString("F3", CultureInfo.InvariantCulture))
-            .Append(" seconds.")
+            .Append(
+                CultureInfo.InvariantCulture,
+                $"Operation completed in {_state.Stopwatch.Elapsed.TotalSeconds:F3} seconds.")
             .ToString();
 
         if (_state.HasResult)
@@ -53,6 +53,6 @@ internal sealed class RootOperationLog(OperationLogState state, string name)
             $"Operation complete: {_operationName:<Operation.Name>}",
             ("Operation.Journal", journal),
             ("Operation.StartTime", _state.StartTime),
-            ("Operation.DurationMs", (int)Math.Round(_state.Stopwatch.Elapsed.TotalMilliseconds)));
+            ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds));
     }
 }

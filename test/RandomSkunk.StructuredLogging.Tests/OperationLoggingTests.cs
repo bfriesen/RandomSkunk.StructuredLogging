@@ -83,7 +83,7 @@ public class OperationLoggingTests
 
         properties.Should().ContainKey("Operation.Name").WhoseValue.Should().Be("Name");
         properties.Should().ContainKey("Operation.StartTime").WhoseValue.Should().BeOfType<DateTimeOffset>();
-        properties.Should().ContainKey("Operation.DurationMs").WhoseValue.Should().BeOfType<int>();
+        properties.Should().ContainKey("Operation.DurationSeconds").WhoseValue.Should().BeOfType<double>();
         properties.Should().ContainKey("Operation.Journal").WhoseValue.Should().BeOfType<string>();
         properties.Should().NotContainKey("Operation.Result");
     }

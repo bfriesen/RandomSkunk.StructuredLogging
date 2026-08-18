@@ -33,7 +33,7 @@ public interface IOperationLog : IDisposable
 
     /// <summary>
     /// Adds a structured property to the operation's final log entry. Unlike the built-in
-    /// <c>Operation.*</c> properties (<c>Operation.StartTime</c>, <c>Operation.DurationMs</c>,
+    /// <c>Operation.*</c> properties (<c>Operation.StartTime</c>, <c>Operation.DurationSeconds</c>,
     /// <c>Operation.Journal</c>, <c>Operation.Result</c>), properties set here are added unprefixed. Can be
     /// called on the root operation or any nested
     /// sub-operation; either way the property is added to the one entry that eventually gets flushed.
