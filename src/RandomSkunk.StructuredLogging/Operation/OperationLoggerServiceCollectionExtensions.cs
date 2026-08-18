@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Extension method for registering <see cref="IOperationLogger{TCategoryName}"/> with an

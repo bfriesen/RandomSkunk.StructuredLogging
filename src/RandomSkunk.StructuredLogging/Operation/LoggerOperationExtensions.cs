@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Extension methods for beginning an operation log on an <see cref="ILogger"/>.

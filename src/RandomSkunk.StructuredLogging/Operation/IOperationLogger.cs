@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// A DI-friendly counterpart to <see cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>

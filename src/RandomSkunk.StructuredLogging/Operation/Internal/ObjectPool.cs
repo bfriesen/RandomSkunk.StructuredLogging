@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// A minimal thread-safe object pool. A busy application may begin many operations per second, and

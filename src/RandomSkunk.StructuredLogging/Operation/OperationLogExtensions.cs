@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Extension methods for recording a value to an operation's (or sub-operation's) journal, or recording a

@@ -1,6 +1,7 @@
 using System.Globalization;
 using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
+using RandomSkunk.StructuredLogging.Operation;
 
 namespace RandomSkunk.StructuredLogging.Tests;
 

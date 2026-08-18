@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// The <see cref="IOperationLogger{TCategoryName}"/> implementation registered by

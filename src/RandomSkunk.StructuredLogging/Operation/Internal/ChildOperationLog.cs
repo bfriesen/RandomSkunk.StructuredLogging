@@ -1,4 +1,4 @@
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// A nested sub-operation returned by <see cref="IOperationLog.BeginSubOperation"/> (on either the root

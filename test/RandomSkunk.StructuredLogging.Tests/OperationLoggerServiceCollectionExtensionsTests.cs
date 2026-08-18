@@ -2,6 +2,7 @@ using System.Reflection;
 using AwesomeAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RandomSkunk.StructuredLogging.Operation;
 
 namespace RandomSkunk.StructuredLogging.Tests;
 

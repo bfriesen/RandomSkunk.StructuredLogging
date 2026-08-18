@@ -1,4 +1,5 @@
 using AwesomeAssertions;
+using RandomSkunk.StructuredLogging.Operation;
 
 namespace RandomSkunk.StructuredLogging.Tests;
 

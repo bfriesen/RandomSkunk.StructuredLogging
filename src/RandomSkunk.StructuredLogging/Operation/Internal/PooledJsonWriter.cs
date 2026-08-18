@@ -1,7 +1,7 @@
 using System.Buffers;
 using System.Text.Json;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Pairs an <see cref="ArrayBufferWriter{T}"/> of <see cref="byte"/> with a <see cref="Utf8JsonWriter"/>

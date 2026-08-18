@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Wraps an <see cref="IOperationLog"/> (root or sub-operation - normally a <see cref="RootOperationLog"/>

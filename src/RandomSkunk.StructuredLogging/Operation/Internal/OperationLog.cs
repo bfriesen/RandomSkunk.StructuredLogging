@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Base class for <see cref="RootOperationLog"/> and <see cref="ChildOperationLog"/>, holding the members

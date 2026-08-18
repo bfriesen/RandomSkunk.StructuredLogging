@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// A no-op <see cref="IOperationLog"/> returned when the operation's level is disabled on the logger,

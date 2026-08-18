@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// The pools <see cref="OperationLogState"/> rents its journal <see cref="StringBuilder"/> and property

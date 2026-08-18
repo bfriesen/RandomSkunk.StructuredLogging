@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace RandomSkunk.StructuredLogging;
+namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Represents an in-progress operation (or nested sub-operation) being journaled by
