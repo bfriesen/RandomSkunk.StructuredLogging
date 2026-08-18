@@ -25,32 +25,32 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
 
     public IOperationLog Append(string text)
     {
-        _state.StartLine().Append(text);
+        _state.BeginJournalEntry().Append(text);
         return (TSelf)this;
     }
 
     public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
-        _state.StartLine().Append($"`{valueName}`: {ValueFormatting.Format(value)}");
+        _state.BeginJournalEntry().Append($"`{valueName}`: {ValueFormatting.Format(value)}");
         return (TSelf)this;
     }
 
     public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
-        var journal = _state.StartLine().Append($"`{valueName}`: ");
+        var journal = _state.BeginJournalEntry().Append($"`{valueName}`: ");
         ValueFormatting.AppendJson(journal, value);
         return (TSelf)this;
     }
 
     public IOperationLog BeginSubOperation(string subOperationName)
     {
-        _state.StartLine().Append($"`{subOperationName}` started.");
+        _state.BeginJournalEntry().Append($"`{subOperationName}` started.");
         return new ChildOperationLog(_state, subOperationName);
     }
 
     public void Dispose()
     {
-        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+        if (Interlocked.Exchange(ref _disposed, -1) == -1)
             return;
 
         DisposeCore();

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging;
@@ -18,7 +19,7 @@ internal sealed class RootOperationLog(OperationLogState state, string name)
 
         if (recordEverywhere)
         {
-            _state.StartLine().Append($"`{_operationName}` failed:\n{exception}");
+            _state.BeginJournalEntry().Append($"`{_operationName}` failed:\n{exception}");
         }
 
         return this;
@@ -34,12 +35,16 @@ internal sealed class RootOperationLog(OperationLogState state, string name)
     protected override void DisposeCore()
     {
         _state.Stopwatch.Stop();
-        string journal = _state.StartLine().Append($"Operation completed in {_state.Stopwatch.Elapsed.TotalSeconds:F3} seconds.").ToString();
+        string journal = _state.BeginJournalEntry()
+            .Append("Operation completed in ")
+            .Append(_state.Stopwatch.Elapsed.TotalSeconds.ToString("F3", CultureInfo.InvariantCulture))
+            .Append(" seconds.")
+            .ToString();
 
         var i = 0;
         var logProperties = new KeyValuePair<string, object?>[_state.Properties.Count + 3 + (_state.HasResult ? 1 : 0)];
         logProperties[i++] = new("Operation.StartTime", _state.StartTime);
-        logProperties[i++] = new("Operation.DurationMs", _state.Stopwatch.Elapsed.TotalMilliseconds);
+        logProperties[i++] = new("Operation.DurationMs", (int)Math.Round(_state.Stopwatch.Elapsed.TotalMilliseconds));
         logProperties[i++] = new("Operation.Journal", journal);
 
         if (_state.HasResult)

@@ -1,3 +1,4 @@
+using System.Globalization;
 using AwesomeAssertions;
 using Microsoft.Extensions.Logging;
 
@@ -80,7 +81,7 @@ public class OperationLoggingTests
         var properties = logger.LastProperties!.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
         properties.Should().ContainKey("Operation.StartTime").WhoseValue.Should().BeOfType<DateTimeOffset>();
-        properties.Should().ContainKey("Operation.DurationMs").WhoseValue.Should().BeOfType<double>();
+        properties.Should().ContainKey("Operation.DurationMs").WhoseValue.Should().BeOfType<int>();
         properties.Should().ContainKey("Operation.Journal").WhoseValue.Should().BeOfType<string>();
         properties.Should().NotContainKey("Operation.Result");
     }
@@ -96,7 +97,7 @@ public class OperationLoggingTests
 
         var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
 
-        journal.Should().StartWith("Operation started at ");
+        journal.Should().MatchRegex(@"^\[\d+\.\d{3}\] Operation started at ");
     }
 
     [Fact]
@@ -111,6 +112,31 @@ public class OperationLoggingTests
         var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
 
         journal.Should().MatchRegex(@"Operation completed in \d+\.\d{3} seconds\.$");
+    }
+
+    [Fact]
+    public void Journal_TimestampsUseInvariantCultureRegardlessOfCurrentCulture()
+    {
+        var originalCulture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fr-FR");
+
+        try
+        {
+            var logger = new RecordingLogger();
+
+            using (logger.BeginOperation("Name"))
+            {
+            }
+
+            var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+
+            journal.Should().MatchRegex(@"^\[\d+\.\d{3}\] Operation started at ");
+            journal.Should().MatchRegex(@"Operation completed in \d+\.\d{3} seconds\.$");
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
     }
 
     [Fact]

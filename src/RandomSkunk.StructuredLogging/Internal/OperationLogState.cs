@@ -22,8 +22,8 @@ internal sealed class OperationLogState
     public readonly ILogger Logger;
     public readonly LogLevel Level;
     public readonly EventId EventId;
-    public readonly DateTimeOffset StartTime = DateTimeOffset.UtcNow;
-    public readonly Stopwatch Stopwatch = Stopwatch.StartNew();
+    public readonly DateTimeOffset StartTime;
+    public readonly Stopwatch Stopwatch;
     public readonly List<(string Name, object? Value)> Properties = OperationLogPools.PropertyLists.Rent();
     private readonly StringBuilder _journal = OperationLogPools.Journals.Rent();
 
@@ -37,28 +37,30 @@ internal sealed class OperationLogState
         Level = level;
         EventId = eventId;
 
-        _journal.Append($"Operation started at {StartTime:o}.");
+        StartTime = DateTimeOffset.UtcNow;
+        AppendTimestamp(TimeSpan.Zero).Append($"Operation started at {StartTime:o}.");
+        Stopwatch = Stopwatch.StartNew();
     }
 
     /// <summary>
-    /// Appends the "[elapsed] " timestamp prefix that starts every journal line, without allocating an
-    /// intermediate string for either the timestamp or the line itself - callers append the rest of the
-    /// line's content directly to <see cref="_journal"/> afterward.
+    /// Appends a newline followed by the "[elapsed] " timestamp prefix that starts every journal line,
+    /// without allocating an intermediate string for either the timestamp or the line itself - callers
+    /// append the rest of the journal entry content directly to the returned <see cref="StringBuilder"/>
+    /// afterward.
     /// </summary>
-    /// <returns>The <see cref="StringBuilder"/> to append the rest of the line to.</returns>
-    public StringBuilder StartLine()
+    /// <returns>The <see cref="StringBuilder"/> to append the rest of the journal entry to.</returns>
+    public StringBuilder BeginJournalEntry()
     {
         _journal.Append('\n');
-
-        Span<char> elapsedSeconds = stackalloc char[32];
-        Stopwatch.Elapsed.TotalSeconds.TryFormat(elapsedSeconds, out int written, "F3", CultureInfo.InvariantCulture);
-
-        return _journal.Append($"[{elapsedSeconds[..written]}] ");
+        return AppendTimestamp(Stopwatch.Elapsed);
     }
 
-    internal void ReturnToPools()
+    public void ReturnToPools()
     {
         OperationLogPools.Journals.Return(_journal);
         OperationLogPools.PropertyLists.Return(Properties);
     }
+
+    private StringBuilder AppendTimestamp(TimeSpan elapsed) =>
+        _journal.Append(CultureInfo.InvariantCulture, $"[{elapsed.TotalSeconds:F3}] ");
 }

@@ -13,7 +13,7 @@ internal sealed class ChildOperationLog(OperationLogState state, string name)
 {
     public IOperationLog SetException(Exception exception, bool recordEverywhere = false)
     {
-        _state.StartLine().Append($"`{_operationName}` failed:\n{exception}");
+        _state.BeginJournalEntry().Append($"`{_operationName}` failed:\n{exception}");
 
         if (recordEverywhere)
             _state.Exception = exception;
@@ -23,12 +23,12 @@ internal sealed class ChildOperationLog(OperationLogState state, string name)
 
     public IOperationLog SetResult<T>(T value)
     {
-        _state.StartLine().Append($"`{_operationName}` result: {ValueFormatting.Format(value)}");
+        _state.BeginJournalEntry().Append($"`{_operationName}` result: {ValueFormatting.Format(value)}");
         return this;
     }
 
     protected override void DisposeCore()
     {
-        _state.StartLine().Append($"`{_operationName}` complete.");
+        _state.BeginJournalEntry().Append($"`{_operationName}` complete.");
     }
 }
