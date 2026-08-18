@@ -26,6 +26,27 @@ public class OperationLogExtensionsTests
     }
 
     [Fact]
+    public void RecordPropertyTo_ReturnsValueUnchangedAndSetsProperty()
+    {
+        var logger = new RecordingLogger();
+
+        int orderId;
+        using (var operation = logger.BeginOperation("Name"))
+            orderId = 42.RecordPropertyTo(operation, "OrderId");
+
+        orderId.Should().Be(42);
+        logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("OrderId", 42));
+    }
+
+    [Fact]
+    public void RecordPropertyTo_NullLog_ThrowsArgumentNullException()
+    {
+        var act = () => "value".RecordPropertyTo(null!, "PropertyName");
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
     public void RecordValueTo_ReturnsValueUnchangedAndAppendsJournalLine()
     {
         var logger = new RecordingLogger();

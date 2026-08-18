@@ -30,6 +30,27 @@ public static class OperationLogExtensions
     }
 
     /// <summary>
+    /// Adds <paramref name="propertyValue"/> as a structured property named <paramref name="propertyName"/>
+    /// to the operation <paramref name="log"/> belongs to, then returns <paramref name="propertyValue"/>
+    /// unchanged - so this can be chained directly onto an expression, e.g.
+    /// <c>var orderId = order.Id.RecordPropertyTo(log, "OrderId");</c>. See
+    /// <see cref="IOperationLog.SetProperty{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the property value.</typeparam>
+    /// <param name="propertyValue">The property value to record.</param>
+    /// <param name="log">The operation (or sub-operation) to record the property to.</param>
+    /// <param name="propertyName">The name to record the property under.</param>
+    /// <returns><paramref name="propertyValue"/>, unchanged.</returns>
+    [return: NotNullIfNotNull(nameof(propertyValue))]
+    public static T RecordPropertyTo<T>(this T propertyValue, IOperationLog log, string propertyName)
+    {
+        ArgumentNullException.ThrowIfNull(log);
+
+        log.SetProperty(propertyName, propertyValue);
+        return propertyValue;
+    }
+
+    /// <summary>
     /// Records <paramref name="value"/> to the journal of the operation <paramref name="log"/> belongs to,
     /// in the form <c>`valueName`: value</c>, then returns <paramref name="value"/> unchanged - so this can
     /// be chained directly onto an expression, e.g. <c>var total = order.Total.RecordValueTo(log);</c>.
