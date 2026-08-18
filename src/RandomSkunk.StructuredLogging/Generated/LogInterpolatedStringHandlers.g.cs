@@ -31,19 +31,6 @@ public ref struct TraceInterpolatedStringHandler
         _capturedProperties = null;
     }
 
-    private TraceInterpolatedStringHandler(string message)
-    {
-        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
-        _handler.AppendLiteral(message);
-        _capturedProperties = null;
-    }
-
-    /// <summary>
-    /// Converts a plain string message to a <see cref="TraceInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
-    /// </summary>
-    /// <param name="message">The literal message text.</param>
-    public static implicit operator TraceInterpolatedStringHandler(string message) => new(message);
-
     /// <summary>
     /// Appends a literal text segment of the interpolated string to the message.
     /// </summary>
@@ -145,19 +132,6 @@ public ref struct DebugInterpolatedStringHandler
             : default;
         _capturedProperties = null;
     }
-
-    private DebugInterpolatedStringHandler(string message)
-    {
-        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
-        _handler.AppendLiteral(message);
-        _capturedProperties = null;
-    }
-
-    /// <summary>
-    /// Converts a plain string message to a <see cref="DebugInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
-    /// </summary>
-    /// <param name="message">The literal message text.</param>
-    public static implicit operator DebugInterpolatedStringHandler(string message) => new(message);
 
     /// <summary>
     /// Appends a literal text segment of the interpolated string to the message.
@@ -261,19 +235,6 @@ public ref struct InformationInterpolatedStringHandler
         _capturedProperties = null;
     }
 
-    private InformationInterpolatedStringHandler(string message)
-    {
-        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
-        _handler.AppendLiteral(message);
-        _capturedProperties = null;
-    }
-
-    /// <summary>
-    /// Converts a plain string message to a <see cref="InformationInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
-    /// </summary>
-    /// <param name="message">The literal message text.</param>
-    public static implicit operator InformationInterpolatedStringHandler(string message) => new(message);
-
     /// <summary>
     /// Appends a literal text segment of the interpolated string to the message.
     /// </summary>
@@ -375,19 +336,6 @@ public ref struct WarningInterpolatedStringHandler
             : default;
         _capturedProperties = null;
     }
-
-    private WarningInterpolatedStringHandler(string message)
-    {
-        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
-        _handler.AppendLiteral(message);
-        _capturedProperties = null;
-    }
-
-    /// <summary>
-    /// Converts a plain string message to a <see cref="WarningInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
-    /// </summary>
-    /// <param name="message">The literal message text.</param>
-    public static implicit operator WarningInterpolatedStringHandler(string message) => new(message);
 
     /// <summary>
     /// Appends a literal text segment of the interpolated string to the message.
@@ -491,19 +439,6 @@ public ref struct ErrorInterpolatedStringHandler
         _capturedProperties = null;
     }
 
-    private ErrorInterpolatedStringHandler(string message)
-    {
-        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
-        _handler.AppendLiteral(message);
-        _capturedProperties = null;
-    }
-
-    /// <summary>
-    /// Converts a plain string message to a <see cref="ErrorInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
-    /// </summary>
-    /// <param name="message">The literal message text.</param>
-    public static implicit operator ErrorInterpolatedStringHandler(string message) => new(message);
-
     /// <summary>
     /// Appends a literal text segment of the interpolated string to the message.
     /// </summary>
@@ -605,19 +540,6 @@ public ref struct CriticalInterpolatedStringHandler
             : default;
         _capturedProperties = null;
     }
-
-    private CriticalInterpolatedStringHandler(string message)
-    {
-        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
-        _handler.AppendLiteral(message);
-        _capturedProperties = null;
-    }
-
-    /// <summary>
-    /// Converts a plain string message to a <see cref="CriticalInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
-    /// </summary>
-    /// <param name="message">The literal message text.</param>
-    public static implicit operator CriticalInterpolatedStringHandler(string message) => new(message);
 
     /// <summary>
     /// Appends a literal text segment of the interpolated string to the message.
@@ -721,19 +643,6 @@ public ref struct LogInterpolatedStringHandler
             : default;
         _capturedProperties = null;
     }
-
-    private LogInterpolatedStringHandler(string message)
-    {
-        _handler = new DefaultInterpolatedStringHandler(message.Length, 0, CultureInfo.InvariantCulture);
-        _handler.AppendLiteral(message);
-        _capturedProperties = null;
-    }
-
-    /// <summary>
-    /// Converts a plain string message to a <see cref="LogInterpolatedStringHandler"/>, assuming the target logger is enabled. No enabled check is performed and the string is used as-is.
-    /// </summary>
-    /// <param name="message">The literal message text.</param>
-    public static implicit operator LogInterpolatedStringHandler(string message) => new(message);
 
     /// <summary>
     /// Appends a literal text segment of the interpolated string to the message.

@@ -22,7 +22,7 @@ public class StructuredLoggerExtensionsTests
     }
 
     [Fact]
-    public void StringLiteral_ImplicitlyConvertsWithoutFormatting()
+    public void StringLiteral_UsesPlainMessageOverloadWithoutFormatting()
     {
         var logger = new RecordingLogger();
 
