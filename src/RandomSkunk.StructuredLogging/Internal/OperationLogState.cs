@@ -11,7 +11,7 @@ namespace RandomSkunk.StructuredLogging;
 /// accumulated anywhere in the tree as exactly one log entry. This type applies no synchronization of its
 /// own - concurrent use (e.g. sub-operations run via <c>Task.WhenAll</c>) is only safe when the operation
 /// was begun with <c>threadSafe: true</c> (see <see cref="LoggerOperationExtensions"/>), which wraps every
-/// <see cref="IOperationLog"/>/<see cref="ISubOperationLog"/> in a locking decorator instead.
+/// <see cref="IOperationLog"/> (root or sub-operation) in a locking decorator instead.
 /// <see cref="Journal"/> and <see cref="Properties"/> are rented from <see cref="OperationLogPools"/> and
 /// returned there by <see cref="RootOperationLog.Dispose"/> - neither must be touched by any
 /// <see cref="ChildOperationLog"/> still in scope after the root operation has been disposed, since by

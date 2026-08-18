@@ -3,10 +3,12 @@ using System.Runtime.CompilerServices;
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
-/// Represents an in-progress operation being journaled by
+/// Represents an in-progress operation (or nested sub-operation) being journaled by
 /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>.
 /// Disposing the root <see cref="IOperationLog"/> writes exactly one log entry summarizing everything that
-/// happened during the operation, including any nested <see cref="ISubOperationLog"/> activity.
+/// happened during the operation, including any nested sub-operation activity. A sub-operation, returned by
+/// <see cref="BeginSubOperation"/>, never writes its own log entry - disposing it appends a "complete" line
+/// to the ancestor journal it was created from instead.
 /// </summary>
 public interface IOperationLog : IDisposable
 {
@@ -64,29 +66,38 @@ public interface IOperationLog : IDisposable
 
     /// <summary>
     /// Begins a nested sub-operation. A "started" line is immediately appended to the journal, and a
-    /// "complete" line is appended when the returned <see cref="ISubOperationLog"/> is disposed. Unlike
+    /// "complete" line is appended when the returned <see cref="IOperationLog"/> is disposed. Unlike
     /// the root operation, a sub-operation never writes its own log entry - it only ever contributes to
     /// the root's single flushed entry.
     /// </summary>
     /// <param name="name">The sub-operation's name, used in its journal lines (e.g. "started"/"complete").</param>
-    /// <returns>An <see cref="ISubOperationLog"/> representing the nested sub-operation.</returns>
-    ISubOperationLog BeginSubOperation(string name);
+    /// <returns>An <see cref="IOperationLog"/> representing the nested sub-operation.</returns>
+    IOperationLog BeginSubOperation(string name);
 
     /// <summary>
     /// Records the exception for this operation. On the root operation, this becomes the <c>Exception</c>
-    /// argument of the final log entry. See <see cref="ISubOperationLog.SetException(Exception, bool)"/> for
-    /// the corresponding sub-operation behavior, including whether it propagates to the root.
+    /// argument of the final log entry, and <paramref name="propagateToRoot"/> is ignored (it's always
+    /// effectively the root). On a sub-operation, a "failed" line is appended to the journal, and
+    /// <paramref name="propagateToRoot"/> chooses whether this exception also becomes the root operation's
+    /// <c>Exception</c> (used in the final log entry, e.g. for backend stack-trace/exception indexing).
     /// </summary>
     /// <param name="exception">The exception to record.</param>
+    /// <param name="propagateToRoot">
+    /// On a sub-operation, <see langword="true"/> to also set this exception as the root operation's
+    /// exception (last call at any level wins); <see langword="false"/> to record it only in this
+    /// sub-operation's journal line. Ignored on the root operation.
+    /// </param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
-    IOperationLog SetException(Exception exception);
+    IOperationLog SetException(Exception exception, bool propagateToRoot = false);
 
     /// <summary>
     /// Records <paramref name="value"/> as the result of this operation. On the root operation, this sets
-    /// the <c>Operation.Result</c> structured property of the final log entry. See
-    /// <see cref="ISubOperationLog.SetResult{T}"/> for the corresponding sub-operation behavior. Typically
-    /// called via the <see cref="OperationLogExtensions.RecordResultTo{T}"/> extension method rather
-    /// than directly, so it can be chained onto a return expression.
+    /// the <c>Operation.Result</c> structured property of the final log entry. On a sub-operation, this
+    /// instead appends a "`Name` result: ..." line (rendered via
+    /// <see cref="IFormattable"/>/<see cref="object.ToString"/>) to the journal - a sub-operation never gets
+    /// its own structured property, since only the root ever writes a log entry. Typically called via the
+    /// <see cref="OperationLogExtensions.RecordResultTo{T}"/> extension method rather than directly, so it
+    /// can be chained onto a return expression.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
     /// <param name="value">The result to record.</param>

@@ -19,7 +19,7 @@ public static class LoggerOperationExtensions
     /// <param name="level">The severity level the operation's final log entry is written at. Defaults to <see cref="LogLevel.Information"/>.</param>
     /// <param name="threadSafe">
     /// <see langword="true"/> to make the returned <see cref="IOperationLog"/> (and every
-    /// <see cref="ISubOperationLog"/> begun from it) safe to use concurrently, e.g. from sub-operations run
+    /// sub-operation begun from it) safe to use concurrently, e.g. from sub-operations run
     /// via <c>Task.WhenAll</c>. By default an operation applies no synchronization of its own.
     /// </param>
     /// <returns>An <see cref="IOperationLog"/> representing the operation.</returns>
@@ -39,7 +39,7 @@ public static class LoggerOperationExtensions
     /// <param name="level">The severity level the operation's final log entry is written at. Defaults to <see cref="LogLevel.Information"/>.</param>
     /// <param name="threadSafe">
     /// <see langword="true"/> to make the returned <see cref="IOperationLog"/> (and every
-    /// <see cref="ISubOperationLog"/> begun from it) safe to use concurrently, e.g. from sub-operations run
+    /// sub-operation begun from it) safe to use concurrently, e.g. from sub-operations run
     /// via <c>Task.WhenAll</c>. By default an operation applies no synchronization of its own.
     /// </param>
     /// <returns>An <see cref="IOperationLog"/> representing the operation.</returns>

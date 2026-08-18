@@ -13,8 +13,8 @@ public static class OperationLogExtensions
     /// Records <paramref name="result"/> as the result of the operation <paramref name="log"/> belongs to,
     /// then returns <paramref name="result"/> unchanged - so this can be chained directly onto a return
     /// expression, e.g. <c>return OrderResult.Shipped(...).RecordResultTo(log);</c>. See
-    /// <see cref="IOperationLog.SetResult{T}"/>/<see cref="ISubOperationLog.SetResult{T}"/> for what
-    /// recording a result actually does on the root operation vs. a sub-operation.
+    /// <see cref="IOperationLog.SetResult{T}"/> for what recording a result actually does on the root
+    /// operation vs. a sub-operation.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
     /// <param name="result">The result to record.</param>

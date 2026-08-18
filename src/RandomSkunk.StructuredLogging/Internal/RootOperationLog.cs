@@ -41,7 +41,7 @@ internal sealed class RootOperationLog(OperationLogState state, string name) : I
         return this;
     }
 
-    public ISubOperationLog BeginSubOperation(string subOperationName)
+    public IOperationLog BeginSubOperation(string subOperationName)
     {
         state.StartLine();
         state.Journal.Append('`').Append(subOperationName).Append("` started.");
@@ -49,7 +49,7 @@ internal sealed class RootOperationLog(OperationLogState state, string name) : I
         return new ChildOperationLog(state, subOperationName);
     }
 
-    public IOperationLog SetException(Exception exception)
+    public IOperationLog SetException(Exception exception, bool propagateToRoot = false)
     {
         state.Exception = exception;
         return this;

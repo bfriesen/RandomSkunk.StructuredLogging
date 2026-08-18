@@ -3,13 +3,13 @@ using System.Runtime.CompilerServices;
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
-/// A no-op <see cref="ISubOperationLog"/> returned when the operation's level is disabled on the logger,
+/// A no-op <see cref="IOperationLog"/> returned when the operation's level is disabled on the logger,
 /// so a disabled operation does zero journal/property accumulation - mirroring how the interpolated
 /// string handlers skip evaluating their holes entirely when disabled. Every member is a no-op, and
 /// <see cref="BeginSubOperation"/> returns the same singleton, so the no-op short-circuits through any
 /// depth of nesting.
 /// </summary>
-internal sealed class NullOperationLog : ISubOperationLog
+internal sealed class NullOperationLog : IOperationLog
 {
     public static readonly NullOperationLog Instance = new();
 
@@ -17,33 +17,19 @@ internal sealed class NullOperationLog : ISubOperationLog
     {
     }
 
-    public ISubOperationLog SetProperty<T>(string name, T value) => this;
+    public IOperationLog SetProperty<T>(string name, T value) => this;
 
-    IOperationLog IOperationLog.SetProperty<T>(string name, T value) => this;
+    public IOperationLog Append(string text) => this;
 
-    public ISubOperationLog Append(string text) => this;
+    public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
 
-    IOperationLog IOperationLog.Append(string text) => this;
+    public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
 
-    public ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
+    public IOperationLog BeginSubOperation(string name) => this;
 
-    IOperationLog IOperationLog.AppendValue<T>(T value, string? valueName) => this;
+    public IOperationLog SetException(Exception exception, bool propagateToRoot = false) => this;
 
-    public ISubOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
-
-    IOperationLog IOperationLog.AppendJson<T>(T value, string? valueName) => this;
-
-    public ISubOperationLog BeginSubOperation(string name) => this;
-
-    public ISubOperationLog SetException(Exception exception) => this;
-
-    IOperationLog IOperationLog.SetException(Exception exception) => this;
-
-    public ISubOperationLog SetException(Exception exception, bool propagateToRoot) => this;
-
-    public ISubOperationLog SetResult<T>(T value) => this;
-
-    IOperationLog IOperationLog.SetResult<T>(T value) => this;
+    public IOperationLog SetResult<T>(T value) => this;
 
     public void Dispose()
     {
