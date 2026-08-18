@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
@@ -17,6 +19,7 @@ public static class OperationResultExtensions
     /// <param name="result">The result to record.</param>
     /// <param name="log">The operation (or sub-operation) the result belongs to.</param>
     /// <returns><paramref name="result"/>, unchanged.</returns>
+    [return: NotNullIfNotNull(nameof(result))]
     public static T SetOperationResult<T>(this T result, IOperationLog log)
     {
         log.SetResult(result);
