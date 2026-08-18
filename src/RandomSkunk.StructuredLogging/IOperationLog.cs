@@ -70,7 +70,7 @@ public interface IOperationLog : IDisposable
     /// Records <paramref name="value"/> as the result of this operation. On the root operation, this sets
     /// the <c>Operation.Result</c> structured property of the final log entry. See
     /// <see cref="ISubOperationLog.SetResult{T}"/> for the corresponding sub-operation behavior. Typically
-    /// called via the <see cref="OperationResultExtensions.SetOperationResult{T}"/> extension method rather
+    /// called via the <see cref="OperationLogExtensions.OperationLogSetResult{T}"/> extension method rather
     /// than directly, so it can be chained onto a return expression.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
