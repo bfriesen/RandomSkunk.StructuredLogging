@@ -14,6 +14,19 @@ internal sealed class RootOperationLog(OperationLogState state, string name) : I
 {
     private bool _disposed;
 
+    public IOperationLog SetException(Exception exception, bool propagateToRoot = false)
+    {
+        state.Exception = exception;
+        return this;
+    }
+
+    public IOperationLog SetResult<T>(T value)
+    {
+        state.Result = value;
+        state.HasResult = true;
+        return this;
+    }
+
     public IOperationLog SetProperty<T>(string propertyName, T value)
     {
         state.Properties.Add((propertyName, value));
@@ -47,19 +60,6 @@ internal sealed class RootOperationLog(OperationLogState state, string name) : I
         state.Journal.Append('`').Append(subOperationName).Append("` started.");
 
         return new ChildOperationLog(state, subOperationName);
-    }
-
-    public IOperationLog SetException(Exception exception, bool propagateToRoot = false)
-    {
-        state.Exception = exception;
-        return this;
-    }
-
-    public IOperationLog SetResult<T>(T value)
-    {
-        state.Result = value;
-        state.HasResult = true;
-        return this;
     }
 
     public void Dispose()

@@ -14,6 +14,20 @@ namespace RandomSkunk.StructuredLogging;
 /// </summary>
 internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate) : IOperationLog
 {
+    public IOperationLog SetException(Exception exception, bool propagateToRoot = false)
+    {
+        lock (gate)
+            inner.SetException(exception, propagateToRoot);
+        return this;
+    }
+
+    public IOperationLog SetResult<T>(T value)
+    {
+        lock (gate)
+            inner.SetResult(value);
+        return this;
+    }
+
     public IOperationLog SetProperty<T>(string name, T value)
     {
         lock (gate)
@@ -48,20 +62,6 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
         lock (gate)
             subOperation = inner.BeginSubOperation(name);
         return new SynchronizedOperationLog(subOperation, gate);
-    }
-
-    public IOperationLog SetException(Exception exception, bool propagateToRoot = false)
-    {
-        lock (gate)
-            inner.SetException(exception, propagateToRoot);
-        return this;
-    }
-
-    public IOperationLog SetResult<T>(T value)
-    {
-        lock (gate)
-            inner.SetResult(value);
-        return this;
     }
 
     public void Dispose()

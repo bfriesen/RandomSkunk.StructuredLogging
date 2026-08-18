@@ -14,6 +14,24 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
 {
     private bool _disposed;
 
+    public IOperationLog SetException(Exception exception, bool propagateToRoot = false)
+    {
+        state.StartLine();
+        state.Journal.Append('`').Append(name).Append("` failed:").Append('\n').Append(exception.ToString());
+
+        if (propagateToRoot)
+            state.Exception = exception;
+
+        return this;
+    }
+
+    public IOperationLog SetResult<T>(T value)
+    {
+        state.StartLine();
+        state.Journal.Append('`').Append(name).Append("` result: ").Append(ValueFormatting.Format(value));
+        return this;
+    }
+
     public IOperationLog SetProperty<T>(string propertyName, T value)
     {
         state.Properties.Add((propertyName, value));
@@ -47,24 +65,6 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
         state.Journal.Append('`').Append(subOperationName).Append("` started.");
 
         return new ChildOperationLog(state, subOperationName);
-    }
-
-    public IOperationLog SetException(Exception exception, bool propagateToRoot = false)
-    {
-        state.StartLine();
-        state.Journal.Append('`').Append(name).Append("` failed:").Append('\n').Append(exception.ToString());
-
-        if (propagateToRoot)
-            state.Exception = exception;
-
-        return this;
-    }
-
-    public IOperationLog SetResult<T>(T value)
-    {
-        state.StartLine();
-        state.Journal.Append('`').Append(name).Append("` result: ").Append(ValueFormatting.Format(value));
-        return this;
     }
 
     public void Dispose()

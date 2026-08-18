@@ -13,6 +13,36 @@ namespace RandomSkunk.StructuredLogging;
 public interface IOperationLog : IDisposable
 {
     /// <summary>
+    /// Records the exception for this operation. On the root operation, this becomes the <c>Exception</c>
+    /// argument of the final log entry, and <paramref name="propagateToRoot"/> is ignored (it's always
+    /// effectively the root). On a sub-operation, a "failed" line is appended to the journal, and
+    /// <paramref name="propagateToRoot"/> chooses whether this exception also becomes the root operation's
+    /// <c>Exception</c> (used in the final log entry, e.g. for backend stack-trace/exception indexing).
+    /// </summary>
+    /// <param name="exception">The exception to record.</param>
+    /// <param name="propagateToRoot">
+    /// On a sub-operation, <see langword="true"/> to also set this exception as the root operation's
+    /// exception (last call at any level wins); <see langword="false"/> to record it only in this
+    /// sub-operation's journal line. Ignored on the root operation.
+    /// </param>
+    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    IOperationLog SetException(Exception exception, bool propagateToRoot = false);
+
+    /// <summary>
+    /// Records <paramref name="value"/> as the result of this operation. On the root operation, this sets
+    /// the <c>Operation.Result</c> structured property of the final log entry. On a sub-operation, this
+    /// instead appends a "`Name` result: ..." line (rendered via
+    /// <see cref="IFormattable"/>/<see cref="object.ToString"/>) to the journal - a sub-operation never gets
+    /// its own structured property, since only the root ever writes a log entry. Typically called via the
+    /// <see cref="OperationLogExtensions.RecordResultTo{T}"/> extension method rather than directly, so it
+    /// can be chained onto a return expression.
+    /// </summary>
+    /// <typeparam name="T">The type of the result.</typeparam>
+    /// <param name="value">The result to record.</param>
+    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    IOperationLog SetResult<T>(T value);
+
+    /// <summary>
     /// Adds a structured property to the operation's final log entry. Unlike the built-in
     /// <c>Operation.*</c> properties (<c>Operation.StartTime</c>, <c>Operation.DurationMs</c>,
     /// <c>Operation.Log</c>, <c>Operation.Result</c>), properties set here are added unprefixed. Can be
@@ -73,34 +103,4 @@ public interface IOperationLog : IDisposable
     /// <param name="name">The sub-operation's name, used in its journal lines (e.g. "started"/"complete").</param>
     /// <returns>An <see cref="IOperationLog"/> representing the nested sub-operation.</returns>
     IOperationLog BeginSubOperation(string name);
-
-    /// <summary>
-    /// Records the exception for this operation. On the root operation, this becomes the <c>Exception</c>
-    /// argument of the final log entry, and <paramref name="propagateToRoot"/> is ignored (it's always
-    /// effectively the root). On a sub-operation, a "failed" line is appended to the journal, and
-    /// <paramref name="propagateToRoot"/> chooses whether this exception also becomes the root operation's
-    /// <c>Exception</c> (used in the final log entry, e.g. for backend stack-trace/exception indexing).
-    /// </summary>
-    /// <param name="exception">The exception to record.</param>
-    /// <param name="propagateToRoot">
-    /// On a sub-operation, <see langword="true"/> to also set this exception as the root operation's
-    /// exception (last call at any level wins); <see langword="false"/> to record it only in this
-    /// sub-operation's journal line. Ignored on the root operation.
-    /// </param>
-    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
-    IOperationLog SetException(Exception exception, bool propagateToRoot = false);
-
-    /// <summary>
-    /// Records <paramref name="value"/> as the result of this operation. On the root operation, this sets
-    /// the <c>Operation.Result</c> structured property of the final log entry. On a sub-operation, this
-    /// instead appends a "`Name` result: ..." line (rendered via
-    /// <see cref="IFormattable"/>/<see cref="object.ToString"/>) to the journal - a sub-operation never gets
-    /// its own structured property, since only the root ever writes a log entry. Typically called via the
-    /// <see cref="OperationLogExtensions.RecordResultTo{T}"/> extension method rather than directly, so it
-    /// can be chained onto a return expression.
-    /// </summary>
-    /// <typeparam name="T">The type of the result.</typeparam>
-    /// <param name="value">The result to record.</param>
-    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
-    IOperationLog SetResult<T>(T value);
 }

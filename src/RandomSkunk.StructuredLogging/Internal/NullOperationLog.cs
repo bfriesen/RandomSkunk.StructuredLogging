@@ -17,6 +17,10 @@ internal sealed class NullOperationLog : IOperationLog
     {
     }
 
+    public IOperationLog SetException(Exception exception, bool propagateToRoot = false) => this;
+
+    public IOperationLog SetResult<T>(T value) => this;
+
     public IOperationLog SetProperty<T>(string name, T value) => this;
 
     public IOperationLog Append(string text) => this;
@@ -26,10 +30,6 @@ internal sealed class NullOperationLog : IOperationLog
     public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
 
     public IOperationLog BeginSubOperation(string name) => this;
-
-    public IOperationLog SetException(Exception exception, bool propagateToRoot = false) => this;
-
-    public IOperationLog SetResult<T>(T value) => this;
 
     public void Dispose()
     {
