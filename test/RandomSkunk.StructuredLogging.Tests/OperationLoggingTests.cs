@@ -134,6 +134,35 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void SetException_DefaultDoesNotAppendJournalLine()
+    {
+        var logger = new RecordingLogger();
+        var exception = new InvalidOperationException("boom");
+
+        using (var log = logger.BeginOperation("Name"))
+            log.SetException(exception);
+
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().NotContain("failed:");
+    }
+
+    [Fact]
+    public void SetException_RecordEverywhereTrue_AlsoAppendsJournalLine()
+    {
+        var logger = new RecordingLogger();
+        var exception = new InvalidOperationException("boom");
+
+        using (var log = logger.BeginOperation("Name"))
+            log.SetException(exception, recordEverywhere: true);
+
+        logger.LastException.Should().BeSameAs(exception);
+
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        journal.Should().Contain("`Name` failed:");
+        journal.Should().Contain(exception.ToString());
+    }
+
+    [Fact]
     public void Append_AddsLineToOperationLog()
     {
         var logger = new RecordingLogger();
@@ -230,7 +259,7 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void SubOperation_SetException_DefaultDoesNotPropagateToRoot()
+    public void SubOperation_SetException_DefaultDoesNotRecordEverywhere()
     {
         var logger = new RecordingLogger();
         var exception = new InvalidOperationException("boom");
@@ -249,7 +278,7 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void SubOperation_SetException_PropagateToRootTrue_SetsRootException()
+    public void SubOperation_SetException_RecordEverywhereTrue_SetsRootException()
     {
         var logger = new RecordingLogger();
         var exception = new InvalidOperationException("boom");
@@ -257,7 +286,7 @@ public class OperationLoggingTests
         using (var log = logger.BeginOperation("Name"))
         {
             using var subLog = log.BeginSubOperation("Fetch");
-            subLog.SetException(exception, propagateToRoot: true);
+            subLog.SetException(exception, recordEverywhere: true);
         }
 
         logger.LastException.Should().BeSameAs(exception);

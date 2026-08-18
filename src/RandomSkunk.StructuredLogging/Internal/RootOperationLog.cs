@@ -12,9 +12,16 @@ namespace RandomSkunk.StructuredLogging;
 internal sealed class RootOperationLog(OperationLogState state, string name)
     : OperationLog<RootOperationLog>(state, name), IOperationLog
 {
-    public IOperationLog SetException(Exception exception, bool propagateToRoot = false)
+    public IOperationLog SetException(Exception exception, bool recordEverywhere = false)
     {
         _state.Exception = exception;
+
+        if (recordEverywhere)
+        {
+            _state.StartLine();
+            _state.Journal.Append('`').Append(_operationName).Append("` failed:").Append('\n').Append(exception.ToString());
+        }
+
         return this;
     }
 

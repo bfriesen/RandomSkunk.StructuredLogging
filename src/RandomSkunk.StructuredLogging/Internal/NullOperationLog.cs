@@ -17,7 +17,7 @@ internal sealed class NullOperationLog : IOperationLog
     {
     }
 
-    public IOperationLog SetException(Exception exception, bool propagateToRoot = false) => this;
+    public IOperationLog SetException(Exception exception, bool recordEverywhere = false) => this;
 
     public IOperationLog SetResult<T>(T value) => this;
 

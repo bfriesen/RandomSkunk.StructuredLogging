@@ -14,10 +14,10 @@ namespace RandomSkunk.StructuredLogging;
 /// </summary>
 internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate) : IOperationLog
 {
-    public IOperationLog SetException(Exception exception, bool propagateToRoot = false)
+    public IOperationLog SetException(Exception exception, bool recordEverywhere = false)
     {
         lock (gate)
-            inner.SetException(exception, propagateToRoot);
+            inner.SetException(exception, recordEverywhere);
         return this;
     }
 
