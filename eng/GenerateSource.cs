@@ -372,17 +372,11 @@ static string GenerateExtensionMethods(string[] levels, int maxArity)
                     AppendArityMethod(sb, group, combo, arity, includeCollection: false, useHandler);
                 }
 
-                sb.AppendLine();
-                AppendParamsMethod(sb, group, combo, includeCollection: false, useHandler);
-
                 for (int arity = 0; arity <= maxArity; arity++)
                 {
                     sb.AppendLine();
                     AppendArityMethod(sb, group, combo, arity, includeCollection: true, useHandler);
                 }
-
-                sb.AppendLine();
-                AppendParamsMethod(sb, group, combo, includeCollection: true, useHandler);
             }
         }
     }
@@ -534,62 +528,6 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     }
 
     sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, {stateType}.Formatter);");
-    sb.AppendLine("    }");
-}
-
-static void AppendParamsMethod(StringBuilder sb, MethodGroup group, Combo combo, bool includeCollection, bool useHandler)
-{
-    var arrayParamName = includeCollection ? "additionalLogProperties" : "logProperties";
-
-    var parameters = BaseParameters(group, combo, includeCollection, useHandler);
-    parameters.Add($"params (string Name, object? Value)[] {arrayParamName}");
-
-    var parameterDocs = BaseParameterDocs(group, combo, includeCollection, useHandler);
-    parameterDocs.Add((arrayParamName, includeCollection
-        ? "Additional structured log properties, as name/value pairs."
-        : "The structured log properties, as name/value pairs."));
-
-    string summary = includeCollection
-        ? $"Writes a log message with a collection of structured properties and any number of additional structured properties {LevelPhrase(group)}."
-        : $"Writes a log message with any number of structured properties {LevelPhrase(group)}.";
-
-    WriteDocComment(sb, "    ", summary, parameters: parameterDocs);
-    AppendMethodSignature(sb, "    ", $"public static void {group.MethodName}", parameters);
-
-    string messageTextExpr;
-    string capturedPropertiesExpr;
-
-    if (useHandler)
-    {
-        // ToStringAndClear() must run unconditionally: it returns the handler's rented buffer to
-        // ArrayPool<char>.Shared, and skipping that when the level is disabled would leak the buffer.
-        sb.AppendLine("        var messageText = message.ToStringAndClear();");
-        sb.AppendLine();
-        messageTextExpr = "messageText";
-        capturedPropertiesExpr = "message.GetCapturedProperties()";
-    }
-    else
-    {
-        messageTextExpr = "message";
-        capturedPropertiesExpr = "Array.Empty<KeyValuePair<string, object?>>()";
-    }
-
-    sb.AppendLine($"        if (!logger.IsEnabled({group.LevelExpr}))");
-    sb.AppendLine("            return;");
-    sb.AppendLine();
-
-    if (includeCollection)
-    {
-        sb.AppendLine("        var logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();");
-        sb.AppendLine($"        var explicitProperties = new ConcatPropertyList(logPropertiesList, {capturedPropertiesExpr});");
-        sb.AppendLine($"        var state = new LogPropertiesState({messageTextExpr}, explicitProperties, new TuplePropertyList({arrayParamName}));");
-    }
-    else
-    {
-        sb.AppendLine($"        var state = new LogPropertiesState({messageTextExpr}, {capturedPropertiesExpr}, new TuplePropertyList(logProperties));");
-    }
-
-    sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, LogPropertiesState.Formatter);");
     sb.AppendLine("    }");
 }
 

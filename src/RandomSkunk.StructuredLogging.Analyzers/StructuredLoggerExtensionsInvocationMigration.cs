@@ -30,10 +30,10 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 /// that fix, there's no generic fallback name available here - a wrong or generic name would become
 /// a permanent, visible part of the rewritten message - so if nothing can be guessed for a given
 /// hole, the whole call is left unconverted instead.</item>
-/// <item>An explicit (string Name, T Value) property - from a generic-arity argument or a params
-/// tuple array with a compile-time-constant name - that isn't already embedded in the message via a
-/// tag becomes a trailing <c>{PropertyName}</c> placeholder appended to the message text, separated
-/// by a single space (no comma), with the value passed as a trailing positional argument.</item>
+/// <item>An explicit (string Name, T Value) property - from a generic-arity argument - with a
+/// compile-time-constant name that isn't already embedded in the message via a tag becomes a
+/// trailing <c>{PropertyName}</c> placeholder appended to the message text, separated by a single
+/// space (no comma), with the value passed as a trailing positional argument.</item>
 /// </list>
 ///
 /// A call is also left unconverted (this method returns <see langword="null"/>) when it contains a
@@ -154,11 +154,10 @@ internal static class StructuredLoggerExtensionsInvocationMigration
 
     /// <summary>
     /// Gathers the explicit (string Name, T Value) structured properties passed to the call - from
-    /// generic-arity <c>logProperty1..6</c> arguments or a params tuple array - resolving each
-    /// name's compile-time constant value. Returns <see langword="null"/> if any property's name
-    /// can't be pinned down at compile time, if the call uses the leading collection-parameter
-    /// overload (whose keys are only known at run time), or if a params array was passed directly
-    /// rather than as individual tuple values.
+    /// generic-arity <c>logProperty1..6</c> arguments - resolving each name's compile-time constant
+    /// value. Returns <see langword="null"/> if any property's name can't be pinned down at compile
+    /// time, or if the call uses the leading collection-parameter overload (whose keys are only known
+    /// at run time).
     /// </summary>
     private static List<(string Name, ExpressionSyntax Value)>? CollectExplicitProperties(
         IMethodSymbol method, Dictionary<string, IArgumentOperation> argumentsByParameterName, SemanticModel semanticModel)
@@ -170,7 +169,7 @@ internal static class StructuredLoggerExtensionsInvocationMigration
             if (!argumentsByParameterName.TryGetValue(parameter.Name, out var argument))
                 continue;
 
-            if (!parameter.IsParams && parameter.Name == "logProperties")
+            if (parameter.Name == "logProperties")
             {
                 // The leading IReadOnlyCollection<KeyValuePair<string, object?>> overload - its
                 // keys are only known at run time, so it can never become a {Name} placeholder.
@@ -181,21 +180,6 @@ internal static class StructuredLoggerExtensionsInvocationMigration
             {
                 if (!TryAddTupleProperty(argument.Value.Syntax, properties, semanticModel))
                     return null;
-            }
-            else if (parameter.IsParams && (parameter.Name == "logProperties" || parameter.Name == "additionalLogProperties"))
-            {
-                if (argument.Value is not IArrayCreationOperation { Initializer: not null } arrayCreation)
-                {
-                    // An array was passed directly (not as individual params values) - too
-                    // ambiguous to safely decompose into named placeholders.
-                    return null;
-                }
-
-                foreach (var element in arrayCreation.Initializer.ElementValues)
-                {
-                    if (!TryAddTupleProperty(element.Syntax, properties, semanticModel))
-                        return null;
-                }
             }
         }
 

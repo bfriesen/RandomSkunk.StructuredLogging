@@ -109,27 +109,6 @@ public class StructuredLoggerExtensionsTests
     }
 
     [Fact]
-    public void ParamsOverload_SupportsMoreThanMaxArity()
-    {
-        // Seven properties exceeds the max generic arity (6), so this can only bind to the
-        // `params (string Name, object? Value)[]` overload.
-        var logger = new RecordingLogger();
-
-        logger.Debug(
-            $"msg",
-            ("P1", 1),
-            ("P2", "two"),
-            ("P3", 3.0),
-            ("P4", true),
-            ("P5", 'c'),
-            ("P6", 6L),
-            ("P7", 7));
-
-        logger.LastProperties.Should().HaveCount(7);
-        logger.LastProperties![6].Should().Be(new KeyValuePair<string, object?>("P7", 7));
-    }
-
-    [Fact]
     public void CollectionOverload_AcceptsListWithNoAdditionalProperties()
     {
         var logger = new RecordingLogger();

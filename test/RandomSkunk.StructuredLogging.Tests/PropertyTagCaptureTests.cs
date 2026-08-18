@@ -97,25 +97,6 @@ public class PropertyTagCaptureTests
     }
 
     [Fact]
-    public void TaggedFormat_CombinesWithParamsProperties()
-    {
-        var logger = new RecordingLogger();
-        var name = "Alice";
-        var extraProperties = new (string Name, object? Value)[]
-        {
-            ("RequestId", 7),
-            ("Region", "us-east"),
-        };
-
-        logger.Debug($"Hello, {name:<UserName>}!", extraProperties);
-
-        logger.LastProperties.Should().Equal(
-            new KeyValuePair<string, object?>("UserName", "Alice"),
-            new KeyValuePair<string, object?>("RequestId", 7),
-            new KeyValuePair<string, object?>("Region", "us-east"));
-    }
-
-    [Fact]
     public void TaggedFormat_CombinesWithCollectionProperties()
     {
         var logger = new RecordingLogger();
