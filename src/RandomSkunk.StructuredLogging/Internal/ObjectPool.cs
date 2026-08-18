@@ -17,6 +17,11 @@ namespace RandomSkunk.StructuredLogging;
 /// </param>
 internal sealed class ObjectPool<T>(Func<T> factory, Action<T> reset, Func<T, bool> shouldPool) where T : class
 {
+    // Concurrently in-flight operations is naturally bounded by available threads, so scaling the
+    // pool's capacity off ProcessorCount keeps roughly a few spare instances per thread without letting
+    // it grow unbounded under heavy concurrency.
+    private static readonly int MaxSize = Environment.ProcessorCount * 4;
+
     private readonly ConcurrentBag<T> _items = new();
 
     /// <summary>
@@ -25,14 +30,15 @@ internal sealed class ObjectPool<T>(Func<T> factory, Action<T> reset, Func<T, bo
     public T Rent() => _items.TryTake(out var item) ? item : factory();
 
     /// <summary>
-    /// Resets <paramref name="item"/> and, if <c>shouldPool</c> approves of it, returns it to the pool -
-    /// otherwise it's simply dropped, to be garbage collected normally.
+    /// Resets <paramref name="item"/> and, if the pool isn't already at capacity and <c>shouldPool</c>
+    /// approves of it, returns it to the pool - otherwise it's simply dropped, to be garbage collected
+    /// normally.
     /// </summary>
     public void Return(T item)
     {
         reset(item);
 
-        if (shouldPool(item))
+        if (_items.Count < MaxSize && shouldPool(item))
             _items.Add(item);
     }
 }
