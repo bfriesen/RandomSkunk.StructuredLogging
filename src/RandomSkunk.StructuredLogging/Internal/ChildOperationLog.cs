@@ -6,7 +6,9 @@ namespace RandomSkunk.StructuredLogging;
 /// A nested sub-operation returned by <see cref="IOperationLog.BeginSubOperation"/> (on either the root
 /// operation or another sub-operation). Never writes its own log entry - every member only ever appends
 /// to the shared <see cref="OperationLogState.Journal"/> or, for <see cref="SetException(Exception, bool)"/>
-/// with <c>propagateToRoot: true</c>, sets <see cref="OperationLogState.Exception"/>.
+/// with <c>propagateToRoot: true</c>, sets <see cref="OperationLogState.Exception"/>. Applies no
+/// synchronization of its own - see <see cref="SynchronizedSubOperationLog"/> for the decorator that wraps
+/// this type when an operation is begun with <c>threadSafe: true</c>.
 /// </summary>
 internal sealed class ChildOperationLog(OperationLogState state, string name) : ISubOperationLog
 {
@@ -14,8 +16,7 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
 
     public ISubOperationLog SetProperty<T>(string propertyName, T value)
     {
-        lock (state)
-            state.Properties.Add((propertyName, value));
+        state.Properties.Add((propertyName, value));
         return this;
     }
 
@@ -23,8 +24,7 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
 
     public ISubOperationLog Append(string text)
     {
-        lock (state)
-            state.AppendLine(text);
+        state.AppendLine(text);
         return this;
     }
 
@@ -32,11 +32,8 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
 
     public ISubOperationLog BeginSubOperation(string subOperationName)
     {
-        lock (state)
-        {
-            state.StartLine();
-            state.Journal.Append('`').Append(subOperationName).Append("` started.");
-        }
+        state.StartLine();
+        state.Journal.Append('`').Append(subOperationName).Append("` started.");
 
         return new ChildOperationLog(state, subOperationName);
     }
@@ -47,26 +44,19 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
 
     public ISubOperationLog SetException(Exception exception, bool propagateToRoot)
     {
-        lock (state)
-        {
-            state.StartLine();
-            state.Journal.Append('`').Append(name).Append("` failed:").Append('\n').Append(exception.ToString());
+        state.StartLine();
+        state.Journal.Append('`').Append(name).Append("` failed:").Append('\n').Append(exception.ToString());
 
-            if (propagateToRoot)
-                state.Exception = exception;
-        }
+        if (propagateToRoot)
+            state.Exception = exception;
 
         return this;
     }
 
     public ISubOperationLog SetResult<T>(T value)
     {
-        lock (state)
-        {
-            state.StartLine();
-            state.Journal.Append('`').Append(name).Append("` result: ").Append(Format(value));
-        }
-
+        state.StartLine();
+        state.Journal.Append('`').Append(name).Append("` result: ").Append(Format(value));
         return this;
     }
 
@@ -79,11 +69,8 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
 
         _disposed = true;
 
-        lock (state)
-        {
-            state.StartLine();
-            state.Journal.Append('`').Append(name).Append("` complete.");
-        }
+        state.StartLine();
+        state.Journal.Append('`').Append(name).Append("` complete.");
     }
 
     private static string Format<T>(T value) => value switch

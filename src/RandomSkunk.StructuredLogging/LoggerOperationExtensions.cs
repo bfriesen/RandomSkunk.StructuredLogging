@@ -17,9 +17,14 @@ public static class LoggerOperationExtensions
     /// <param name="logger">The logger the operation's single log entry will eventually be written to.</param>
     /// <param name="name">The operation's name, used in its journal lines and its final log message.</param>
     /// <param name="level">The severity level the operation's final log entry is written at. Defaults to <see cref="LogLevel.Information"/>.</param>
+    /// <param name="threadSafe">
+    /// <see langword="true"/> to make the returned <see cref="IOperationLog"/> (and every
+    /// <see cref="ISubOperationLog"/> begun from it) safe to use concurrently, e.g. from sub-operations run
+    /// via <c>Task.WhenAll</c>. By default an operation applies no synchronization of its own.
+    /// </param>
     /// <returns>An <see cref="IOperationLog"/> representing the operation.</returns>
-    public static IOperationLog BeginOperation(this ILogger logger, string name, LogLevel level = LogLevel.Information) =>
-        BeginOperation(logger, default, name, level);
+    public static IOperationLog BeginOperation(this ILogger logger, string name, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
+        BeginOperation(logger, default, name, level, threadSafe);
 
     /// <summary>
     /// Begins an operation: a journal of everything that happens during it, written as exactly one log
@@ -32,17 +37,27 @@ public static class LoggerOperationExtensions
     /// <param name="eventId">The event id associated with the operation's final log entry.</param>
     /// <param name="name">The operation's name, used in its journal lines and its final log message.</param>
     /// <param name="level">The severity level the operation's final log entry is written at. Defaults to <see cref="LogLevel.Information"/>.</param>
+    /// <param name="threadSafe">
+    /// <see langword="true"/> to make the returned <see cref="IOperationLog"/> (and every
+    /// <see cref="ISubOperationLog"/> begun from it) safe to use concurrently, e.g. from sub-operations run
+    /// via <c>Task.WhenAll</c>. By default an operation applies no synchronization of its own.
+    /// </param>
     /// <returns>An <see cref="IOperationLog"/> representing the operation.</returns>
-    public static IOperationLog BeginOperation(this ILogger logger, EventId eventId, string name, LogLevel level = LogLevel.Information)
+    public static IOperationLog BeginOperation(this ILogger logger, EventId eventId, string name, LogLevel level = LogLevel.Information, bool threadSafe = false)
     {
+        // A disabled operation is already a no-op, so there's nothing for threadSafe to protect -
+        // skip the SynchronizedOperationLog wrap entirely rather than allocating a decorator around it.
         if (!logger.IsEnabled(level))
             return NullOperationLog.Instance;
 
         var state = new OperationLogState(logger, level, eventId);
+        state.AppendLine("Operation started.");
 
-        lock (state)
-            state.AppendLine("Operation started.");
+        var operationLog = new RootOperationLog(state, name);
 
-        return new RootOperationLog(state, name);
+        if (threadSafe)
+            return new SynchronizedOperationLog(operationLog, state);
+
+        return operationLog;
     }
 }

@@ -7,9 +7,11 @@ namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
 /// Mutable state shared by a root <see cref="RootOperationLog"/> and every <see cref="ChildOperationLog"/>
-/// nested under it. A single instance backs the whole operation tree so that concurrent sub-operations
-/// (e.g. run via <c>Task.WhenAll</c>) can safely interleave journal lines and properties under one lock,
-/// and so the root can flush everything accumulated anywhere in the tree as exactly one log entry.
+/// nested under it. A single instance backs the whole operation tree so the root can flush everything
+/// accumulated anywhere in the tree as exactly one log entry. This type applies no synchronization of its
+/// own - concurrent use (e.g. sub-operations run via <c>Task.WhenAll</c>) is only safe when the operation
+/// was begun with <c>threadSafe: true</c> (see <see cref="LoggerOperationExtensions"/>), which wraps every
+/// <see cref="IOperationLog"/>/<see cref="ISubOperationLog"/> in a locking decorator instead.
 /// <see cref="Journal"/> and <see cref="Properties"/> are rented from <see cref="OperationLogPools"/> and
 /// returned there by <see cref="RootOperationLog.Dispose"/> - neither must be touched by any
 /// <see cref="ChildOperationLog"/> still in scope after the root operation has been disposed, since by
@@ -30,7 +32,7 @@ internal sealed class OperationLogState(ILogger logger, LogLevel level, EventId 
     public Exception? Exception;
 
     /// <summary>
-    /// Appends a timestamped line to the journal. Must be called while holding a lock on this instance.
+    /// Appends a timestamped line to the journal.
     /// </summary>
     public void AppendLine(string text)
     {
@@ -41,8 +43,7 @@ internal sealed class OperationLogState(ILogger logger, LogLevel level, EventId 
     /// <summary>
     /// Appends the "[elapsed] " timestamp prefix that starts every journal line, without allocating an
     /// intermediate string for either the timestamp or the line itself - callers append the rest of the
-    /// line's content directly to <see cref="Journal"/> afterward. Must be called while holding a lock on
-    /// this instance.
+    /// line's content directly to <see cref="Journal"/> afterward.
     /// </summary>
     public void StartLine()
     {

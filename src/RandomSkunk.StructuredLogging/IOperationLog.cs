@@ -2,7 +2,7 @@ namespace RandomSkunk.StructuredLogging;
 
 /// <summary>
 /// Represents an in-progress operation being journaled by
-/// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel)"/>.
+/// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>.
 /// Disposing the root <see cref="IOperationLog"/> writes exactly one log entry summarizing everything that
 /// happened during the operation, including any nested <see cref="ISubOperationLog"/> activity.
 /// </summary>
