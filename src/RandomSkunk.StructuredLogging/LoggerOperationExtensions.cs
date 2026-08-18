@@ -53,7 +53,6 @@ public static class LoggerOperationExtensions
             return NullOperationLog.Instance;
 
         var state = new OperationLogState(logger, level, eventId);
-        state.AppendLine("Operation started.");
 
         IOperationLog operationLog = new RootOperationLog(state, name);
 

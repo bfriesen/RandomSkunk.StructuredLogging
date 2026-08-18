@@ -96,7 +96,21 @@ public class OperationLoggingTests
 
         var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
 
-        journal.Should().Contain("Operation started.");
+        journal.Should().StartWith("Operation started at ");
+    }
+
+    [Fact]
+    public void Journal_EndsWithOperationCompletedLine()
+    {
+        var logger = new RecordingLogger();
+
+        using (logger.BeginOperation("Name"))
+        {
+        }
+
+        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+
+        journal.Should().MatchRegex(@"Operation completed in \d+\.\d{3} seconds\.$");
     }
 
     [Fact]

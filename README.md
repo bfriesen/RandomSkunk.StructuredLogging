@@ -244,7 +244,7 @@ using (var payment = op.BeginSubOperation("ChargePayment"))
     }
     catch (Exception ex)
     {
-        payment.SetException(ex, propagateToRoot: true);
+        payment.SetException(ex, recordEverywhere: true);
         throw;
     }
 }
@@ -258,11 +258,12 @@ Disposing `op` writes a single log entry whose structured properties include `Op
 and sub-operation start/result/failure/complete line, each timestamped with elapsed seconds:
 
 ```
-[0.001] Operation started.
+Operation started at 2024-01-01T00:00:00.0000000+00:00.
 [0.002] Validating order 42
 [0.003] `ChargePayment` started.
 [0.041] `ChargePayment` result: Receipt { Id = ..., Amount = 99.00 }
 [0.041] `ChargePayment` complete.
+[0.042] Operation completed in 0.042 seconds.
 ```
 
 If the logger's level is disabled, `BeginOperation` returns a no-op that allocates nothing - no
@@ -283,8 +284,8 @@ need to guard the call yourself.
 - `IOperationLog.BeginSubOperation(name)` - starts a nested `ISubOperationLog`; disposing it
   appends a "complete" line to the parent's journal. Sub-operations never write their own log
   entry - only the root operation does, once, when *it's* disposed.
-- `IOperationLog.SetException(exception)` / `ISubOperationLog.SetException(exception, propagateToRoot)` -
-  records the operation's exception. On a sub-operation, `propagateToRoot: true` also sets it as
+- `IOperationLog.SetException(exception)` / `ISubOperationLog.SetException(exception, recordEverywhere)` -
+  records the operation's exception. On a sub-operation, `recordEverywhere: true` also sets it as
   the *root* operation's exception (the one that ends up on the final log entry); `false` records
   it only in the sub-operation's own journal line.
 - `IOperationLog.SetResult<T>(value)` - on the root, sets the `Operation.Result` structured

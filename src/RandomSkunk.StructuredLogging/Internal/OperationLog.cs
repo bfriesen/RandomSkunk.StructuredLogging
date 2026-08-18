@@ -14,7 +14,8 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
 {
     protected readonly OperationLogState _state = state;
     protected readonly string _operationName = operationName;
-    protected int _disposed;
+    
+    private int _disposed;
 
     public IOperationLog SetProperty<T>(string propertyName, T value)
     {
@@ -24,30 +25,36 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
 
     public IOperationLog Append(string text)
     {
-        _state.AppendLine(text);
+        _state.StartLine().Append(text);
         return (TSelf)this;
     }
 
     public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
-        _state.StartLine();
-        _state.Journal.Append('`').Append(valueName).Append("`: ").Append(ValueFormatting.Format(value));
+        _state.StartLine().Append($"`{valueName}`: {ValueFormatting.Format(value)}");
         return (TSelf)this;
     }
 
     public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
-        _state.StartLine();
-        _state.Journal.Append('`').Append(valueName).Append("`: ");
-        ValueFormatting.AppendJson(_state.Journal, value);
+        var journal = _state.StartLine().Append($"`{valueName}`: ");
+        ValueFormatting.AppendJson(journal, value);
         return (TSelf)this;
     }
 
     public IOperationLog BeginSubOperation(string subOperationName)
     {
-        _state.StartLine();
-        _state.Journal.Append('`').Append(subOperationName).Append("` started.");
-
+        _state.StartLine().Append($"`{subOperationName}` started.");
         return new ChildOperationLog(_state, subOperationName);
     }
+
+    public void Dispose()
+    {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+            return;
+
+        DisposeCore();
+    }
+
+    protected abstract void DisposeCore();
 }

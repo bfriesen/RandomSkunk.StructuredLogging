@@ -12,47 +12,53 @@ namespace RandomSkunk.StructuredLogging;
 /// own - concurrent use (e.g. sub-operations run via <c>Task.WhenAll</c>) is only safe when the operation
 /// was begun with <c>threadSafe: true</c> (see <see cref="LoggerOperationExtensions"/>), which wraps every
 /// <see cref="IOperationLog"/> (root or sub-operation) in a locking decorator instead.
-/// <see cref="Journal"/> and <see cref="Properties"/> are rented from <see cref="OperationLogPools"/> and
-/// returned there by <see cref="RootOperationLog.Dispose"/> - neither must be touched by any
+/// <see cref="_journal"/> and <see cref="Properties"/> are rented from <see cref="OperationLogPools"/> and
+/// returned there by <see cref="RootOperationLog.DisposeCore"/> - neither must be touched by any
 /// <see cref="ChildOperationLog"/> still in scope after the root operation has been disposed, since by
 /// then they may have already been handed out to a different, unrelated operation.
 /// </summary>
-internal sealed class OperationLogState(ILogger logger, LogLevel level, EventId eventId)
+internal sealed class OperationLogState
 {
-    public readonly ILogger Logger = logger;
-    public readonly LogLevel Level = level;
-    public readonly EventId EventId = eventId;
+    public readonly ILogger Logger;
+    public readonly LogLevel Level;
+    public readonly EventId EventId;
     public readonly DateTimeOffset StartTime = DateTimeOffset.UtcNow;
     public readonly Stopwatch Stopwatch = Stopwatch.StartNew();
-    public readonly StringBuilder Journal = OperationLogPools.Journals.Rent();
     public readonly List<(string Name, object? Value)> Properties = OperationLogPools.PropertyLists.Rent();
+    private readonly StringBuilder _journal = OperationLogPools.Journals.Rent();
 
     public object? Result;
     public bool HasResult;
     public Exception? Exception;
 
-    /// <summary>
-    /// Appends a timestamped line to the journal.
-    /// </summary>
-    public void AppendLine(string text)
+    public OperationLogState(ILogger logger, LogLevel level, EventId eventId)
     {
-        StartLine();
-        Journal.Append(text);
+        Logger = logger;
+        Level = level;
+        EventId = eventId;
+
+        _journal.Append($"Operation started at {StartTime:o}.");
     }
 
     /// <summary>
     /// Appends the "[elapsed] " timestamp prefix that starts every journal line, without allocating an
     /// intermediate string for either the timestamp or the line itself - callers append the rest of the
-    /// line's content directly to <see cref="Journal"/> afterward.
+    /// line's content directly to <see cref="_journal"/> afterward.
     /// </summary>
-    public void StartLine()
+    /// <returns>The <see cref="StringBuilder"/> to append the rest of the line to.</returns>
+    public StringBuilder StartLine()
     {
-        if (Journal.Length > 0)
-            Journal.Append('\n');
+        _journal.Append('\n');
 
         Span<char> elapsedSeconds = stackalloc char[32];
         Stopwatch.Elapsed.TotalSeconds.TryFormat(elapsedSeconds, out int written, "F3", CultureInfo.InvariantCulture);
 
-        Journal.Append('[').Append(elapsedSeconds[..written]).Append("] ");
+        return _journal.Append($"[{elapsedSeconds[..written]}] ");
+    }
+
+    internal void ReturnToPools()
+    {
+        OperationLogPools.Journals.Return(_journal);
+        OperationLogPools.PropertyLists.Return(Properties);
     }
 }
