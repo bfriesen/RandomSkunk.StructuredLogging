@@ -29,6 +29,10 @@ internal sealed class NullOperationLog : ISubOperationLog
 
     IOperationLog IOperationLog.AppendValue<T>(T value, string? valueName) => this;
 
+    public ISubOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
+
+    IOperationLog IOperationLog.AppendJson<T>(T value, string? valueName) => this;
+
     public ISubOperationLog BeginSubOperation(string name) => this;
 
     public ISubOperationLog SetException(Exception exception) => this;

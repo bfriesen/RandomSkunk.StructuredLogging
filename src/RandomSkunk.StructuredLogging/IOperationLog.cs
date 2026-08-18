@@ -48,6 +48,21 @@ public interface IOperationLog : IDisposable
     IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
 
     /// <summary>
+    /// Appends a line of free text to the operation's journal in the form <c>`valueName`: value</c>, like
+    /// <see cref="AppendValue{T}"/>, but rendering <paramref name="value"/> as indented JSON (via
+    /// <see cref="System.Text.Json.JsonSerializer"/>) instead of via
+    /// <see cref="IFormattable"/>/<see cref="object.ToString"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the value.</typeparam>
+    /// <param name="value">The value to append.</param>
+    /// <param name="valueName">
+    /// The name to label the value with. Defaults to the source text of the <paramref name="value"/>
+    /// argument expression, via <see cref="CallerArgumentExpressionAttribute"/>.
+    /// </param>
+    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
+
+    /// <summary>
     /// Begins a nested sub-operation. A "started" line is immediately appended to the journal, and a
     /// "complete" line is appended when the returned <see cref="ISubOperationLog"/> is disposed. Unlike
     /// the root operation, a sub-operation never writes its own log entry - it only ever contributes to

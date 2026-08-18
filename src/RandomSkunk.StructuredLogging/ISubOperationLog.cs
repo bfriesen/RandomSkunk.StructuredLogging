@@ -39,6 +39,19 @@ public interface ISubOperationLog : IOperationLog
     new ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
 
     /// <summary>
+    /// Appends a line of free text to the operation's journal in the form <c>`valueName`: value</c>,
+    /// rendering <paramref name="value"/> as indented JSON. See <see cref="IOperationLog.AppendJson{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the value.</typeparam>
+    /// <param name="value">The value to append.</param>
+    /// <param name="valueName">
+    /// The name to label the value with. Defaults to the source text of the <paramref name="value"/>
+    /// argument expression, via <see cref="CallerArgumentExpressionAttribute"/>.
+    /// </param>
+    /// <returns>This <see cref="ISubOperationLog"/>, so calls can be chained.</returns>
+    new ISubOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
+
+    /// <summary>
     /// Records the exception for this sub-operation, appending a "failed" line to the journal. See
     /// <see cref="IOperationLog.SetException(Exception)"/>.
     /// </summary>

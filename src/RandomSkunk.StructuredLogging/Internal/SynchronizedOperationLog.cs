@@ -35,6 +35,13 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
         return this;
     }
 
+    public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        lock (gate)
+            inner.AppendJson(value, valueName);
+        return this;
+    }
+
     public ISubOperationLog BeginSubOperation(string name)
     {
         ISubOperationLog subOperation;

@@ -47,4 +47,26 @@ public static class OperationLogExtensions
         log.AppendValue(value, valueName);
         return value;
     }
+
+    /// <summary>
+    /// Appends <paramref name="value"/> to the journal of the operation <paramref name="log"/> belongs to,
+    /// in the form <c>`valueName`: value</c> with <paramref name="value"/> rendered as indented JSON, then
+    /// returns <paramref name="value"/> unchanged - so this can be chained directly onto an expression, e.g.
+    /// <c>var order = FetchOrder(id).OperationLogAppendJson(log);</c>. See
+    /// <see cref="IOperationLog.AppendJson{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the value.</typeparam>
+    /// <param name="value">The value to append.</param>
+    /// <param name="log">The operation (or sub-operation) to append the value to.</param>
+    /// <param name="valueName">
+    /// The name to label the value with. Defaults to the source text of the <paramref name="value"/>
+    /// argument expression, via <see cref="CallerArgumentExpressionAttribute"/>.
+    /// </param>
+    /// <returns><paramref name="value"/>, unchanged.</returns>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static T OperationLogAppendJson<T>(this T value, IOperationLog log, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        log.AppendJson(value, valueName);
+        return value;
+    }
 }

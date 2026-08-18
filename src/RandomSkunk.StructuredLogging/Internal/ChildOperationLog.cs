@@ -39,6 +39,16 @@ internal sealed class ChildOperationLog(OperationLogState state, string name) : 
 
     IOperationLog IOperationLog.AppendValue<T>(T value, string? valueName) => AppendValue(value, valueName);
 
+    public ISubOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        state.StartLine();
+        state.Journal.Append('`').Append(valueName).Append("`: ");
+        ValueFormatting.AppendJson(state.Journal, value);
+        return this;
+    }
+
+    IOperationLog IOperationLog.AppendJson<T>(T value, string? valueName) => AppendJson(value, valueName);
+
     public ISubOperationLog BeginSubOperation(string subOperationName)
     {
         state.StartLine();

@@ -33,6 +33,14 @@ internal sealed class RootOperationLog(OperationLogState state, string name) : I
         return this;
     }
 
+    public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        state.StartLine();
+        state.Journal.Append('`').Append(valueName).Append("`: ");
+        ValueFormatting.AppendJson(state.Journal, value);
+        return this;
+    }
+
     public ISubOperationLog BeginSubOperation(string subOperationName)
     {
         state.StartLine();
