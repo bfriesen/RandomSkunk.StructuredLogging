@@ -222,6 +222,113 @@ warnings.
 | Move `'PropertyName'` into the message | `RSSL0004` | Takes a trailing `("PropertyName", value)` tuple argument and inlines it into the message as a `{value:<PropertyName>}` interpolation hole, removing the separate tuple argument. |
 | Use the equivalent `Microsoft.Extensions.Logging` extension method | `RSSL0005` | The inverse of the `RSSL0001` fix: converts a `RandomSkunk.StructuredLogging` call back to the equivalent `Microsoft.Extensions.Logging` call, described in the `RSSL0005` row above. |
 
+## Operation logging
+
+Beyond individual log calls, the library also has a canonical-log-line-style feature for
+journaling everything that happens during an operation and flushing it as exactly **one** log
+entry when the operation completes — instead of one log line per step, scattered across the
+timeline and hard to correlate.
+
+```csharp
+using var op = logger.BeginOperation("FulfillOrder");
+
+op.SetProperty("OrderId", orderId);
+op.Append($"Validating order {orderId}");
+
+using (var payment = op.BeginSubOperation("ChargePayment"))
+{
+    try
+    {
+        var receipt = await paymentGateway.ChargeAsync(orderId);
+        payment.SetResult(receipt);
+    }
+    catch (Exception ex)
+    {
+        payment.SetException(ex, propagateToRoot: true);
+        throw;
+    }
+}
+
+return order.OperationLogSetResult(op);
+```
+
+Disposing `op` writes a single log entry whose structured properties include `Operation.StartTime`,
+`Operation.DurationMs`, `Operation.Result` (if set), any properties added via `SetProperty`, and an
+`Operation.Log` property holding the full journal - every `Append`/`AppendValue`/`AppendJson` call
+and sub-operation start/result/failure/complete line, each timestamped with elapsed seconds:
+
+```
+[0.001] Operation started.
+[0.002] Validating order 42
+[0.003] `ChargePayment` started.
+[0.041] `ChargePayment` result: Receipt { Id = ..., Amount = 99.00 }
+[0.041] `ChargePayment` complete.
+```
+
+If the logger's level is disabled, `BeginOperation` returns a no-op that allocates nothing - no
+need to guard the call yourself.
+
+### API at a glance
+
+- `logger.BeginOperation(name)` / `logger.BeginOperation(eventId, name)` - both take optional
+  `level` (default `LogLevel.Information`) and `threadSafe` (default `false`) parameters, and
+  return an `IOperationLog`.
+- `IOperationLog.SetProperty<T>(name, value)` - adds a structured property to the final entry.
+- `IOperationLog.Append(text)` - appends a free-text line to the journal.
+- `IOperationLog.AppendValue<T>(value, [valueName])` - appends `` `valueName`: value ``, where
+  `valueName` defaults to the value expression's source text (via `CallerArgumentExpression`), so
+  `op.AppendValue(order.Total)` appends `` `order.Total`: 42.50 `` with no name to spell out.
+- `IOperationLog.AppendJson<T>(value, [valueName])` - same as `AppendValue`, but `value` is
+  rendered as indented JSON instead of via `ToString()`/`IFormattable`.
+- `IOperationLog.BeginSubOperation(name)` - starts a nested `ISubOperationLog`; disposing it
+  appends a "complete" line to the parent's journal. Sub-operations never write their own log
+  entry - only the root operation does, once, when *it's* disposed.
+- `IOperationLog.SetException(exception)` / `ISubOperationLog.SetException(exception, propagateToRoot)` -
+  records the operation's exception. On a sub-operation, `propagateToRoot: true` also sets it as
+  the *root* operation's exception (the one that ends up on the final log entry); `false` records
+  it only in the sub-operation's own journal line.
+- `IOperationLog.SetResult<T>(value)` - on the root, sets the `Operation.Result` structured
+  property; on a sub-operation, appends a result line to the journal instead. Typically called via
+  the fluent `value.OperationLogSetResult(log)` extension method so it can be chained directly onto
+  a `return` expression.
+- `value.OperationLogAppendValue(log, [valueName])` / `value.OperationLogAppendJson(log, [valueName])` -
+  fluent equivalents of `AppendValue`/`AppendJson` that return `value` unchanged, for chaining
+  inline into an expression, e.g. `var total = order.Total.OperationLogAppendValue(op);`.
+
+Every method returns the same log (or, for `ISubOperationLog`, a covariant `ISubOperationLog`), so
+calls can be chained: `op.SetProperty("OrderId", orderId).Append("Order validated");`.
+
+### Thread safety
+
+Operation logs are **not thread-safe by default** - if a single operation's sub-operations run
+concurrently (e.g. via `Task.WhenAll`), pass `threadSafe: true` to `BeginOperation` to wrap the
+entire tree (root and every nested sub-operation) in a decorator that synchronizes on one shared
+lock:
+
+```csharp
+using var op = logger.BeginOperation("ProcessBatch", threadSafe: true);
+
+await Task.WhenAll(items.Select(async item =>
+{
+    using var sub = op.BeginSubOperation($"Item {item.Id}");
+    await ProcessAsync(item);
+}));
+```
+
+### Mocking in tests
+
+An extension method can't be mocked, so for tests that need to verify what got journaled without a
+real `ILogger`, inject `IOperationLogger<TCategoryName>` instead of calling
+`ILogger.BeginOperation` directly - it exposes the same `BeginOperation` overloads as instance
+members. Register the built-in implementation (which just forwards to the extension methods) with:
+
+```csharp
+services.AddOperationLogger();
+```
+
+and constructor-inject `IOperationLogger<MyService>` in place of `ILogger<MyService>` wherever code
+begins operations.
+
 ## License
 
 [MIT](LICENSE)
