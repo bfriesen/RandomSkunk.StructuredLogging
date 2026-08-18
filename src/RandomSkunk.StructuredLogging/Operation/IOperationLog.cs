@@ -32,6 +32,19 @@ public interface IOperationLog : IDisposable
     IOperationLog SetException(Exception exception, bool recordEverywhere = false);
 
     /// <summary>
+    /// Adds a structured property to the operation's final log entry. Unlike the built-in
+    /// <c>Operation.*</c> properties (<c>Operation.StartTime</c>, <c>Operation.DurationMs</c>,
+    /// <c>Operation.Journal</c>, <c>Operation.Result</c>), properties set here are added unprefixed. Can be
+    /// called on the root operation or any nested
+    /// sub-operation; either way the property is added to the one entry that eventually gets flushed.
+    /// </summary>
+    /// <typeparam name="T">The type of the property value.</typeparam>
+    /// <param name="name">The property name.</param>
+    /// <param name="value">The property value.</param>
+    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    IOperationLog AddProperty<T>(string name, T value);
+
+    /// <summary>
     /// Records <paramref name="value"/> as the result of this operation. On the root operation, this sets
     /// the <c>Operation.Result</c> structured property of the final log entry. On a sub-operation, this
     /// instead appends a "`Name` result: ..." line (rendered via
@@ -44,19 +57,6 @@ public interface IOperationLog : IDisposable
     /// <param name="value">The result to record.</param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
     IOperationLog SetResult<T>(T value);
-
-    /// <summary>
-    /// Adds a structured property to the operation's final log entry. Unlike the built-in
-    /// <c>Operation.*</c> properties (<c>Operation.StartTime</c>, <c>Operation.DurationMs</c>,
-    /// <c>Operation.Journal</c>, <c>Operation.Result</c>), properties set here are added unprefixed. Can be
-    /// called on the root operation or any nested
-    /// sub-operation; either way the property is added to the one entry that eventually gets flushed.
-    /// </summary>
-    /// <typeparam name="T">The type of the property value.</typeparam>
-    /// <param name="name">The property name.</param>
-    /// <param name="value">The property value.</param>
-    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
-    IOperationLog SetProperty<T>(string name, T value);
 
     /// <summary>
     /// Appends a line of free text to the operation's journal (the <c>Operation.Journal</c> property of the

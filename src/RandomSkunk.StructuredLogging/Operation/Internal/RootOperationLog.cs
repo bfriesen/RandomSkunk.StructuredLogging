@@ -41,19 +41,18 @@ internal sealed class RootOperationLog(OperationLogState state, string name)
             .Append(" seconds.")
             .ToString();
 
-        var i = 0;
-        var logProperties = new KeyValuePair<string, object?>[_state.Properties.Count + 3 + (_state.HasResult ? 1 : 0)];
-        logProperties[i++] = new("Operation.StartTime", _state.StartTime);
-        logProperties[i++] = new("Operation.DurationMs", (int)Math.Round(_state.Stopwatch.Elapsed.TotalMilliseconds));
-        logProperties[i++] = new("Operation.Journal", journal);
-
         if (_state.HasResult)
-            logProperties[i++] = new("Operation.Result", _state.Result);
+            _state.AddProperty("Operation.Result", _state.Result);
 
-        foreach (var (propertyName, propertyValue) in _state.Properties)
-            logProperties[i++] = new(propertyName, propertyValue);
-
-        _state.ReturnToPools();
-        _state.Logger.Write(logProperties, _state.Level, _state.EventId, _state.Exception, $"Operation complete: {_operationName}");
+        _state.ReturnJournalToPool();
+        _state.Logger.Write(
+            _state.Properties ?? [],
+            _state.Level,
+            _state.EventId,
+            _state.Exception,
+            $"Operation complete: {_operationName:<Operation.Name>}",
+            ("Operation.Journal", journal),
+            ("Operation.StartTime", _state.StartTime),
+            ("Operation.DurationMs", (int)Math.Round(_state.Stopwatch.Elapsed.TotalMilliseconds)));
     }
 }

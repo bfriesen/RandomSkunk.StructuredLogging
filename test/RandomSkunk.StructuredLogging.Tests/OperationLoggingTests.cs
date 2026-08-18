@@ -15,7 +15,7 @@ public class OperationLoggingTests
         using (var log = logger.BeginOperation("Test"))
         {
             log
-                .SetProperty("x", 1)
+                .AddProperty("x", 1)
                 .Append("hi")
                 .AppendValue(5)
                 .AppendJson(new { A = 1 })
@@ -23,7 +23,7 @@ public class OperationLoggingTests
                 .SetException(new InvalidOperationException());
 
             using var subLog = log.BeginSubOperation("Sub");
-            subLog.SetProperty("y", 2).SetResult(3).SetException(new InvalidOperationException());
+            subLog.AddProperty("y", 2).SetResult(3).SetException(new InvalidOperationException());
         }
 
         logger.LogCallCount.Should().Be(0);
@@ -81,6 +81,7 @@ public class OperationLoggingTests
 
         var properties = logger.LastProperties!.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
+        properties.Should().ContainKey("Operation.Name").WhoseValue.Should().Be("Name");
         properties.Should().ContainKey("Operation.StartTime").WhoseValue.Should().BeOfType<DateTimeOffset>();
         properties.Should().ContainKey("Operation.DurationMs").WhoseValue.Should().BeOfType<int>();
         properties.Should().ContainKey("Operation.Journal").WhoseValue.Should().BeOfType<string>();
@@ -141,12 +142,12 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void SetProperty_AddsUnprefixedStructuredProperty()
+    public void AddProperty_AddsUnprefixedStructuredProperty()
     {
         var logger = new RecordingLogger();
 
         using (var log = logger.BeginOperation("Name"))
-            log.SetProperty("UserId", 123);
+            log.AddProperty("UserId", 123);
 
         logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("UserId", 123));
     }
@@ -270,14 +271,14 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void SubOperation_SetProperty_AddsToRootFinalEntry()
+    public void SubOperation_AddProperty_AddsToRootFinalEntry()
     {
         var logger = new RecordingLogger();
 
         using (var log = logger.BeginOperation("Name"))
         {
             using var subLog = log.BeginSubOperation("Fetch");
-            subLog.SetProperty("Count", 5);
+            subLog.AddProperty("Count", 5);
         }
 
         logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Count", 5));
@@ -389,7 +390,7 @@ public class OperationLoggingTests
             var tasks = Enumerable.Range(0, 20).Select(i => Task.Run(() =>
             {
                 using var subLog = log.BeginSubOperation($"Sub{i}");
-                subLog.SetProperty($"P{i}", i);
+                subLog.AddProperty($"P{i}", i);
                 subLog.AppendValue(i, "value");
             }));
 

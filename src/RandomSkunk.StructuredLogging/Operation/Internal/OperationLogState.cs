@@ -12,8 +12,8 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// own - concurrent use (e.g. sub-operations run via <c>Task.WhenAll</c>) is only safe when the operation
 /// was begun with <c>threadSafe: true</c> (see <see cref="LoggerOperationExtensions"/>), which wraps every
 /// <see cref="IOperationLog"/> (root or sub-operation) in a locking decorator instead.
-/// <see cref="_journal"/> and <see cref="Properties"/> are rented from <see cref="OperationLogPools"/> and
-/// returned there by <see cref="RootOperationLog.DisposeCore"/> - neither must be touched by any
+/// <see cref="_journal"/> is rented from <see cref="OperationLogPools"/> and returned there by
+/// <see cref="RootOperationLog.DisposeCore"/> - neither must be touched by any
 /// <see cref="ChildOperationLog"/> still in scope after the root operation has been disposed, since by
 /// then they may have already been handed out to a different, unrelated operation.
 /// </summary>
@@ -24,7 +24,7 @@ internal sealed class OperationLogState
     public readonly EventId EventId;
     public readonly DateTimeOffset StartTime;
     public readonly Stopwatch Stopwatch;
-    public readonly List<(string Name, object? Value)> Properties = OperationLogPools.PropertyLists.Rent();
+    public List<KeyValuePair<string, object?>>? Properties;
     private readonly StringBuilder _journal = OperationLogPools.Journals.Rent();
 
     public object? Result;
@@ -42,6 +42,9 @@ internal sealed class OperationLogState
         Stopwatch = Stopwatch.StartNew();
     }
 
+    public void AddProperty(string propertyName, object? value) =>
+        (Properties ??= new(capacity: 8)).Add(new(propertyName, value));
+
     /// <summary>
     /// Appends a newline followed by the "[elapsed] " timestamp prefix that starts every journal line,
     /// without allocating an intermediate string for either the timestamp or the line itself - callers
@@ -55,10 +58,9 @@ internal sealed class OperationLogState
         return AppendTimestamp(Stopwatch.Elapsed);
     }
 
-    public void ReturnToPools()
+    public void ReturnJournalToPool()
     {
         OperationLogPools.Journals.Return(_journal);
-        OperationLogPools.PropertyLists.Return(Properties);
     }
 
     private StringBuilder AppendTimestamp(TimeSpan elapsed) =>

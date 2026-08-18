@@ -17,9 +17,9 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
     
     private int _disposed;
 
-    public IOperationLog SetProperty<T>(string propertyName, T value)
+    public IOperationLog AddProperty<T>(string propertyName, T value)
     {
-        _state.Properties.Add((propertyName, value));
+        _state.AddProperty(propertyName, value);
         return (TSelf)this;
     }
 

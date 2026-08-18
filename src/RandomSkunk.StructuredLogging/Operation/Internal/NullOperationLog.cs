@@ -19,9 +19,9 @@ internal sealed class NullOperationLog : IOperationLog
 
     public IOperationLog SetException(Exception exception, bool recordEverywhere = false) => this;
 
-    public IOperationLog SetResult<T>(T value) => this;
+    public IOperationLog AddProperty<T>(string name, T value) => this;
 
-    public IOperationLog SetProperty<T>(string name, T value) => this;
+    public IOperationLog SetResult<T>(T value) => this;
 
     public IOperationLog Append(string text) => this;
 

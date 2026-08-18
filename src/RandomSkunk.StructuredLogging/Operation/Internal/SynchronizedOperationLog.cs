@@ -21,17 +21,17 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
         return this;
     }
 
+    public IOperationLog AddProperty<T>(string name, T value)
+    {
+        lock (gate)
+            inner.AddProperty(name, value);
+        return this;
+    }
+
     public IOperationLog SetResult<T>(T value)
     {
         lock (gate)
             inner.SetResult(value);
-        return this;
-    }
-
-    public IOperationLog SetProperty<T>(string name, T value)
-    {
-        lock (gate)
-            inner.SetProperty(name, value);
         return this;
     }
 

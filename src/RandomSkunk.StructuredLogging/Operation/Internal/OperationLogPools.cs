@@ -4,7 +4,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// The pools <see cref="OperationLogState"/> rents its journal <see cref="StringBuilder"/> and property
-/// list from (returned by <see cref="OperationLogState.ReturnToPools"/> once an operation's single log entry has
+/// list from (returned by <see cref="OperationLogState.ReturnJournalToPool"/> once an operation's single log entry has
 /// been flushed), and <see cref="ValueFormatting.AppendJson{T}"/> rents its scratch
 /// <see cref="PooledJsonWriter"/> from.
 /// </summary>
@@ -17,13 +17,6 @@ internal static class OperationLogPools
         () => new StringBuilder(),
         sb => sb.Clear(),
         sb => sb.Capacity <= 4096);
-
-    // Most operations set only a handful of properties, so cap what's retained to avoid keeping an
-    // oversized backing array around from one property-heavy operation.
-    public static readonly ObjectPool<List<(string Name, object? Value)>> PropertyLists = new(
-        () => new(),
-        list => list.Clear(),
-        list => list.Capacity <= 32);
 
     // Same reasoning as Journals: don't retain the backing byte buffer from one unusually large
     // AppendJson call.

@@ -34,7 +34,7 @@ public static class OperationLogExtensions
     /// to the operation <paramref name="log"/> belongs to, then returns <paramref name="propertyValue"/>
     /// unchanged - so this can be chained directly onto an expression, e.g.
     /// <c>var orderId = order.Id.RecordPropertyTo(log, "OrderId");</c>. See
-    /// <see cref="IOperationLog.SetProperty{T}"/>.
+    /// <see cref="IOperationLog.AddProperty{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of the property value.</typeparam>
     /// <param name="propertyValue">The property value to record.</param>
@@ -46,7 +46,7 @@ public static class OperationLogExtensions
     {
         ArgumentNullException.ThrowIfNull(log);
 
-        log.SetProperty(propertyName, propertyValue);
+        log.AddProperty(propertyName, propertyValue);
         return propertyValue;
     }
 
