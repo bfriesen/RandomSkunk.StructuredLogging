@@ -75,7 +75,7 @@ internal sealed class RootOperationLog(OperationLogState state, string name) : I
         var logProperties = new KeyValuePair<string, object?>[state.Properties.Count + 3 + (state.HasResult ? 1 : 0)];
         logProperties[i++] = new("Operation.StartTime", state.StartTime);
         logProperties[i++] = new("Operation.DurationMs", state.Stopwatch.Elapsed.TotalMilliseconds);
-        logProperties[i++] = new("Operation.Log", state.Journal.ToString());
+        logProperties[i++] = new("Operation.Journal", state.Journal.ToString());
 
         if (state.HasResult)
             logProperties[i++] = new("Operation.Result", state.Result);

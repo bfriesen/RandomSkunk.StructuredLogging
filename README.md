@@ -254,7 +254,7 @@ return order.RecordResultTo(op);
 
 Disposing `op` writes a single log entry whose structured properties include `Operation.StartTime`,
 `Operation.DurationMs`, `Operation.Result` (if set), any properties added via `SetProperty`, and an
-`Operation.Log` property holding the full journal - every `Append`/`AppendValue`/`AppendJson` call
+`Operation.Journal` property holding the full journal - every `Append`/`AppendValue`/`AppendJson` call
 and sub-operation start/result/failure/complete line, each timestamped with elapsed seconds:
 
 ```

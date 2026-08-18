@@ -56,7 +56,7 @@ public class OperationLogExtensionsTests
             value = 7.RecordValueTo(operation, "Count");
 
         value.Should().Be(7);
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Log").Value!;
+        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
         log.Should().Contain("`Count`: 7");
     }
 
@@ -69,7 +69,7 @@ public class OperationLogExtensionsTests
         using (var operation = logger.BeginOperation("Name"))
             order.Total.RecordValueTo(operation);
 
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Log").Value!;
+        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
         log.Should().Contain("`order.Total`: 42.5");
     }
 
@@ -91,7 +91,7 @@ public class OperationLogExtensionsTests
             value = new { A = 1 }.RecordJsonTo(operation, "Payload");
 
         value.Should().BeEquivalentTo(new { A = 1 });
-        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Log").Value!;
+        var log = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
         log.Should().Contain("`Payload`:");
         log.Should().Contain("\"A\": 1");
     }
