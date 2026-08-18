@@ -21,6 +21,8 @@ public static class OperationLoggerServiceCollectionExtensions
     /// <returns><paramref name="services"/>, so calls can be chained.</returns>
     public static IServiceCollection AddOperationLogger(this IServiceCollection services)
     {
+        ArgumentNullException.ThrowIfNull(services);
+
         services.Add(ServiceDescriptor.Singleton(typeof(IOperationLogger<>), typeof(OperationLogger<>)));
 
         return services;

@@ -45,6 +45,8 @@ public static class LoggerOperationExtensions
     /// <returns>An <see cref="IOperationLog"/> representing the operation.</returns>
     public static IOperationLog BeginOperation(this ILogger logger, EventId eventId, string name, LogLevel level = LogLevel.Information, bool threadSafe = false)
     {
+        ArgumentNullException.ThrowIfNull(logger);
+
         // A disabled operation is already a no-op, so there's nothing for threadSafe to protect -
         // skip the SynchronizedOperationLog wrap entirely rather than allocating a decorator around it.
         if (!logger.IsEnabled(level))

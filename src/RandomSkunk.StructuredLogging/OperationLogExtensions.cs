@@ -23,6 +23,8 @@ public static class OperationLogExtensions
     [return: NotNullIfNotNull(nameof(result))]
     public static T RecordResultTo<T>(this T result, IOperationLog log)
     {
+        ArgumentNullException.ThrowIfNull(log);
+
         log.SetResult(result);
         return result;
     }
@@ -44,6 +46,8 @@ public static class OperationLogExtensions
     [return: NotNullIfNotNull(nameof(value))]
     public static T RecordValueTo<T>(this T value, IOperationLog log, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
+        ArgumentNullException.ThrowIfNull(log);
+
         log.AppendValue(value, valueName);
         return value;
     }
@@ -66,6 +70,8 @@ public static class OperationLogExtensions
     [return: NotNullIfNotNull(nameof(value))]
     public static T RecordJsonTo<T>(this T value, IOperationLog log, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
+        ArgumentNullException.ThrowIfNull(log);
+
         log.AppendJson(value, valueName);
         return value;
     }
