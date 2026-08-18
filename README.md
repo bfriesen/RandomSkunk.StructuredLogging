@@ -249,7 +249,7 @@ using (var payment = op.BeginSubOperation("ChargePayment"))
     }
 }
 
-return order.OperationLogSetResult(op);
+return order.RecordResultTo(op);
 ```
 
 Disposing `op` writes a single log entry whose structured properties include `Operation.StartTime`,
@@ -289,11 +289,11 @@ need to guard the call yourself.
   it only in the sub-operation's own journal line.
 - `IOperationLog.SetResult<T>(value)` - on the root, sets the `Operation.Result` structured
   property; on a sub-operation, appends a result line to the journal instead. Typically called via
-  the fluent `value.OperationLogSetResult(log)` extension method so it can be chained directly onto
+  the fluent `value.RecordResultTo(log)` extension method so it can be chained directly onto
   a `return` expression.
-- `value.OperationLogAppendValue(log, [valueName])` / `value.OperationLogAppendJson(log, [valueName])` -
+- `value.RecordValueTo(log, [valueName])` / `value.RecordJsonTo(log, [valueName])` -
   fluent equivalents of `AppendValue`/`AppendJson` that return `value` unchanged, for chaining
-  inline into an expression, e.g. `var total = order.Total.OperationLogAppendValue(op);`.
+  inline into an expression, e.g. `var total = order.Total.RecordValueTo(op);`.
 
 Every method returns the same log (or, for `ISubOperationLog`, a covariant `ISubOperationLog`), so
 calls can be chained: `op.SetProperty("OrderId", orderId).Append("Order validated");`.
