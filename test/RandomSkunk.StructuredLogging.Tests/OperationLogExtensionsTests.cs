@@ -8,10 +8,10 @@ public class OperationLogExtensionsTests
     [Fact]
     public void RecordResultTo_ReturnsValueUnchangedAndSetsOperationResult()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         string result;
-        using (var log = logger.BeginOperation("Name"))
+        using (IOperationLog log = logger.BeginOperation("Name"))
             result = "shipped".RecordResultTo(log);
 
         result.Should().Be("shipped");
@@ -21,7 +21,7 @@ public class OperationLogExtensionsTests
     [Fact]
     public void RecordResultTo_NullLog_ThrowsArgumentNullException()
     {
-        var act = () => "value".RecordResultTo(null!);
+        Func<string> act = () => "value".RecordResultTo(null!);
 
         act.Should().Throw<ArgumentNullException>();
     }
@@ -29,10 +29,10 @@ public class OperationLogExtensionsTests
     [Fact]
     public void RecordPropertyTo_ReturnsValueUnchangedAndSetsProperty()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         int orderId;
-        using (var log = logger.BeginOperation("Name"))
+        using (IOperationLog log = logger.BeginOperation("Name"))
             orderId = 42.RecordPropertyTo(log, "OrderId");
 
         orderId.Should().Be(42);
@@ -42,7 +42,7 @@ public class OperationLogExtensionsTests
     [Fact]
     public void RecordPropertyTo_NullLog_ThrowsArgumentNullException()
     {
-        var act = () => "value".RecordPropertyTo(null!, "PropertyName");
+        Func<string> act = () => "value".RecordPropertyTo(null!, "PropertyName");
 
         act.Should().Throw<ArgumentNullException>();
     }
@@ -50,34 +50,34 @@ public class OperationLogExtensionsTests
     [Fact]
     public void RecordValueTo_ReturnsValueUnchangedAndAppendsJournalLine()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         int value;
-        using (var log = logger.BeginOperation("Name"))
+        using (IOperationLog log = logger.BeginOperation("Name"))
             value = 7.RecordValueTo(log, "Count");
 
         value.Should().Be(7);
-        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
         journal.Should().Contain("`Count`: 7");
     }
 
     [Fact]
     public void RecordValueTo_DefaultName_UsesCallerArgumentExpression()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
         var order = new { Total = 42.5m };
 
-        using (var log = logger.BeginOperation("Name"))
+        using (IOperationLog log = logger.BeginOperation("Name"))
             order.Total.RecordValueTo(log);
 
-        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
         journal.Should().Contain("`order.Total`: 42.5");
     }
 
     [Fact]
     public void RecordValueTo_NullLog_ThrowsArgumentNullException()
     {
-        var act = () => 1.RecordValueTo(null!);
+        Func<int> act = () => 1.RecordValueTo(null!);
 
         act.Should().Throw<ArgumentNullException>();
     }
@@ -85,14 +85,14 @@ public class OperationLogExtensionsTests
     [Fact]
     public void RecordJsonTo_ReturnsValueUnchangedAndAppendsJsonJournalLine()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         object value;
-        using (var log = logger.BeginOperation("Name"))
+        using (IOperationLog log = logger.BeginOperation("Name"))
             value = new { A = 1 }.RecordJsonTo(log, "Payload");
 
         value.Should().BeEquivalentTo(new { A = 1 });
-        var journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
         journal.Should().Contain("`Payload`:");
         journal.Should().Contain("\"A\": 1");
     }

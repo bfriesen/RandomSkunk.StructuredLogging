@@ -14,10 +14,10 @@ internal static class TestReferences
 
     private static ImmutableArray<MetadataReference> Build()
     {
-        var trustedPlatformAssemblies = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
+        string[] trustedPlatformAssemblies = ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)
             .Split(Path.PathSeparator);
 
-        var paths = trustedPlatformAssemblies
+        IEnumerable<string> paths = trustedPlatformAssemblies
             .Append(typeof(Microsoft.Extensions.Logging.ILogger).Assembly.Location)
             .Append(typeof(RandomSkunk.StructuredLogging.StructuredLoggerExtensions).Assembly.Location)
             .Distinct();

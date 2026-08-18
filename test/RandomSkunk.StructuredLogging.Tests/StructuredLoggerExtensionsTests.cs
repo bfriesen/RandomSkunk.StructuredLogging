@@ -8,8 +8,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void MessageOnly_LogsFormattedMessage()
     {
-        var logger = new RecordingLogger();
-        var name = "World";
+        RecordingLogger logger = new();
+        string name = "World";
 
         logger.Information($"Hello, {name}!");
 
@@ -24,7 +24,7 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void StringLiteral_UsesPlainMessageOverloadWithoutFormatting()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         logger.Warning("plain message");
 
@@ -35,8 +35,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void Disabled_DoesNotEvaluateInterpolationHoles()
     {
-        var logger = new RecordingLogger { Enabled = false };
-        var evaluationCount = 0;
+        RecordingLogger logger = new() { Enabled = false };
+        int evaluationCount = 0;
 
         int GetValue()
         {
@@ -53,7 +53,7 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void Disabled_StringLiteralStillSkipsLogging()
     {
-        var logger = new RecordingLogger { Enabled = false };
+        RecordingLogger logger = new() { Enabled = false };
 
         logger.Debug("plain message");
 
@@ -63,8 +63,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void Enabled_EvaluatesInterpolationHoles()
     {
-        var logger = new RecordingLogger { Enabled = true };
-        var evaluationCount = 0;
+        RecordingLogger logger = new() { Enabled = true };
+        int evaluationCount = 0;
 
         int GetValue()
         {
@@ -81,7 +81,7 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void SingleProperty_IsPassedThrough()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         logger.Debug($"msg", ("UserId", 42));
 
@@ -92,7 +92,7 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void SixProperties_MaxArityIsPassedThrough()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         logger.Debug(
             $"msg",
@@ -111,8 +111,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void CollectionOverload_AcceptsListWithNoAdditionalProperties()
     {
-        var logger = new RecordingLogger();
-        var properties = new List<KeyValuePair<string, object?>>
+        RecordingLogger logger = new();
+        List<KeyValuePair<string, object?>> properties = new()
         {
             new("A", 1),
             new("B", "two"),
@@ -126,8 +126,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void CollectionOverload_AcceptsDictionaryWithNoAdditionalProperties()
     {
-        var logger = new RecordingLogger();
-        var properties = new Dictionary<string, object?>
+        RecordingLogger logger = new();
+        Dictionary<string, object?> properties = new()
         {
             ["A"] = 1,
             ["B"] = "two",
@@ -141,8 +141,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void CollectionOverload_CombinesWithSingleStaticProperty()
     {
-        var logger = new RecordingLogger();
-        var properties = new Dictionary<string, object?> { ["A"] = 1 };
+        RecordingLogger logger = new();
+        Dictionary<string, object?> properties = new() { ["A"] = 1 };
 
         logger.Debug(properties, $"msg", ("B", "two"));
 
@@ -154,8 +154,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void CollectionOverload_CombinesWithParamsProperties()
     {
-        var logger = new RecordingLogger();
-        var properties = new Dictionary<string, object?> { ["A"] = 1 };
+        RecordingLogger logger = new();
+        Dictionary<string, object?> properties = new() { ["A"] = 1 };
 
         logger.Debug(properties, $"msg", ("B", "two"), ("C", 3.0));
 
@@ -168,9 +168,9 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void EventIdAndException_BothPassedThrough()
     {
-        var logger = new RecordingLogger();
-        var eventId = new EventId(7, "SomethingHappened");
-        var exception = new InvalidOperationException("boom");
+        RecordingLogger logger = new();
+        EventId eventId = new(7, "SomethingHappened");
+        InvalidOperationException exception = new("boom");
 
         logger.Error(eventId, exception, $"failure");
 
@@ -181,8 +181,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void EventIdOnly_ExceptionDefaultsToNull()
     {
-        var logger = new RecordingLogger();
-        var eventId = new EventId(7, "SomethingHappened");
+        RecordingLogger logger = new();
+        EventId eventId = new(7, "SomethingHappened");
 
         logger.Error(eventId, $"failure");
 
@@ -193,8 +193,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void ExceptionOnly_EventIdDefaultsToDefault()
     {
-        var logger = new RecordingLogger();
-        var exception = new InvalidOperationException("boom");
+        RecordingLogger logger = new();
+        InvalidOperationException exception = new("boom");
 
         logger.Error(exception, $"failure");
 
@@ -205,7 +205,7 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void Neither_EventIdAndExceptionDefault()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         logger.Error($"failure");
 
@@ -216,7 +216,7 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void Write_UsesProvidedLevel()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         logger.Write(LogLevel.Critical, $"custom level");
 
@@ -227,8 +227,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void Write_RespectsIsEnabledForProvidedLevel()
     {
-        var logger = new RecordingLogger { Enabled = false };
-        var evaluationCount = 0;
+        RecordingLogger logger = new() { Enabled = false };
+        int evaluationCount = 0;
 
         int GetValue()
         {
@@ -251,7 +251,7 @@ public class StructuredLoggerExtensionsTests
     [InlineData(LogLevel.Critical)]
     public void AllLevels_LogAtTheCorrectLevel(LogLevel level)
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         switch (level)
         {
@@ -269,8 +269,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void FormatSpecifier_IsApplied()
     {
-        var logger = new RecordingLogger();
-        var value = 3.14159;
+        RecordingLogger logger = new();
+        double value = 3.14159;
 
         logger.Information($"Pi is {value:F2}");
 
@@ -280,8 +280,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void Alignment_PadsFormattedValue()
     {
-        var logger = new RecordingLogger();
-        var value = 7;
+        RecordingLogger logger = new();
+        int value = 7;
 
         logger.Information($"[{value,5}]");
 
@@ -291,8 +291,8 @@ public class StructuredLoggerExtensionsTests
     [Fact]
     public void NegativeAlignment_LeftAlignsFormattedValue()
     {
-        var logger = new RecordingLogger();
-        var value = 7;
+        RecordingLogger logger = new();
+        int value = 7;
 
         logger.Information($"[{value,-5}]");
 

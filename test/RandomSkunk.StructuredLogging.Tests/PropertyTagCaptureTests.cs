@@ -7,8 +7,8 @@ public class PropertyTagCaptureTests
     [Fact]
     public void TaggedFormat_CapturesValueAsProperty_AndKeepsItInMessage()
     {
-        var logger = new RecordingLogger();
-        var name = "World";
+        RecordingLogger logger = new();
+        string name = "World";
 
         logger.Debug($"Hello, {name:<UserName>}!");
 
@@ -20,8 +20,8 @@ public class PropertyTagCaptureTests
     [Fact]
     public void TaggedFormat_WithFormatSpecifier_FormatsMessage_AndCapturesRawValue()
     {
-        var logger = new RecordingLogger();
-        var timestamp = new DateTime(2024, 1, 2, 13, 14, 15, DateTimeKind.Utc);
+        RecordingLogger logger = new();
+        DateTime timestamp = new(2024, 1, 2, 13, 14, 15, DateTimeKind.Utc);
 
         logger.Information($"[{timestamp:<Timestamp>HH:mm:ss}] Login operation started.");
 
@@ -33,8 +33,8 @@ public class PropertyTagCaptureTests
     [Fact]
     public void EmptyTag_DoesNotCapture_ButStripsTagFromFormat()
     {
-        var logger = new RecordingLogger();
-        var value = 3.14159;
+        RecordingLogger logger = new();
+        double value = 3.14159;
 
         logger.Information($"Pi is {value:<>F2}");
 
@@ -45,8 +45,8 @@ public class PropertyTagCaptureTests
     [Fact]
     public void UntaggedFormat_BehavesAsBefore()
     {
-        var logger = new RecordingLogger();
-        var value = 3.14159;
+        RecordingLogger logger = new();
+        double value = 3.14159;
 
         logger.Information($"Pi is {value:F2}");
 
@@ -57,9 +57,9 @@ public class PropertyTagCaptureTests
     [Fact]
     public void MultipleTags_CapturesAllInMessageOrder()
     {
-        var logger = new RecordingLogger();
-        var first = "Alice";
-        var second = 42;
+        RecordingLogger logger = new();
+        string first = "Alice";
+        int second = 42;
 
         logger.Debug($"{first:<UserName>} has {second:<Count>} items.");
 
@@ -72,9 +72,9 @@ public class PropertyTagCaptureTests
     [Fact]
     public void MixedTaggedAndUntaggedInterpolations_OnlyCapturesTagged()
     {
-        var logger = new RecordingLogger();
-        var name = "Alice";
-        var untouched = "ignored";
+        RecordingLogger logger = new();
+        string name = "Alice";
+        string untouched = "ignored";
 
         logger.Debug($"{name:<UserName>} did something with {untouched}.");
 
@@ -86,8 +86,8 @@ public class PropertyTagCaptureTests
     [Fact]
     public void TaggedFormat_CombinesWithExplicitGenericProperty()
     {
-        var logger = new RecordingLogger();
-        var name = "Alice";
+        RecordingLogger logger = new();
+        string name = "Alice";
 
         logger.Debug($"Hello, {name:<UserName>}!", ("RequestId", 7));
 
@@ -99,9 +99,9 @@ public class PropertyTagCaptureTests
     [Fact]
     public void TaggedFormat_CombinesWithCollectionProperties()
     {
-        var logger = new RecordingLogger();
-        var name = "Alice";
-        var extraProperties = new Dictionary<string, object?> { ["RequestId"] = 7 };
+        RecordingLogger logger = new();
+        string name = "Alice";
+        Dictionary<string, object?> extraProperties = new() { ["RequestId"] = 7 };
 
         logger.Debug(extraProperties, $"Hello, {name:<UserName>}!");
 
@@ -113,7 +113,7 @@ public class PropertyTagCaptureTests
     [Fact]
     public void Disabled_DoesNotCaptureProperties()
     {
-        var logger = new RecordingLogger { Enabled = false };
+        RecordingLogger logger = new() { Enabled = false };
 
         string? capturedName = null;
         string GetName() => capturedName = "World";
@@ -126,13 +126,13 @@ public class PropertyTagCaptureTests
     [Fact]
     public void TaggedDestructuringFormat_CapturesRawValue_AndRendersDestructuredMessage()
     {
-        var logger = new RecordingLogger();
-        var item = new OrderItem(123, 456, 1);
+        RecordingLogger logger = new();
+        OrderItem item = new(123, 456, 1);
 
         logger.Trace($"Item added to cart: {item:<@Item>}");
 
         logger.LastMessage.Should().Be("Item added to cart: OrderItem { CartId: 123, ItemId: 456, Quantity: 1 }");
-        var property = logger.LastProperties.Should().ContainSingle().Which;
+        KeyValuePair<string, object?> property = logger.LastProperties.Should().ContainSingle().Which;
         property.Key.Should().Be("Item");
         property.Value.Should().BeSameAs(item);
     }
@@ -140,8 +140,8 @@ public class PropertyTagCaptureTests
     [Fact]
     public void EmptyDestructuringTag_DoesNotCapture_ButRendersDestructuredMessage()
     {
-        var logger = new RecordingLogger();
-        var item = new OrderItem(123, 456, 1);
+        RecordingLogger logger = new();
+        OrderItem item = new(123, 456, 1);
 
         logger.Trace($"Item added to cart: {item:<@>}");
 
@@ -152,8 +152,8 @@ public class PropertyTagCaptureTests
     [Fact]
     public void TaggedDestructuringFormat_IgnoresTrailingFormatText()
     {
-        var logger = new RecordingLogger();
-        var item = new OrderItem(123, 456, 1);
+        RecordingLogger logger = new();
+        OrderItem item = new(123, 456, 1);
 
         logger.Trace($"Item: {item:<@Item>SomeIgnoredText}");
 
@@ -163,7 +163,7 @@ public class PropertyTagCaptureTests
     [Fact]
     public void Disabled_DoesNotCaptureOrRenderDestructuredMessage()
     {
-        var logger = new RecordingLogger { Enabled = false };
+        RecordingLogger logger = new() { Enabled = false };
 
         OrderItem? captured = null;
         OrderItem GetItem()

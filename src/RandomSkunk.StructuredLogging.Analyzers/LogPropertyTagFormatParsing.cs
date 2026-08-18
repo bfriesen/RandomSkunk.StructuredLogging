@@ -4,7 +4,7 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 /// Parses the <c>&lt;PropertyName&gt;</c> tag prefix of an interpolation hole's format specifier -
 /// shared by <see cref="LogPropertyTagFormatAnalyzer"/> and <see cref="LogPropertyTagFormatMigration"/>.
 /// Mirrors the tag-detection half of the runtime's own parsing (RandomSkunk.StructuredLogging's
-/// Internal/LogPropertyTagFormat.cs), which this netstandard2.0-only project can't reference
+/// LogPropertyTagFormat.cs), which this netstandard2.0-only project can't reference
 /// directly since it doesn't depend on that library. A tag whose name starts with '@' (e.g.
 /// <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) requests Serilog-style destructured message
 /// formatting - see <see cref="IsDestructuring"/>.
@@ -22,12 +22,12 @@ internal static class LogPropertyTagFormatParsing
         if (format.Length == 0 || format[0] != '<')
             return null;
 
-        var closeIndex = format.IndexOf('>', 1);
+        int closeIndex = format.IndexOf('>', 1);
         if (closeIndex < 0)
             return null;
 
-        var nameStart = format.Length > 1 && format[1] == '@' ? 2 : 1;
-        var propertyName = format.Substring(nameStart, closeIndex - nameStart);
+        int nameStart = format.Length > 1 && format[1] == '@' ? 2 : 1;
+        string propertyName = format.Substring(nameStart, closeIndex - nameStart);
         return propertyName.Length == 0 ? null : propertyName;
     }
 
@@ -46,8 +46,8 @@ internal static class LogPropertyTagFormatParsing
     /// </summary>
     public static string? GetRemainingFormat(string format)
     {
-        var closeIndex = format.IndexOf('>', 1);
-        var remainingFormat = format.Substring(closeIndex + 1);
+        int closeIndex = format.IndexOf('>', 1);
+        string remainingFormat = format.Substring(closeIndex + 1);
         return remainingFormat.Length == 0 ? null : remainingFormat;
     }
 }

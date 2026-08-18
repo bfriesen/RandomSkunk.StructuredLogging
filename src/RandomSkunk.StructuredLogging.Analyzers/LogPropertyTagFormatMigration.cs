@@ -34,12 +34,12 @@ internal static class LogPropertyTagFormatMigration
     /// </summary>
     public static (InvocationExpressionSyntax OldInvocation, InvocationExpressionSyntax NewInvocation, string PropertyName)? TryCreateReplacement(InterpolationSyntax hole)
     {
-        var formatClause = hole.FormatClause;
+        InterpolationFormatClauseSyntax? formatClause = hole.FormatClause;
         if (formatClause is null)
             return null;
 
-        var format = formatClause.FormatStringToken.ValueText;
-        var propertyName = LogPropertyTagFormatParsing.TryGetPropertyName(format);
+        string format = formatClause.FormatStringToken.ValueText;
+        string? propertyName = LogPropertyTagFormatParsing.TryGetPropertyName(format);
         if (propertyName is null)
             return null;
 
@@ -54,24 +54,24 @@ internal static class LogPropertyTagFormatMigration
             return null;
         }
 
-        var newInterpolatedString = RemoveHole(interpolatedString, hole);
+        InterpolatedStringExpressionSyntax newInterpolatedString = RemoveHole(interpolatedString, hole);
 
-        var propertyNameLiteral = SyntaxFactory.LiteralExpression(
+        LiteralExpressionSyntax propertyNameLiteral = SyntaxFactory.LiteralExpression(
             SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(propertyName));
-        var valueExpression = hole.Expression.WithoutTrivia();
+        ExpressionSyntax valueExpression = hole.Expression.WithoutTrivia();
 
-        var tupleArgument = SyntaxFactory.Argument(
+        ArgumentSyntax tupleArgument = SyntaxFactory.Argument(
             SyntaxFactory.TupleExpression(SyntaxFactory.SeparatedList(new[]
             {
                 SyntaxFactory.Argument(propertyNameLiteral),
                 SyntaxFactory.Argument(valueExpression),
             })));
 
-        var newArguments = argumentList.Arguments
+        IEnumerable<ArgumentSyntax> newArguments = argumentList.Arguments
             .Select(argument => argument == messageArgument ? argument.WithExpression(newInterpolatedString) : argument)
             .Append(tupleArgument);
 
-        var newInvocation = invocation.WithArgumentList(SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(newArguments)));
+        InvocationExpressionSyntax newInvocation = invocation.WithArgumentList(SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(newArguments)));
 
         return (invocation, newInvocation, propertyName);
     }
@@ -79,19 +79,19 @@ internal static class LogPropertyTagFormatMigration
     private static InterpolatedStringExpressionSyntax RemoveHole(
         InterpolatedStringExpressionSyntax interpolatedString, InterpolationSyntax hole)
     {
-        var contents = interpolatedString.Contents;
-        var holeIndex = contents.IndexOf(hole);
+        SyntaxList<InterpolatedStringContentSyntax> contents = interpolatedString.Contents;
+        int holeIndex = contents.IndexOf(hole);
 
-        var newContents = new List<InterpolatedStringContentSyntax>();
-        for (var i = 0; i < contents.Count; i++)
+        List<InterpolatedStringContentSyntax> newContents = new();
+        for (int i = 0; i < contents.Count; i++)
         {
             if (i == holeIndex)
                 continue;
 
-            var content = contents[i];
+            InterpolatedStringContentSyntax content = contents[i];
             if (i == holeIndex - 1 && content is InterpolatedStringTextSyntax precedingText)
             {
-                var trimmedValue = precedingText.TextToken.ValueText.TrimEnd();
+                string trimmedValue = precedingText.TextToken.ValueText.TrimEnd();
                 if (trimmedValue.Length == 0)
                     continue;
 
@@ -106,7 +106,7 @@ internal static class LogPropertyTagFormatMigration
 
     private static SyntaxToken CreateTextToken(string rawValue)
     {
-        var escapedText = SymbolDisplay.FormatLiteral(rawValue, quote: false).Replace("{", "{{").Replace("}", "}}");
+        string escapedText = SymbolDisplay.FormatLiteral(rawValue, quote: false).Replace("{", "{{").Replace("}", "}}");
         return SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, escapedText, rawValue, default);
     }
 }

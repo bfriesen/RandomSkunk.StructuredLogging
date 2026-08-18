@@ -31,44 +31,44 @@ internal static class CodeFixVerifier
         string source, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider,
         Func<CodeAction, bool>? selectAction = null, bool allowCompilerErrors = false)
     {
-        using var workspace = new AdhocWorkspace();
-        var projectId = ProjectId.CreateNewId();
-        var documentId = DocumentId.CreateNewId(projectId);
+        using AdhocWorkspace workspace = new();
+        ProjectId projectId = ProjectId.CreateNewId();
+        DocumentId documentId = DocumentId.CreateNewId(projectId);
 
-        var solution = workspace.CurrentSolution
+        Solution solution = workspace.CurrentSolution
             .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
             .WithProjectParseOptions(projectId, new CSharpParseOptions(LanguageVersion.Latest))
             .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
             .AddMetadataReferences(projectId, TestReferences.All)
             .AddDocument(documentId, "Test.cs", source);
 
-        var document = solution.GetDocument(documentId)!;
+        Document document = solution.GetDocument(documentId)!;
 
-        var compilation = (await document.Project.GetCompilationAsync())!;
+        Compilation compilation = (await document.Project.GetCompilationAsync())!;
         if (!allowCompilerErrors)
         {
-            var compilerErrors = compilation.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error).ToArray();
+            Diagnostic[] compilerErrors = compilation.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error).ToArray();
             if (compilerErrors.Length > 0)
                 throw new InvalidOperationException($"Test source failed to compile: {string.Join(Environment.NewLine, compilerErrors.Select(d => d.ToString()))}");
         }
 
-        var withAnalyzers = compilation.WithAnalyzers([analyzer]);
-        var diagnostics = await withAnalyzers.GetAnalyzerDiagnosticsAsync();
-        var diagnostic = diagnostics.Single();
+        CompilationWithAnalyzers withAnalyzers = compilation.WithAnalyzers([analyzer]);
+        ImmutableArray<Diagnostic> diagnostics = await withAnalyzers.GetAnalyzerDiagnosticsAsync();
+        Diagnostic diagnostic = diagnostics.Single();
 
-        var actions = new List<CodeAction>();
-        var context = new CodeFixContext(document, diagnostic, (action, _) => actions.Add(action), CancellationToken.None);
+        List<CodeAction> actions = new();
+        CodeFixContext context = new(document, diagnostic, (action, _) => actions.Add(action), CancellationToken.None);
         await codeFixProvider.RegisterCodeFixesAsync(context);
 
         if (actions.Count == 0)
             return null;
 
-        var selectedAction = selectAction is null ? actions.Single() : actions.Single(selectAction);
+        CodeAction selectedAction = selectAction is null ? actions.Single() : actions.Single(selectAction);
 
-        var operations = await selectedAction.GetOperationsAsync(CancellationToken.None);
-        var applyChanges = operations.OfType<ApplyChangesOperation>().Single();
-        var newDocument = applyChanges.ChangedSolution.GetDocument(documentId)!;
-        var newRoot = await newDocument.GetSyntaxRootAsync();
+        ImmutableArray<CodeActionOperation> operations = await selectedAction.GetOperationsAsync(CancellationToken.None);
+        ApplyChangesOperation applyChanges = operations.OfType<ApplyChangesOperation>().Single();
+        Document newDocument = applyChanges.ChangedSolution.GetDocument(documentId)!;
+        SyntaxNode? newRoot = await newDocument.GetSyntaxRootAsync();
 
         return newRoot!.ToFullString();
     }

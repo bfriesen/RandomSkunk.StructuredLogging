@@ -26,25 +26,25 @@ public sealed class NonCapturingInterpolationHoleCodeFixProvider : CodeFixProvid
     /// <inheritdoc/>
     public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
-        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+        SyntaxNode? root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         if (root is null)
             return;
 
-        var diagnostic = context.Diagnostics[0];
+        Diagnostic diagnostic = context.Diagnostics[0];
         if (root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is not InterpolationSyntax hole)
             return;
 
-        var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+        SemanticModel? semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
         if (semanticModel is null)
             return;
 
-        var replacement = AddLogPropertyTagFormatMigration.TryCreateReplacement(hole, semanticModel);
+        (InterpolationSyntax OldHole, InterpolationSyntax NewHole, string PropertyName, bool Destructure)? replacement = AddLogPropertyTagFormatMigration.TryCreateReplacement(hole, semanticModel);
         if (replacement is null)
             return;
 
-        var (oldHole, newHole, propertyName, destructure) = replacement.Value;
+        (InterpolationSyntax? oldHole, InterpolationSyntax? newHole, string? propertyName, bool destructure) = replacement.Value;
 
-        var title = destructure
+        string title = destructure
             ? $"Capture as a destructured structured property named '{propertyName}'"
             : $"Capture as a structured property named '{propertyName}'";
 

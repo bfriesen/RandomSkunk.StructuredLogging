@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 
@@ -19,12 +20,12 @@ public class AvoidLoggerExtensionsAnalyzerTests
     [InlineData("""LoggerExtensions.LogInformation(logger, "message");""", "LogInformation")]
     public async Task LoggerExtensionsMethodCall_IsFlagged(string call, string methodName)
     {
-        var source = TestSource.WrapInMethodBody(call);
+        string source = TestSource.WrapInMethodBody(call);
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
 
         diagnostics.Should().ContainSingle();
-        var diagnostic = diagnostics[0];
+        Diagnostic diagnostic = diagnostics[0];
         diagnostic.Id.Should().Be("RSSL0001");
         diagnostic.Severity.Should().Be(DiagnosticSeverity.Info);
         diagnostic.GetMessage().Should().Contain(methodName);
@@ -33,10 +34,10 @@ public class AvoidLoggerExtensionsAnalyzerTests
     [Fact]
     public async Task InterfaceLogMethodCall_IsNotFlagged()
     {
-        var source = TestSource.WrapInMethodBody(
+        string source = TestSource.WrapInMethodBody(
             """logger.Log(LogLevel.Information, new EventId(1, "Name"), "state", null, (state, exception) => state);""");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }
@@ -44,7 +45,7 @@ public class AvoidLoggerExtensionsAnalyzerTests
     [Fact]
     public async Task UnrelatedExtensionMethodWithSameName_IsNotFlagged()
     {
-        var source = """
+        string source = """
             using Microsoft.Extensions.Logging;
 
             namespace TestNamespace;
@@ -63,7 +64,7 @@ public class AvoidLoggerExtensionsAnalyzerTests
             }
             """;
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }
@@ -71,9 +72,9 @@ public class AvoidLoggerExtensionsAnalyzerTests
     [Fact]
     public async Task NoLoggerCalls_IsNotFlagged()
     {
-        var source = TestSource.WrapInMethodBody("logger.IsEnabled(LogLevel.Information);");
+        string source = TestSource.WrapInMethodBody("logger.IsEnabled(LogLevel.Information);");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new AvoidLoggerExtensionsAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }

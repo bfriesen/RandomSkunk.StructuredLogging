@@ -25,7 +25,7 @@ internal static class ConstantStringExpressionParsing
     /// </summary>
     public static string? TryGetConstantStringValue(ExpressionSyntax expression, SemanticModel semanticModel)
     {
-        var constantValue = semanticModel.GetConstantValue(expression);
+        Optional<object?> constantValue = semanticModel.GetConstantValue(expression);
         if (constantValue.HasValue)
             return constantValue.Value as string;
 
@@ -35,11 +35,11 @@ internal static class ConstantStringExpressionParsing
                 return TryGetConstantStringValue(parenthesized.Expression, semanticModel);
 
             case BinaryExpressionSyntax { RawKind: (int)SyntaxKind.AddExpression } concatenation:
-                var left = TryGetConstantStringValue(concatenation.Left, semanticModel);
+                string? left = TryGetConstantStringValue(concatenation.Left, semanticModel);
                 if (left is null)
                     return null;
 
-                var right = TryGetConstantStringValue(concatenation.Right, semanticModel);
+                string? right = TryGetConstantStringValue(concatenation.Right, semanticModel);
                 return right is null ? null : left + right;
 
             case InterpolatedStringExpressionSyntax interpolatedString:
@@ -52,9 +52,9 @@ internal static class ConstantStringExpressionParsing
 
     private static string? TryGetConstantInterpolatedStringValue(InterpolatedStringExpressionSyntax interpolatedString, SemanticModel semanticModel)
     {
-        var value = new StringBuilder();
+        StringBuilder value = new();
 
-        foreach (var content in interpolatedString.Contents)
+        foreach (InterpolatedStringContentSyntax content in interpolatedString.Contents)
         {
             switch (content)
             {
@@ -63,7 +63,7 @@ internal static class ConstantStringExpressionParsing
                     break;
 
                 case InterpolationSyntax interpolation:
-                    var holeValue = TryGetConstantStringValue(interpolation.Expression, semanticModel);
+                    string? holeValue = TryGetConstantStringValue(interpolation.Expression, semanticModel);
                     if (holeValue is null)
                         return null;
 

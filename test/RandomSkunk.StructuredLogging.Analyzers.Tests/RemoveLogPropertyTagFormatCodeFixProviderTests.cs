@@ -28,9 +28,9 @@ public class RemoveLogPropertyTagFormatCodeFixProviderTests
         """logger.Debug($"Item: {value:<@>N2}");""")]
     public async Task TagFormatHole_HasTagRemoved(string call, string expectedCall)
     {
-        var source = TestSource.WrapInMethodBody(call);
+        string source = TestSource.WrapInMethodBody(call);
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(
             source, new LogPropertyTagFormatAnalyzer(), new LogPropertyTagFormatCodeFixProvider(),
             action => action.Title.StartsWith("Remove", StringComparison.Ordinal));
 

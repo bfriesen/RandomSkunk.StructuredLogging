@@ -28,18 +28,18 @@ public sealed class LogPropertyTagFormatCodeFixProvider : CodeFixProvider
     /// <inheritdoc/>
     public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
-        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+        SyntaxNode? root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         if (root is null)
             return;
 
-        var diagnostic = context.Diagnostics[0];
+        Diagnostic diagnostic = context.Diagnostics[0];
         if (root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is not InterpolationSyntax hole)
             return;
 
-        var extractReplacement = LogPropertyTagFormatMigration.TryCreateReplacement(hole);
+        (InvocationExpressionSyntax OldInvocation, InvocationExpressionSyntax NewInvocation, string PropertyName)? extractReplacement = LogPropertyTagFormatMigration.TryCreateReplacement(hole);
         if (extractReplacement is not null)
         {
-            var (oldInvocation, newInvocation, propertyName) = extractReplacement.Value;
+            (InvocationExpressionSyntax? oldInvocation, InvocationExpressionSyntax? newInvocation, string? propertyName) = extractReplacement.Value;
 
             context.RegisterCodeFix(
                 CodeAction.Create(
@@ -50,10 +50,10 @@ public sealed class LogPropertyTagFormatCodeFixProvider : CodeFixProvider
                 diagnostic);
         }
 
-        var removeReplacement = RemoveLogPropertyTagFormatMigration.TryCreateReplacement(hole);
+        (InterpolationSyntax OldHole, InterpolationSyntax NewHole, string PropertyName)? removeReplacement = RemoveLogPropertyTagFormatMigration.TryCreateReplacement(hole);
         if (removeReplacement is not null)
         {
-            var (oldHole, newHole, propertyName) = removeReplacement.Value;
+            (InterpolationSyntax? oldHole, InterpolationSyntax? newHole, string? propertyName) = removeReplacement.Value;
 
             context.RegisterCodeFix(
                 CodeAction.Create(

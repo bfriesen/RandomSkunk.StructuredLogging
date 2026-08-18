@@ -18,7 +18,7 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 public sealed class LogPropertyTagFormatAnalyzer : DiagnosticAnalyzer
 {
     // The ref struct interpolated string handler types declared in
-    // Generated/LogInterpolatedStringHandlers.g.cs - one per level, plus WriteInterpolatedStringHandler
+    // LogInterpolatedStringHandlers.g.cs - one per level, plus WriteInterpolatedStringHandler
     // for Write. An interpolated string argument is only ever parsed for the <PropertyName> tag
     // format (by AppendFormatted, at run time) when it's converted to one of these types, so that
     // conversion is exactly what scopes this analyzer to RandomSkunk.StructuredLogging message
@@ -44,10 +44,10 @@ public sealed class LogPropertyTagFormatAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var handlerTypesBuilder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>(SymbolEqualityComparer.Default);
-            foreach (var metadataName in HandlerTypeMetadataNames)
+            ImmutableHashSet<INamedTypeSymbol>.Builder handlerTypesBuilder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+            foreach (string metadataName in HandlerTypeMetadataNames)
             {
-                var type = compilationContext.Compilation.GetTypeByMetadataName(metadataName);
+                INamedTypeSymbol? type = compilationContext.Compilation.GetTypeByMetadataName(metadataName);
                 if (type is not null)
                     handlerTypesBuilder.Add(type);
             }
@@ -57,7 +57,7 @@ public sealed class LogPropertyTagFormatAnalyzer : DiagnosticAnalyzer
             if (handlerTypesBuilder.Count == 0)
                 return;
 
-            var handlerTypes = handlerTypesBuilder.ToImmutable();
+            ImmutableHashSet<INamedTypeSymbol> handlerTypes = handlerTypesBuilder.ToImmutable();
 
             compilationContext.RegisterSyntaxNodeAction(
                 syntaxContext => AnalyzeInterpolation(syntaxContext, handlerTypes),
@@ -67,20 +67,20 @@ public sealed class LogPropertyTagFormatAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeInterpolation(SyntaxNodeAnalysisContext context, ImmutableHashSet<INamedTypeSymbol> handlerTypes)
     {
-        var interpolation = (InterpolationSyntax)context.Node;
+        InterpolationSyntax interpolation = (InterpolationSyntax)context.Node;
 
-        var formatClause = interpolation.FormatClause;
+        InterpolationFormatClauseSyntax? formatClause = interpolation.FormatClause;
         if (formatClause is null)
             return;
 
-        var propertyName = LogPropertyTagFormatParsing.TryGetPropertyName(formatClause.FormatStringToken.ValueText);
+        string? propertyName = LogPropertyTagFormatParsing.TryGetPropertyName(formatClause.FormatStringToken.ValueText);
         if (propertyName is null)
             return;
 
         if (interpolation.Parent is not InterpolatedStringExpressionSyntax interpolatedString)
             return;
 
-        var convertedType = context.SemanticModel.GetTypeInfo(interpolatedString, context.CancellationToken).ConvertedType;
+        ITypeSymbol? convertedType = context.SemanticModel.GetTypeInfo(interpolatedString, context.CancellationToken).ConvertedType;
         if (convertedType is not INamedTypeSymbol namedType || !handlerTypes.Contains(namedType))
             return;
 

@@ -52,7 +52,7 @@ public static class LoggerOperationExtensions
         if (!logger.IsEnabled(level))
             return NullOperationLog.Instance;
 
-        var state = new OperationLogState(logger, level, eventId);
+        OperationLogState state = new(logger, level, eventId);
 
         IOperationLog operationLog = new RootOperationLog(state, name);
 

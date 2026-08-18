@@ -11,7 +11,7 @@ public class PropertyTagDestructuringTests
     [InlineData(true, "True")]
     public void NumericOrBoolScalar_RendersUnquoted(object value, string expected)
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         logger.Trace($"Value: {value:<@>}");
 
@@ -21,7 +21,7 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void EnumScalar_RendersUnquoted()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         logger.Trace($"Day: {DayOfWeek.Monday:<@>}");
 
@@ -31,8 +31,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void GuidScalar_RendersUnquoted()
     {
-        var logger = new RecordingLogger();
-        var value = Guid.Parse("11111111-2222-3333-4444-555555555555");
+        RecordingLogger logger = new();
+        Guid value = Guid.Parse("11111111-2222-3333-4444-555555555555");
 
         logger.Trace($"Id: {value:<@>}");
 
@@ -42,8 +42,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void DateTimeScalar_RendersUnquoted_UsingInvariantCulture()
     {
-        var logger = new RecordingLogger();
-        var value = new DateTime(2024, 1, 2, 13, 14, 15, DateTimeKind.Utc);
+        RecordingLogger logger = new();
+        DateTime value = new(2024, 1, 2, 13, 14, 15, DateTimeKind.Utc);
 
         logger.Trace($"When: {value:<@>}");
 
@@ -53,8 +53,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void StringScalar_RendersQuoted_WithEscaping()
     {
-        var logger = new RecordingLogger();
-        var value = "hello \"world\"";
+        RecordingLogger logger = new();
+        string value = "hello \"world\"";
 
         logger.Trace($"Value: {value:<@>}");
 
@@ -64,7 +64,7 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void CharScalar_RendersQuoted()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
 
         logger.Trace($"Value: {'x':<@>}");
 
@@ -74,7 +74,7 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void NullValue_RendersNullLiteral()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
         OrderItem? item = null;
 
         logger.Trace($"Value: {item:<@>}");
@@ -85,8 +85,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void SimpleObject_RendersTypeNameAndProperties_MatchesPromptExample()
     {
-        var logger = new RecordingLogger();
-        var item = new OrderItem(123, 456, 1);
+        RecordingLogger logger = new();
+        OrderItem item = new(123, 456, 1);
 
         logger.Trace($"Item added to cart: {item:<@Item>}");
 
@@ -96,8 +96,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void NestedObject_RendersRecursively()
     {
-        var logger = new RecordingLogger();
-        var customer = new Customer("Alice", new Address("Springfield", "IL"));
+        RecordingLogger logger = new();
+        Customer customer = new("Alice", new Address("Springfield", "IL"));
 
         logger.Trace($"Customer: {customer:<@>}");
 
@@ -108,8 +108,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void Collection_RendersAsBracketList()
     {
-        var logger = new RecordingLogger();
-        var values = new List<int> { 1, 2, 3 };
+        RecordingLogger logger = new();
+        List<int> values = new() { 1, 2, 3 };
 
         logger.Trace($"Values: {values:<@>}");
 
@@ -119,8 +119,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void Dictionary_RendersAsKeyValueBraces()
     {
-        var logger = new RecordingLogger();
-        var values = new Dictionary<string, int> { ["A"] = 1, ["B"] = 2 };
+        RecordingLogger logger = new();
+        Dictionary<string, int> values = new() { ["A"] = 1, ["B"] = 2 };
 
         logger.Trace($"Values: {values:<@>}");
 
@@ -130,7 +130,7 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void AnonymousType_OmitsTypeName()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
         var value = new { Foo = 1, Bar = "x" };
 
         logger.Trace($"Value: {value:<@>}");
@@ -141,8 +141,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void CircularReference_RendersPlaceholder_DoesNotStackOverflow()
     {
-        var logger = new RecordingLogger();
-        var node = new Node { Name = "A" };
+        RecordingLogger logger = new();
+        Node node = new() { Name = "A" };
         node.Next = node;
 
         logger.Trace($"Node: {node:<@>}");
@@ -153,7 +153,7 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void DeepNesting_StopsAtMaxDepth()
     {
-        var logger = new RecordingLogger();
+        RecordingLogger logger = new();
         Node? head = null;
         for (int i = 0; i < 15; i++)
             head = new Node { Name = i.ToString(), Next = head };
@@ -166,8 +166,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void LargeCollection_CapsAtTenItems()
     {
-        var logger = new RecordingLogger();
-        var values = Enumerable.Range(1, 15).ToList();
+        RecordingLogger logger = new();
+        List<int> values = Enumerable.Range(1, 15).ToList();
 
         logger.Trace($"Values: {values:<@>}");
 
@@ -177,8 +177,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void PropertyGetterThrows_DoesNotThrow_RendersPlaceholder()
     {
-        var logger = new RecordingLogger();
-        var value = new ThrowingProperty();
+        RecordingLogger logger = new();
+        ThrowingProperty value = new();
 
         logger.Trace($"Value: {value:<@>}");
 
@@ -188,8 +188,8 @@ public class PropertyTagDestructuringTests
     [Fact]
     public void StructValue_RendersAsObject()
     {
-        var logger = new RecordingLogger();
-        var value = new Point(1, 2);
+        RecordingLogger logger = new();
+        Point value = new(1, 2);
 
         logger.Trace($"Point: {value:<@>}");
 

@@ -67,8 +67,8 @@ internal static class PropertyNameGuessing
     /// </summary>
     public static string? TryGuessPropertyName(ExpressionSyntax expression, SemanticModel semanticModel)
     {
-        var callSiteType = semanticModel.GetEnclosingSymbol(expression.SpanStart)?.ContainingType;
-        var segments = TryGetSegments(expression, semanticModel, callSiteType);
+        INamedTypeSymbol? callSiteType = semanticModel.GetEnclosingSymbol(expression.SpanStart)?.ContainingType;
+        List<string>? segments = TryGetSegments(expression, semanticModel, callSiteType);
         return segments is { Count: > 0 } ? string.Concat(segments) : null;
     }
 
@@ -82,18 +82,18 @@ internal static class PropertyNameGuessing
 
         if (expression is MemberAccessExpressionSyntax { RawKind: (int)SyntaxKind.SimpleMemberAccessExpression } memberAccess)
         {
-            var memberSymbol = semanticModel.GetSymbolInfo(memberAccess).Symbol;
+            ISymbol? memberSymbol = semanticModel.GetSymbolInfo(memberAccess).Symbol;
             if (memberSymbol is not (IFieldSymbol or IPropertySymbol))
                 return null;
 
             if (memberSymbol.IsStatic)
                 return TryGetStaticSegments(memberSymbol, TreatSegment(memberSymbol.Name), callSiteType);
 
-            var targetSegments = TryGetSegments(memberAccess.Expression, semanticModel, callSiteType);
+            List<string>? targetSegments = TryGetSegments(memberAccess.Expression, semanticModel, callSiteType);
             if (targetSegments is null)
                 return null;
 
-            var memberSegment = TreatSegment(memberSymbol.Name);
+            string? memberSegment = TreatSegment(memberSymbol.Name);
             if (memberSegment is null)
                 return null;
 
@@ -129,15 +129,15 @@ internal static class PropertyNameGuessing
 
         if (IsSerializationMethod(method, semanticModel.Compilation))
         {
-            var arguments = invocation.ArgumentList.Arguments;
+            SeparatedSyntaxList<ArgumentSyntax> arguments = invocation.ArgumentList.Arguments;
             return arguments.Count == 0 ? null : TryGetSegments(arguments[0].Expression, semanticModel, callSiteType);
         }
 
-        var strippedName = TryStripPrefix(method.Name);
+        string? strippedName = TryStripPrefix(method.Name);
         if (strippedName is null)
             return null;
 
-        var memberSegment = TreatSegment(strippedName);
+        string? memberSegment = TreatSegment(strippedName);
         if (memberSegment is null)
             return null;
 
@@ -147,11 +147,11 @@ internal static class PropertyNameGuessing
         // Instance method: a receiver written in source (obj.GetX() or bare GetX(), meaning an
         // implicit `this.`) leads with the receiver's own segments, exactly like an instance
         // field/property.
-        var receiver = invocation.Expression is MemberAccessExpressionSyntax { RawKind: (int)SyntaxKind.SimpleMemberAccessExpression } memberAccess
+        ExpressionSyntax? receiver = invocation.Expression is MemberAccessExpressionSyntax { RawKind: (int)SyntaxKind.SimpleMemberAccessExpression } memberAccess
             ? memberAccess.Expression
             : null;
 
-        var targetSegments = receiver is null ? [] : TryGetSegments(receiver, semanticModel, callSiteType);
+        List<string>? targetSegments = receiver is null ? [] : TryGetSegments(receiver, semanticModel, callSiteType);
         if (targetSegments is null)
             return null;
 
@@ -164,12 +164,12 @@ internal static class PropertyNameGuessing
         if (method.ReturnType.SpecialType != SpecialType.System_String)
             return false;
 
-        foreach (var (typeMetadataName, methodName) in SerializationMethods)
+        foreach ((string? typeMetadataName, string? methodName) in SerializationMethods)
         {
             if (method.Name != methodName)
                 continue;
 
-            var type = compilation.GetTypeByMetadataName(typeMetadataName);
+            INamedTypeSymbol? type = compilation.GetTypeByMetadataName(typeMetadataName);
             if (type is not null && SymbolEqualityComparer.Default.Equals(method.ContainingType, type))
                 return true;
         }
@@ -179,7 +179,7 @@ internal static class PropertyNameGuessing
 
     private static string? TryStripPrefix(string methodName)
     {
-        foreach (var prefix in MethodNamePrefixes)
+        foreach (string prefix in MethodNamePrefixes)
         {
             if (methodName.Length > prefix.Length && methodName.StartsWith(prefix, StringComparison.Ordinal))
                 return methodName.Substring(prefix.Length);
@@ -193,7 +193,7 @@ internal static class PropertyNameGuessing
         if (memberSegment is null)
             return null;
 
-        var containingType = memberSymbol.ContainingType;
+        INamedTypeSymbol? containingType = memberSymbol.ContainingType;
         if (containingType is null)
             return null;
 
@@ -202,13 +202,13 @@ internal static class PropertyNameGuessing
         if (callSiteType is not null && SymbolEqualityComparer.Default.Equals(containingType, callSiteType))
             return [memberSegment];
 
-        var typeSegment = TreatSegment(containingType.Name);
+        string? typeSegment = TreatSegment(containingType.Name);
         return typeSegment is null ? null : [typeSegment, memberSegment];
     }
 
     private static List<string>? TrySingleSegment(string name)
     {
-        var segment = TreatSegment(name);
+        string? segment = TreatSegment(name);
         return segment is null ? null : [segment];
     }
 
@@ -219,7 +219,7 @@ internal static class PropertyNameGuessing
         if (!IsSimpleIdentifier(name))
             return null;
 
-        var strippedName = name.Length > 1 && name[0] == '_' ? name.Substring(1) : name;
+        string strippedName = name.Length > 1 && name[0] == '_' ? name.Substring(1) : name;
         if (strippedName.Length == 0)
             return null;
 

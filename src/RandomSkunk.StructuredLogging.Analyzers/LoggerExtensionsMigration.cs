@@ -32,17 +32,17 @@ internal static class LoggerExtensionsMigration
     /// </summary>
     public static ExpressionSyntax? TryCreateReplacement(IInvocationOperation invocation)
     {
-        var argumentsByParameterName = new Dictionary<string, IArgumentOperation>();
-        foreach (var argument in invocation.Arguments)
+        Dictionary<string, IArgumentOperation> argumentsByParameterName = new();
+        foreach (IArgumentOperation argument in invocation.Arguments)
         {
             if (argument.Parameter is not null)
                 argumentsByParameterName[argument.Parameter.Name] = argument;
         }
 
-        var receiver = invocation.Instance?.Syntax as ExpressionSyntax;
+        ExpressionSyntax? receiver = invocation.Instance?.Syntax as ExpressionSyntax;
         if (receiver is null)
         {
-            if (!argumentsByParameterName.TryGetValue("logger", out var loggerArgument) ||
+            if (!argumentsByParameterName.TryGetValue("logger", out IArgumentOperation? loggerArgument) ||
                 loggerArgument.Value.Syntax is not ExpressionSyntax loggerSyntax)
             {
                 return null;
@@ -51,13 +51,13 @@ internal static class LoggerExtensionsMigration
             receiver = loggerSyntax;
         }
 
-        var method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
+        IMethodSymbol method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
 
         ExpressionSyntax? levelArgument = null;
         string newMethodName;
         if (method.Name == "Log")
         {
-            if (!argumentsByParameterName.TryGetValue("logLevel", out var logLevelArgument) ||
+            if (!argumentsByParameterName.TryGetValue("logLevel", out IArgumentOperation? logLevelArgument) ||
                 logLevelArgument.Value.Syntax is not ExpressionSyntax logLevelSyntax)
             {
                 return null;
@@ -83,27 +83,27 @@ internal static class LoggerExtensionsMigration
                 return null;
         }
 
-        var eventIdArgument = argumentsByParameterName.TryGetValue("eventId", out var eventIdArg)
+        ExpressionSyntax? eventIdArgument = argumentsByParameterName.TryGetValue("eventId", out IArgumentOperation? eventIdArg)
             ? eventIdArg.Value.Syntax as ExpressionSyntax
             : null;
-        var exceptionArgument = argumentsByParameterName.TryGetValue("exception", out var exceptionArg)
+        ExpressionSyntax? exceptionArgument = argumentsByParameterName.TryGetValue("exception", out IArgumentOperation? exceptionArg)
             ? exceptionArg.Value.Syntax as ExpressionSyntax
             : null;
 
-        if (!argumentsByParameterName.TryGetValue("message", out var messageArgument) ||
+        if (!argumentsByParameterName.TryGetValue("message", out IArgumentOperation? messageArgument) ||
             messageArgument.Value.Syntax is not LiteralExpressionSyntax { RawKind: (int)SyntaxKind.StringLiteralExpression } messageLiteral)
         {
             return null;
         }
 
-        var formatArguments = new List<ExpressionSyntax>();
-        if (argumentsByParameterName.TryGetValue("args", out var argsArgument))
+        List<ExpressionSyntax> formatArguments = new();
+        if (argumentsByParameterName.TryGetValue("args", out IArgumentOperation? argsArgument))
         {
             if (argsArgument.ArgumentKind == ArgumentKind.ParamArray)
             {
                 if (argsArgument.Value is IArrayCreationOperation { Initializer: not null } arrayCreation)
                 {
-                    foreach (var element in arrayCreation.Initializer.ElementValues)
+                    foreach (IOperation element in arrayCreation.Initializer.ElementValues)
                     {
                         if (element.Syntax is not ExpressionSyntax elementSyntax)
                             return null;
@@ -120,11 +120,11 @@ internal static class LoggerExtensionsMigration
             }
         }
 
-        var newMessage = TryBuildMessageExpression(messageLiteral, formatArguments);
+        ExpressionSyntax? newMessage = TryBuildMessageExpression(messageLiteral, formatArguments);
         if (newMessage is null)
             return null;
 
-        var arguments = new List<ArgumentSyntax>();
+        List<ArgumentSyntax> arguments = new();
         if (levelArgument is not null)
             arguments.Add(SyntaxFactory.Argument(levelArgument.WithoutTrivia()));
         if (eventIdArgument is not null)
@@ -143,18 +143,18 @@ internal static class LoggerExtensionsMigration
 
     private static ExpressionSyntax? TryBuildMessageExpression(LiteralExpressionSyntax messageLiteral, IReadOnlyList<ExpressionSyntax> formatArguments)
     {
-        var template = messageLiteral.Token.ValueText;
-        var matches = TemplateHolePattern.Matches(template);
+        string template = messageLiteral.Token.ValueText;
+        MatchCollection matches = TemplateHolePattern.Matches(template);
         if (matches.Count != formatArguments.Count)
             return null;
 
         if (matches.Count == 0)
             return messageLiteral.WithoutTrivia();
 
-        var names = new string[matches.Count];
-        for (var i = 0; i < matches.Count; i++)
+        string[] names = new string[matches.Count];
+        for (int i = 0; i < matches.Count; i++)
         {
-            var name = matches[i].Groups[1].Value;
+            string name = matches[i].Groups[1].Value;
 
             if (!ValidPropertyName.IsMatch(name))
                 return null;
@@ -162,15 +162,15 @@ internal static class LoggerExtensionsMigration
             names[i] = name;
         }
 
-        var contents = new List<InterpolatedStringContentSyntax>();
-        var position = 0;
-        for (var i = 0; i < matches.Count; i++)
+        List<InterpolatedStringContentSyntax> contents = new();
+        int position = 0;
+        for (int i = 0; i < matches.Count; i++)
         {
-            var match = matches[i];
+            Match match = matches[i];
             if (match.Index > position)
                 contents.Add(CreateText(template.Substring(position, match.Index - position)));
 
-            var formatClause = SyntaxFactory.InterpolationFormatClause(
+            InterpolationFormatClauseSyntax formatClause = SyntaxFactory.InterpolationFormatClause(
                 SyntaxFactory.Token(SyntaxKind.ColonToken),
                 SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, "<" + names[i] + ">", "<" + names[i] + ">", default));
 
@@ -189,15 +189,15 @@ internal static class LoggerExtensionsMigration
 
     private static InterpolatedStringTextSyntax CreateText(string text)
     {
-        var escaped = EscapeForRegularInterpolatedString(text);
+        string escaped = EscapeForRegularInterpolatedString(text);
         return SyntaxFactory.InterpolatedStringText(
             SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, escaped, text, default));
     }
 
     private static string EscapeForRegularInterpolatedString(string text)
     {
-        var builder = new StringBuilder(text.Length);
-        foreach (var c in text)
+        StringBuilder builder = new(text.Length);
+        foreach (char c in text)
         {
             switch (c)
             {

@@ -11,9 +11,9 @@ public class OperationLoggerServiceCollectionExtensionsTests
     [Fact]
     public void AddOperationLogger_ReturnsSameServiceCollection()
     {
-        var services = new FakeServiceCollection();
+        FakeServiceCollection services = new();
 
-        var result = services.AddOperationLogger();
+        IServiceCollection result = services.AddOperationLogger();
 
         result.Should().BeSameAs(services);
     }
@@ -21,11 +21,11 @@ public class OperationLoggerServiceCollectionExtensionsTests
     [Fact]
     public void AddOperationLogger_RegistersOpenGenericSingleton()
     {
-        var services = new FakeServiceCollection();
+        FakeServiceCollection services = new();
 
         services.AddOperationLogger();
 
-        var descriptor = services.Single();
+        ServiceDescriptor descriptor = services.Single();
         descriptor.ServiceType.Should().Be(typeof(IOperationLogger<>));
         descriptor.Lifetime.Should().Be(ServiceLifetime.Singleton);
         descriptor.ImplementationType.Should().NotBeNull();
@@ -38,7 +38,7 @@ public class OperationLoggerServiceCollectionExtensionsTests
     {
         IServiceCollection services = null!;
 
-        var act = () => services.AddOperationLogger();
+        Func<IServiceCollection> act = () => services.AddOperationLogger();
 
         act.Should().Throw<ArgumentNullException>();
     }
@@ -46,14 +46,14 @@ public class OperationLoggerServiceCollectionExtensionsTests
     [Fact]
     public void RegisteredImplementation_ForwardsToLoggerBeginOperation()
     {
-        var services = new FakeServiceCollection();
+        FakeServiceCollection services = new();
         services.AddOperationLogger();
-        var descriptor = services.Single();
+        ServiceDescriptor descriptor = services.Single();
 
-        var closedType = descriptor.ImplementationType!.MakeGenericType(typeof(OperationLoggerServiceCollectionExtensionsTests));
-        var innerLogger = new RecordingLogger<OperationLoggerServiceCollectionExtensionsTests>();
+        Type closedType = descriptor.ImplementationType!.MakeGenericType(typeof(OperationLoggerServiceCollectionExtensionsTests));
+        RecordingLogger<OperationLoggerServiceCollectionExtensionsTests> innerLogger = new();
 
-        var operationLogger = (IOperationLogger<OperationLoggerServiceCollectionExtensionsTests>)Activator.CreateInstance(
+        IOperationLogger<OperationLoggerServiceCollectionExtensionsTests> operationLogger = (IOperationLogger<OperationLoggerServiceCollectionExtensionsTests>)Activator.CreateInstance(
             closedType,
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
             binder: null,

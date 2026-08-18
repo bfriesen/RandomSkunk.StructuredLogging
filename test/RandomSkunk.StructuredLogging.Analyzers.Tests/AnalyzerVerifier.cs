@@ -14,22 +14,22 @@ internal static class AnalyzerVerifier
 {
     public static async Task<ImmutableArray<Diagnostic>> GetDiagnosticsAsync(string source, DiagnosticAnalyzer analyzer)
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Latest));
+        SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Latest));
 
-        var compilation = CSharpCompilation.Create(
+        CSharpCompilation compilation = CSharpCompilation.Create(
             "AnalyzerTestAssembly",
             [syntaxTree],
             TestReferences.All,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-        var compilerErrors = compilation.GetDiagnostics()
+        Diagnostic[] compilerErrors = compilation.GetDiagnostics()
             .Where(d => d.Severity == DiagnosticSeverity.Error)
             .ToArray();
 
         if (compilerErrors.Length > 0)
             throw new InvalidOperationException($"Test source failed to compile: {string.Join(Environment.NewLine, compilerErrors.Select(d => d.ToString()))}");
 
-        var withAnalyzers = compilation.WithAnalyzers([analyzer]);
+        CompilationWithAnalyzers withAnalyzers = compilation.WithAnalyzers([analyzer]);
 
         return await withAnalyzers.GetAnalyzerDiagnosticsAsync();
     }

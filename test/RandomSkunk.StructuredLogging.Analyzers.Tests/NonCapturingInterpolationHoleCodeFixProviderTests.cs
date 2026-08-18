@@ -44,9 +44,9 @@ public class NonCapturingInterpolationHoleCodeFixProviderTests
         """logger.Debug($"Value: {value:<@Value>N2}");""")]
     public async Task NonCapturingHole_HasTagAdded(string call, string expectedCall)
     {
-        var source = TestSource.WrapInMethodBody(call);
+        string source = TestSource.WrapInMethodBody(call);
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(
             source, new NonCapturingInterpolationHoleAnalyzer(), new NonCapturingInterpolationHoleCodeFixProvider());
 
         fixedSource.Should().NotBeNull();

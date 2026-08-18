@@ -35,19 +35,19 @@ public sealed class AvoidLoggerExtensionsCodeFixProvider : CodeFixProvider
     /// <inheritdoc/>
     public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
-        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+        SyntaxNode? root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         if (root is null)
             return;
 
-        var diagnostic = context.Diagnostics[0];
+        Diagnostic diagnostic = context.Diagnostics[0];
         if (root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is not InvocationExpressionSyntax invocation)
             return;
 
-        var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+        SemanticModel? semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
         if (semanticModel?.GetOperation(invocation, context.CancellationToken) is not IInvocationOperation operation)
             return;
 
-        var replacement = LoggerExtensionsMigration.TryCreateReplacement(operation);
+        ExpressionSyntax? replacement = LoggerExtensionsMigration.TryCreateReplacement(operation);
         if (replacement is null)
             return;
 

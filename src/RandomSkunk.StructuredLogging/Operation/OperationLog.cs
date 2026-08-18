@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace RandomSkunk.StructuredLogging.Operation;
 
@@ -37,7 +38,7 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
 
     public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
-        var journal = _state.BeginJournalEntry().Append($"`{valueName}`: ");
+        StringBuilder journal = _state.BeginJournalEntry().Append($"`{valueName}`: ");
         ValueFormatting.AppendJson(journal, value);
         return (TSelf)this;
     }

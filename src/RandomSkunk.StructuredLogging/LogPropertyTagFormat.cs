@@ -34,13 +34,13 @@ internal static class LogPropertyTagFormat
         ReadOnlySpan<char> span = format;
         bool destructure = span.Length > 1 && span[1] == '@';
         int tagStart = destructure ? 2 : 1;
-        int closeIndex = span.Slice(tagStart).IndexOf('>');
+        int closeIndex = span[tagStart..].IndexOf('>');
 
         if (closeIndex < 0)
             return new TagFormat(null, format);
 
         ReadOnlySpan<char> tag = span.Slice(tagStart, closeIndex);
-        ReadOnlySpan<char> remaining = span.Slice(tagStart + closeIndex + 1);
+        ReadOnlySpan<char> remaining = span[(tagStart + closeIndex + 1)..];
 
         return new TagFormat(
             tag.IsEmpty ? null : tag.ToString(),

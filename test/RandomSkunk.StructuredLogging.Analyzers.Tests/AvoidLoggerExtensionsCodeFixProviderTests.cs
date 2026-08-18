@@ -37,9 +37,9 @@ public class AvoidLoggerExtensionsCodeFixProviderTests
         """logger.Information($"Raw value {value:<$Value>}");""")]
     public async Task LiteralMessageWithMatchingArgs_IsFixed(string call, string expectedCall)
     {
-        var source = TestSource.WrapInMethodBody(call);
+        string source = TestSource.WrapInMethodBody(call);
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
 
         fixedSource.Should().NotBeNull();
         fixedSource.Should().Be(TestSource.WrapInMethodBody(expectedCall));
@@ -48,10 +48,10 @@ public class AvoidLoggerExtensionsCodeFixProviderTests
     [Fact]
     public async Task MismatchedPlaceholderCount_IsNotFixed()
     {
-        var source = TestSource.WrapInMethodBody(
+        string source = TestSource.WrapInMethodBody(
             """logger.LogInformation("User {UserId} did {Action}", userId);""");
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
 
         fixedSource.Should().BeNull();
     }
@@ -59,9 +59,9 @@ public class AvoidLoggerExtensionsCodeFixProviderTests
     [Fact]
     public async Task NonLiteralMessage_IsNotFixed()
     {
-        var source = TestSource.WrapInMethodBody("logger.LogInformation(GetMessage());");
+        string source = TestSource.WrapInMethodBody("logger.LogInformation(GetMessage());");
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
 
         fixedSource.Should().BeNull();
     }
@@ -69,10 +69,10 @@ public class AvoidLoggerExtensionsCodeFixProviderTests
     [Fact]
     public async Task ExplicitArgsArray_IsNotFixed()
     {
-        var source = TestSource.WrapInMethodBody(
+        string source = TestSource.WrapInMethodBody(
             """logger.LogInformation("User {UserId}", new object[] { userId });""");
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(source, new AvoidLoggerExtensionsAnalyzer(), new AvoidLoggerExtensionsCodeFixProvider());
 
         fixedSource.Should().BeNull();
     }

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 
@@ -21,12 +22,12 @@ public class StructuredLoggerExtensionsInvocationAnalyzerTests
     [InlineData("""StructuredLoggerExtensions.Debug(logger, $"message");""", "Debug")]
     public async Task StructuredLoggerExtensionsMethodCall_IsFlagged(string call, string methodName)
     {
-        var source = TestSource.WrapInMethodBody(call);
+        string source = TestSource.WrapInMethodBody(call);
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
 
         diagnostics.Should().ContainSingle();
-        var diagnostic = diagnostics[0];
+        Diagnostic diagnostic = diagnostics[0];
         diagnostic.Id.Should().Be("RSSL0005");
         diagnostic.Severity.Should().Be(DiagnosticSeverity.Hidden);
         diagnostic.GetMessage().Should().Contain(methodName);
@@ -35,13 +36,13 @@ public class StructuredLoggerExtensionsInvocationAnalyzerTests
     [Fact]
     public async Task MultipleStructuredLoggerExtensionsCalls_AreAllFlagged()
     {
-        var source = TestSource.WrapInMethodBody(
+        string source = TestSource.WrapInMethodBody(
             """
             logger.Debug($"first");
             logger.Information($"second");
             """);
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
 
         diagnostics.Should().HaveCount(2);
     }
@@ -49,9 +50,9 @@ public class StructuredLoggerExtensionsInvocationAnalyzerTests
     [Fact]
     public async Task LoggerExtensionsMethodCall_IsNotFlagged()
     {
-        var source = TestSource.WrapInMethodBody("""logger.LogInformation("message");""");
+        string source = TestSource.WrapInMethodBody("""logger.LogInformation("message");""");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }
@@ -59,10 +60,10 @@ public class StructuredLoggerExtensionsInvocationAnalyzerTests
     [Fact]
     public async Task InterfaceLogMethodCall_IsNotFlagged()
     {
-        var source = TestSource.WrapInMethodBody(
+        string source = TestSource.WrapInMethodBody(
             """logger.Log(LogLevel.Information, new EventId(1, "Name"), "state", null, (state, exception) => state);""");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }
@@ -70,7 +71,7 @@ public class StructuredLoggerExtensionsInvocationAnalyzerTests
     [Fact]
     public async Task UnrelatedExtensionMethodWithSameName_IsNotFlagged()
     {
-        var source = """
+        string source = """
             using Microsoft.Extensions.Logging;
 
             namespace TestNamespace;
@@ -89,7 +90,7 @@ public class StructuredLoggerExtensionsInvocationAnalyzerTests
             }
             """;
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }
@@ -97,9 +98,9 @@ public class StructuredLoggerExtensionsInvocationAnalyzerTests
     [Fact]
     public async Task NoStructuredLoggerExtensionsCalls_IsNotFlagged()
     {
-        var source = TestSource.WrapInMethodBody("logger.IsEnabled(LogLevel.Information);");
+        string source = TestSource.WrapInMethodBody("logger.IsEnabled(LogLevel.Information);");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new StructuredLoggerExtensionsInvocationAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }

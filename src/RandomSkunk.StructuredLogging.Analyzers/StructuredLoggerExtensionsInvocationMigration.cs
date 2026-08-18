@@ -54,17 +54,17 @@ internal static class StructuredLoggerExtensionsInvocationMigration
     /// </summary>
     public static InvocationExpressionSyntax? TryCreateReplacement(IInvocationOperation invocation, SemanticModel semanticModel)
     {
-        var argumentsByParameterName = new Dictionary<string, IArgumentOperation>();
-        foreach (var argument in invocation.Arguments)
+        Dictionary<string, IArgumentOperation> argumentsByParameterName = new();
+        foreach (IArgumentOperation argument in invocation.Arguments)
         {
             if (argument.Parameter is not null)
                 argumentsByParameterName[argument.Parameter.Name] = argument;
         }
 
-        var receiver = invocation.Instance?.Syntax as ExpressionSyntax;
+        ExpressionSyntax? receiver = invocation.Instance?.Syntax as ExpressionSyntax;
         if (receiver is null)
         {
-            if (!argumentsByParameterName.TryGetValue("logger", out var loggerArgument) ||
+            if (!argumentsByParameterName.TryGetValue("logger", out IArgumentOperation? loggerArgument) ||
                 loggerArgument.Value.Syntax is not ExpressionSyntax loggerSyntax)
             {
                 return null;
@@ -73,13 +73,13 @@ internal static class StructuredLoggerExtensionsInvocationMigration
             receiver = loggerSyntax;
         }
 
-        var method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
+        IMethodSymbol method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
 
         ExpressionSyntax? levelArgument = null;
         string newMethodName;
         if (method.Name == "Write")
         {
-            if (!argumentsByParameterName.TryGetValue("level", out var levelArg) ||
+            if (!argumentsByParameterName.TryGetValue("level", out IArgumentOperation? levelArg) ||
                 levelArg.Value.Syntax is not ExpressionSyntax levelSyntax)
             {
                 return null;
@@ -105,24 +105,24 @@ internal static class StructuredLoggerExtensionsInvocationMigration
                 return null;
         }
 
-        var eventIdArgument = argumentsByParameterName.TryGetValue("eventId", out var eventIdArg)
+        ExpressionSyntax? eventIdArgument = argumentsByParameterName.TryGetValue("eventId", out IArgumentOperation? eventIdArg)
             ? eventIdArg.Value.Syntax as ExpressionSyntax
             : null;
-        var exceptionArgument = argumentsByParameterName.TryGetValue("exception", out var exceptionArg)
+        ExpressionSyntax? exceptionArgument = argumentsByParameterName.TryGetValue("exception", out IArgumentOperation? exceptionArg)
             ? exceptionArg.Value.Syntax as ExpressionSyntax
             : null;
 
-        if (!argumentsByParameterName.TryGetValue("message", out var messageArgument) ||
+        if (!argumentsByParameterName.TryGetValue("message", out IArgumentOperation? messageArgument) ||
             messageArgument.Value.Syntax is not ExpressionSyntax messageSyntax)
         {
             return null;
         }
 
-        var explicitProperties = CollectExplicitProperties(method, argumentsByParameterName, semanticModel);
+        List<(string Name, ExpressionSyntax Value)>? explicitProperties = CollectExplicitProperties(method, argumentsByParameterName, semanticModel);
         if (explicitProperties is null)
             return null;
 
-        var built = messageSyntax switch
+        (ExpressionSyntax Message, List<ExpressionSyntax> Args)? built = messageSyntax switch
         {
             InterpolatedStringExpressionSyntax interpolatedString => BuildFromInterpolatedString(interpolatedString, explicitProperties, semanticModel),
             LiteralExpressionSyntax { RawKind: (int)SyntaxKind.StringLiteralExpression } literal => BuildFromLiteral(literal, explicitProperties),
@@ -132,9 +132,9 @@ internal static class StructuredLoggerExtensionsInvocationMigration
         if (built is null)
             return null;
 
-        var (newMessage, trailingArgs) = built.Value;
+        (ExpressionSyntax? newMessage, List<ExpressionSyntax>? trailingArgs) = built.Value;
 
-        var arguments = new List<ArgumentSyntax>();
+        List<ArgumentSyntax> arguments = new();
         if (levelArgument is not null)
             arguments.Add(SyntaxFactory.Argument(levelArgument.WithoutTrivia()));
         if (eventIdArgument is not null)
@@ -162,11 +162,11 @@ internal static class StructuredLoggerExtensionsInvocationMigration
     private static List<(string Name, ExpressionSyntax Value)>? CollectExplicitProperties(
         IMethodSymbol method, Dictionary<string, IArgumentOperation> argumentsByParameterName, SemanticModel semanticModel)
     {
-        var properties = new List<(string Name, ExpressionSyntax Value)>();
+        List<(string Name, ExpressionSyntax Value)> properties = new();
 
-        foreach (var parameter in method.Parameters)
+        foreach (IParameterSymbol parameter in method.Parameters)
         {
-            if (!argumentsByParameterName.TryGetValue(parameter.Name, out var argument))
+            if (!argumentsByParameterName.TryGetValue(parameter.Name, out IArgumentOperation? argument))
                 continue;
 
             if (parameter.Name == "logProperties")
@@ -192,7 +192,7 @@ internal static class StructuredLoggerExtensionsInvocationMigration
         if (syntax is not TupleExpressionSyntax { Arguments.Count: 2 } tuple)
             return false;
 
-        var name = ConstantStringExpressionParsing.TryGetConstantStringValue(tuple.Arguments[0].Expression, semanticModel);
+        string? name = ConstantStringExpressionParsing.TryGetConstantStringValue(tuple.Arguments[0].Expression, semanticModel);
         if (name is null || !IsSafePlaceholderName(name))
             return false;
 
@@ -204,10 +204,10 @@ internal static class StructuredLoggerExtensionsInvocationMigration
         InterpolatedStringExpressionSyntax interpolatedString, List<(string Name, ExpressionSyntax Value)> explicitProperties,
         SemanticModel semanticModel)
     {
-        var contents = new List<InterpolatedStringContentSyntax>();
-        var args = new List<ExpressionSyntax>();
+        List<InterpolatedStringContentSyntax> contents = new();
+        List<ExpressionSyntax> args = new();
 
-        foreach (var content in interpolatedString.Contents)
+        foreach (InterpolatedStringContentSyntax content in interpolatedString.Contents)
         {
             if (content is not InterpolationSyntax interpolation)
             {
@@ -215,12 +215,12 @@ internal static class StructuredLoggerExtensionsInvocationMigration
                 continue;
             }
 
-            var formatText = interpolation.FormatClause?.FormatStringToken.ValueText;
-            var isTag = !string.IsNullOrEmpty(formatText) && formatText![0] == '<';
+            string? formatText = interpolation.FormatClause?.FormatStringToken.ValueText;
+            bool isTag = !string.IsNullOrEmpty(formatText) && formatText![0] == '<';
 
-            var propertyName = isTag ? LogPropertyTagFormatParsing.TryGetPropertyName(formatText!) : null;
-            var isDestructuring = isTag && LogPropertyTagFormatParsing.IsDestructuring(formatText!);
-            var residualFormat = isTag ? LogPropertyTagFormatParsing.GetRemainingFormat(formatText!) : formatText;
+            string? propertyName = isTag ? LogPropertyTagFormatParsing.TryGetPropertyName(formatText!) : null;
+            bool isDestructuring = isTag && LogPropertyTagFormatParsing.IsDestructuring(formatText!);
+            string? residualFormat = isTag ? LogPropertyTagFormatParsing.GetRemainingFormat(formatText!) : formatText;
 
             if (propertyName is null)
             {
@@ -238,18 +238,18 @@ internal static class StructuredLoggerExtensionsInvocationMigration
             if (!IsSafePlaceholderName(propertyName))
                 return null;
 
-            var placeholderName = isDestructuring ? "@" + propertyName : propertyName;
+            string placeholderName = isDestructuring ? "@" + propertyName : propertyName;
             if (isDestructuring)
                 residualFormat = null;
             else if (residualFormat is not null && !IsSafePlaceholderName(residualFormat))
                 return null;
 
-            var placeholderText = residualFormat is null ? $"{{{placeholderName}}}" : $"{{{placeholderName}:{residualFormat}}}";
+            string placeholderText = residualFormat is null ? $"{{{placeholderName}}}" : $"{{{placeholderName}:{residualFormat}}}";
             contents.Add(CreateTextPiece(placeholderText));
             args.Add(interpolation.Expression.WithoutTrivia());
         }
 
-        foreach (var (name, value) in explicitProperties)
+        foreach ((string? name, ExpressionSyntax? value) in explicitProperties)
         {
             contents.Add(CreateTextPiece($" {{{name}}}"));
             args.Add(value.WithoutTrivia());
@@ -267,15 +267,15 @@ internal static class StructuredLoggerExtensionsInvocationMigration
         if (explicitProperties.Count == 0)
             return (literal.WithoutTrivia(), []);
 
-        foreach (var (name, _) in explicitProperties)
+        foreach ((string? name, ExpressionSyntax _) in explicitProperties)
         {
             if (!IsSafePlaceholderName(name))
                 return null;
         }
 
-        var text = literal.Token.ValueText + string.Concat(explicitProperties.Select(p => $" {{{p.Name}}}"));
-        var newLiteral = SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(text));
-        var args = explicitProperties.Select(p => p.Value.WithoutTrivia()).ToList();
+        string text = literal.Token.ValueText + string.Concat(explicitProperties.Select(p => $" {{{p.Name}}}"));
+        LiteralExpressionSyntax newLiteral = SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(text));
+        List<ExpressionSyntax> args = explicitProperties.Select(p => p.Value.WithoutTrivia()).ToList();
 
         return (newLiteral, args);
     }
@@ -286,14 +286,14 @@ internal static class StructuredLoggerExtensionsInvocationMigration
 
     private static ExpressionSyntax CollapseToLiteral(List<InterpolatedStringContentSyntax> contents)
     {
-        var text = string.Concat(contents.OfType<InterpolatedStringTextSyntax>().Select(t => t.TextToken.ValueText));
+        string text = string.Concat(contents.OfType<InterpolatedStringTextSyntax>().Select(t => t.TextToken.ValueText));
         return SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(text));
     }
 
     private static InterpolatedStringTextSyntax CreateTextPiece(string rawValue)
     {
-        var escapedText = SymbolDisplay.FormatLiteral(rawValue, quote: false).Replace("{", "{{").Replace("}", "}}");
-        var textToken = SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, escapedText, rawValue, default);
+        string escapedText = SymbolDisplay.FormatLiteral(rawValue, quote: false).Replace("{", "{{").Replace("}", "}}");
+        SyntaxToken textToken = SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, escapedText, rawValue, default);
         return SyntaxFactory.InterpolatedStringText(textToken);
     }
 }

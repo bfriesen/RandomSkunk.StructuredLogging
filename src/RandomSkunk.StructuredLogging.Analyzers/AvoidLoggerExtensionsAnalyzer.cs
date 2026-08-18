@@ -41,7 +41,7 @@ public sealed class AvoidLoggerExtensionsAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var loggerExtensionsType = compilationContext.Compilation.GetTypeByMetadataName(
+            INamedTypeSymbol? loggerExtensionsType = compilationContext.Compilation.GetTypeByMetadataName(
                 "Microsoft.Extensions.Logging.LoggerExtensions");
 
             // Microsoft.Extensions.Logging.Abstractions isn't referenced by this compilation,
@@ -57,14 +57,14 @@ public sealed class AvoidLoggerExtensionsAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeInvocation(OperationAnalysisContext context, INamedTypeSymbol loggerExtensionsType)
     {
-        var invocation = (IInvocationOperation)context.Operation;
+        IInvocationOperation invocation = (IInvocationOperation)context.Operation;
 
         // A call like `logger.LogInformation(...)` resolves to the *reduced* form of the
         // extension method, whose ReceiverType is ILogger rather than LoggerExtensions.
         // ReducedFrom recovers the original static method so the containing-type check below
         // works the same way for both `logger.LogInformation(...)` and
         // `LoggerExtensions.LogInformation(logger, ...)` call syntax.
-        var method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
+        IMethodSymbol method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
 
         if (!LoggerExtensionsMethodNames.Contains(method.Name))
             return;

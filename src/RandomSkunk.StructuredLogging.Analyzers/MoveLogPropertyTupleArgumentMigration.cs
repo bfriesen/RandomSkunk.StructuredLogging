@@ -49,8 +49,8 @@ internal static class MoveLogPropertyTupleArgumentMigration
         if (semanticModel.GetSymbolInfo(invocation).Symbol is not IMethodSymbol method)
             return null;
 
-        var messageParameterIndex = -1;
-        for (var i = 0; i < method.Parameters.Length; i++)
+        int messageParameterIndex = -1;
+        for (int i = 0; i < method.Parameters.Length; i++)
         {
             if (method.Parameters[i].Name == "message")
             {
@@ -62,15 +62,15 @@ internal static class MoveLogPropertyTupleArgumentMigration
         if (messageParameterIndex < 0 || messageParameterIndex >= argumentList.Arguments.Count)
             return null;
 
-        var messageArgument = argumentList.Arguments[messageParameterIndex];
+        ArgumentSyntax messageArgument = argumentList.Arguments[messageParameterIndex];
 
-        var propertyName = ConstantStringExpressionParsing.TryGetConstantStringValue(tuple.Arguments[0].Expression, semanticModel);
+        string? propertyName = ConstantStringExpressionParsing.TryGetConstantStringValue(tuple.Arguments[0].Expression, semanticModel);
         if (propertyName is null)
             return null;
 
-        var valueExpression = tuple.Arguments[1].Expression.WithoutTrivia();
+        ExpressionSyntax valueExpression = tuple.Arguments[1].Expression.WithoutTrivia();
 
-        var newMessageExpression = messageArgument.Expression switch
+        InterpolatedStringExpressionSyntax? newMessageExpression = messageArgument.Expression switch
         {
             InterpolatedStringExpressionSyntax interpolatedString => AddHoleToInterpolatedString(interpolatedString, valueExpression, propertyName),
             LiteralExpressionSyntax { RawKind: (int)SyntaxKind.StringLiteralExpression } literal => PromoteStringLiteral(literal, valueExpression, propertyName),
@@ -80,11 +80,11 @@ internal static class MoveLogPropertyTupleArgumentMigration
         if (newMessageExpression is null)
             return null;
 
-        var newArguments = argumentList.Arguments
+        IEnumerable<ArgumentSyntax> newArguments = argumentList.Arguments
             .Where(argument => argument != tupleArgument)
             .Select(argument => argument == messageArgument ? argument.WithExpression(newMessageExpression) : argument);
 
-        var newInvocation = invocation.WithArgumentList(SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(newArguments)));
+        InvocationExpressionSyntax newInvocation = invocation.WithArgumentList(SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(newArguments)));
 
         return (invocation, newInvocation, propertyName);
     }
@@ -92,23 +92,23 @@ internal static class MoveLogPropertyTupleArgumentMigration
     private static InterpolatedStringExpressionSyntax AddHoleToInterpolatedString(
         InterpolatedStringExpressionSyntax interpolatedString, ExpressionSyntax valueExpression, string propertyName)
     {
-        var emptyHole = interpolatedString.Contents
+        InterpolationSyntax? emptyHole = interpolatedString.Contents
             .OfType<InterpolationSyntax>()
             .FirstOrDefault(interpolation => interpolation.Expression.IsMissing);
 
         if (emptyHole is not null)
         {
-            var filledHole = emptyHole.WithExpression(valueExpression).WithFormatClause(CreateTagFormatClause(propertyName));
+            InterpolationSyntax filledHole = emptyHole.WithExpression(valueExpression).WithFormatClause(CreateTagFormatClause(propertyName));
             return interpolatedString.WithContents(SyntaxFactory.List(
                 interpolatedString.Contents.Select(content => content == emptyHole ? filledHole : content)));
         }
 
-        var newHole = SyntaxFactory.Interpolation(valueExpression).WithFormatClause(CreateTagFormatClause(propertyName));
+        InterpolationSyntax newHole = SyntaxFactory.Interpolation(valueExpression).WithFormatClause(CreateTagFormatClause(propertyName));
 
-        var contents = interpolatedString.Contents;
+        SyntaxList<InterpolatedStringContentSyntax> contents = interpolatedString.Contents;
         if (contents.Count > 0 && contents[contents.Count - 1] is InterpolatedStringTextSyntax lastText)
         {
-            var spacedText = CreateTextPiece(lastText.TextToken.ValueText + " ");
+            InterpolatedStringTextSyntax spacedText = CreateTextPiece(lastText.TextToken.ValueText + " ");
             contents = contents.Replace(lastText, spacedText);
         }
         else
@@ -122,16 +122,16 @@ internal static class MoveLogPropertyTupleArgumentMigration
     private static InterpolatedStringExpressionSyntax PromoteStringLiteral(
         LiteralExpressionSyntax literal, ExpressionSyntax valueExpression, string propertyName)
     {
-        var text = literal.Token.ValueText;
-        var newHole = SyntaxFactory.Interpolation(valueExpression).WithFormatClause(CreateTagFormatClause(propertyName));
+        string text = literal.Token.ValueText;
+        InterpolationSyntax newHole = SyntaxFactory.Interpolation(valueExpression).WithFormatClause(CreateTagFormatClause(propertyName));
 
-        var contents = new List<InterpolatedStringContentSyntax>();
+        List<InterpolatedStringContentSyntax> contents = new();
 
-        var markerIndex = text.IndexOf("{}", StringComparison.Ordinal);
+        int markerIndex = text.IndexOf("{}", StringComparison.Ordinal);
         if (markerIndex >= 0)
         {
-            var before = text.Substring(0, markerIndex);
-            var after = text.Substring(markerIndex + 2);
+            string before = text.Substring(0, markerIndex);
+            string after = text.Substring(markerIndex + 2);
 
             if (before.Length > 0)
                 contents.Add(CreateTextPiece(before));
@@ -155,15 +155,15 @@ internal static class MoveLogPropertyTupleArgumentMigration
 
     private static InterpolationFormatClauseSyntax CreateTagFormatClause(string propertyName)
     {
-        var formatText = $"<{propertyName}>";
-        var formatToken = SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, formatText, formatText, default);
+        string formatText = $"<{propertyName}>";
+        SyntaxToken formatToken = SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, formatText, formatText, default);
         return SyntaxFactory.InterpolationFormatClause(SyntaxFactory.Token(SyntaxKind.ColonToken), formatToken);
     }
 
     private static InterpolatedStringTextSyntax CreateTextPiece(string rawValue)
     {
-        var escapedText = SymbolDisplay.FormatLiteral(rawValue, quote: false).Replace("{", "{{").Replace("}", "}}");
-        var textToken = SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, escapedText, rawValue, default);
+        string escapedText = SymbolDisplay.FormatLiteral(rawValue, quote: false).Replace("{", "{{").Replace("}", "}}");
+        SyntaxToken textToken = SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, escapedText, rawValue, default);
         return SyntaxFactory.InterpolatedStringText(textToken);
     }
 }

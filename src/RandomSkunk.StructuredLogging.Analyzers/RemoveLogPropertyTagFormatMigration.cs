@@ -24,22 +24,22 @@ internal static class RemoveLogPropertyTagFormatMigration
     /// </summary>
     public static (InterpolationSyntax OldHole, InterpolationSyntax NewHole, string PropertyName)? TryCreateReplacement(InterpolationSyntax hole)
     {
-        var formatClause = hole.FormatClause;
+        InterpolationFormatClauseSyntax? formatClause = hole.FormatClause;
         if (formatClause is null)
             return null;
 
-        var format = formatClause.FormatStringToken.ValueText;
-        var propertyName = LogPropertyTagFormatParsing.TryGetPropertyName(format);
+        string format = formatClause.FormatStringToken.ValueText;
+        string? propertyName = LogPropertyTagFormatParsing.TryGetPropertyName(format);
         if (propertyName is null)
             return null;
 
-        var remainingFormat = LogPropertyTagFormatParsing.GetRemainingFormat(format);
-        var destructure = LogPropertyTagFormatParsing.IsDestructuring(format);
+        string? remainingFormat = LogPropertyTagFormatParsing.GetRemainingFormat(format);
+        bool destructure = LogPropertyTagFormatParsing.IsDestructuring(format);
 
         InterpolationSyntax newHole;
         if (destructure)
         {
-            var newFormatText = remainingFormat is null ? "<@>" : $"<@>{remainingFormat}";
+            string newFormatText = remainingFormat is null ? "<@>" : $"<@>{remainingFormat}";
             newHole = hole.WithFormatClause(formatClause.WithFormatStringToken(
                 SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, newFormatText, newFormatText, default)));
         }

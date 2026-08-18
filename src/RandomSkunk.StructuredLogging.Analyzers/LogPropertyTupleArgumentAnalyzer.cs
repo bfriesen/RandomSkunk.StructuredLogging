@@ -34,7 +34,7 @@ public sealed class LogPropertyTupleArgumentAnalyzer : DiagnosticAnalyzer
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var structuredLoggerExtensionsType = compilationContext.Compilation.GetTypeByMetadataName(
+            INamedTypeSymbol? structuredLoggerExtensionsType = compilationContext.Compilation.GetTypeByMetadataName(
                 "RandomSkunk.StructuredLogging.StructuredLoggerExtensions");
 
             // RandomSkunk.StructuredLogging isn't referenced by this compilation, so there's
@@ -50,7 +50,7 @@ public sealed class LogPropertyTupleArgumentAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeTupleExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol structuredLoggerExtensionsType)
     {
-        var tuple = (TupleExpressionSyntax)context.Node;
+        TupleExpressionSyntax tuple = (TupleExpressionSyntax)context.Node;
 
         // A structured log property tuple is always a two-element (string Name, T Value) pair,
         // and is always passed directly as an argument - not nested inside some other expression
@@ -64,22 +64,22 @@ public sealed class LogPropertyTupleArgumentAnalyzer : DiagnosticAnalyzer
             argumentList.Parent is not InvocationExpressionSyntax invocation)
             return;
 
-        var symbol = context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol as IMethodSymbol;
+        IMethodSymbol? symbol = context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol as IMethodSymbol;
         if (symbol is null)
             return;
 
-        var method = symbol.ReducedFrom ?? symbol;
+        IMethodSymbol method = symbol.ReducedFrom ?? symbol;
         if (!SymbolEqualityComparer.Default.Equals(method.ContainingType, structuredLoggerExtensionsType))
             return;
 
         // Only a tuple whose name is provably fixed at compile time is safe to treat as a
         // structured property name - a runtime-computed name (e.g. a variable, a method call)
         // can't be captured by a code fix or reported as a stable name.
-        var propertyName = ConstantStringExpressionParsing.TryGetConstantStringValue(tuple.Arguments[0].Expression, context.SemanticModel);
+        string? propertyName = ConstantStringExpressionParsing.TryGetConstantStringValue(tuple.Arguments[0].Expression, context.SemanticModel);
         if (propertyName is null)
             return;
 
-        var valueText = tuple.Arguments[1].Expression.ToString();
+        string valueText = tuple.Arguments[1].Expression.ToString();
 
         context.ReportDiagnostic(Diagnostic.Create(
             DiagnosticDescriptors.LogPropertyTupleArgument,

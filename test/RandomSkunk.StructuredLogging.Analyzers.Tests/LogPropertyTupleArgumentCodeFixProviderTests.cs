@@ -7,9 +7,9 @@ public class LogPropertyTupleArgumentCodeFixProviderTests
     [Fact]
     public async Task EmptyHole_IsFilledWithTheTupleValue()
     {
-        var source = TestSource.WrapInMethodBody("""logger.Trace($"Hello, {}!", ("Who", who));""");
+        string source = TestSource.WrapInMethodBody("""logger.Trace($"Hello, {}!", ("Who", who));""");
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(
             source, new LogPropertyTupleArgumentAnalyzer(), new LogPropertyTupleArgumentCodeFixProvider(),
             allowCompilerErrors: true);
 
@@ -53,9 +53,9 @@ public class LogPropertyTupleArgumentCodeFixProviderTests
         """logger.Critical(new EventId(1, "Name"), new Exception(), $"Fatal {code:<Code>}");""")]
     public async Task NoEmptyHole_AppendsANewHoleToTheEnd(string call, string expectedCall)
     {
-        var source = TestSource.WrapInMethodBody(call);
+        string source = TestSource.WrapInMethodBody(call);
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(
             source, new LogPropertyTupleArgumentAnalyzer(), new LogPropertyTupleArgumentCodeFixProvider());
 
         fixedSource.Should().NotBeNull();
@@ -65,9 +65,9 @@ public class LogPropertyTupleArgumentCodeFixProviderTests
     [Fact]
     public async Task PlainStringLiteralMessage_WithEmptyHoleMarker_IsPromotedAndFilled()
     {
-        var source = TestSource.WrapInMethodBody("""logger.Debug("Hello, {}!", ("Who", who));""");
+        string source = TestSource.WrapInMethodBody("""logger.Debug("Hello, {}!", ("Who", who));""");
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(
             source, new LogPropertyTupleArgumentAnalyzer(), new LogPropertyTupleArgumentCodeFixProvider());
 
         fixedSource.Should().NotBeNull();
@@ -77,9 +77,9 @@ public class LogPropertyTupleArgumentCodeFixProviderTests
     [Fact]
     public async Task PlainStringLiteralMessage_WithoutEmptyHoleMarker_IsPromotedAndAppended()
     {
-        var source = TestSource.WrapInMethodBody("""logger.Debug("Hello, there!", ("Who", who));""");
+        string source = TestSource.WrapInMethodBody("""logger.Debug("Hello, there!", ("Who", who));""");
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(
             source, new LogPropertyTupleArgumentAnalyzer(), new LogPropertyTupleArgumentCodeFixProvider());
 
         fixedSource.Should().NotBeNull();
@@ -89,9 +89,9 @@ public class LogPropertyTupleArgumentCodeFixProviderTests
     [Fact]
     public async Task ConstantNonLiteralPropertyName_UsesItsFoldedValue()
     {
-        var source = TestSource.WrapInMethodBody("""logger.Debug($"Hello, there!", ("User" + "Id", who));""");
+        string source = TestSource.WrapInMethodBody("""logger.Debug($"Hello, there!", ("User" + "Id", who));""");
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(
             source, new LogPropertyTupleArgumentAnalyzer(), new LogPropertyTupleArgumentCodeFixProvider());
 
         fixedSource.Should().NotBeNull();

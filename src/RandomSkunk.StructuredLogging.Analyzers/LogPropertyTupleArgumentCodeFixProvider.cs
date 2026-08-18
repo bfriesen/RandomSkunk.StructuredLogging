@@ -26,23 +26,23 @@ public sealed class LogPropertyTupleArgumentCodeFixProvider : CodeFixProvider
     /// <inheritdoc/>
     public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
-        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+        SyntaxNode? root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         if (root is null)
             return;
 
-        var diagnostic = context.Diagnostics[0];
+        Diagnostic diagnostic = context.Diagnostics[0];
         if (root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is not TupleExpressionSyntax tuple)
             return;
 
-        var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+        SemanticModel? semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
         if (semanticModel is null)
             return;
 
-        var replacement = MoveLogPropertyTupleArgumentMigration.TryCreateReplacement(tuple, semanticModel);
+        (InvocationExpressionSyntax OldInvocation, InvocationExpressionSyntax NewInvocation, string PropertyName)? replacement = MoveLogPropertyTupleArgumentMigration.TryCreateReplacement(tuple, semanticModel);
         if (replacement is null)
             return;
 
-        var (oldInvocation, newInvocation, propertyName) = replacement.Value;
+        (InvocationExpressionSyntax? oldInvocation, InvocationExpressionSyntax? newInvocation, string? propertyName) = replacement.Value;
 
         context.RegisterCodeFix(
             CodeAction.Create(

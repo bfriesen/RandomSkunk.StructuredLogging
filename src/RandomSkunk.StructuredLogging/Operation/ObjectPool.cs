@@ -22,12 +22,12 @@ internal sealed class ObjectPool<T>(Func<T> factory, Action<T> reset, Func<T, bo
     // it grow unbounded under heavy concurrency.
     private static readonly int MaxSize = Environment.ProcessorCount * 4;
 
-    private readonly ConcurrentBag<T> _items = new();
+    private readonly ConcurrentBag<T> _items = [];
 
     /// <summary>
     /// Rents an item from the pool, or creates a new one if the pool is empty.
     /// </summary>
-    public T Rent() => _items.TryTake(out var item) ? item : factory();
+    public T Rent() => _items.TryTake(out T? item) ? item : factory();
 
     /// <summary>
     /// Resets <paramref name="item"/> and, if the pool isn't already at capacity and <c>shouldPool</c>

@@ -15,29 +15,29 @@ public class LogPropertyTupleArgumentAnalyzerTests
     [InlineData("""logger.Write(LogLevel.Information, $"Hello", ("UserName", userName));""", "UserName", "userName")]
     public async Task TupleArgument_IsFlagged(string call, string expectedPropertyName, string expectedValueText)
     {
-        var source = TestSource.WrapInMethodBody(call);
+        string source = TestSource.WrapInMethodBody(call);
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
+        System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
 
         diagnostics.Should().ContainSingle();
-        var diagnostic = diagnostics[0];
+        Diagnostic diagnostic = diagnostics[0];
         diagnostic.Id.Should().Be("RSSL0004");
         diagnostic.Severity.Should().Be(DiagnosticSeverity.Hidden);
         diagnostic.GetMessage().Should().Contain(expectedPropertyName);
         diagnostic.GetMessage().Should().Contain(expectedValueText);
 
-        var syntaxTree = diagnostic.Location.SourceTree!;
-        var text = syntaxTree.GetText().ToString(diagnostic.Location.SourceSpan);
+        SyntaxTree syntaxTree = diagnostic.Location.SourceTree!;
+        string text = syntaxTree.GetText().ToString(diagnostic.Location.SourceSpan);
         text.Should().Be($$"""("{{expectedPropertyName}}", {{expectedValueText}})""");
     }
 
     [Fact]
     public async Task MultipleTupleArguments_AreAllFlagged()
     {
-        var source = TestSource.WrapInMethodBody(
+        string source = TestSource.WrapInMethodBody(
             """logger.Debug($"Hello", ("UserId", userId), ("IpAddress", ipAddress));""");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
+        System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
 
         diagnostics.Should().HaveCount(2);
         diagnostics.Select(d => d.GetMessage()).Should().Contain(m => m.Contains("UserId"));
@@ -47,10 +47,10 @@ public class LogPropertyTupleArgumentAnalyzerTests
     [Fact]
     public async Task ParamsTupleArguments_AreAllFlagged()
     {
-        var source = TestSource.WrapInMethodBody(
+        string source = TestSource.WrapInMethodBody(
             """logger.Debug($"Hello", ("UserId", userId), ("IpAddress", ipAddress), ("OrderId", orderId));""");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
+        System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
 
         diagnostics.Should().HaveCount(3);
     }
@@ -65,9 +65,9 @@ public class LogPropertyTupleArgumentAnalyzerTests
     [InlineData("""(("User" + "Id"), userId)""", "UserId")]
     public async Task ConstantNonLiteralPropertyName_IsFlaggedWithItsFoldedValue(string tupleArgument, string expectedPropertyName)
     {
-        var source = TestSource.WrapInMethodBody($$"""logger.Debug($"Hello", {{tupleArgument}});""");
+        string source = TestSource.WrapInMethodBody($$"""logger.Debug($"Hello", {{tupleArgument}});""");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
+        System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
 
         diagnostics.Should().ContainSingle();
         diagnostics[0].GetMessage().Should().Contain(expectedPropertyName);
@@ -81,9 +81,9 @@ public class LogPropertyTupleArgumentAnalyzerTests
     [InlineData("""($"Id{dynamicName}", userId)""")]
     public async Task NonConstantPropertyName_IsNotFlagged(string tupleArgument)
     {
-        var source = TestSource.WrapInMethodBody($$"""logger.Debug($"Hello", {{tupleArgument}});""");
+        string source = TestSource.WrapInMethodBody($$"""logger.Debug($"Hello", {{tupleArgument}});""");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
+        System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }
@@ -91,9 +91,9 @@ public class LogPropertyTupleArgumentAnalyzerTests
     [Fact]
     public async Task NoTupleArgument_IsNotFlagged()
     {
-        var source = TestSource.WrapInMethodBody("""logger.Debug($"Hello, {who}!");""");
+        string source = TestSource.WrapInMethodBody("""logger.Debug($"Hello, {who}!");""");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
+        System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }
@@ -101,14 +101,14 @@ public class LogPropertyTupleArgumentAnalyzerTests
     [Fact]
     public async Task TupleArgumentToUnrelatedMethod_IsNotFlagged()
     {
-        var source = TestSource.WrapInMethodBody(
+        string source = TestSource.WrapInMethodBody(
             """
             LocalMethod(("UserId", userId));
 
             void LocalMethod((string Name, object Value) logProperty1) { }
             """);
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
+        System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }
@@ -116,9 +116,9 @@ public class LogPropertyTupleArgumentAnalyzerTests
     [Fact]
     public async Task NoTupleArguments_LoggerExtensionsCall_IsNotFlagged()
     {
-        var source = TestSource.WrapInMethodBody("""logger.LogInformation("no tuple here");""");
+        string source = TestSource.WrapInMethodBody("""logger.LogInformation("no tuple here");""");
 
-        var diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
+        System.Collections.Immutable.ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new LogPropertyTupleArgumentAnalyzer());
 
         diagnostics.Should().BeEmpty();
     }

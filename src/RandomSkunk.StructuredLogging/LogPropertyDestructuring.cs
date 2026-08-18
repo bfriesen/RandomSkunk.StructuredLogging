@@ -33,7 +33,7 @@ internal static class LogPropertyDestructuring
     /// </summary>
     public static string Render(object? value)
     {
-        var sb = new StringBuilder();
+        StringBuilder sb = new();
         AppendValue(sb, value, depth: 0, ancestors: null);
         return sb.ToString();
     }
@@ -58,7 +58,7 @@ internal static class LogPropertyDestructuring
             return;
         }
 
-        var type = value.GetType();
+        Type type = value.GetType();
 
         if (IsScalarType(type))
         {
@@ -109,14 +109,14 @@ internal static class LogPropertyDestructuring
 
             sb.Append('{');
 
-            var properties = PropertyCache.GetOrAdd(type, static t => t
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.CanRead && p.GetIndexParameters().Length == 0)
-                .ToArray());
+            PropertyInfo[] properties = PropertyCache.GetOrAdd(
+                type, static t => [..
+                    t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        .Where(p => p.CanRead && p.GetIndexParameters().Length == 0)]);
 
             for (int i = 0; i < properties.Length; i++)
             {
-                var property = properties[i];
+                PropertyInfo property = properties[i];
                 sb.Append(i == 0 ? " " : ", ");
                 sb.Append(property.Name);
                 sb.Append(": ");
@@ -129,7 +129,7 @@ internal static class LogPropertyDestructuring
                 catch (Exception ex)
                 {
                     // A throwing property getter must never turn a log call into a crash.
-                    var thrown = ex is TargetInvocationException { InnerException: { } inner } ? inner : ex;
+                    Exception thrown = ex is TargetInvocationException { InnerException: { } inner } ? inner : ex;
                     sb.Append("<getter threw ").Append(thrown.GetType().Name).Append('>');
                     continue;
                 }
@@ -158,7 +158,7 @@ internal static class LogPropertyDestructuring
             sb.Append('[');
 
             int count = 0;
-            foreach (var item in sequence)
+            foreach (object? item in sequence)
             {
                 if (count == MaxCollectionItems)
                 {
@@ -240,7 +240,7 @@ internal static class LogPropertyDestructuring
     {
         sb.Append('"');
 
-        foreach (var ch in value)
+        foreach (char ch in value)
         {
             switch (ch)
             {
@@ -295,12 +295,12 @@ internal static class LogPropertyDestructuring
         if (!type.IsGenericType)
             return type.Name;
 
-        var name = type.Name;
-        var backtickIndex = name.IndexOf('`');
+        string name = type.Name;
+        int backtickIndex = name.IndexOf('`');
         if (backtickIndex >= 0)
-            name = name.Substring(0, backtickIndex);
+            name = name[..backtickIndex];
 
-        var typeArgs = string.Join(", ", type.GetGenericArguments().Select(GetFriendlyTypeName));
+        string typeArgs = string.Join(", ", type.GetGenericArguments().Select(GetFriendlyTypeName));
         return $"{name}<{typeArgs}>";
     }
 }

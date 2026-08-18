@@ -43,9 +43,9 @@ public class LogPropertyTagFormatCodeFixProviderTests
         """logger.Debug($"Item added", ("@Value", value));""")]
     public async Task TagFormatHole_IsExtractedToTrailingTupleArgument(string call, string expectedCall)
     {
-        var source = TestSource.WrapInMethodBody(call);
+        string source = TestSource.WrapInMethodBody(call);
 
-        var fixedSource = await CodeFixVerifier.TryApplyFixAsync(
+        string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(
             source, new LogPropertyTagFormatAnalyzer(), new LogPropertyTagFormatCodeFixProvider(),
             action => action.Title.StartsWith("Move", StringComparison.Ordinal));
 

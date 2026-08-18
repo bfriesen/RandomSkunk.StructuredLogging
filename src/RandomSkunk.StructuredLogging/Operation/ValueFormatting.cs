@@ -30,7 +30,7 @@ internal static class ValueFormatting
     /// </summary>
     public static void AppendJson<T>(StringBuilder journal, T value)
     {
-        var pooled = OperationLogPools.JsonWriters.Rent();
+        PooledJsonWriter pooled = OperationLogPools.JsonWriters.Rent();
 
         try
         {
@@ -47,12 +47,12 @@ internal static class ValueFormatting
 
     private static void AppendUtf8(StringBuilder journal, ReadOnlySpan<byte> utf8)
     {
-        var maxCharCount = Encoding.UTF8.GetMaxCharCount(utf8.Length);
-        var chars = ArrayPool<char>.Shared.Rent(maxCharCount);
+        int maxCharCount = Encoding.UTF8.GetMaxCharCount(utf8.Length);
+        char[] chars = ArrayPool<char>.Shared.Rent(maxCharCount);
 
         try
         {
-            var charCount = Encoding.UTF8.GetChars(utf8, chars);
+            int charCount = Encoding.UTF8.GetChars(utf8, chars);
             journal.Append(chars, 0, charCount);
         }
         finally

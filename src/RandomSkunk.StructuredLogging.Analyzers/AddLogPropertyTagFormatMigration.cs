@@ -25,24 +25,24 @@ internal static class AddLogPropertyTagFormatMigration
     public static (InterpolationSyntax OldHole, InterpolationSyntax NewHole, string PropertyName, bool Destructure)? TryCreateReplacement(
         InterpolationSyntax hole, SemanticModel semanticModel)
     {
-        var formatClause = hole.FormatClause;
-        var existingFormat = formatClause?.FormatStringToken.ValueText;
+        InterpolationFormatClauseSyntax? formatClause = hole.FormatClause;
+        string? existingFormat = formatClause?.FormatStringToken.ValueText;
 
         if (existingFormat is not null && LogPropertyTagFormatParsing.TryGetPropertyName(existingFormat) is not null)
             return null;
 
-        var (remainingFormat, destructure) = AnalyzeExistingFormat(existingFormat);
-        var propertyName = GuessPropertyName(hole.Expression, semanticModel);
+        (string? remainingFormat, bool destructure) = AnalyzeExistingFormat(existingFormat);
+        string propertyName = GuessPropertyName(hole.Expression, semanticModel);
 
-        var tagPrefix = destructure ? $"<@{propertyName}>" : $"<{propertyName}>";
-        var newFormatText = remainingFormat is null ? tagPrefix : $"{tagPrefix}{remainingFormat}";
-        var newFormatToken = SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, newFormatText, newFormatText, default);
+        string tagPrefix = destructure ? $"<@{propertyName}>" : $"<{propertyName}>";
+        string newFormatText = remainingFormat is null ? tagPrefix : $"{tagPrefix}{remainingFormat}";
+        SyntaxToken newFormatToken = SyntaxFactory.Token(default, SyntaxKind.InterpolatedStringTextToken, newFormatText, newFormatText, default);
 
-        var newFormatClause = formatClause is null
+        InterpolationFormatClauseSyntax newFormatClause = formatClause is null
             ? SyntaxFactory.InterpolationFormatClause(SyntaxFactory.Token(SyntaxKind.ColonToken), newFormatToken)
             : formatClause.WithFormatStringToken(newFormatToken);
 
-        var newHole = hole.WithFormatClause(newFormatClause);
+        InterpolationSyntax newHole = hole.WithFormatClause(newFormatClause);
 
         return (hole, newHole, propertyName, destructure);
     }
@@ -52,7 +52,7 @@ internal static class AddLogPropertyTagFormatMigration
     /// <c>&lt;...</c> with no closing <c>&gt;</c>, or the <c>&lt;&gt;</c>/<c>&lt;@&gt;</c> opt-out)
     /// is stripped from <paramref name="format"/>, along with whether that prefix was a destructuring
     /// (<c>&lt;@&gt;</c>) tag whose destructuring status should be preserved. Mirrors the runtime's
-    /// own <c>TagFormat</c> parsing (RandomSkunk.StructuredLogging's Internal/LogPropertyTagFormat.cs).
+    /// own <c>TagFormat</c> parsing (RandomSkunk.StructuredLogging's LogPropertyTagFormat.cs).
     /// </summary>
     private static (string? RemainingFormat, bool Destructure) AnalyzeExistingFormat(string? format)
     {

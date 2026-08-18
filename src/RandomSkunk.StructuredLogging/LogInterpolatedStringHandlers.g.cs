@@ -52,7 +52,7 @@ public ref struct TraceInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -79,7 +79,7 @@ public ref struct TraceInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -154,7 +154,7 @@ public ref struct DebugInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -181,7 +181,7 @@ public ref struct DebugInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -256,7 +256,7 @@ public ref struct InformationInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -283,7 +283,7 @@ public ref struct InformationInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -358,7 +358,7 @@ public ref struct WarningInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -385,7 +385,7 @@ public ref struct WarningInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -460,7 +460,7 @@ public ref struct ErrorInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -487,7 +487,7 @@ public ref struct ErrorInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -562,7 +562,7 @@ public ref struct CriticalInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -589,7 +589,7 @@ public ref struct CriticalInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -665,7 +665,7 @@ public ref struct WriteInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
@@ -692,7 +692,7 @@ public ref struct WriteInterpolatedStringHandler
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type, optionally preceded by a <c>&lt;PropertyName&gt;</c> capture tag.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
-        var tag = LogPropertyTagFormat.Parse(format);
+        TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 

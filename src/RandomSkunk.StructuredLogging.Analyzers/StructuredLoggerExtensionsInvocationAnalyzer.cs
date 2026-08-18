@@ -30,7 +30,7 @@ public sealed class StructuredLoggerExtensionsInvocationAnalyzer : DiagnosticAna
 
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var structuredLoggerExtensionsType = compilationContext.Compilation.GetTypeByMetadataName(
+            INamedTypeSymbol? structuredLoggerExtensionsType = compilationContext.Compilation.GetTypeByMetadataName(
                 "RandomSkunk.StructuredLogging.StructuredLoggerExtensions");
 
             // RandomSkunk.StructuredLogging isn't referenced by this compilation, so there's
@@ -46,14 +46,14 @@ public sealed class StructuredLoggerExtensionsInvocationAnalyzer : DiagnosticAna
 
     private static void AnalyzeInvocation(OperationAnalysisContext context, INamedTypeSymbol structuredLoggerExtensionsType)
     {
-        var invocation = (IInvocationOperation)context.Operation;
+        IInvocationOperation invocation = (IInvocationOperation)context.Operation;
 
         // A call like `logger.Debug(...)` resolves to the *reduced* form of the extension method,
         // whose ReceiverType is ILogger rather than StructuredLoggerExtensions. ReducedFrom
         // recovers the original static method so the containing-type check below works the same
         // way for both `logger.Debug(...)` and `StructuredLoggerExtensions.Debug(logger, ...)`
         // call syntax.
-        var method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
+        IMethodSymbol method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
 
         if (!SymbolEqualityComparer.Default.Equals(method.ContainingType, structuredLoggerExtensionsType))
             return;
