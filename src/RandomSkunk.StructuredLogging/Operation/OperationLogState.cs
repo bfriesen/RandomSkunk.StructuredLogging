@@ -31,14 +31,14 @@ internal sealed class OperationLogState
     public bool HasResult;
     public Exception? Exception;
 
-    public OperationLogState(ILogger logger, LogLevel level, EventId eventId, string name)
+    public OperationLogState(ILogger logger, LogLevel level, EventId eventId, string operationName)
     {
         Logger = logger;
         Level = level;
         EventId = eventId;
 
         StartTime = DateTimeOffset.Now;
-        _journal.Append(name).Append('\n').Append('-', name.Length).Append('\n');
+        _journal.Append(operationName).Append('\n').Append('-', operationName.Length).Append('\n');
         AppendTimestamp(TimeSpan.Zero).Append(
             CultureInfo.InvariantCulture,
             $"Operation started at {StartTime:yyyy-MM-dd HH:mm:ss.fff zzz}.");

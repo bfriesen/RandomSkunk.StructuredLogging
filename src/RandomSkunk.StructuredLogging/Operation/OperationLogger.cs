@@ -13,11 +13,11 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// </summary>
 internal sealed class OperationLogger<TCategoryName>(ILogger<TCategoryName> logger) : IOperationLogger<TCategoryName>
 {
-    public IOperationLog BeginOperation(string name, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
-        logger.BeginOperation(name, level, threadSafe);
+    public IOperationLog BeginOperation(string operationName, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
+        logger.BeginOperation(operationName, level, threadSafe);
 
-    public IOperationLog BeginOperation(EventId eventId, string name, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
-        logger.BeginOperation(eventId, name, level, threadSafe);
+    public IOperationLog BeginOperation(EventId eventId, string operationName, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
+        logger.BeginOperation(eventId, operationName, level, threadSafe);
 
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull =>
         logger.BeginScope(state);

@@ -24,7 +24,7 @@ public interface IOperationLog : IDisposable
 
     /// <summary>
     /// The <see cref="EventId"/> the operation was begun with (via the
-    /// <c>BeginOperation(eventId, name, ...)</c> overload), or <c>default</c> if the operation was begun
+    /// <c>BeginOperation(eventId, operationName, ...)</c> overload), or <c>default</c> if the operation was begun
     /// without one. The same value on the root operation and every nested sub-operation, since it's the
     /// <see cref="EventId"/> that ends up on the one eventual log entry. Useful for tying a log line
     /// written elsewhere (e.g. from within the operation) back to the operation's own final entry.
@@ -32,7 +32,7 @@ public interface IOperationLog : IDisposable
     EventId EventId { get; }
 
     /// <summary>
-    /// The name this operation was created with - the <c>name</c> argument to
+    /// The name this operation was created with - the <c>operationName</c> argument to
     /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>
     /// for the root operation, or to <see cref="BeginSubOperation"/> for a sub-operation. Unlike
     /// <see cref="EventId"/> and <see cref="Properties"/>, this is specific to each level of the
@@ -132,7 +132,7 @@ public interface IOperationLog : IDisposable
     /// the root operation, a sub-operation never writes its own log entry - it only ever contributes to
     /// the root's single flushed entry.
     /// </summary>
-    /// <param name="name">The sub-operation's name, used in its journal lines (e.g. "started"/"complete").</param>
+    /// <param name="operationName">The sub-operation's name, used in its journal lines (e.g. "started"/"complete").</param>
     /// <returns>An <see cref="IOperationLog"/> representing the nested sub-operation.</returns>
-    IOperationLog BeginSubOperation(string name);
+    IOperationLog BeginSubOperation(string operationName);
 }

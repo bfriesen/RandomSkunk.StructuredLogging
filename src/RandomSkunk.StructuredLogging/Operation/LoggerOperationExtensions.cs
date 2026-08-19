@@ -17,7 +17,7 @@ public static class LoggerOperationExtensions
     /// operation, since callers may read them regardless of whether the operation logs anything.
     /// </summary>
     /// <param name="logger">The logger the operation's single log entry will eventually be written to.</param>
-    /// <param name="name">The operation's name, used in its journal lines and its final log message.</param>
+    /// <param name="operationName">The operation's name, used in its journal lines and its final log message.</param>
     /// <param name="level">The severity level the operation's final log entry is written at. Defaults to <see cref="LogLevel.Information"/>.</param>
     /// <param name="threadSafe">
     /// <see langword="true"/> to make the returned <see cref="IOperationLog"/> (and every
@@ -25,8 +25,8 @@ public static class LoggerOperationExtensions
     /// via <c>Task.WhenAll</c>. By default an operation applies no synchronization of its own.
     /// </param>
     /// <returns>An <see cref="IOperationLog"/> representing the operation.</returns>
-    public static IOperationLog BeginOperation(this ILogger logger, string name, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
-        BeginOperation(logger, default, name, level, threadSafe);
+    public static IOperationLog BeginOperation(this ILogger logger, string operationName, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
+        BeginOperation(logger, default, operationName, level, threadSafe);
 
     /// <summary>
     /// Begins an operation: a journal of everything that happens during it, written as exactly one log
@@ -40,7 +40,7 @@ public static class LoggerOperationExtensions
     /// </summary>
     /// <param name="logger">The logger the operation's single log entry will eventually be written to.</param>
     /// <param name="eventId">The event id associated with the operation's final log entry.</param>
-    /// <param name="name">The operation's name, used in its journal lines and its final log message.</param>
+    /// <param name="operationName">The operation's name, used in its journal lines and its final log message.</param>
     /// <param name="level">The severity level the operation's final log entry is written at. Defaults to <see cref="LogLevel.Information"/>.</param>
     /// <param name="threadSafe">
     /// <see langword="true"/> to make the returned <see cref="IOperationLog"/> (and every
@@ -48,19 +48,19 @@ public static class LoggerOperationExtensions
     /// via <c>Task.WhenAll</c>. By default an operation applies no synchronization of its own.
     /// </param>
     /// <returns>An <see cref="IOperationLog"/> representing the operation.</returns>
-    public static IOperationLog BeginOperation(this ILogger logger, EventId eventId, string name, LogLevel level = LogLevel.Information, bool threadSafe = false)
+    public static IOperationLog BeginOperation(this ILogger logger, EventId eventId, string operationName, LogLevel level = LogLevel.Information, bool threadSafe = false)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         if (!logger.IsEnabled(level))
         {
-            IOperationLog disabledLog = new DisabledOperationLog(eventId, name);
+            IOperationLog disabledLog = new DisabledOperationLog(eventId, operationName);
             return threadSafe ? new SynchronizedOperationLog(disabledLog, new object()) : disabledLog;
         }
 
-        OperationLogState state = new(logger, level, eventId, name);
+        OperationLogState state = new(logger, level, eventId, operationName);
 
-        IOperationLog operationLog = new RootOperationLog(state, name);
+        IOperationLog operationLog = new RootOperationLog(state, operationName);
 
         if (threadSafe)
             operationLog = new SynchronizedOperationLog(operationLog, state);

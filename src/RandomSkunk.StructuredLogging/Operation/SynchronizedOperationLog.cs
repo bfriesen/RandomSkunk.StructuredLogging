@@ -70,11 +70,11 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
         return this;
     }
 
-    public IOperationLog BeginSubOperation(string name)
+    public IOperationLog BeginSubOperation(string operationName)
     {
         IOperationLog subOperation;
         lock (gate)
-            subOperation = inner.BeginSubOperation(name);
+            subOperation = inner.BeginSubOperation(operationName);
         return new SynchronizedOperationLog(subOperation, gate);
     }
 

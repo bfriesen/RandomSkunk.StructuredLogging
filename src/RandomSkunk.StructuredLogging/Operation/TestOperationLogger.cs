@@ -23,12 +23,12 @@ namespace RandomSkunk.StructuredLogging.Operation;
 public class TestOperationLogger<TCategoryName>(ILogger<TCategoryName> logger) : IOperationLogger<TCategoryName>
 {
     /// <inheritdoc/>
-    public virtual IOperationLog BeginOperation(string name, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
-        BeginOperation(default, name, level, threadSafe);
+    public virtual IOperationLog BeginOperation(string operationName, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
+        BeginOperation(default, operationName, level, threadSafe);
 
     /// <inheritdoc/>
-    public virtual IOperationLog BeginOperation(EventId eventId, string name, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
-        new DisabledOperationLog(eventId, name);
+    public virtual IOperationLog BeginOperation(EventId eventId, string operationName, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
+        new DisabledOperationLog(eventId, operationName);
 
     /// <inheritdoc/>
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull =>

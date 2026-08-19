@@ -60,7 +60,7 @@ internal sealed class DisabledOperationLog : IOperationLog
 
     public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
 
-    public IOperationLog BeginSubOperation(string name) => new DisabledOperationLog(_eventId, name, _shared);
+    public IOperationLog BeginSubOperation(string operationName) => new DisabledOperationLog(_eventId, operationName, _shared);
 
     public void Dispose()
     {

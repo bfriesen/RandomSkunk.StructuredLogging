@@ -17,8 +17,8 @@ namespace RandomSkunk.StructuredLogging.Operation;
 public interface IOperationLogger<out TCategoryName> : ILogger<TCategoryName>
 {
     /// <inheritdoc cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>
-    IOperationLog BeginOperation(string name, LogLevel level = LogLevel.Information, bool threadSafe = false);
+    IOperationLog BeginOperation(string operationName, LogLevel level = LogLevel.Information, bool threadSafe = false);
 
     /// <inheritdoc cref="LoggerOperationExtensions.BeginOperation(ILogger, EventId, string, LogLevel, bool)"/>
-    IOperationLog BeginOperation(EventId eventId, string name, LogLevel level = LogLevel.Information, bool threadSafe = false);
+    IOperationLog BeginOperation(EventId eventId, string operationName, LogLevel level = LogLevel.Information, bool threadSafe = false);
 }

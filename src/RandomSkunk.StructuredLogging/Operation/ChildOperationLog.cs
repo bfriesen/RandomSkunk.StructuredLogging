@@ -8,8 +8,8 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// of its own - see <see cref="SynchronizedOperationLog"/> for the decorator that wraps this type when an
 /// operation is begun with <c>threadSafe: true</c>.
 /// </summary>
-internal sealed class ChildOperationLog(OperationLogState state, string name)
-    : OperationLog<ChildOperationLog>(state, name), IOperationLog
+internal sealed class ChildOperationLog(OperationLogState state, string operationName)
+    : OperationLog<ChildOperationLog>(state, operationName), IOperationLog
 {
     public IOperationLog SetException(Exception exception, bool recordEverywhere = false)
     {
