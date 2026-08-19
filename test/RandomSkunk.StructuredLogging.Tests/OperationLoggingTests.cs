@@ -153,6 +153,66 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void Properties_ReflectsAddedPropertiesBeforeDispose()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        log.AddProperty("UserId", 123);
+
+        log.Properties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("UserId", 123));
+    }
+
+    [Fact]
+    public void Properties_Empty_WhenNoPropertiesAdded()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name");
+
+        log.Properties.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Properties_Disabled_ReturnsEmpty()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        log.AddProperty("UserId", 123);
+
+        log.Properties.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void SubOperation_Properties_SharesRootsPropertyList()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        using IOperationLog subLog = log.BeginSubOperation("Fetch");
+        subLog.AddProperty("Count", 5);
+
+        log.Properties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Count", 5));
+        subLog.Properties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Count", 5));
+    }
+
+    [Fact]
+    public void ThreadSafe_Properties_ReturnsSnapshotNotLiveList()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name", threadSafe: true);
+        log.AddProperty("UserId", 123);
+
+        IReadOnlyList<KeyValuePair<string, object?>> snapshot = log.Properties;
+        log.AddProperty("SecondProperty", 456);
+
+        snapshot.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("UserId", 123));
+        snapshot.Should().NotContain(kvp => kvp.Key == "SecondProperty");
+    }
+
+    [Fact]
     public void SetResult_SetsOperationResultProperty()
     {
         RecordingLogger logger = new();

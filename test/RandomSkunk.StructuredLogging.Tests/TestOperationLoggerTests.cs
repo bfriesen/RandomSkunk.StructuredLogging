@@ -170,6 +170,8 @@ public class TestOperationLoggerTests
 
     private sealed class FakeOperationLog : IOperationLog
     {
+        public IReadOnlyList<KeyValuePair<string, object?>> Properties => Array.Empty<KeyValuePair<string, object?>>();
+
         public IOperationLog AddProperty<T>(string name, T value) => this;
 
         public IOperationLog Append(string text) => this;

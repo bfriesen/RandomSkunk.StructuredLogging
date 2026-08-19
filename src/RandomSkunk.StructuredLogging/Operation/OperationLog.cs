@@ -18,6 +18,8 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
     
     private int _disposed;
 
+    public IReadOnlyList<KeyValuePair<string, object?>> Properties => _state.Properties ?? [];
+
     public IOperationLog AddProperty<T>(string propertyName, T value)
     {
         _state.AddProperty(propertyName, value);

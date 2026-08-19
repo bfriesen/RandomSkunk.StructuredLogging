@@ -17,6 +17,8 @@ internal sealed class NullOperationLog : IOperationLog
     {
     }
 
+    public IReadOnlyList<KeyValuePair<string, object?>> Properties => [];
+
     public IOperationLog SetException(Exception exception, bool recordEverywhere = false) => this;
 
     public IOperationLog AddProperty<T>(string name, T value) => this;

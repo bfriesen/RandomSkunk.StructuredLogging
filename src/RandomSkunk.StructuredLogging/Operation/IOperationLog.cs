@@ -13,6 +13,15 @@ namespace RandomSkunk.StructuredLogging.Operation;
 public interface IOperationLog : IDisposable
 {
     /// <summary>
+    /// The structured properties added so far via <see cref="AddProperty{T}"/>, on this operation or any
+    /// other operation in the same tree (root or sub-operation) - they all share the same eventual log
+    /// entry. Empty if <see cref="AddProperty{T}"/> has never been called. For an operation begun with
+    /// <c>threadSafe: true</c>, this returns a point-in-time snapshot rather than a live view, so it's safe
+    /// to enumerate even while another thread concurrently calls <see cref="AddProperty{T}"/>.
+    /// </summary>
+    IReadOnlyList<KeyValuePair<string, object?>> Properties { get; }
+
+    /// <summary>
     /// Records the exception for this operation. On the root operation, this becomes the <c>Exception</c>
     /// argument of the final log entry, and <paramref name="recordEverywhere"/> additionally appends a
     /// "failed" line to the journal describing it. On a sub-operation, a "failed" line is always appended

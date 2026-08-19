@@ -14,6 +14,15 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// </summary>
 internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate) : IOperationLog
 {
+    public IReadOnlyList<KeyValuePair<string, object?>> Properties
+    {
+        get
+        {
+            lock (gate)
+                return [.. inner.Properties];
+        }
+    }
+
     public IOperationLog SetException(Exception exception, bool recordEverywhere = false)
     {
         lock (gate)
