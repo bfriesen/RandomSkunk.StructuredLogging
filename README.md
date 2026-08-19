@@ -261,12 +261,14 @@ Disposing `log` writes a single log entry whose structured properties include `O
 and sub-operation start/result/failure/complete line, each timestamped with elapsed seconds:
 
 ```
-Operation started at 2024-01-01T00:00:00.0000000+00:00.
+FulfillOrder
+------------
+[0.000] Operation started at 2026-08-19 12:56:31.417 -04:00.
 [0.002] Validating order 42
 [0.003] `ChargePayment` started.
 [0.041] `ChargePayment` result: Receipt { Id = ..., Amount = 99.00 }
 [0.041] `ChargePayment` complete.
-[0.042] Operation completed in 0.042 seconds.
+[0.042] Operation complete.
 ```
 
 If the logger's level is disabled, `BeginOperation` returns a no-op that allocates nothing - no

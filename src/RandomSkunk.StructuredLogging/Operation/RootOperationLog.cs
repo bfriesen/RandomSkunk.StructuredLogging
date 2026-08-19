@@ -1,4 +1,3 @@
-using System.Globalization;
 using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging.Operation;
@@ -36,9 +35,7 @@ internal sealed class RootOperationLog(OperationLogState state, string name)
     {
         _state.Stopwatch.Stop();
         string journal = _state.BeginJournalEntry()
-            .Append(
-                CultureInfo.InvariantCulture,
-                $"Operation completed in {_state.Stopwatch.Elapsed.TotalSeconds:F3} seconds.")
+            .Append("Operation complete.")
             .ToString();
 
         if (_state.HasResult)
