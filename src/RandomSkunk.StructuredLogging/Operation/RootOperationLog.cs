@@ -34,21 +34,22 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
     protected override void DisposeCore()
     {
         _state.Stopwatch.Stop();
+
         string journal = _state.BeginJournalEntry()
             .Append("Operation complete.")
             .ToString();
+        _state.ReturnJournalToPool();
 
         if (_state.HasResult)
             _state.AddProperty("Operation.Result", _state.Result);
 
-        _state.ReturnJournalToPool();
         _state.Logger.Write(
             _state.Properties ?? [],
             _state.Level,
             _state.EventId,
             _state.Exception,
-            $"Operation complete: {_operationName:<Operation.Name>}",
-            ("Operation.Journal", journal),
+            journal,
+            ("Operation.Name", _operationName),
             ("Operation.StartTime", _state.StartTime),
             ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds));
     }

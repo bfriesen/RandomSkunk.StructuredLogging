@@ -62,9 +62,9 @@ public interface IOperationLog : IDisposable
 
     /// <summary>
     /// Adds a structured property to the operation's final log entry. Unlike the built-in
-    /// <c>Operation.*</c> properties (<c>Operation.StartTime</c>, <c>Operation.DurationSeconds</c>,
-    /// <c>Operation.Journal</c>, <c>Operation.Result</c>), properties set here are added unprefixed. Can be
-    /// called on the root operation or any nested
+    /// <c>Operation.*</c> properties (<c>Operation.Name</c>, <c>Operation.StartTime</c>,
+    /// <c>Operation.DurationSeconds</c>, <c>Operation.Result</c>), properties set here are added unprefixed.
+    /// Can be called on the root operation or any nested
     /// sub-operation; either way the property is added to the one entry that eventually gets flushed.
     /// </summary>
     /// <typeparam name="T">The type of the property value.</typeparam>
@@ -88,8 +88,8 @@ public interface IOperationLog : IDisposable
     IOperationLog SetResult<T>(T value);
 
     /// <summary>
-    /// Appends a line of free text to the operation's journal (the <c>Operation.Journal</c> property of the
-    /// final log entry).
+    /// Appends a line of free text to the operation's journal, which becomes the message of the
+    /// final log entry.
     /// </summary>
     /// <param name="text">The text to append.</param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>

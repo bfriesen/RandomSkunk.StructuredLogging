@@ -55,7 +55,8 @@ public class OperationLoggingTests
 
         logger.LogCallCount.Should().Be(1);
         logger.LastLevel.Should().Be(LogLevel.Information);
-        logger.LastMessage.Should().Be("Operation complete: DoThing");
+        logger.LastMessage.Should().StartWith("Operation: DoThing\n");
+        logger.LastMessage.Should().EndWith("Operation complete.");
         logger.LastEventId.Should().Be(default(EventId));
         logger.LastException.Should().BeNull();
     }
@@ -99,8 +100,8 @@ public class OperationLoggingTests
         properties.Should().ContainKey("Operation.Name").WhoseValue.Should().Be("Name");
         properties.Should().ContainKey("Operation.StartTime").WhoseValue.Should().BeOfType<DateTimeOffset>();
         properties.Should().ContainKey("Operation.DurationSeconds").WhoseValue.Should().BeOfType<double>();
-        properties.Should().ContainKey("Operation.Journal").WhoseValue.Should().BeOfType<string>();
         properties.Should().NotContainKey("Operation.Result");
+        logger.LastMessage.Should().NotBeNull();
     }
 
     [Fact]
@@ -112,7 +113,7 @@ public class OperationLoggingTests
         {
         }
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         DateTimeOffset startTime = (DateTimeOffset)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.StartTime").Value!;
 
         string startTimeLine = "Start Time: " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff zzz", CultureInfo.InvariantCulture);
@@ -131,7 +132,7 @@ public class OperationLoggingTests
         {
         }
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
 
         journal.Should().MatchRegex(@"\[\d+\.\d{3}\] Operation complete\.$");
     }
@@ -145,7 +146,7 @@ public class OperationLoggingTests
         {
         }
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         DateTimeOffset startTime = (DateTimeOffset)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.StartTime").Value!;
 
         string startTimeLine = "Start Time: " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff zzz", CultureInfo.InvariantCulture);
@@ -168,7 +169,7 @@ public class OperationLoggingTests
             {
             }
 
-            string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+            string journal = logger.LastMessage!;
 
             journal.Should().MatchRegex(@"^Operation: Name\nStart Time: \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{2}:\d{2}\n-+\n");
             journal.Should().MatchRegex(@"\[\d+\.\d{3}\] Operation complete\.$");
@@ -384,7 +385,7 @@ public class OperationLoggingTests
         using (IOperationLog log = logger.BeginOperation("Name"))
             log.SetException(exception);
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         journal.Should().NotContain("failed:");
     }
 
@@ -399,7 +400,7 @@ public class OperationLoggingTests
 
         logger.LastException.Should().BeSameAs(exception);
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         journal.Should().Contain("`Name` failed:");
         journal.Should().Contain(exception.ToString());
     }
@@ -412,7 +413,7 @@ public class OperationLoggingTests
         using (IOperationLog log = logger.BeginOperation("Name"))
             log.Append("custom line");
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         journal.Should().Contain("custom line");
     }
 
@@ -425,7 +426,7 @@ public class OperationLoggingTests
         using (IOperationLog log = logger.BeginOperation("Name"))
             log.AppendValue(total);
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         journal.Should().Contain("`total`: 42.5");
     }
 
@@ -437,7 +438,7 @@ public class OperationLoggingTests
         using (IOperationLog log = logger.BeginOperation("Name"))
             log.AppendValue(42, "Count");
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         journal.Should().Contain("`Count`: 42");
     }
 
@@ -449,7 +450,7 @@ public class OperationLoggingTests
         using (IOperationLog log = logger.BeginOperation("Name"))
             log.AppendJson(new { A = 1, B = "x" }, "Payload");
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         journal.Should().Contain("`Payload`:");
         journal.Should().Contain("\"A\": 1");
         journal.Should().Contain("\"B\": \"x\"");
@@ -465,7 +466,7 @@ public class OperationLoggingTests
             using IOperationLog subLog = log.BeginSubOperation("Fetch");
         }
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         journal.Should().Contain("`Fetch` started.");
         journal.Should().Contain("`Fetch` complete.");
     }
@@ -495,7 +496,7 @@ public class OperationLoggingTests
             subLog.SetResult(99);
         }
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         journal.Should().Contain("`Fetch` result: 99");
         logger.LastProperties!.Any(kvp => kvp.Key == "Operation.Result").Should().BeFalse();
     }
@@ -514,7 +515,7 @@ public class OperationLoggingTests
 
         logger.LastException.Should().BeNull();
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         journal.Should().Contain("`Fetch` failed:");
         journal.Should().Contain(exception.ToString());
     }
@@ -545,7 +546,7 @@ public class OperationLoggingTests
             using IOperationLog innerLog = outerLog.BeginSubOperation("Inner");
         }
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         journal.Should().Contain("`Outer` started.");
         journal.Should().Contain("`Inner` started.");
         journal.Should().Contain("`Inner` complete.");
@@ -576,7 +577,7 @@ public class OperationLoggingTests
             subLog.Dispose();
         }
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         CountOccurrences(journal, "`Fetch` complete.").Should().Be(1);
     }
 
@@ -600,7 +601,7 @@ public class OperationLoggingTests
         logger.LogCallCount.Should().Be(1);
         logger.LastProperties!.Count(kvp => kvp.Key.StartsWith('P')).Should().Be(20);
 
-        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        string journal = logger.LastMessage!;
         for (int i = 0; i < 20; i++)
         {
             journal.Should().Contain($"`Sub{i}` started.");

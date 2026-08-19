@@ -215,12 +215,13 @@ using (var paymentLog = log.BeginSubOperation("ChargePayment"))
 return order.RecordResultTo(log);
 ```
 
-Disposing `log` writes a single log entry whose structured properties include `Operation.StartTime`,
-`Operation.DurationSeconds`, `Operation.Result` (if set), any properties added via `AddProperty`, and an
-`Operation.Journal` property holding the full journal - every `Append`/`AppendValue`/`AppendJson` call
-and sub-operation start/result/failure/complete line, each timestamped with elapsed seconds. The
-journal's header starts with the operation name; if `BeginOperation` was called with a non-default
-`EventId`, the next header line shows its value; the header always ends with a `Start Time` line:
+Disposing `log` writes a single log entry whose message *is* the full journal - every
+`Append`/`AppendValue`/`AppendJson` call and sub-operation start/result/failure/complete line, each
+timestamped with elapsed seconds - and whose structured properties include `Operation.Name`,
+`Operation.StartTime`, `Operation.DurationSeconds`, `Operation.Result` (if set), and any properties
+added via `AddProperty`. The journal's header starts with the operation name; if `BeginOperation` was
+called with a non-default `EventId`, the next header line shows its value; the header always ends with
+a `Start Time` line:
 
 ```
 Operation: FulfillOrder
