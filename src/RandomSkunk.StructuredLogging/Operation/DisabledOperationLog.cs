@@ -14,41 +14,39 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// another structured log call. Every other member is a no-op. <see cref="BeginSubOperation"/> returns a
 /// new <see cref="DisabledOperationLog"/> with the sub-operation's own <see cref="OperationName"/> but
 /// sharing this instance's <see cref="EventId"/> and <see cref="Properties"/> list (via
-/// <see cref="_shared"/>), matching how a root and its sub-operations share one
+/// <see cref="_state"/>), matching how a root and its sub-operations share one
 /// <see cref="OperationLogState"/> when enabled.
 /// </summary>
 internal sealed class DisabledOperationLog : IOperationLog
 {
-    private readonly EventId _eventId;
     private readonly string _operationName;
-    private readonly SharedState _shared;
+    private readonly State _state;
 
     /// <param name="eventId">The <see cref="EventId"/> the operation was begun with.</param>
     /// <param name="operationName">The operation's name.</param>
     public DisabledOperationLog(EventId eventId, string operationName)
-        : this(eventId, operationName, new SharedState())
+        : this(operationName, new State(eventId))
     {
     }
 
-    public object Gate => _shared;
+    public object Gate => _state;
 
-    private DisabledOperationLog(EventId eventId, string operationName, SharedState shared)
+    private DisabledOperationLog(string operationName, State shared)
     {
-        _eventId = eventId;
         _operationName = operationName;
-        _shared = shared;
+        _state = shared;
     }
 
     public IReadOnlyList<KeyValuePair<string, object?>> Properties =>
-        (IReadOnlyList<KeyValuePair<string, object?>>?)_shared.Properties ?? [];
+        (IReadOnlyList<KeyValuePair<string, object?>>?)_state.Properties ?? [];
 
-    public EventId EventId => _eventId;
+    public EventId EventId => _state.EventId;
 
     public string OperationName => _operationName;
 
     public IOperationLog AddProperty<T>(string name, T value)
     {
-        (_shared.Properties ??= new(capacity: 8)).Add(new(name, value));
+        (_state.Properties ??= new(capacity: 8)).Add(new(name, value));
         return this;
     }
 
@@ -62,14 +60,16 @@ internal sealed class DisabledOperationLog : IOperationLog
 
     public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
 
-    public IOperationLog BeginSubOperation(string operationName) => new DisabledOperationLog(_eventId, operationName, _shared);
+    public IOperationLog BeginSubOperation(string operationName) => new DisabledOperationLog(operationName, _state);
 
     public void Dispose()
     {
     }
 
-    private sealed class SharedState
+    private sealed class State(EventId eventId)
     {
+        public readonly EventId EventId = eventId;
+
         public List<KeyValuePair<string, object?>>? Properties;
     }
 }
