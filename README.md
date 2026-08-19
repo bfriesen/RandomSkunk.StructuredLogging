@@ -354,8 +354,8 @@ private sealed class RecordingOperationLogger<T>(ILogger<T> logger) : TestOperat
 {
     public IOperationLog? LastOperation { get; private set; }
 
-    public override IOperationLog BeginOperation(string name, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
-        LastOperation = new FakeOperationLog(name);
+    public override IOperationLog BeginOperation(string operationName, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
+        LastOperation = new FakeOperationLog(operationName);
 }
 ```
 
