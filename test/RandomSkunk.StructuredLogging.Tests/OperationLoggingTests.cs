@@ -114,7 +114,7 @@ public class OperationLoggingTests
 
         string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
 
-        journal.Should().MatchRegex(@"^Name\n----\n\[\d+\.\d{3}\] Operation started at ");
+        journal.Should().MatchRegex(@"^Operation: Name\n-{15}\n\[\d+\.\d{3}\] Operation started at ");
     }
 
     [Fact]
@@ -129,6 +129,20 @@ public class OperationLoggingTests
         string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
 
         journal.Should().MatchRegex(@"\[\d+\.\d{3}\] Operation complete\.$");
+    }
+
+    [Fact]
+    public void Journal_WithNonDefaultEventId_IncludesEventIdHeaderLine()
+    {
+        RecordingLogger logger = new();
+
+        using (logger.BeginOperation(new EventId(42, "SomeEvent"), "Name"))
+        {
+        }
+
+        string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+
+        journal.Should().StartWith("Operation: Name\nEventId: SomeEvent\n" + new string('-', "EventId: SomeEvent".Length) + "\n");
     }
 
     [Fact]
@@ -147,7 +161,7 @@ public class OperationLoggingTests
 
             string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
 
-            journal.Should().MatchRegex(@"^Name\n----\n\[\d+\.\d{3}\] Operation started at ");
+            journal.Should().MatchRegex(@"^Operation: Name\n-{15}\n\[\d+\.\d{3}\] Operation started at ");
             journal.Should().MatchRegex(@"\[\d+\.\d{3}\] Operation complete\.$");
         }
         finally
