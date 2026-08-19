@@ -117,23 +117,26 @@ collection/dictionary (both shown as `...` when exceeded), and a self-referencin
 `<circular reference>` instead of recursing forever. Any format text after a `<@...>` tag's
 closing `>` is ignored, since destructured rendering fully replaces ordinary formatting.
 
-### 3. Dynamic properties, or more than 6 — `params` array
+### 3. Dynamic properties, or more than 6 — build a collection
+
+Every generic-tuple call in option 1 is really calling one specific overload per arity (1–6);
+there's no arbitrary-count `params` overload. Once a call needs more than 6 properties, or the set
+of properties is built at runtime, build a collection instead and pass it via option 4 below:
 
 ```csharp
-logger.Information(
-    $"Order processed",
-    ("OrderId", orderId),
-    ("Total", total),
-    ("Currency", currency),
-    ("Tax", tax),
-    ("Discount", discount),
-    ("Shipping", shipping),
-    ("CouponCode", coupon));
-```
+Dictionary<string, object?> properties = new()
+{
+    ["OrderId"] = orderId,
+    ["Total"] = total,
+    ["Currency"] = currency,
+    ["Tax"] = tax,
+    ["Discount"] = discount,
+    ["Shipping"] = shipping,
+    ["CouponCode"] = coupon,
+};
 
-Every generic-tuple call in option 1 is really calling one specific overload per arity; once a
-call needs more than 6 properties, or the set of properties is built at runtime, this overload
-takes over with the same call shape — just boxed `object?` values.
+logger.Information(properties, $"Order processed");
+```
 
 ### 4. Merging a pre-built collection with per-call properties
 
@@ -230,30 +233,30 @@ entry when the operation completes — instead of one log line per step, scatter
 timeline and hard to correlate.
 
 ```csharp
-using var op = logger.BeginOperation("FulfillOrder");
+using var log = logger.BeginOperation("FulfillOrder");
 
-op.SetProperty("OrderId", orderId);
-op.Append($"Validating order {orderId}");
+log.AddProperty("OrderId", orderId);
+log.Append($"Validating order {orderId}");
 
-using (var payment = op.BeginSubOperation("ChargePayment"))
+using (var paymentLog = log.BeginSubOperation("ChargePayment"))
 {
     try
     {
         var receipt = await paymentGateway.ChargeAsync(orderId);
-        payment.SetResult(receipt);
+        paymentLog.SetResult(receipt);
     }
     catch (Exception ex)
     {
-        payment.SetException(ex, recordEverywhere: true);
+        paymentLog.SetException(ex, recordEverywhere: true);
         throw;
     }
 }
 
-return order.RecordResultTo(op);
+return order.RecordResultTo(log);
 ```
 
-Disposing `op` writes a single log entry whose structured properties include `Operation.StartTime`,
-`Operation.DurationSeconds`, `Operation.Result` (if set), any properties added via `SetProperty`, and an
+Disposing `log` writes a single log entry whose structured properties include `Operation.StartTime`,
+`Operation.DurationSeconds`, `Operation.Result` (if set), any properties added via `AddProperty`, and an
 `Operation.Journal` property holding the full journal - every `Append`/`AppendValue`/`AppendJson` call
 and sub-operation start/result/failure/complete line, each timestamped with elapsed seconds:
 
@@ -273,31 +276,34 @@ need to guard the call yourself.
 
 - `logger.BeginOperation(name)` / `logger.BeginOperation(eventId, name)` - both take optional
   `level` (default `LogLevel.Information`) and `threadSafe` (default `false`) parameters, and
-  return an `IOperationLog`.
-- `IOperationLog.SetProperty<T>(name, value)` - adds a structured property to the final entry.
+  return an `IOperationLog`. The same interface represents both the root operation and every
+  nested sub-operation - there's no separate sub-operation type.
+- `IOperationLog.AddProperty<T>(name, value)` - adds a structured property to the final entry.
 - `IOperationLog.Append(text)` - appends a free-text line to the journal.
 - `IOperationLog.AppendValue<T>(value, [valueName])` - appends `` `valueName`: value ``, where
   `valueName` defaults to the value expression's source text (via `CallerArgumentExpression`), so
-  `op.AppendValue(order.Total)` appends `` `order.Total`: 42.50 `` with no name to spell out.
+  `log.AppendValue(order.Total)` appends `` `order.Total`: 42.50 `` with no name to spell out.
 - `IOperationLog.AppendJson<T>(value, [valueName])` - same as `AppendValue`, but `value` is
   rendered as indented JSON instead of via `ToString()`/`IFormattable`.
-- `IOperationLog.BeginSubOperation(name)` - starts a nested `ISubOperationLog`; disposing it
+- `IOperationLog.BeginSubOperation(name)` - starts a nested `IOperationLog`; disposing it
   appends a "complete" line to the parent's journal. Sub-operations never write their own log
   entry - only the root operation does, once, when *it's* disposed.
-- `IOperationLog.SetException(exception)` / `ISubOperationLog.SetException(exception, recordEverywhere)` -
-  records the operation's exception. On a sub-operation, `recordEverywhere: true` also sets it as
-  the *root* operation's exception (the one that ends up on the final log entry); `false` records
-  it only in the sub-operation's own journal line.
+- `IOperationLog.SetException(exception, recordEverywhere = false)` - records the operation's
+  exception. On the root, `recordEverywhere: true` additionally appends a "failed" line to the
+  journal (the exception always becomes the final log entry's `Exception` regardless). On a
+  sub-operation, a "failed" journal line is always appended, and `recordEverywhere: true`
+  additionally sets it as the *root* operation's exception (the one that ends up on the final log
+  entry).
 - `IOperationLog.SetResult<T>(value)` - on the root, sets the `Operation.Result` structured
   property; on a sub-operation, appends a result line to the journal instead. Typically called via
   the fluent `value.RecordResultTo(log)` extension method so it can be chained directly onto
   a `return` expression.
 - `value.RecordValueTo(log, [valueName])` / `value.RecordJsonTo(log, [valueName])` -
   fluent equivalents of `AppendValue`/`AppendJson` that return `value` unchanged, for chaining
-  inline into an expression, e.g. `var total = order.Total.RecordValueTo(op);`.
+  inline into an expression, e.g. `var total = order.Total.RecordValueTo(log);`.
 
-Every method returns the same log (or, for `ISubOperationLog`, a covariant `ISubOperationLog`), so
-calls can be chained: `op.SetProperty("OrderId", orderId).Append("Order validated");`.
+Every method returns the same `IOperationLog`, so calls can be chained:
+`log.AddProperty("OrderId", orderId).Append("Order validated");`.
 
 ### Thread safety
 
@@ -307,11 +313,11 @@ entire tree (root and every nested sub-operation) in a decorator that synchroniz
 lock:
 
 ```csharp
-using var op = logger.BeginOperation("ProcessBatch", threadSafe: true);
+using var log = logger.BeginOperation("ProcessBatch", threadSafe: true);
 
 await Task.WhenAll(items.Select(async item =>
 {
-    using var sub = op.BeginSubOperation($"Item {item.Id}");
+    using var subLog = log.BeginSubOperation($"Item {item.Id}");
     await ProcessAsync(item);
 }));
 ```
@@ -337,7 +343,7 @@ public class OrderProcessor
 
     public void Process(Order order)
     {
-        using IOperationLog op = _logger.BeginOperation("ProcessOrder");
+        using IOperationLog log = _logger.BeginOperation("ProcessOrder");
         // ...
     }
 }
@@ -376,7 +382,7 @@ mockLogger
 OrderProcessor processor = new(mockLogger.Object);
 processor.Process(order);
 
-mockOperation.Verify(op => op.SetResult(order), Times.Once);
+mockOperation.Verify(log => log.SetResult(order), Times.Once);
 ```
 
 ## License
