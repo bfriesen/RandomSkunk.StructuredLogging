@@ -241,6 +241,12 @@ need to guard the call yourself.
   return an `IOperationLog`. The same interface represents both the root operation and every
   nested sub-operation - there's no separate sub-operation type.
 - `IOperationLog.AddProperty<T>(name, value)` - adds a structured property to the final entry.
+- `IOperationLog.Properties` - the properties added so far via `AddProperty`, as an
+  `IReadOnlyList<KeyValuePair<string, object?>>`, readable while the operation is still open (the
+  final entry isn't written until `Dispose`). The root and every sub-operation share the same
+  list, since they all contribute to the one eventual entry. Under `threadSafe: true`, this
+  returns a point-in-time snapshot rather than a live view, so it's safe to enumerate even while
+  another thread is concurrently calling `AddProperty`.
 - `IOperationLog.Append(text)` - appends a free-text line to the journal.
 - `IOperationLog.AppendValue<T>(value, [valueName])` - appends `` `valueName`: value ``, where
   `valueName` defaults to the value expression's source text (via `CallerArgumentExpression`), so
@@ -266,6 +272,16 @@ need to guard the call yourself.
 
 Every method returns the same `IOperationLog`, so calls can be chained:
 `log.AddProperty("OrderId", orderId).Append("Order validated");`.
+
+`log.Properties` implements `IReadOnlyCollection<KeyValuePair<string, object?>>`, so it can be
+passed directly as the leading collection argument (option 4 above) to an ordinary structured log
+call — useful for surfacing the operation's context on a standalone log line emitted
+mid-operation, before the operation's own entry is flushed:
+
+```csharp
+if (elapsed > paymentGateway.SlowThreshold)
+    logger.Warning(log.Properties, $"Payment gateway is responding slowly ({elapsed:<ElapsedMs>ms})");
+```
 
 ### Thread safety
 
