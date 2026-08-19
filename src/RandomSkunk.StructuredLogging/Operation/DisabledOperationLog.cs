@@ -30,6 +30,8 @@ internal sealed class DisabledOperationLog : IOperationLog
     {
     }
 
+    public object Gate => _shared;
+
     private DisabledOperationLog(EventId eventId, string operationName, SharedState shared)
     {
         _eventId = eventId;

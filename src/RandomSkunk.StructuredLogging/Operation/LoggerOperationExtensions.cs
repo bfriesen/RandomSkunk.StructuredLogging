@@ -52,20 +52,19 @@ public static class LoggerOperationExtensions
     {
         ArgumentNullException.ThrowIfNull(logger);
 
-        if (!logger.IsEnabled(level))
+        if (logger.IsEnabled(level))
         {
-            IOperationLog disabledLog = new DisabledOperationLog(eventId, operationName);
-            return threadSafe ? new SynchronizedOperationLog(disabledLog, new object()) : disabledLog;
+            OperationLogState state = new(logger, level, eventId, operationName);
+            RootOperationLog rootOperationLog = new(state, operationName);
+            if (threadSafe)
+                return new SynchronizedOperationLog(rootOperationLog, state);
+            return rootOperationLog;
         }
 
-        OperationLogState state = new(logger, level, eventId, operationName);
-
-        IOperationLog operationLog = new RootOperationLog(state, operationName);
-
+        DisabledOperationLog disabledLog = new(eventId, operationName);
         if (threadSafe)
-            operationLog = new SynchronizedOperationLog(operationLog, state);
-
-        return operationLog;
+            return new SynchronizedOperationLog(disabledLog, disabledLog.Gate);
+        return disabledLog;
     }
 
     /// <summary>
