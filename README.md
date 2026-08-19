@@ -231,8 +231,10 @@ FulfillOrder
 [0.042] Operation complete.
 ```
 
-If the logger's level is disabled, `BeginOperation` returns a no-op that allocates nothing - no
-need to guard the call yourself.
+If the logger's level is disabled, `BeginOperation` returns an `IOperationLog` that never writes a
+log entry and never accumulates a journal - no need to guard the call yourself. `EventId` and
+`Properties` (via `AddProperty`) still behave normally even when disabled, since code may read
+them regardless of whether the operation ends up logging anything.
 
 ### API at a glance
 
@@ -337,7 +339,7 @@ Production code (and any test that doesn't care about operation logging) keeps c
 `OrderProcessor` with an `ILogger<OrderProcessor>` unchanged. A test that does care constructs it
 with a `TestOperationLogger<OrderProcessor>` subclass instead - `BeginOperation`'s two overloads are
 `virtual` specifically so a test double can override them (used as-is, without overriding either
-overload, `TestOperationLogger<TCategoryName>` returns a no-op `IOperationLog` and never touches the
+overload, `TestOperationLogger<TCategoryName>` returns an `IOperationLog` that never touches the
 injected `ILogger<TCategoryName>`; its other members - `Log`, `IsEnabled`, `BeginScope` - do still
 forward to whatever `ILogger<TCategoryName>` you pass to its base constructor, real or fake):
 

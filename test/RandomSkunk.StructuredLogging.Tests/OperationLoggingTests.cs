@@ -30,6 +30,20 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void Disabled_ThreadSafe_StillReflectsEventIdAndProperties()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+        EventId eventId = new(42, "Custom");
+
+        using IOperationLog log = logger.BeginOperation(eventId, "Name", threadSafe: true);
+        log.AddProperty("UserId", 123);
+
+        log.EventId.Should().Be(eventId);
+        log.Properties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("UserId", 123));
+        logger.LogCallCount.Should().Be(0);
+    }
+
+    [Fact]
     public void Enabled_WritesExactlyOneLogEntryOnDispose()
     {
         RecordingLogger logger = new();
@@ -174,14 +188,14 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void Properties_Disabled_ReturnsEmpty()
+    public void Properties_Disabled_StillReflectsAddedProperties()
     {
         RecordingLogger logger = new() { Enabled = false };
 
         using IOperationLog log = logger.BeginOperation("Name");
         log.AddProperty("UserId", 123);
 
-        log.Properties.Should().BeEmpty();
+        log.Properties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("UserId", 123));
     }
 
     [Fact]
@@ -234,14 +248,14 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void EventId_Disabled_ReturnsDefault()
+    public void EventId_Disabled_StillReflectsEventId()
     {
         RecordingLogger logger = new() { Enabled = false };
         EventId eventId = new(42, "Custom");
 
         using IOperationLog log = logger.BeginOperation(eventId, "Name");
 
-        log.EventId.Should().Be(default(EventId));
+        log.EventId.Should().Be(eventId);
     }
 
     [Fact]
@@ -254,6 +268,20 @@ public class OperationLoggingTests
         using IOperationLog subLog = log.BeginSubOperation("Fetch");
 
         subLog.EventId.Should().Be(eventId);
+    }
+
+    [Fact]
+    public void SubOperation_Disabled_SharesEventIdAndPropertiesWithRoot()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+        EventId eventId = new(42, "Custom");
+
+        using IOperationLog log = logger.BeginOperation(eventId, "Name");
+        using IOperationLog subLog = log.BeginSubOperation("Fetch");
+        subLog.AddProperty("Count", 5);
+
+        subLog.EventId.Should().Be(eventId);
+        log.Properties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Count", 5));
     }
 
     [Fact]

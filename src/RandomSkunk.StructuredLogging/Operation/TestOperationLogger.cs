@@ -6,8 +6,8 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// An <see cref="IOperationLogger{TCategoryName}"/> base class for test code to derive from and override,
 /// to verify operation-logging behavior without a real <see cref="ILogger{TCategoryName}"/>. Its
 /// <c>BeginOperation</c> overloads are <see langword="virtual"/>; by default, the <see cref="EventId"/>
-/// overload returns a no-op <see cref="IOperationLog"/> (rather than forwarding to a real logger, the way
-/// <see cref="OperationLogger{TCategoryName}"/> does) and the other overload just calls it, so a base
+/// overload returns a <see cref="DisabledOperationLog"/> (rather than forwarding to a real logger, the
+/// way <see cref="OperationLogger{TCategoryName}"/> does) and the other overload just calls it, so a base
 /// <see cref="TestOperationLogger{TCategoryName}"/> used without overriding either method never appends to
 /// the injected <see cref="ILogger{TCategoryName}"/>. Its other members (<see cref="Log"/>,
 /// <see cref="IsEnabled"/>, <see cref="BeginScope"/>) still just forward to the injected
@@ -28,7 +28,7 @@ public class TestOperationLogger<TCategoryName>(ILogger<TCategoryName> logger) :
 
     /// <inheritdoc/>
     public virtual IOperationLog BeginOperation(EventId eventId, string name, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
-        NullOperationLog.Instance;
+        new DisabledOperationLog(eventId);
 
     /// <inheritdoc/>
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull =>
