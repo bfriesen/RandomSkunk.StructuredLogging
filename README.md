@@ -314,69 +314,6 @@ await Task.WhenAll(items.Select(async item =>
 }));
 ```
 
-### Testing operation logging
-
-`logger.BeginOperation(...)` is an extension method, so it can't be mocked or overridden. To verify
-what a class journals during an operation without a real `ILogger`, give the class a second
-constructor overload that accepts `IOperationLogger<TCategoryName>` in place of
-`ILogger<TCategoryName>`, and have the existing constructor call it via `.ToOperationLogger()`:
-
-```csharp
-public class OrderProcessor
-{
-    private readonly IOperationLogger<OrderProcessor> _logger;
-
-    public OrderProcessor(ILogger<OrderProcessor> logger)
-        : this(logger.ToOperationLogger())
-    {
-    }
-
-    public OrderProcessor(IOperationLogger<OrderProcessor> logger) => _logger = logger;
-
-    public void Process(Order order)
-    {
-        using IOperationLog log = _logger.BeginOperation("ProcessOrder");
-        // ...
-    }
-}
-```
-
-Production code (and any test that doesn't care about operation logging) keeps constructing
-`OrderProcessor` with an `ILogger<OrderProcessor>` unchanged. A test that does care constructs it
-with a `TestOperationLogger<OrderProcessor>` subclass instead - `BeginOperation`'s two overloads are
-`virtual` specifically so a test double can override them (used as-is, without overriding either
-overload, `TestOperationLogger<TCategoryName>` returns an `IOperationLog` that never touches the
-injected `ILogger<TCategoryName>`; its other members - `Log`, `IsEnabled`, `BeginScope` - do still
-forward to whatever `ILogger<TCategoryName>` you pass to its base constructor, real or fake):
-
-```csharp
-private sealed class RecordingOperationLogger<T>(ILogger<T> logger) : TestOperationLogger<T>(logger)
-{
-    public IOperationLog? LastOperation { get; private set; }
-
-    public override IOperationLog BeginOperation(string operationName, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
-        LastOperation = new FakeOperationLog(operationName);
-}
-```
-
-A hand-rolled subclass isn't required - because `TestOperationLogger<TCategoryName>`'s `BeginOperation`
-overloads are `virtual`, a mocking library like Moq can override them on the fly instead. Pass its
-constructor a logger (a no-op `NullLogger<T>.Instance` is enough if the test doesn't care about `Log`/
-`IsEnabled`/`BeginScope`), then set up `BeginOperation` to return a mock `IOperationLog`:
-
-```csharp
-Mock<IOperationLog> mockOperation = new();
-Mock<TestOperationLogger<OrderProcessor>> mockLogger = new(NullLogger<OrderProcessor>.Instance);
-mockLogger
-    .Setup(m => m.BeginOperation(It.IsAny<string>(), It.IsAny<LogLevel>(), It.IsAny<bool>()))
-    .Returns(mockOperation.Object);
-
-OrderProcessor processor = new(mockLogger.Object);
-processor.Process(order);
-
-mockOperation.Verify(log => log.SetResult(order), Times.Once);
-```
-
 ## Analyzers
 
 [![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.Analyzers.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging.Analyzers)
