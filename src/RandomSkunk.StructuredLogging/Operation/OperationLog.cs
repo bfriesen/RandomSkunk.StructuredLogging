@@ -23,6 +23,8 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
 
     public EventId EventId => _state.EventId;
 
+    public string OperationName => _operationName;
+
     public IOperationLog AddProperty<T>(string propertyName, T value)
     {
         _state.AddProperty(propertyName, value);

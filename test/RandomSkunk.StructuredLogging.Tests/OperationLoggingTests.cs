@@ -39,6 +39,7 @@ public class OperationLoggingTests
         log.AddProperty("UserId", 123);
 
         log.EventId.Should().Be(eventId);
+        log.OperationName.Should().Be("Name");
         log.Properties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("UserId", 123));
         logger.LogCallCount.Should().Be(0);
     }
@@ -282,6 +283,50 @@ public class OperationLoggingTests
 
         subLog.EventId.Should().Be(eventId);
         log.Properties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Count", 5));
+    }
+
+    [Fact]
+    public void OperationName_ReflectsNamePassedToBeginOperation()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("FulfillOrder");
+
+        log.OperationName.Should().Be("FulfillOrder");
+    }
+
+    [Fact]
+    public void OperationName_Disabled_StillReflectsName()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+
+        using IOperationLog log = logger.BeginOperation("FulfillOrder");
+
+        log.OperationName.Should().Be("FulfillOrder");
+    }
+
+    [Fact]
+    public void SubOperation_OperationName_IsItsOwnNameNotRoots()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("FulfillOrder");
+        using IOperationLog subLog = log.BeginSubOperation("ChargePayment");
+
+        log.OperationName.Should().Be("FulfillOrder");
+        subLog.OperationName.Should().Be("ChargePayment");
+    }
+
+    [Fact]
+    public void SubOperation_Disabled_OperationNameIsItsOwnNameNotRoots()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+
+        using IOperationLog log = logger.BeginOperation("FulfillOrder");
+        using IOperationLog subLog = log.BeginSubOperation("ChargePayment");
+
+        log.OperationName.Should().Be("FulfillOrder");
+        subLog.OperationName.Should().Be("ChargePayment");
     }
 
     [Fact]

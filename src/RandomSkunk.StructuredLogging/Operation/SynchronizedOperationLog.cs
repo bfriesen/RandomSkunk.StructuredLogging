@@ -26,6 +26,8 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
 
     public EventId EventId => inner.EventId;
 
+    public string OperationName => inner.OperationName;
+
     public IOperationLog SetException(Exception exception, bool recordEverywhere = false)
     {
         lock (gate)

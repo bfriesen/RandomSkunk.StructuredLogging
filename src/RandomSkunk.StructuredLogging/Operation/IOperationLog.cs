@@ -32,6 +32,16 @@ public interface IOperationLog : IDisposable
     EventId EventId { get; }
 
     /// <summary>
+    /// The name this operation was created with - the <c>name</c> argument to
+    /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>
+    /// for the root operation, or to <see cref="BeginSubOperation"/> for a sub-operation. Unlike
+    /// <see cref="EventId"/> and <see cref="Properties"/>, this is specific to each level of the
+    /// operation tree rather than shared - a sub-operation's <see cref="OperationName"/> is its own
+    /// name, not its ancestor's.
+    /// </summary>
+    string OperationName { get; }
+
+    /// <summary>
     /// Records the exception for this operation. On the root operation, this becomes the <c>Exception</c>
     /// argument of the final log entry, and <paramref name="recordEverywhere"/> additionally appends a
     /// "failed" line to the journal describing it. On a sub-operation, a "failed" line is always appended

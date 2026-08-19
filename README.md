@@ -232,9 +232,9 @@ FulfillOrder
 ```
 
 If the logger's level is disabled, `BeginOperation` returns an `IOperationLog` that never writes a
-log entry and never accumulates a journal - no need to guard the call yourself. `EventId` and
-`Properties` (via `AddProperty`) still behave normally even when disabled, since code may read
-them regardless of whether the operation ends up logging anything.
+log entry and never accumulates a journal - no need to guard the call yourself. `EventId`,
+`OperationName`, and `Properties` (via `AddProperty`) still behave normally even when disabled,
+since code may read them regardless of whether the operation ends up logging anything.
 
 ### API at a glance
 
@@ -254,6 +254,10 @@ them regardless of whether the operation ends up logging anything.
   and every sub-operation. Useful for tagging a log line written elsewhere - e.g. from within the
   operation, or from code the operation called into - with the same `EventId` as the operation's
   own final entry, so the two can be correlated in a backend that indexes/filters by `EventId`.
+- `IOperationLog.OperationName` - the `name` this operation was created with: `BeginOperation`'s
+  `name` argument for the root, or `BeginSubOperation`'s `name` argument for a sub-operation.
+  Unlike `EventId`/`Properties`, this is specific to each level - a sub-operation's
+  `OperationName` is its own name, not its ancestor's.
 - `IOperationLog.Append(text)` - appends a free-text line to the journal.
 - `IOperationLog.AppendValue<T>(value, [valueName])` - appends `` `valueName`: value ``, where
   `valueName` defaults to the value expression's source text (via `CallerArgumentExpression`), so

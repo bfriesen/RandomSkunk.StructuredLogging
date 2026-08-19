@@ -174,6 +174,8 @@ public class TestOperationLoggerTests
 
         public EventId EventId => default;
 
+        public string OperationName => string.Empty;
+
         public IOperationLog AddProperty<T>(string name, T value) => this;
 
         public IOperationLog Append(string text) => this;

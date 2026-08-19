@@ -28,7 +28,7 @@ public class TestOperationLogger<TCategoryName>(ILogger<TCategoryName> logger) :
 
     /// <inheritdoc/>
     public virtual IOperationLog BeginOperation(EventId eventId, string name, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
-        new DisabledOperationLog(eventId);
+        new DisabledOperationLog(eventId, name);
 
     /// <inheritdoc/>
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull =>

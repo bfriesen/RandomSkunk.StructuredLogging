@@ -54,7 +54,7 @@ public static class LoggerOperationExtensions
 
         if (!logger.IsEnabled(level))
         {
-            IOperationLog disabledLog = new DisabledOperationLog(eventId);
+            IOperationLog disabledLog = new DisabledOperationLog(eventId, name);
             return threadSafe ? new SynchronizedOperationLog(disabledLog, new object()) : disabledLog;
         }
 
