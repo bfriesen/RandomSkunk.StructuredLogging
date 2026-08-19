@@ -10,6 +10,10 @@ internal sealed class RecordingLogger : ILogger
 {
     public bool Enabled { get; set; } = true;
 
+    public IDisposable? ScopeToReturn { get; set; }
+
+    public object? LastScopeState { get; private set; }
+
     public int LogCallCount { get; private set; }
 
     public LogLevel LastLevel { get; private set; }
@@ -23,7 +27,11 @@ internal sealed class RecordingLogger : ILogger
     public IReadOnlyList<KeyValuePair<string, object?>>? LastProperties { get; private set; }
 
     public IDisposable? BeginScope<TState>(TState state)
-        where TState : notnull => null;
+        where TState : notnull
+    {
+        LastScopeState = state;
+        return ScopeToReturn;
+    }
 
     public bool IsEnabled(LogLevel logLevel) => Enabled;
 

@@ -14,7 +14,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// <see cref="OperationLoggerServiceCollectionExtensions.AddOperationLogger"/>.
 /// </summary>
 /// <typeparam name="TCategoryName">The type whose name is used for the log category.</typeparam>
-public interface IOperationLogger<out TCategoryName>
+public interface IOperationLogger<out TCategoryName> : ILogger<TCategoryName>
 {
     /// <inheritdoc cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>
     IOperationLog BeginOperation(string name, LogLevel level = LogLevel.Information, bool threadSafe = false);
