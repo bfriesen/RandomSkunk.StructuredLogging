@@ -316,19 +316,68 @@ await Task.WhenAll(items.Select(async item =>
 }));
 ```
 
-### Mocking in tests
+### Testing operation logging
 
-An extension method can't be mocked, so for tests that need to verify what got journaled without a
-real `ILogger`, inject `IOperationLogger<TCategoryName>` instead of calling
-`ILogger.BeginOperation` directly - it exposes the same `BeginOperation` overloads as instance
-members. Register the built-in implementation (which just forwards to the extension methods) with:
+`logger.BeginOperation(...)` is an extension method, so it can't be mocked or overridden. To verify
+what a class journals during an operation without a real `ILogger`, give the class a second
+constructor overload that accepts `IOperationLogger<TCategoryName>` in place of
+`ILogger<TCategoryName>`, and have the existing constructor call it via `.ToOperationLogger()`:
 
 ```csharp
-services.AddOperationLogger();
+public class OrderProcessor
+{
+    private readonly IOperationLogger<OrderProcessor> _logger;
+
+    public OrderProcessor(ILogger<OrderProcessor> logger)
+        : this(logger.ToOperationLogger())
+    {
+    }
+
+    public OrderProcessor(IOperationLogger<OrderProcessor> logger) => _logger = logger;
+
+    public void Process(Order order)
+    {
+        using IOperationLog op = _logger.BeginOperation("ProcessOrder");
+        // ...
+    }
+}
 ```
 
-and constructor-inject `IOperationLogger<MyService>` in place of `ILogger<MyService>` wherever code
-begins operations.
+Production code (and any test that doesn't care about operation logging) keeps constructing
+`OrderProcessor` with an `ILogger<OrderProcessor>` unchanged. A test that does care constructs it
+with a `TestOperationLogger<OrderProcessor>` subclass instead - `BeginOperation`'s two overloads are
+`virtual` specifically so a test double can override them (used as-is, without overriding either
+overload, `TestOperationLogger<TCategoryName>` returns a no-op `IOperationLog` and never touches the
+injected `ILogger<TCategoryName>`; its other members - `Log`, `IsEnabled`, `BeginScope` - do still
+forward to whatever `ILogger<TCategoryName>` you pass to its base constructor, real or fake):
+
+```csharp
+private sealed class RecordingOperationLogger<T>(ILogger<T> logger) : TestOperationLogger<T>(logger)
+{
+    public IOperationLog? LastOperation { get; private set; }
+
+    public override IOperationLog BeginOperation(string name, LogLevel level = LogLevel.Information, bool threadSafe = false) =>
+        LastOperation = new FakeOperationLog(name);
+}
+```
+
+A hand-rolled subclass isn't required - because `TestOperationLogger<TCategoryName>`'s `BeginOperation`
+overloads are `virtual`, a mocking library like Moq can override them on the fly instead. Pass its
+constructor a logger (a no-op `NullLogger<T>.Instance` is enough if the test doesn't care about `Log`/
+`IsEnabled`/`BeginScope`), then set up `BeginOperation` to return a mock `IOperationLog`:
+
+```csharp
+Mock<IOperationLog> mockOperation = new();
+Mock<TestOperationLogger<OrderProcessor>> mockLogger = new(NullLogger<OrderProcessor>.Instance);
+mockLogger
+    .Setup(m => m.BeginOperation(It.IsAny<string>(), It.IsAny<LogLevel>(), It.IsAny<bool>()))
+    .Returns(mockOperation.Object);
+
+OrderProcessor processor = new(mockLogger.Object);
+processor.Process(order);
+
+mockOperation.Verify(op => op.SetResult(order), Times.Once);
+```
 
 ## License
 

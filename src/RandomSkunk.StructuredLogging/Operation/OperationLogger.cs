@@ -3,10 +3,13 @@ using Microsoft.Extensions.Logging;
 namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
-/// The <see cref="IOperationLogger{TCategoryName}"/> implementation registered by
-/// <see cref="OperationLoggerServiceCollectionExtensions.AddOperationLogger"/>. Just forwards each member
-/// to the corresponding <see cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>
-/// extension method on the injected <see cref="ILogger{TCategoryName}"/>.
+/// The <see cref="IOperationLogger{TCategoryName}"/> implementation returned by
+/// <see cref="LoggerOperationExtensions.ToOperationLogger{TCategoryName}(ILogger{TCategoryName})"/>. Just
+/// forwards each member to the corresponding
+/// <see cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/> extension
+/// method on the injected <see cref="ILogger{TCategoryName}"/>. Sealed, with no virtual members - this is
+/// the production implementation; see <see cref="TestOperationLogger{TCategoryName}"/> for a base class
+/// test code can subclass to override operation-logging behavior.
 /// </summary>
 internal sealed class OperationLogger<TCategoryName>(ILogger<TCategoryName> logger) : IOperationLogger<TCategoryName>
 {

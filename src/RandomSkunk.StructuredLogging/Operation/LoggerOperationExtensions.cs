@@ -61,4 +61,25 @@ public static class LoggerOperationExtensions
 
         return operationLog;
     }
+
+    /// <summary>
+    /// Wraps <paramref name="logger"/> in an <see cref="IOperationLogger{TCategoryName}"/> that forwards
+    /// to it, for callers migrating from an injected <see cref="ILogger{TCategoryName}"/> to
+    /// <see cref="IOperationLogger{TCategoryName}"/> without changing how the logger itself is obtained -
+    /// e.g. <c>logger.ToOperationLogger().BeginOperation("FulfillOrder")</c> in place of
+    /// <c>logger.BeginOperation("FulfillOrder")</c>. Because <see cref="IOperationLogger{TCategoryName}"/>
+    /// extends <see cref="ILogger{TCategoryName}"/>, every other call site that used <paramref name="logger"/>
+    /// as an <see cref="ILogger{TCategoryName}"/> keeps working unchanged against the wrapped result. See
+    /// <see cref="TestOperationLogger{TCategoryName}"/> for how to substitute a test double for
+    /// operation-logging behavior in tests, instead of this method's result.
+    /// </summary>
+    /// <typeparam name="TCategoryName">The type whose name is used for the log category.</typeparam>
+    /// <param name="logger">The logger to wrap.</param>
+    /// <returns>An <see cref="IOperationLogger{TCategoryName}"/> that forwards to <paramref name="logger"/>.</returns>
+    public static IOperationLogger<TCategoryName> ToOperationLogger<TCategoryName>(this ILogger<TCategoryName> logger)
+    {
+        ArgumentNullException.ThrowIfNull(logger);
+
+        return new OperationLogger<TCategoryName>(logger);
+    }
 }
