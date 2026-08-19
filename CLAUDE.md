@@ -17,6 +17,10 @@ cmd.exe /c "dotnet test"
 
 The SDK version is pinned in `global.json` (currently 10.0.301).
 
+## Workflow
+
+After making changes, always ask before committing them - do not run `git commit` unprompted.
+
 ## Code style
 
 Never use `var`; always write the concrete type, except where the type is an anonymous object (which requires `var`).
