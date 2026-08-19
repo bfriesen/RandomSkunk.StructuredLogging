@@ -247,6 +247,11 @@ need to guard the call yourself.
   list, since they all contribute to the one eventual entry. Under `threadSafe: true`, this
   returns a point-in-time snapshot rather than a live view, so it's safe to enumerate even while
   another thread is concurrently calling `AddProperty`.
+- `IOperationLog.EventId` - the `EventId` the operation was begun with (via
+  `BeginOperation(eventId, name, ...)`), or `default` if none was given. Same value on the root
+  and every sub-operation. Useful for tagging a log line written elsewhere - e.g. from within the
+  operation, or from code the operation called into - with the same `EventId` as the operation's
+  own final entry, so the two can be correlated in a backend that indexes/filters by `EventId`.
 - `IOperationLog.Append(text)` - appends a free-text line to the journal.
 - `IOperationLog.AppendValue<T>(value, [valueName])` - appends `` `valueName`: value ``, where
   `valueName` defaults to the value expression's source text (via `CallerArgumentExpression`), so
@@ -275,12 +280,13 @@ Every method returns the same `IOperationLog`, so calls can be chained:
 
 `log.Properties` implements `IReadOnlyCollection<KeyValuePair<string, object?>>`, so it can be
 passed directly as the leading collection argument (option 4 above) to an ordinary structured log
-call — useful for surfacing the operation's context on a standalone log line emitted
-mid-operation, before the operation's own entry is flushed:
+call, and `log.EventId` alongside it - useful for surfacing the operation's context on a
+standalone log line emitted mid-operation, before the operation's own entry is flushed, while
+still tying that line back to the operation via a shared `EventId`:
 
 ```csharp
 if (elapsed > paymentGateway.SlowThreshold)
-    logger.Warning(log.Properties, $"Payment gateway is responding slowly ({elapsed:<ElapsedMs>ms})");
+    logger.Warning(log.Properties, log.EventId, $"Payment gateway is responding slowly ({elapsed:<ElapsedMs>ms})");
 ```
 
 ### Thread safety

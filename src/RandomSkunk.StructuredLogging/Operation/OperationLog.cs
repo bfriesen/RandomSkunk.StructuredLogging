@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging.Operation;
 
@@ -19,6 +20,8 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
     private int _disposed;
 
     public IReadOnlyList<KeyValuePair<string, object?>> Properties => _state.Properties ?? [];
+
+    public EventId EventId => _state.EventId;
 
     public IOperationLog AddProperty<T>(string propertyName, T value)
     {

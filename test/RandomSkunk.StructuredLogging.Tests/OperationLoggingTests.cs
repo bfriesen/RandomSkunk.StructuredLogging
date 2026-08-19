@@ -213,6 +213,50 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void EventId_ReflectsEventIdPassedToBeginOperation()
+    {
+        RecordingLogger logger = new();
+        EventId eventId = new(42, "Custom");
+
+        using IOperationLog log = logger.BeginOperation(eventId, "Name");
+
+        log.EventId.Should().Be(eventId);
+    }
+
+    [Fact]
+    public void EventId_Default_WhenNotProvided()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name");
+
+        log.EventId.Should().Be(default(EventId));
+    }
+
+    [Fact]
+    public void EventId_Disabled_ReturnsDefault()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+        EventId eventId = new(42, "Custom");
+
+        using IOperationLog log = logger.BeginOperation(eventId, "Name");
+
+        log.EventId.Should().Be(default(EventId));
+    }
+
+    [Fact]
+    public void SubOperation_EventId_MatchesRoots()
+    {
+        RecordingLogger logger = new();
+        EventId eventId = new(42, "Custom");
+
+        using IOperationLog log = logger.BeginOperation(eventId, "Name");
+        using IOperationLog subLog = log.BeginSubOperation("Fetch");
+
+        subLog.EventId.Should().Be(eventId);
+    }
+
+    [Fact]
     public void SetResult_SetsOperationResultProperty()
     {
         RecordingLogger logger = new();

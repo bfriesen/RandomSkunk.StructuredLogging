@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging.Operation;
 
@@ -20,6 +21,15 @@ public interface IOperationLog : IDisposable
     /// to enumerate even while another thread concurrently calls <see cref="AddProperty{T}"/>.
     /// </summary>
     IReadOnlyList<KeyValuePair<string, object?>> Properties { get; }
+
+    /// <summary>
+    /// The <see cref="EventId"/> the operation was begun with (via the
+    /// <c>BeginOperation(eventId, name, ...)</c> overload), or <c>default</c> if the operation was begun
+    /// without one. The same value on the root operation and every nested sub-operation, since it's the
+    /// <see cref="EventId"/> that ends up on the one eventual log entry. Useful for tying a log line
+    /// written elsewhere (e.g. from within the operation) back to the operation's own final entry.
+    /// </summary>
+    EventId EventId { get; }
 
     /// <summary>
     /// Records the exception for this operation. On the root operation, this becomes the <c>Exception</c>

@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging.Operation;
 
@@ -22,6 +23,8 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
                 return [.. inner.Properties];
         }
     }
+
+    public EventId EventId => inner.EventId;
 
     public IOperationLog SetException(Exception exception, bool recordEverywhere = false)
     {

@@ -172,6 +172,8 @@ public class TestOperationLoggerTests
     {
         public IReadOnlyList<KeyValuePair<string, object?>> Properties => Array.Empty<KeyValuePair<string, object?>>();
 
+        public EventId EventId => default;
+
         public IOperationLog AddProperty<T>(string name, T value) => this;
 
         public IOperationLog Append(string text) => this;

@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging.Operation;
 
@@ -18,6 +19,8 @@ internal sealed class NullOperationLog : IOperationLog
     }
 
     public IReadOnlyList<KeyValuePair<string, object?>> Properties => [];
+
+    public EventId EventId => default;
 
     public IOperationLog SetException(Exception exception, bool recordEverywhere = false) => this;
 
