@@ -104,7 +104,7 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void Journal_StartsWithOperationStartedLine()
+    public void Journal_HeaderIncludesStartTimeLine()
     {
         RecordingLogger logger = new();
 
@@ -113,8 +113,13 @@ public class OperationLoggingTests
         }
 
         string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        DateTimeOffset startTime = (DateTimeOffset)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.StartTime").Value!;
 
-        journal.Should().MatchRegex(@"^Operation: Name\n-{15}\n\[\d+\.\d{3}\] Operation started at ");
+        string startTimeLine = "Start Time: " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff zzz", CultureInfo.InvariantCulture);
+        string dashes = new string('-', Math.Max("Operation: Name".Length, startTimeLine.Length));
+
+        journal.Should().StartWith($"Operation: Name\n{startTimeLine}\n{dashes}\n");
+        journal.Should().NotContain("Operation started at");
     }
 
     [Fact]
@@ -141,8 +146,12 @@ public class OperationLoggingTests
         }
 
         string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
+        DateTimeOffset startTime = (DateTimeOffset)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.StartTime").Value!;
 
-        journal.Should().StartWith("Operation: Name\nEventId: SomeEvent\n" + new string('-', "EventId: SomeEvent".Length) + "\n");
+        string startTimeLine = "Start Time: " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff zzz", CultureInfo.InvariantCulture);
+        string dashes = new string('-', new[] { "Operation: Name".Length, "EventId: SomeEvent".Length, startTimeLine.Length }.Max());
+
+        journal.Should().StartWith($"Operation: Name\nEventId: SomeEvent\n{startTimeLine}\n{dashes}\n");
     }
 
     [Fact]
@@ -161,7 +170,7 @@ public class OperationLoggingTests
 
             string journal = (string)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.Journal").Value!;
 
-            journal.Should().MatchRegex(@"^Operation: Name\n-{15}\n\[\d+\.\d{3}\] Operation started at ");
+            journal.Should().MatchRegex(@"^Operation: Name\nStart Time: \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{2}:\d{2}\n-+\n");
             journal.Should().MatchRegex(@"\[\d+\.\d{3}\] Operation complete\.$");
         }
         finally

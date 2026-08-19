@@ -41,15 +41,16 @@ internal sealed class OperationLogState
 
         string operationLine = "Operation: " + operationName;
         string? eventIdLine = eventId != default ? "EventId: " + eventId : null;
-        int dashCount = eventIdLine is null ? operationLine.Length : Math.Max(operationLine.Length, eventIdLine.Length);
+        string startTimeLine = string.Create(
+            CultureInfo.InvariantCulture,
+            $"Start Time: {StartTime:yyyy-MM-dd HH:mm:ss.fff zzz}");
+        int dashCount = Math.Max(operationLine.Length, Math.Max(eventIdLine?.Length ?? 0, startTimeLine.Length));
 
         _journal.Append(operationLine).Append('\n');
         if (eventIdLine is not null)
             _journal.Append(eventIdLine).Append('\n');
-        _journal.Append('-', dashCount).Append('\n');
-        AppendTimestamp(TimeSpan.Zero).Append(
-            CultureInfo.InvariantCulture,
-            $"Operation started at {StartTime:yyyy-MM-dd HH:mm:ss.fff zzz}.");
+        _journal.Append(startTimeLine).Append('\n');
+        _journal.Append('-', dashCount);
         Stopwatch = Stopwatch.StartNew();
     }
 

@@ -219,13 +219,13 @@ Disposing `log` writes a single log entry whose structured properties include `O
 `Operation.DurationSeconds`, `Operation.Result` (if set), any properties added via `AddProperty`, and an
 `Operation.Journal` property holding the full journal - every `Append`/`AppendValue`/`AppendJson` call
 and sub-operation start/result/failure/complete line, each timestamped with elapsed seconds. The
-journal's header is the operation name; if `BeginOperation` was called with a non-default `EventId`, a
-second header line shows its value:
+journal's header starts with the operation name; if `BeginOperation` was called with a non-default
+`EventId`, the next header line shows its value; the header always ends with a `Start Time` line:
 
 ```
 Operation: FulfillOrder
------------------------
-[0.000] Operation started at 2026-08-19 12:56:31.417 -04:00.
+Start Time: 2026-08-19 12:56:31.417 -04:00
+------------------------------------------
 [0.002] Validating order 42
 [0.003] `ChargePayment` started.
 [0.041] `ChargePayment` result: Receipt { Id = ..., Amount = 99.00 }
