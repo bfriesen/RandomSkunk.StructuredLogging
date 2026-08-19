@@ -267,9 +267,9 @@ since code may read them regardless of whether the operation ends up logging any
   `log.AppendValue(order.Total)` appends `` `order.Total`: 42.50 `` with no name to spell out.
 - `IOperationLog.AppendJson<T>(value, [valueName])` - same as `AppendValue`, but `value` is
   rendered as indented JSON instead of via `ToString()`/`IFormattable`.
-- `IOperationLog.BeginSubOperation(name)` - starts a nested `IOperationLog`; disposing it
-  appends a "complete" line to the parent's journal. Sub-operations never write their own log
-  entry - only the root operation does, once, when *it's* disposed.
+- `IOperationLog.BeginSubOperation(name)` - starts a nested `IOperationLog`, immediately
+  appending a "started" line to the journal; disposing it appends a "complete" line. Sub-operations
+  never write their own log entry - only the root operation does, once, when *it's* disposed.
 - `IOperationLog.SetException(exception, recordEverywhere = false)` - records the operation's
   exception. On the root, `recordEverywhere: true` additionally appends a "failed" line to the
   journal (the exception always becomes the final log entry's `Exception` regardless). On a
