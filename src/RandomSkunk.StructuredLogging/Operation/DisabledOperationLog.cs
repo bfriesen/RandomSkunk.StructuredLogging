@@ -50,7 +50,7 @@ internal sealed class DisabledOperationLog : IOperationLog
         return this;
     }
 
-    public IOperationLog SetException(Exception exception, bool recordEverywhere = false) => this;
+    public IOperationLog SetException(Exception exception) => this;
 
     public IOperationLog SetResult<T>(T value) => this;
 

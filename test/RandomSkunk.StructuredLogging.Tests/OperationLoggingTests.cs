@@ -377,7 +377,7 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void SetException_DefaultDoesNotAppendJournalLine()
+    public void SetException_DoesNotAppendJournalLine()
     {
         RecordingLogger logger = new();
         InvalidOperationException exception = new("boom");
@@ -387,22 +387,6 @@ public class OperationLoggingTests
 
         string journal = logger.LastMessage!;
         journal.Should().NotContain("failed:");
-    }
-
-    [Fact]
-    public void SetException_RecordEverywhereTrue_AlsoAppendsJournalLine()
-    {
-        RecordingLogger logger = new();
-        InvalidOperationException exception = new("boom");
-
-        using (IOperationLog log = logger.BeginOperation("Name"))
-            log.SetException(exception, recordEverywhere: true);
-
-        logger.LastException.Should().BeSameAs(exception);
-
-        string journal = logger.LastMessage!;
-        journal.Should().Contain("`Name` failed:");
-        journal.Should().Contain(exception.ToString());
     }
 
     [Fact]
@@ -502,7 +486,7 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void SubOperation_SetException_DefaultDoesNotRecordEverywhere()
+    public void SubOperation_SetException_AppendsJournalLineAndDoesNotSetRootException()
     {
         RecordingLogger logger = new();
         InvalidOperationException exception = new("boom");
@@ -518,21 +502,6 @@ public class OperationLoggingTests
         string journal = logger.LastMessage!;
         journal.Should().Contain("`Fetch` failed:");
         journal.Should().Contain(exception.ToString());
-    }
-
-    [Fact]
-    public void SubOperation_SetException_RecordEverywhereTrue_SetsRootException()
-    {
-        RecordingLogger logger = new();
-        InvalidOperationException exception = new("boom");
-
-        using (IOperationLog log = logger.BeginOperation("Name"))
-        {
-            using IOperationLog subLog = log.BeginSubOperation("Fetch");
-            subLog.SetException(exception, recordEverywhere: true);
-        }
-
-        logger.LastException.Should().BeSameAs(exception);
     }
 
     [Fact]

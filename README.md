@@ -207,7 +207,7 @@ using (var paymentLog = log.BeginSubOperation("ChargePayment"))
     }
     catch (Exception ex)
     {
-        paymentLog.SetException(ex, recordEverywhere: true);
+        paymentLog.SetException(ex);
         throw;
     }
 }
@@ -270,12 +270,8 @@ since code may read them regardless of whether the operation ends up logging any
 - `IOperationLog.BeginSubOperation(name)` - starts a nested `IOperationLog`, immediately
   appending a "started" line to the journal; disposing it appends a "complete" line. Sub-operations
   never write their own log entry - only the root operation does, once, when *it's* disposed.
-- `IOperationLog.SetException(exception, recordEverywhere = false)` - records the operation's
-  exception. On the root, `recordEverywhere: true` additionally appends a "failed" line to the
-  journal (the exception always becomes the final log entry's `Exception` regardless). On a
-  sub-operation, a "failed" journal line is always appended, and `recordEverywhere: true`
-  additionally sets it as the *root* operation's exception (the one that ends up on the final log
-  entry).
+- `IOperationLog.SetException(exception)` - on the root, sets the final log entry's `Exception`.
+  On a sub-operation, appends a "failed" line to the journal instead.
 - `IOperationLog.SetResult<T>(value)` - on the root, sets the `Operation.Result` structured
   property; on a sub-operation, appends a result line to the journal instead. Typically called via
   the fluent `value.RecordResultTo(log)` extension method so it can be chained directly onto

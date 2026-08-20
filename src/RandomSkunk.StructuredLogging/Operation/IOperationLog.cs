@@ -43,22 +43,12 @@ public interface IOperationLog : IDisposable
 
     /// <summary>
     /// Records the exception for this operation. On the root operation, this becomes the <c>Exception</c>
-    /// argument of the final log entry, and <paramref name="recordEverywhere"/> additionally appends a
-    /// "failed" line to the journal describing it. On a sub-operation, a "failed" line is always appended
-    /// to the journal, and <paramref name="recordEverywhere"/> additionally sets this exception as the root
-    /// operation's <c>Exception</c> (used in the final log entry, e.g. for backend stack-trace/exception
-    /// indexing).
+    /// argument of the final log entry. On a sub-operation, this instead appends a "failed" line describing
+    /// it to the journal.
     /// </summary>
     /// <param name="exception">The exception to record.</param>
-    /// <param name="recordEverywhere">
-    /// On the root operation, <see langword="true"/> to also append a "failed" line to the journal (the
-    /// exception always becomes the final log entry's <c>Exception</c> argument regardless). On a
-    /// sub-operation, <see langword="true"/> to also set this exception as the root operation's exception
-    /// (last call at any level wins; the exception always gets a "failed" journal line regardless).
-    /// <see langword="false"/> to record it only in the location that's implicit for this operation level.
-    /// </param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
-    IOperationLog SetException(Exception exception, bool recordEverywhere = false);
+    IOperationLog SetException(Exception exception);
 
     /// <summary>
     /// Adds a structured property to the operation's final log entry. Unlike the built-in

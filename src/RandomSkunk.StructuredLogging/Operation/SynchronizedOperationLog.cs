@@ -28,10 +28,10 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
 
     public string OperationName => inner.OperationName;
 
-    public IOperationLog SetException(Exception exception, bool recordEverywhere = false)
+    public IOperationLog SetException(Exception exception)
     {
         lock (gate)
-            inner.SetException(exception, recordEverywhere);
+            inner.SetException(exception);
         return this;
     }
 
