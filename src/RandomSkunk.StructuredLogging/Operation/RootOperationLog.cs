@@ -14,12 +14,14 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
 {
     public IOperationLog SetException(Exception exception)
     {
+        _state.ThrowIfDisposed();
         _state.Exception = exception;
         return this;
     }
 
     public IOperationLog SetResult<T>(T value)
     {
+        _state.ThrowIfDisposed();
         _state.Result = value;
         _state.HasResult = true;
         return this;
@@ -32,7 +34,7 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
         string journal = _state.BeginJournalEntry()
             .Append("Operation complete.")
             .ToString();
-        _state.ReturnJournalToPool();
+        _state.Dispose();
 
         if (_state.HasResult)
             _state.AddProperty("Operation.Result", _state.Result);

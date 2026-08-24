@@ -180,7 +180,7 @@ chain, since those all return the same instance that needs disposing.
 Documented in the README's new "Common pitfalls" subsection under
 "Operation logging".
 
-## 10. Operation logging: using a sub-operation after the root is disposed corrupts an unrelated log entry
+## 10. Operation logging: using a sub-operation after the root is disposed corrupts an unrelated log entry — ✅ Complete
 
 The nastiest one found. `RootOperationLog.DisposeCore()` returns the shared
 journal `StringBuilder` to the pool. If any `ChildOperationLog` reference is
@@ -194,6 +194,19 @@ exception and no connection back to the actual root cause.
 `OperationLogState` so a `ChildOperationLog` used after the root's
 `Dispose()` throws `ObjectDisposedException` instead of silently mutating a
 pooled `StringBuilder` that's been handed to a different operation.
+
+**Status:** Done. `OperationLogState` gained an `IsDisposed` flag, set the
+moment the root returns the journal `StringBuilder` to `OperationLogPools`
+(`ReturnJournalToPool`), plus a `ThrowIfDisposed()` helper. Every mutating
+member on `OperationLog<TSelf>` (`AddProperty`, `Append`, `AppendValue`,
+`AppendJson`, `BeginSubOperation`) and on `RootOperationLog`/
+`ChildOperationLog` (`SetException`, `SetResult`, and `ChildOperationLog`'s
+`DisposeCore`) now calls it first, so any leaked `ChildOperationLog` used or
+disposed after the root has been disposed throws `ObjectDisposedException`
+instead of touching a `StringBuilder` that may already belong to a different
+operation. `IOperationLog`'s XML docs document the new exception. Covered by
+`OperationLoggingTests.LeakedSubOperation_UsedAfterRootDisposed_ThrowsObjectDisposedException`
+and `LeakedSubOperation_DisposedAfterRootDisposed_ThrowsObjectDisposedException`.
 
 ## 11. Not thread-safe by default, and it's easy to reach for concurrently
 
@@ -287,7 +300,7 @@ Two buckets stand out as most worth addressing first:
 | 7 | Destructuring skips fields | Fix (backlog, not urgent) |
 | 8 | Tag-based capture always boxes | Document (known tradeoff) |
 | 9 | Forgetting `using` drops the journal | ✅ Document + analyzer (CA2000 confirmed *not* to catch this) — shipped as `RSSL0006` |
-| 10 | Sub-operation used after root disposed corrupts unrelated log | Fix (planned: disposed guard) |
+| 10 | Sub-operation used after root disposed corrupts unrelated log | ✅ Fixed: `ObjectDisposedException` guard |
 | 11 | Not thread-safe by default | Document (intentional opt-in) |
 | 12 | Sub-operation `SetException`/`SetResult` don't touch root | Document (more prominently) |
 | 13 | `Operation.*` reserved property names | Fix (throw `ArgumentException`) |
@@ -295,6 +308,7 @@ Two buckets stand out as most worth addressing first:
 | 15 | Operation-log args always eagerly evaluated | Document (C# limitation) |
 | 16 | `BeginSubOperation` writes "started" unconditionally | Document (by design) |
 
-Planned code changes: **#3**, **#10**, **#13** (fixes); **#7** (backlog
+Planned code changes: **#3**, **#13** (fixes); **#7** (backlog
 enhancement). Analyzer ideas to investigate: **#1**, **#3**, **#4**
 (stretch), **#5** (stretch, lower priority). **#9** shipped as `RSSL0006`.
+**#10** shipped as an `ObjectDisposedException` guard in `OperationLogState`.

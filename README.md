@@ -330,6 +330,14 @@ flags an undisposed `IOperationLog` and offers a code fix to wrap it in a `using
 block. As always, `using var log = logger.BeginOperation(...);` is the simplest way to avoid the
 problem in the first place.
 
+A sub-operation's `IOperationLog` only ever appends to the root operation's shared journal - it
+never writes its own log entry. If a sub-operation reference outlives the root (e.g. it's leaked
+out of scope, or held by a fire-and-forget task), any attempt to use it - `AddProperty`, `Append`,
+`AppendValue`, `AppendJson`, `BeginSubOperation`, `SetException`, `SetResult`, or `Dispose` -
+throws `ObjectDisposedException` once the root has been disposed, rather than silently mutating a
+pooled `StringBuilder` that may already have been handed out to a completely different operation
+elsewhere in the app.
+
 ## Analyzers
 
 [![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.Analyzers.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging.Analyzers)

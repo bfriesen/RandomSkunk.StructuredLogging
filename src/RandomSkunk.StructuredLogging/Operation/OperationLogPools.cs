@@ -4,7 +4,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// The pools <see cref="OperationLogState"/> rents its journal <see cref="StringBuilder"/> and property
-/// list from (returned by <see cref="OperationLogState.ReturnJournalToPool"/> once an operation's single log entry has
+/// list from (returned by <see cref="OperationLogState.Dispose"/> once an operation's single log entry has
 /// been flushed), and <see cref="ValueFormatting.AppendJson{T}"/> rents its scratch
 /// <see cref="PooledJsonWriter"/> from.
 /// </summary>

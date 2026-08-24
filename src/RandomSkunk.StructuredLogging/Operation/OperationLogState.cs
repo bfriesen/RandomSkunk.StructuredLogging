@@ -13,11 +13,11 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// was begun with <c>threadSafe: true</c> (see <see cref="LoggerOperationExtensions"/>), which wraps every
 /// <see cref="IOperationLog"/> (root or sub-operation) in a locking decorator instead.
 /// <see cref="_journal"/> is rented from <see cref="OperationLogPools"/> and returned there by
-/// <see cref="RootOperationLog.DisposeCore"/> - neither must be touched by any
-/// <see cref="ChildOperationLog"/> still in scope after the root operation has been disposed, since by
-/// then they may have already been handed out to a different, unrelated operation.
+/// <see cref="Dispose"/>, called from <see cref="RootOperationLog.DisposeCore"/> - neither must be
+/// touched by any <see cref="ChildOperationLog"/> still in scope after the root operation has been
+/// disposed, since by then they may have already been handed out to a different, unrelated operation.
 /// </summary>
-internal sealed class OperationLogState
+internal sealed class OperationLogState : IDisposable
 {
     public readonly ILogger Logger;
     public readonly LogLevel Level;
@@ -30,6 +30,15 @@ internal sealed class OperationLogState
     public object? Result;
     public bool HasResult;
     public Exception? Exception;
+
+    /// <summary>
+    /// Set by <see cref="Dispose"/>, once the root operation has finished writing its log entry
+    /// and returned <see cref="_journal"/> to <see cref="OperationLogPools"/>. From that point on, the
+    /// <see cref="StringBuilder"/> instance may already be in use by a different, unrelated operation, so any
+    /// further attempt to use this state (e.g. via a <see cref="ChildOperationLog"/> that leaked out of scope)
+    /// must throw instead of touching it.
+    /// </summary>
+    public bool IsDisposed { get; private set; }
 
     public OperationLogState(ILogger logger, LogLevel level, EventId eventId, string operationName)
     {
@@ -70,9 +79,21 @@ internal sealed class OperationLogState
         return AppendTimestamp(Stopwatch.Elapsed);
     }
 
-    public void ReturnJournalToPool()
+    public void Dispose()
     {
         OperationLogPools.Journals.Return(_journal);
+        IsDisposed = true;
+    }
+
+    /// <summary>
+    /// Throws <see cref="ObjectDisposedException"/> if the root operation has already been disposed - see
+    /// <see cref="IsDisposed"/>. Called by every <see cref="OperationLog{TSelf}"/> member that would
+    /// otherwise read or write this shared state.
+    /// </summary>
+    public void ThrowIfDisposed()
+    {
+        if (IsDisposed)
+            throw new ObjectDisposedException(nameof(IOperationLog), "Cannot use an operation log after the root operation has been disposed.");
     }
 
     private StringBuilder AppendTimestamp(TimeSpan elapsed) =>

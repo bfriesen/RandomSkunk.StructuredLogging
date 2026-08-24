@@ -551,6 +551,38 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void LeakedSubOperation_UsedAfterRootDisposed_ThrowsObjectDisposedException()
+    {
+        RecordingLogger logger = new();
+
+        IOperationLog leakedSubLog;
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            leakedSubLog = log.BeginSubOperation("Fetch");
+        }
+
+        Action append = () => leakedSubLog.Append("late write");
+
+        append.Should().Throw<ObjectDisposedException>();
+    }
+
+    [Fact]
+    public void LeakedSubOperation_DisposedAfterRootDisposed_ThrowsObjectDisposedException()
+    {
+        RecordingLogger logger = new();
+
+        IOperationLog leakedSubLog;
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            leakedSubLog = log.BeginSubOperation("Fetch");
+        }
+
+        Action dispose = leakedSubLog.Dispose;
+
+        dispose.Should().Throw<ObjectDisposedException>();
+    }
+
+    [Fact]
     public async Task ThreadSafe_AllowsConcurrentSubOperations()
     {
         RecordingLogger logger = new();

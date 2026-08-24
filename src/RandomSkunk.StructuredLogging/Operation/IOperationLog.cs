@@ -10,6 +10,11 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// happened during the operation, including any nested sub-operation activity. A sub-operation, returned by
 /// <see cref="BeginSubOperation"/>, never writes its own log entry - disposing it appends a "complete" line
 /// to the ancestor journal it was created from instead.
+/// Every sub-operation shares the root operation's journal, so once the root <see cref="IOperationLog"/> has
+/// been disposed, calling any member other than <see cref="IDisposable.Dispose"/>, <see cref="Properties"/>,
+/// <see cref="EventId"/>, or <see cref="OperationName"/> on a sub-operation still referenced from outside the
+/// root's <c>using</c> scope throws <see cref="ObjectDisposedException"/>, rather than risking corruption of
+/// an unrelated operation's journal.
 /// </summary>
 public interface IOperationLog : IDisposable
 {
@@ -48,6 +53,7 @@ public interface IOperationLog : IDisposable
     /// </summary>
     /// <param name="exception">The exception to record.</param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
     IOperationLog SetException(Exception exception);
 
     /// <summary>
@@ -61,6 +67,7 @@ public interface IOperationLog : IDisposable
     /// <param name="name">The property name.</param>
     /// <param name="value">The property value.</param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
     IOperationLog AddProperty<T>(string name, T value);
 
     /// <summary>
@@ -75,6 +82,7 @@ public interface IOperationLog : IDisposable
     /// <typeparam name="T">The type of the result.</typeparam>
     /// <param name="value">The result to record.</param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
     IOperationLog SetResult<T>(T value);
 
     /// <summary>
@@ -83,6 +91,7 @@ public interface IOperationLog : IDisposable
     /// </summary>
     /// <param name="text">The text to append.</param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
     IOperationLog Append(string text);
 
     /// <summary>
@@ -99,6 +108,7 @@ public interface IOperationLog : IDisposable
     /// argument expression, via <see cref="CallerArgumentExpressionAttribute"/>.
     /// </param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
     IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
 
     /// <summary>
@@ -114,6 +124,7 @@ public interface IOperationLog : IDisposable
     /// argument expression, via <see cref="CallerArgumentExpressionAttribute"/>.
     /// </param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
     IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
 
     /// <summary>
@@ -124,5 +135,6 @@ public interface IOperationLog : IDisposable
     /// </summary>
     /// <param name="operationName">The sub-operation's name, used in its journal lines (e.g. "started"/"complete").</param>
     /// <returns>An <see cref="IOperationLog"/> representing the nested sub-operation.</returns>
+    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
     IOperationLog BeginSubOperation(string operationName);
 }

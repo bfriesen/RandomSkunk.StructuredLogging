@@ -27,24 +27,28 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
 
     public IOperationLog AddProperty<T>(string propertyName, T value)
     {
+        _state.ThrowIfDisposed();
         _state.AddProperty(propertyName, value);
         return (TSelf)this;
     }
 
     public IOperationLog Append(string text)
     {
+        _state.ThrowIfDisposed();
         _state.BeginJournalEntry().Append(text);
         return (TSelf)this;
     }
 
     public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
+        _state.ThrowIfDisposed();
         _state.BeginJournalEntry().Append($"`{valueName}`: {ValueFormatting.Format(value)}");
         return (TSelf)this;
     }
 
     public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
+        _state.ThrowIfDisposed();
         StringBuilder journal = _state.BeginJournalEntry().Append($"`{valueName}`: ");
         ValueFormatting.AppendJson(journal, value);
         return (TSelf)this;
@@ -52,6 +56,7 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
 
     public IOperationLog BeginSubOperation(string subOperationName)
     {
+        _state.ThrowIfDisposed();
         _state.BeginJournalEntry().Append($"`{subOperationName}` started.");
         return new ChildOperationLog(_state, subOperationName);
     }

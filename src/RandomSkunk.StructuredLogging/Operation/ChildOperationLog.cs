@@ -12,18 +12,21 @@ internal sealed class ChildOperationLog(OperationLogState state, string operatio
 {
     public IOperationLog SetException(Exception exception)
     {
+        _state.ThrowIfDisposed();
         _state.BeginJournalEntry().Append($"`{_operationName}` failed:\n{exception}");
         return this;
     }
 
     public IOperationLog SetResult<T>(T value)
     {
+        _state.ThrowIfDisposed();
         _state.BeginJournalEntry().Append($"`{_operationName}` result: {ValueFormatting.Format(value)}");
         return this;
     }
 
     protected override void DisposeCore()
     {
+        _state.ThrowIfDisposed();
         _state.BeginJournalEntry().Append($"`{_operationName}` complete.");
     }
 }
