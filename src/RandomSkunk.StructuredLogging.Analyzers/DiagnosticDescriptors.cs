@@ -99,4 +99,18 @@ public static class DiagnosticDescriptors
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "BeginOperation/BeginSubOperation return an IOperationLog whose disposal is what actually writes its log entry (root) or 'complete' journal line (sub-operation). Nothing enforces disposal, and forgetting it silently drops the entire journal - no exception, no partial log entry - and leaks the operation's pooled StringBuilder. This is the operation-logging analog of CA2000, which can't catch this itself: its escape analysis anchors on 'new' expressions visible in the consuming compilation, and BeginOperation's internal object construction is opaque, living inside the already-compiled library assembly.");
+
+    /// <summary>
+    /// Reported on a local variable that's initialized from an interpolated string expression and
+    /// then passed as the plain <c>string message</c> argument of a
+    /// RandomSkunk.StructuredLogging Trace/Debug/Information/Warning/Error/Critical/Write call.
+    /// </summary>
+    public static readonly DiagnosticDescriptor InterpolatedStringAssignedToLocalMessageArgument = new(
+        id: "RSSL0007",
+        title: "Don't assign an interpolated message to a local before logging",
+        messageFormat: "'{0}' is initialized from an interpolated string and then passed as this call's message argument; this binds the plain 'string' overload instead of the interpolated-string-handler overload, so the message is always built eagerly (even when this level is disabled) and any '<PropertyName>' tag is handed to the value's IFormattable.ToString(format) as a real format string instead of being parsed as a property tag - pass the interpolated string directly to the logging call instead",
+        category: "Reliability",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "The disabled-level optimization and the <PropertyName> tag format both depend on an interpolated string literal binding directly to a logging call's interpolated-string-handler overload. Assigning the interpolated string to a string local first (e.g. `string msg = $\"User {id:<UserId>}\"; logger.Debug(msg);`) forces the plain `string message` overload instead: the string is built eagerly regardless of level, and any <PropertyName> tag is handed to the interpolated value's IFormattable.ToString(format) as a genuine .NET format string, which usually throws FormatException at the log call site the first time that code path runs.");
 }

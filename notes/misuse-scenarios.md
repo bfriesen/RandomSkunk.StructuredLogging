@@ -31,7 +31,7 @@ analyzer that flags the common defeating patterns (a method call/operator
 applied directly to an interpolated-string-literal argument of one of our
 logger methods, e.g. `logger.Debug($"...".ToUpper())`) as a warning.
 
-## 2. `string msg = $"...{x:<Name>}..."` is actively dangerous, not just inert
+## 2. `string msg = $"...{x:<Name>}..."` is actively dangerous, not just inert — ✅ Complete
 
 If a developer assigns the interpolated string to a `string` *before* passing
 it to the logger, the compiler uses the ordinary interpolation handler, not
@@ -42,7 +42,16 @@ the log call site in production, and only when that code path actually runs
 (e.g., someone enables Debug logging to troubleshoot an issue and the app
 starts throwing).
 
-**Decision:** Document prominently as the top pitfall.
+**Decision:** Document prominently as the top pitfall. Also addresses the
+second bullet of #1 (`string msg = $"User {name}"; logger.Debug(msg);`),
+since both are the same underlying pattern — assigning an interpolated
+string to a local before passing it to the logger.
+
+**Status:** Done. `InterpolatedStringLocalMessageAnalyzer` ships as
+`RSSL0007` (warning): flags a call to a RandomSkunk.StructuredLogging
+Trace/Debug/Information/Warning/Error/Critical/Write method whose `message`
+argument is a local variable declared with an interpolated string
+initializer. Documented in the README's analyzers table.
 
 ## 3. A missing `>` in a tag is a silent runtime format bug, not a compile error
 
@@ -300,7 +309,7 @@ Two buckets stand out as most worth addressing first:
 | # | Scenario | Decision |
 |---|----------|----------|
 | 1 | Defeating the disabled-check optimization | Document + analyzer (warning) |
-| 2 | `string msg = $"...{x:<Name>}..."` assigned before logging | Document (top pitfall) |
+| 2 | `string msg = $"...{x:<Name>}..."` assigned before logging | ✅ Document (top pitfall) + analyzer — shipped as `RSSL0007` |
 | 3 | Missing `>` in a tag → runtime `FormatException` | Fix (throw `FormatException`) + analyzer (warning) |
 | 4 | Duplicate property names never deduped | Document (+ future analyzer idea) |
 | 5 | `<>`/`<@>` edge cases | Document (+ consider analyzer for text after `<@...>`) |
@@ -318,7 +327,8 @@ Two buckets stand out as most worth addressing first:
 
 Planned code changes: **#3**, **#13** (fixes); **#7** (backlog
 enhancement). Analyzer ideas to investigate: **#1**, **#3**, **#4**
-(stretch), **#5** (stretch, lower priority). **#9** shipped as `RSSL0006`.
+(stretch), **#5** (stretch, lower priority). **#2** shipped as `RSSL0007`
+(also covers the second bullet of #1). **#9** shipped as `RSSL0006`.
 **#10** shipped as an `ObjectDisposedException` guard in `OperationLogState`.
 **#11** confirmed already documented in the README's "Thread safety"
 subsection.

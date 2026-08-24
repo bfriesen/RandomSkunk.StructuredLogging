@@ -11,3 +11,4 @@ RSSL0003 | Usage | Hidden | NonCapturingInterpolationHoleAnalyzer, [Documentatio
 RSSL0004 | Usage | Hidden | LogPropertyTupleArgumentAnalyzer, [Documentation](../../README.md#analyzers)
 RSSL0005 | Usage | Hidden | StructuredLoggerExtensionsInvocationAnalyzer, [Documentation](../../README.md#analyzers)
 RSSL0006 | Reliability | Warning | UndisposedOperationLogAnalyzer, [Documentation](../../README.md#analyzers)
+RSSL0007 | Reliability | Warning | InterpolatedStringLocalMessageAnalyzer, [Documentation](../../README.md#analyzers)
