@@ -79,9 +79,31 @@ names and tuple-arg names are almost always literals).
 
 - `<>` is documented as "opt out of capture, strip the tag" — easy to misread
   as "use default format."
-- There's no way to *both* capture a property *and* use a custom format that
-  itself starts with `<`; a developer wanting both will find the empty-tag
-  escape hatch only strips, never captures.
+- Only ever *one* tag is parsed per hole — whatever comes after that tag's
+  closing `>` is handed straight through as literal format text, never
+  re-parsed for a second tag. This cuts both ways:
+  - It's what lets a real format that itself starts with `<` (or even `<>`)
+    survive uncorrupted after a normal `<PropertyName>` tag, with no escaping
+    needed: `{amount:<Amount><>myformat}` captures `Amount` *and* formats with
+    the literal text `<>myformat`, because everything after `<Amount>`'s
+    closing `>` is taken verbatim. Same for the no-capture case:
+    `{x:<><>myformat}` opts out of capture and formats with `<>myformat`. If
+    the parser instead looped to strip every leading `<>` it found, both of
+    these legitimate "format literally starts with `<>`" cases would break.
+  - But it also means a developer who has learned the `<>` escape hatch and
+    reaches for it *and* wants to capture a property will naturally try
+    stacking a second tag onto the escaped remainder: `{value:<><Amount>F2}`,
+    expecting `<>` to strip and `<Amount>` to still be parsed as a capture
+    tag. It isn't — `<>` already consumed the one tag slot, so `<Amount>F2`
+    is treated as literal format text passed straight to `double.ToString()`.
+    That's not a valid custom numeric format string, but .NET doesn't throw
+    for that — it echoes the unrecognized characters back verbatim, so the
+    message silently renders as `<Amount>F2` instead of the formatted number,
+    and no property is captured at all. See
+    `PropertyTagCaptureTests.EmptyTagEscapeHatch_CannotAlsoCaptureAProperty`
+    for a reproduction. The fix for a developer in this situation is simply
+    to put the property name in the *first* (and only) tag —
+    `{value:<Amount>F2}` — rather than stacking a second one.
 - A stray space breaks destructuring detection silently: `{x:< @Foo>}` is
   *not* recognized as destructure-mode (the `@` check is position-exact at
   index 1) — instead `" @Foo"` (with leading space) becomes the literal

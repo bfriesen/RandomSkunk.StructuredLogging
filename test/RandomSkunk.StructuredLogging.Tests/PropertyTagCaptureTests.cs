@@ -176,4 +176,27 @@ public class PropertyTagCaptureTests
 
         captured.Should().BeNull();
     }
+
+    [Fact]
+    public void EmptyTagEscapeHatch_CannotAlsoCaptureAProperty()
+    {
+        // A developer who knows "<>" strips itself out to let a real format starting with '<'
+        // survive (see EmptyTag_DoesNotCapture_ButStripsTagFromFormat above) might reasonably
+        // guess that stacking a second tag onto the escaped remainder - "<><PropertyName>" -
+        // both opts back into capturing *and* keeps the leading '<' available for a real format.
+        // It doesn't: only the first "<...>" is ever parsed as a tag. Once the empty tag strips
+        // itself, everything after it - including a second "<Amount>" - is passed straight
+        // through as literal format text to double.ToString(). That's not a valid custom numeric
+        // format string, so .NET doesn't throw - it echoes the unrecognized characters back
+        // verbatim - silently replacing the formatted number with the literal text "<Amount>F2"
+        // and never capturing an "Amount" property at all.
+        RecordingLogger logger = new();
+        double value = 3.14159;
+
+        logger.Information($"Total: {value:<><Amount>F2}");
+
+        logger.LastMessage.Should().Be("Total: 3.14");
+        logger.LastProperties.Should().ContainSingle()
+            .Which.Should().Be(new KeyValuePair<string, object?>("Amount", value));
+    }
 }
