@@ -113,4 +113,21 @@ public static class DiagnosticDescriptors
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "The disabled-level optimization and the <PropertyName> tag format both depend on an interpolated string literal binding directly to a logging call's interpolated-string-handler overload. Assigning the interpolated string to a string local first (e.g. `string msg = $\"User {id:<UserId>}\"; logger.Debug(msg);`) forces the plain `string message` overload instead: the string is built eagerly regardless of level, and any <PropertyName> tag is handed to the interpolated value's IFormattable.ToString(format) as a genuine .NET format string, which usually throws FormatException at the log call site the first time that code path runs.");
+
+    /// <summary>
+    /// Reported on an interpolation hole in a RandomSkunk.StructuredLogging message argument whose
+    /// format specifier starts with '&lt;' but has no matching '&gt;' - almost always a missing
+    /// '&gt;' typo, since a real format that needs to start with a literal '&lt;' should use the
+    /// <c>&lt;&gt;</c> escape hatch instead. At run time this throws
+    /// <c>UnterminatedLogPropertyTagException</c>; this diagnostic catches the same mistake at
+    /// compile time instead.
+    /// </summary>
+    public static readonly DiagnosticDescriptor UnterminatedLogPropertyTag = new(
+        id: "RSSL0008",
+        title: "Unterminated '<PropertyName>' tag",
+        messageFormat: "This interpolation hole's format starts with '<' but has no matching '>', so it isn't a valid '<PropertyName>' tag; use the '<>' escape hatch if the format is meant to start with a literal '<'",
+        category: "Reliability",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "A format specifier that starts with '<' but never closes with '>' (e.g. {value:<UserId}, a missing '>' typo) can't be parsed as a <PropertyName> tag or the <> no-capture escape hatch. At run time, RandomSkunk.StructuredLogging throws UnterminatedLogPropertyTagException rather than silently treating the raw text as a real format string handed to IFormattable.ToString(format). This diagnostic flags the same mistake at compile time. If the format is genuinely meant to start with a literal '<', use the '<>' escape hatch, e.g. {value:<><realformat}.");
 }

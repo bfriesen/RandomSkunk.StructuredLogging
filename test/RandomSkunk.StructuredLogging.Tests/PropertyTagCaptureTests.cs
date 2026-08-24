@@ -199,4 +199,27 @@ public class PropertyTagCaptureTests
         logger.LastProperties.Should().ContainSingle()
             .Which.Should().Be(new KeyValuePair<string, object?>("Amount", value));
     }
+
+    [Fact]
+    public void UnterminatedTag_ThrowsFormatException()
+    {
+        RecordingLogger logger = new();
+        double value = 3.14159;
+
+        Action act = () => logger.Information($"Total: {value:<Amount}");
+
+        act.Should().Throw<UnterminatedLogPropertyTagException>()
+            .WithMessage("*<Amount*");
+    }
+
+    [Fact]
+    public void UnterminatedTag_Disabled_DoesNotThrow()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+        double value = 3.14159;
+
+        Action act = () => logger.Information($"Total: {value:<Amount}");
+
+        act.Should().NotThrow();
+    }
 }

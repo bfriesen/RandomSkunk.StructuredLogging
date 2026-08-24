@@ -12,3 +12,4 @@ RSSL0004 | Usage | Hidden | LogPropertyTupleArgumentAnalyzer, [Documentation](..
 RSSL0005 | Usage | Hidden | StructuredLoggerExtensionsInvocationAnalyzer, [Documentation](../../README.md#analyzers)
 RSSL0006 | Reliability | Warning | UndisposedOperationLogAnalyzer, [Documentation](../../README.md#analyzers)
 RSSL0007 | Reliability | Warning | InterpolatedStringLocalMessageAnalyzer, [Documentation](../../README.md#analyzers)
+RSSL0008 | Reliability | Error | UnterminatedLogPropertyTagAnalyzer, [Documentation](../../README.md#analyzers)

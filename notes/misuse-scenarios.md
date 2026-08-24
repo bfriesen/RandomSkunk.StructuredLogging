@@ -53,7 +53,7 @@ Trace/Debug/Information/Warning/Error/Critical/Write method whose `message`
 argument is a local variable declared with an interpolated string
 initializer. Documented in the README's analyzers table.
 
-## 3. A missing `>` in a tag is a silent runtime format bug, not a compile error
+## 3. A missing `>` in a tag is a silent runtime format bug, not a compile error — ✅ Complete (fix)
 
 `{value:<UserId}` (typo, no closing `>`) parses to `TagFormat(null,
 "<UserId")` — capture is silently skipped, and the *entire* literal
@@ -69,6 +69,29 @@ certainly a typo. Change `LogPropertyTagFormat.ParseCore` to throw a clear
 text through as a format string. Also try building an analyzer that flags an
 unterminated `<...` tag literal as a warning at compile time, since format
 specifiers in interpolated holes are always compile-time constants.
+
+**Status:** Fix done. `LogPropertyTagFormat.ParseCore` now throws a new
+`UnterminatedLogPropertyTagException` (a `FormatException` subclass) when a
+tag starting with `<` has no matching `>`, instead of silently treating the
+raw text as a real format string. The exception carries a message pointing
+at the `<>` escape hatch as the fix. Thrown at the point of use (inside
+`AppendFormatted<T>`), so it only fires when the interpolation hole is
+actually appended (i.e., the log level is enabled) — consistent with the
+rest of the tag-parsing behavior. Covered by
+`PropertyTagCaptureTests.UnterminatedTag_ThrowsFormatException` and
+`UnterminatedTag_Disabled_DoesNotThrow`.
+
+Analyzer also done: `UnterminatedLogPropertyTagAnalyzer` ships as `RSSL0008`
+(Error, unlike every other analyzer in this package which is Warning/Info/
+Hidden — an unterminated tag is unconditionally a bug, not a style
+suggestion). It flags an interpolation hole whose format specifier starts
+with `<` but never closes with `>`, scoped to holes that convert to one of
+the library's interpolated-string-handler types (mirroring
+`LogPropertyTagFormatAnalyzer`'s RSSL0002 scoping). No code fix was
+requested/added - the diagnostic exists to surface the typo at compile time,
+not to auto-correct it (there's no single right fix: it could be a missing
+`>`, a missing property name, or the developer meant the `<>` escape).
+Documented in the README's analyzers table.
 
 ## 4. Duplicate property names are never deduplicated, anywhere
 
@@ -310,7 +333,7 @@ Two buckets stand out as most worth addressing first:
 |---|----------|----------|
 | 1 | Defeating the disabled-check optimization | Document + analyzer (warning) |
 | 2 | `string msg = $"...{x:<Name>}..."` assigned before logging | ✅ Document (top pitfall) + analyzer — shipped as `RSSL0007` |
-| 3 | Missing `>` in a tag → runtime `FormatException` | Fix (throw `FormatException`) + analyzer (warning) |
+| 3 | Missing `>` in a tag → runtime `FormatException` | ✅ Fixed: throws `UnterminatedLogPropertyTagException` (analyzer idea still outstanding) |
 | 4 | Duplicate property names never deduped | Document (+ future analyzer idea) |
 | 5 | `<>`/`<@>` edge cases | Document (+ consider analyzer for text after `<@...>`) |
 | 6 | Destructuring captures raw (live) value | Document (by design) |
@@ -325,10 +348,11 @@ Two buckets stand out as most worth addressing first:
 | 15 | Operation-log args always eagerly evaluated | Document (C# limitation) |
 | 16 | `BeginSubOperation` writes "started" unconditionally | Document (by design) |
 
-Planned code changes: **#3**, **#13** (fixes); **#7** (backlog
-enhancement). Analyzer ideas to investigate: **#1**, **#3**, **#4**
-(stretch), **#5** (stretch, lower priority). **#2** shipped as `RSSL0007`
-(also covers the second bullet of #1). **#9** shipped as `RSSL0006`.
-**#10** shipped as an `ObjectDisposedException` guard in `OperationLogState`.
-**#11** confirmed already documented in the README's "Thread safety"
-subsection.
+Planned code changes: **#13** (fix); **#7** (backlog
+enhancement). Analyzer ideas to investigate: **#1**, **#3** (fix shipped;
+analyzer still outstanding), **#4** (stretch), **#5** (stretch, lower
+priority). **#2** shipped as `RSSL0007` (also covers the second bullet of
+#1). **#3** fix shipped as `UnterminatedLogPropertyTagException`. **#9**
+shipped as `RSSL0006`. **#10** shipped as an `ObjectDisposedException` guard
+in `OperationLogState`. **#11** confirmed already documented in the README's
+"Thread safety" subsection.

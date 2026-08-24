@@ -92,6 +92,13 @@ logger.Debug($"[{ts:<Timestamp>HH:mm:ss}] tick");
 An empty tag (`<>`) strips itself out without capturing anything — use it when a real format
 string happens to start with `<`: `{value:<>therealformat}`.
 
+A tag that starts with `<` but has no closing `>` (e.g. `{value:<UserId}`, a missing `>` typo)
+throws `UnterminatedLogPropertyTagException` (a `FormatException`) at the point the interpolation
+hole is appended, rather than silently treating `<UserId` as a real format string handed to
+`value`'s `IFormattable.ToString(format)`. If you genuinely need a format that starts with `<`,
+use the `<>` escape hatch shown above. The analyzers package catches this at compile time instead —
+see `RSSL0008` below.
+
 #### `<@PropertyName>` — Serilog-style destructured message text
 
 A tag whose name starts with `@` renders the value into the *message text* using Serilog-style
@@ -363,6 +370,7 @@ itself (or doesn't need the runtime library at all, e.g. one that only calls
 | `RSSL0005` | Silent | Marks a call to any of the `RandomSkunk.StructuredLogging` `Trace`/`Debug`/`Information`/`Warning`/`Error`/`Critical`/`Write` extension methods, regardless of overload. Its code fix rewrites the call to the roughly equivalent `Microsoft.Extensions.Logging` call (the inverse of `RSSL0001`), moving each structured property into a `{PropertyName}` message-template placeholder — since a hole that isn't already tagged with a name (including a bare `<@>` destructuring tag) gets one guessed from its expression (the same guess RSSL0003's fix uses), most calls convert cleanly. A call is left unconverted only when a name truly can't be pinned down: a hole whose expression isn't a simple identifier, a tuple argument with a dynamically-computed name, or the leading collection-parameter overload. Silent by default — it exists to anchor code fixes that act on these calls, not to warn about anything. |
 | `RSSL0006` | Warning | Flags a call to `BeginOperation`/`BeginSubOperation` whose returned `IOperationLog` isn't visibly disposed (via a `using` declaration/statement, an explicit `Dispose()` call, or by returning/assigning it elsewhere for someone else to dispose). Passing it as a plain method argument doesn't count — a sub-operation is expected to be created and disposed within the method it's threaded into, not handed off through a parameter. Forgetting to dispose it silently drops the entire journal — not even a partial log entry is written. CA2000 can't catch this itself, since its escape analysis anchors on `new`-expressions and can't see through `BeginOperation`'s internal object construction, which lives inside the already-compiled library assembly. |
 | `RSSL0007` | Warning | Flags a `RandomSkunk.StructuredLogging` call whose message argument is a local variable declared with an interpolated string initializer (e.g. `string msg = $"User {id}"; logger.Debug(msg);`). Assigning the interpolated string to a `string` local first forces the call to bind the plain `string message` overload instead of the interpolated-string-handler overload — the message is then built eagerly regardless of level, and any [`<PropertyName>` tag](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) is handed to the value's `IFormattable.ToString(format)` as a real (usually invalid) format string instead of being parsed as a property tag. Pass the interpolated string directly to the logging call instead. |
+| `RSSL0008` | Error | Flags an interpolation hole whose format specifier starts with `<` but has no matching `>` (e.g. `{userId:<UserId}`, a missing `>` typo) - almost always a mistake, since a real format that needs to start with a literal `<` should use the [`<>` escape hatch](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) instead. At run time this throws `UnterminatedLogPropertyTagException` rather than silently treating the raw text as a real format string; this analyzer catches the same mistake at compile time, at error severity since it always indicates a bug. |
 
 ### Code fixes
 

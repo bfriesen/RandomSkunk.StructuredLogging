@@ -37,7 +37,7 @@ internal static class LogPropertyTagFormat
         int closeIndex = span[tagStart..].IndexOf('>');
 
         if (closeIndex < 0)
-            return new TagFormat(null, format);
+            throw new UnterminatedLogPropertyTagException(format);
 
         ReadOnlySpan<char> tag = span.Slice(tagStart, closeIndex);
         ReadOnlySpan<char> remaining = span[(tagStart + closeIndex + 1)..];
@@ -46,6 +46,21 @@ internal static class LogPropertyTagFormat
             tag.IsEmpty ? null : tag.ToString(),
             remaining.IsEmpty ? null : remaining.ToString(),
             destructure);
+    }
+}
+
+/// <summary>
+/// Thrown when an interpolation hole's format specifier begins with '&lt;' but has no matching
+/// '&gt;', so it cannot be parsed as either a "&lt;PropertyName&gt;format" capture tag or the
+/// "&lt;&gt;" no-capture escape hatch. A real format string that needs to start with a literal
+/// '&lt;' must use the "&lt;&gt;" escape (e.g. "&lt;&gt;&lt;custom&gt;") rather than leaving the
+/// '&lt;' unescaped.
+/// </summary>
+public sealed class UnterminatedLogPropertyTagException : FormatException
+{
+    internal UnterminatedLogPropertyTagException(string format)
+        : base($"The format \"{format}\" starts with '<' but has no matching '>', so it can't be parsed as a \"<PropertyName>\" capture tag. If the format is meant to start with a literal '<', use the \"<>\" escape hatch instead, e.g. \"<>{format}\".")
+    {
     }
 }
 

@@ -39,6 +39,15 @@ internal static class LogPropertyTagFormatParsing
         format.Length > 1 && format[0] == '<' && format[1] == '@' && format.IndexOf('>', 1) >= 0;
 
     /// <summary>
+    /// Returns whether <paramref name="format"/> starts with '&lt;' but has no matching '&gt;',
+    /// so it can't be parsed as either a <c>&lt;PropertyName&gt;</c> tag or the <c>&lt;&gt;</c>
+    /// no-capture escape hatch - almost always a missing '&gt;' typo, since a real format that
+    /// needs to start with a literal '&lt;' should use the <c>&lt;&gt;</c> escape instead.
+    /// </summary>
+    public static bool IsUnterminatedTag(string format) =>
+        format.Length > 0 && format[0] == '<' && format.IndexOf('>', 1) < 0;
+
+    /// <summary>
     /// Returns the format text remaining after the <c>&lt;PropertyName&gt;</c> tag, or
     /// <see langword="null"/> if nothing follows the tag. Only meaningful when
     /// <see cref="TryGetPropertyName"/> already returned non-<see langword="null"/> for
