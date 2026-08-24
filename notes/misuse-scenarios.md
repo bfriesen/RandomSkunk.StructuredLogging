@@ -111,6 +111,17 @@ names and tuple-arg names are almost always literals).
 
 - `<>` is documented as "opt out of capture, strip the tag" — easy to misread
   as "use default format."
+  - `<>` is only actually useful when *both* conditions hold: the developer
+    doesn't want to capture the interpolation hole, *and* the real format
+    string they want happens to start with `<`. If they don't want to
+    capture and their real format starts with anything other than `<`, they
+    can just write that format directly with no `<>` prefix — a plain
+    (untagged) format specifier already means "no capture." Similarly, `<@>`
+    is only useful when the developer doesn't want to capture the hole but
+    *does* want it rendered into the message using Serilog-style
+    destructured formatting instead of `IFormattable`/`ToString()`; if
+    neither capture nor destructured rendering is wanted, no tag is needed
+    at all.
 - Only ever *one* tag is parsed per hole — whatever comes after that tag's
   closing `>` is handed straight through as literal format text, never
   re-parsed for a second tag. This cuts both ways:

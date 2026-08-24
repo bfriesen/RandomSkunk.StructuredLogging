@@ -89,8 +89,11 @@ logger.Debug($"[{ts:<Timestamp>HH:mm:ss}] tick");
 // message text uses "HH:mm:ss" to format ts; the Timestamp property holds the raw DateTime
 ```
 
-An empty tag (`<>`) strips itself out without capturing anything — use it when a real format
-string happens to start with `<`: `{value:<>therealformat}`.
+An empty tag (`<>`) strips itself out without capturing anything — it's only useful when *both* of
+these are true: you don't want to capture the value, *and* your real format string happens to start
+with `<`. If your real format doesn't start with `<`, just write it directly with no `<>` prefix —
+`{value:therealformat}` already opts out of capturing on its own. The escape hatch exists purely to
+disambiguate a leading `<` in a real format from a capture tag: `{value:<>therealformat}`.
 
 A tag that starts with `<` but has no closing `>` (e.g. `{value:<UserId}`, a missing `>` typo)
 throws `UnterminatedLogPropertyTagException` (a `FormatException`) at the point the interpolation
@@ -114,6 +117,11 @@ logger.Trace($"Item added to cart: {item:<@Item>}");
 logger.Trace($"Item added to cart: {item:<@>}");
 // same message text, but the empty destructuring tag doesn't capture a structured property
 ```
+
+The empty destructuring tag (`<@>`) is only useful when you don't want to capture the value but
+still want it *rendered into the message* using destructured formatting rather than
+`ToString()`/`IFormattable`. If you don't want destructured rendering either, skip the tag
+entirely.
 
 Rendering rules: objects render as `TypeName { Prop1: Value1, Prop2: Value2 }` (anonymous types
 omit the type name); collections render as `[item1, item2]`; dictionaries render as
