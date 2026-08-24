@@ -150,7 +150,7 @@ they did.
 **Decision:** Document as a known tradeoff; not fixable without doubling the
 generated surface area.
 
-## 9. Operation logging: forgetting `using` silently drops the entire journal
+## 9. Operation logging: forgetting `using` silently drops the entire journal — ✅ Complete
 
 `BeginOperation` returns an `IDisposable`; nothing enforces disposal. Forget
 it, and no log entry is ever written — not even a partial one — and the
@@ -171,6 +171,14 @@ referenced assembly. Since consumers only ever obtain an `IOperationLog` via
 never fire here in practice — this needs our own analyzer (flag a local
 typed `IOperationLog`/assigned from `BeginOperation`/`BeginSubOperation`
 that isn't disposed on all paths) rather than relying on CA2000.
+
+**Status:** Done. `UndisposedOperationLogAnalyzer` ships as `RSSL0006`
+(warning), with two code fixes (add a `using` declaration / add an empty
+`using` block) and correct handling of `IOperationLog`'s fluent
+`AddProperty`/`Append`/`AppendValue`/`AppendJson`/`SetException`/`SetResult`
+chain, since those all return the same instance that needs disposing.
+Documented in the README's new "Common pitfalls" subsection under
+"Operation logging".
 
 ## 10. Operation logging: using a sub-operation after the root is disposed corrupts an unrelated log entry
 
@@ -278,7 +286,7 @@ Two buckets stand out as most worth addressing first:
 | 6 | Destructuring captures raw (live) value | Document (by design) |
 | 7 | Destructuring skips fields | Fix (backlog, not urgent) |
 | 8 | Tag-based capture always boxes | Document (known tradeoff) |
-| 9 | Forgetting `using` drops the journal | Document + analyzer (CA2000 confirmed *not* to catch this) |
+| 9 | Forgetting `using` drops the journal | ✅ Document + analyzer (CA2000 confirmed *not* to catch this) — shipped as `RSSL0006` |
 | 10 | Sub-operation used after root disposed corrupts unrelated log | Fix (planned: disposed guard) |
 | 11 | Not thread-safe by default | Document (intentional opt-in) |
 | 12 | Sub-operation `SetException`/`SetResult` don't touch root | Document (more prominently) |
@@ -288,5 +296,5 @@ Two buckets stand out as most worth addressing first:
 | 16 | `BeginSubOperation` writes "started" unconditionally | Document (by design) |
 
 Planned code changes: **#3**, **#10**, **#13** (fixes); **#7** (backlog
-enhancement). Analyzer ideas to investigate: **#1**, **#3**, **#9**, **#4**
-(stretch), **#5** (stretch, lower priority).
+enhancement). Analyzer ideas to investigate: **#1**, **#3**, **#4**
+(stretch), **#5** (stretch, lower priority). **#9** shipped as `RSSL0006`.

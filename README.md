@@ -311,6 +311,25 @@ await Task.WhenAll(items.Select(async item =>
 }));
 ```
 
+### Common pitfalls
+
+`BeginOperation`/`BeginSubOperation` return an ordinary `IDisposable` - nothing enforces disposal.
+Forget the `using`, and the operation's *entire* journal is silently dropped: not even a partial
+log entry is written, no exception is thrown, and the pooled `StringBuilder` the journal was
+building into never returns to the pool. This is easy to miss because it doesn't look dangerous -
+unlike a leaked file handle or connection, there's no resource exhaustion to notice until you go
+looking for a log entry that should be there and find nothing.
+
+[CA2000](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000) won't
+catch this for you: its escape analysis anchors on `new`-expressions visible in your code, but
+`BeginOperation`'s internal `new RootOperationLog(...)`/`new DisabledOperationLog(...)` live inside
+the already-compiled library assembly, opaque to CA2000. Since you only ever obtain an
+`IOperationLog` from `BeginOperation`/`BeginSubOperation` (never `new`), CA2000 essentially never
+fires here. This library ships its own analyzer for exactly this gap - see `RSSL0006` below - which
+flags an undisposed `IOperationLog` and offers a code fix to wrap it in a `using` declaration or
+block. As always, `using var log = logger.BeginOperation(...);` is the simplest way to avoid the
+problem in the first place.
+
 ## Analyzers
 
 [![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.Analyzers.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging.Analyzers)
@@ -334,6 +353,7 @@ itself (or doesn't need the runtime library at all, e.g. one that only calls
 | `RSSL0003` | Silent | Marks an interpolation hole that does *not* use the [`<PropertyName>` tag format](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) (e.g. `{who}`) to capture a structured property. Silent by default — it exists to anchor code fixes that act on these holes, not to warn about anything. |
 | `RSSL0004` | Silent | Marks a name/value tuple argument (e.g. `("UserId", userId)`) passed at the end of a `RandomSkunk.StructuredLogging` extension method call to attach a structured property, when the name is a compile-time constant string (a literal, a constant concatenation, or an interpolated string whose holes are themselves constant strings). Silent by default — it exists to anchor code fixes that act on these arguments, not to warn about anything. |
 | `RSSL0005` | Silent | Marks a call to any of the `RandomSkunk.StructuredLogging` `Trace`/`Debug`/`Information`/`Warning`/`Error`/`Critical`/`Write` extension methods, regardless of overload. Its code fix rewrites the call to the roughly equivalent `Microsoft.Extensions.Logging` call (the inverse of `RSSL0001`), moving each structured property into a `{PropertyName}` message-template placeholder — since a hole that isn't already tagged with a name (including a bare `<@>` destructuring tag) gets one guessed from its expression (the same guess RSSL0003's fix uses), most calls convert cleanly. A call is left unconverted only when a name truly can't be pinned down: a hole whose expression isn't a simple identifier, a tuple argument with a dynamically-computed name, or the leading collection-parameter overload. Silent by default — it exists to anchor code fixes that act on these calls, not to warn about anything. |
+| `RSSL0006` | Warning | Flags a call to `BeginOperation`/`BeginSubOperation` whose returned `IOperationLog` isn't visibly disposed (via a `using` declaration/statement, an explicit `Dispose()` call, or by returning/assigning it elsewhere for someone else to dispose). Passing it as a plain method argument doesn't count — a sub-operation is expected to be created and disposed within the method it's threaded into, not handed off through a parameter. Forgetting to dispose it silently drops the entire journal — not even a partial log entry is written. CA2000 can't catch this itself, since its escape analysis anchors on `new`-expressions and can't see through `BeginOperation`'s internal object construction, which lives inside the already-compiled library assembly. |
 
 ### Code fixes
 
@@ -350,6 +370,8 @@ warnings.
 | Capture as a structured property named `'PropertyName'` / Capture as a destructured structured property named `'PropertyName'` | `RSSL0003` | Adds a `<PropertyName>` (or destructuring `<@PropertyName>`) tag to an interpolation hole that isn't currently capturing a structured property, guessing the property name from the hole's expression (e.g. `{user.Id}` → `<Id>`). |
 | Move `'PropertyName'` into the message | `RSSL0004` | Takes a trailing `("PropertyName", value)` tuple argument and inlines it into the message as a `{value:<PropertyName>}` interpolation hole, removing the separate tuple argument. |
 | Use the equivalent `Microsoft.Extensions.Logging` extension method | `RSSL0005` | The inverse of the `RSSL0001` fix: converts a `RandomSkunk.StructuredLogging` call back to the equivalent `Microsoft.Extensions.Logging` call, described in the `RSSL0005` row above. |
+| Add a `using` declaration | `RSSL0006` | Turns the flagged statement into a `using` declaration — adds the `using` keyword to an existing local declaration, or introduces one (named `log`/`subLog`, or a disambiguated variant if that name's already in use) for a bare or discarded call. Offered only when the call is the entire statement or the initializer of a single-variable declaration; a call nested inside a larger expression (e.g. passed as an argument) is left for the developer to fix by hand. |
+| Add a `using` block | `RSSL0006` | The block form of the same fix: wraps the flagged statement in a `using (...) { }` block with an empty body, rather than guessing which surrounding statements the developer meant to move into it — they're expected to do that by hand. Offered under the same conditions as the `using` declaration fix. |
 
 ## License
 

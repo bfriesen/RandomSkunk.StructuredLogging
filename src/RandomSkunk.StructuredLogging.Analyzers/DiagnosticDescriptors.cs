@@ -85,4 +85,18 @@ public static class DiagnosticDescriptors
         defaultSeverity: DiagnosticSeverity.Hidden,
         isEnabledByDefault: true,
         description: "Marks a call to one of the RandomSkunk.StructuredLogging Trace/Debug/Information/Warning/Error/Critical/Write extension methods. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these calls.");
+
+    /// <summary>
+    /// Reported on a call to <c>BeginOperation</c>/<c>BeginSubOperation</c> whose returned
+    /// <c>IOperationLog</c> isn't visibly disposed. Forgetting to dispose it means no log entry
+    /// (not even a partial one) is ever written for the operation.
+    /// </summary>
+    public static readonly DiagnosticDescriptor UndisposedOperationLog = new(
+        id: "RSSL0006",
+        title: "Dispose the operation log",
+        messageFormat: "The IOperationLog returned by '{0}' should be disposed, typically with a 'using' declaration or statement, so its journal is written as a log entry",
+        category: "Reliability",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "BeginOperation/BeginSubOperation return an IOperationLog whose disposal is what actually writes its log entry (root) or 'complete' journal line (sub-operation). Nothing enforces disposal, and forgetting it silently drops the entire journal - no exception, no partial log entry - and leaks the operation's pooled StringBuilder. This is the operation-logging analog of CA2000, which can't catch this itself: its escape analysis anchors on 'new' expressions visible in the consuming compilation, and BeginOperation's internal object construction is opaque, living inside the already-compiled library assembly.");
 }
