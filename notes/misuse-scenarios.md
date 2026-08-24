@@ -208,7 +208,7 @@ operation. `IOperationLog`'s XML docs document the new exception. Covered by
 `OperationLoggingTests.LeakedSubOperation_UsedAfterRootDisposed_ThrowsObjectDisposedException`
 and `LeakedSubOperation_DisposedAfterRootDisposed_ThrowsObjectDisposedException`.
 
-## 11. Not thread-safe by default, and it's easy to reach for concurrently
+## 11. Not thread-safe by default, and it's easy to reach for concurrently — ✅ Complete
 
 `IOperationLog` feels like the natural thing to close over in
 `Task.WhenAll`/`Parallel.ForEach` sub-operations, but concurrent use without
@@ -217,6 +217,14 @@ corruption or lost writes, no exception guaranteeing a loud failure.
 
 **Decision:** Document only. This is an intentional opt-in design
 (`threadSafe: true`), just needs to be prominent in the README.
+
+**Status:** Done. Already documented in the README's dedicated "Thread
+safety" subsection (under "Operation logging"), which predates this notes
+file — added back when thread-safety was made opt-in
+(`338ecef`/`93a5fa1`). States plainly that operation logs are "not
+thread-safe by default," shows the `threadSafe: true` opt-in with a
+`Task.WhenAll` sub-operation example, and explains the whole tree (root +
+every nested sub-operation) shares one lock. No further action needed.
 
 ## 12. `SetException`/`SetResult` on a sub-operation don't do what they look like they do
 
@@ -301,7 +309,7 @@ Two buckets stand out as most worth addressing first:
 | 8 | Tag-based capture always boxes | Document (known tradeoff) |
 | 9 | Forgetting `using` drops the journal | ✅ Document + analyzer (CA2000 confirmed *not* to catch this) — shipped as `RSSL0006` |
 | 10 | Sub-operation used after root disposed corrupts unrelated log | ✅ Fixed: `ObjectDisposedException` guard |
-| 11 | Not thread-safe by default | Document (intentional opt-in) |
+| 11 | Not thread-safe by default | ✅ Document (intentional opt-in) — already covered by README's "Thread safety" subsection |
 | 12 | Sub-operation `SetException`/`SetResult` don't touch root | Document (more prominently) |
 | 13 | `Operation.*` reserved property names | Fix (throw `ArgumentException`) |
 | 14 | Level frozen at `BeginOperation` | Document (intentional) |
@@ -312,3 +320,5 @@ Planned code changes: **#3**, **#13** (fixes); **#7** (backlog
 enhancement). Analyzer ideas to investigate: **#1**, **#3**, **#4**
 (stretch), **#5** (stretch, lower priority). **#9** shipped as `RSSL0006`.
 **#10** shipped as an `ObjectDisposedException` guard in `OperationLogState`.
+**#11** confirmed already documented in the README's "Thread safety"
+subsection.
