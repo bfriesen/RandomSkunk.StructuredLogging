@@ -21,6 +21,8 @@ The SDK version is pinned in `global.json` (currently 10.0.301).
 
 After making changes, always ask before committing them - do not run `git commit` unprompted.
 
+`v2` is a clean-room rewrite: the library has a prior implementation on other git branches, and the rewrite is deliberately not informed by its design or code. Never inspect another branch (`git log --all`, `git diff <other-branch>`, `git show <other-branch>:<path>`, checking it out, browsing it on a remote, etc.) - read-only commands scoped to the current branch's own history are fine. If a task seems to need comparing against another branch, stop and ask first.
+
 ## Code style
 
 Never use `var`; always write the concrete type, except where the type is an anonymous object (which requires `var`).
