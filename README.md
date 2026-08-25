@@ -25,6 +25,10 @@ using RandomSkunk.StructuredLogging;
 logger.Information($"User logged in", ("UserId", userId), ("IpAddress", ipAddress));
 ```
 
+Alongside these per-call log methods, the library also has an [operation logging](#operation-logging)
+feature: journal everything that happens during an operation (and any nested sub-operations) and
+flush it as exactly one log entry when the operation completes, instead of one log line per step.
+
 ## Install
 
 ```bash
