@@ -13,3 +13,5 @@ RSSL0005 | Usage | Hidden | StructuredLoggerExtensionsInvocationAnalyzer, [Docum
 RSSL0006 | Reliability | Warning | UndisposedOperationLogAnalyzer, [Documentation](../../README.md#analyzers)
 RSSL0007 | Reliability | Warning | InterpolatedStringLocalMessageAnalyzer, [Documentation](../../README.md#analyzers)
 RSSL0008 | Reliability | Error | UnterminatedLogPropertyTagAnalyzer, [Documentation](../../README.md#analyzers)
+RSSL0009 | Reliability | Warning | InterpolatedStringMessageExpressionAnalyzer, [Documentation](../../README.md#analyzers)
+RSSL0010 | Reliability | Warning | InterpolatedStringHelperMethodArgumentAnalyzer, [Documentation](../../README.md#analyzers)

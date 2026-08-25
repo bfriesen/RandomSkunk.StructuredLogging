@@ -200,6 +200,56 @@ using Microsoft.Extensions.Logging;      // for LogLevel, EventId, ILogger, etc.
 using RandomSkunk.StructuredLogging;     // brings the Trace/Debug/.../Write extension methods into scope
 ```
 
+## Common pitfalls
+
+The "never evaluate interpolation holes when the level is disabled" optimization, and `<PropertyName>`
+tag capture, both depend on the compiler binding your `message` argument to this library's
+`[InterpolatedStringHandler]` overload instead of the plain `string` overload. That binding only
+happens when the argument is *statically*, syntactically an interpolated-string literal (`$"..."`)
+at the call site. Anything that forces the value through `string` first gets none of it - the
+interpolation runs unconditionally, eagerly, exactly as expensive as it would be with
+`Microsoft.Extensions.Logging`'s `LogInformation`/etc.:
+
+```csharp
+logger.Debug($"User {name}".ToUpper());          // a method call on the literal forces `string`
+logger.Debug($"count: " + count);                // string concatenation, same problem
+
+string message = $"User {userId} logged in";     // interpolated string assigned to a local first
+logger.Debug(message);                            // ...then passed as a plain `string`
+
+logger.Debug(FormatMessage($"User {userId} logged in")); // passed through a wrapper/helper method
+```
+
+None of these fail to compile, throw, or log anything different-looking - they just silently give
+up the performance benefit, and any `<PropertyName>` tags in the format specifiers are no longer
+parsed as tags at all (see below for what they become instead).
+
+**The local-variable and wrapper-method forms are worse than just "no benefit" - they're a runtime
+bug if any hole uses a `<PropertyName>` tag.** Once the interpolated string is built by the ordinary
+compiler-provided handler instead of this library's, `<Name>` (or `<@Name>`) is passed straight
+through as a genuine .NET format string to that value's `IFormattable.ToString(format)`. Most types
+don't recognize `"<Name>"` as a valid format - this throws `FormatException` as soon as that code
+path actually executes (e.g., someone enables Debug logging in production to investigate an issue,
+and the app starts throwing from the log statement itself):
+
+```csharp
+string message = $"User {userId:<UserId>} logged in"; // throws FormatException once Debug logging
+logger.Debug(message);                                  // is enabled and this line actually runs
+
+logger.Debug(FormatMessage($"User {userId:<UserId>} logged in")); // same failure, one call away -
+                                                                     // FormatMessage's parameter is
+                                                                     // just `string`, so the literal
+                                                                     // is built by the ordinary
+                                                                     // handler when this line runs
+```
+
+The fix in every case is the same: pass the interpolated string literal directly as the `message`
+argument, rather than through a variable, method call, concatenation, or helper method. The
+`InterpolatedStringLocalMessageAnalyzer` (`RSSL0007`) catches the local-variable form at compile
+time, the `InterpolatedStringMessageExpressionAnalyzer` (`RSSL0009`) catches the method-call/
+concatenation form, and the `InterpolatedStringHelperMethodArgumentAnalyzer` (`RSSL0010`) catches
+the wrapper/helper-method form - see below.
+
 ## Operation logging
 
 Beyond individual log calls, the library also has a canonical-log-line-style feature for
@@ -379,6 +429,8 @@ itself (or doesn't need the runtime library at all, e.g. one that only calls
 | `RSSL0006` | Warning | Flags a call to `BeginOperation`/`BeginSubOperation` whose returned `IOperationLog` isn't visibly disposed (via a `using` declaration/statement, an explicit `Dispose()` call, or by returning/assigning it elsewhere for someone else to dispose). Passing it as a plain method argument doesn't count — a sub-operation is expected to be created and disposed within the method it's threaded into, not handed off through a parameter. Forgetting to dispose it silently drops the entire journal — not even a partial log entry is written. CA2000 can't catch this itself, since its escape analysis anchors on `new`-expressions and can't see through `BeginOperation`'s internal object construction, which lives inside the already-compiled library assembly. |
 | `RSSL0007` | Warning | Flags a `RandomSkunk.StructuredLogging` call whose message argument is a local variable declared with an interpolated string initializer (e.g. `string msg = $"User {id}"; logger.Debug(msg);`). Assigning the interpolated string to a `string` local first forces the call to bind the plain `string message` overload instead of the interpolated-string-handler overload — the message is then built eagerly regardless of level, and any [`<PropertyName>` tag](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) is handed to the value's `IFormattable.ToString(format)` as a real (usually invalid) format string instead of being parsed as a property tag. Pass the interpolated string directly to the logging call instead. |
 | `RSSL0008` | Error | Flags an interpolation hole whose format specifier starts with `<` but has no matching `>` (e.g. `{userId:<UserId}`, a missing `>` typo) - almost always a mistake, since a real format that needs to start with a literal `<` should use the [`<>` escape hatch](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) instead. At run time this throws `UnterminatedLogPropertyTagException` rather than silently treating the raw text as a real format string; this analyzer catches the same mistake at compile time, at error severity since it always indicates a bug. |
+| `RSSL0009` | Warning | Flags a `RandomSkunk.StructuredLogging` call whose message argument applies a method call or `+` concatenation directly to an interpolated string literal (e.g. `logger.Debug($"User {id}".ToUpper())` or `logger.Debug($"count: " + count)`). Either pattern forces the call to bind the plain `string message` overload instead of the interpolated-string-handler overload — the message is then built eagerly regardless of level, and any [`<PropertyName>` tag](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) is handed to the value's `IFormattable.ToString(format)` as a real (usually invalid) format string instead of being parsed as a property tag. Pass the interpolated string directly to the logging call instead. |
+| `RSSL0010` | Warning | Flags a `RandomSkunk.StructuredLogging` call whose message argument is the result of calling some other wrapper/helper method that was itself handed an interpolated string literal as one of its arguments (e.g. `logger.Debug(FormatMessage($"User {id}"))`). Unless that helper method is itself written with an `[InterpolatedStringHandler]` parameter, the literal is built eagerly by the ordinary compiler-provided handler as soon as the helper is called, and whatever plain string the helper returns then binds the logging call's plain `string message` overload — with the same eager-evaluation and [`<PropertyName>`-tag-as-real-format-string](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message) consequences as `RSSL0009`. Pass the interpolated string directly to the logging call instead. |
 
 ### Code fixes
 

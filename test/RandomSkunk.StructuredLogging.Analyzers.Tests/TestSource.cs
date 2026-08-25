@@ -39,6 +39,8 @@ internal static class TestSource
 
             public static string GetMessage() => "message";
 
+            public static string FormatMessage(string s) => s;
+
             public static object CreateDefault() => "default";
         }
         """;

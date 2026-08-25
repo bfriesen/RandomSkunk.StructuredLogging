@@ -130,4 +130,36 @@ public static class DiagnosticDescriptors
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
         description: "A format specifier that starts with '<' but never closes with '>' (e.g. {value:<UserId}, a missing '>' typo) can't be parsed as a <PropertyName> tag or the <> no-capture escape hatch. At run time, RandomSkunk.StructuredLogging throws UnterminatedLogPropertyTagException rather than silently treating the raw text as a real format string handed to IFormattable.ToString(format). This diagnostic flags the same mistake at compile time. If the format is genuinely meant to start with a literal '<', use the '<>' escape hatch, e.g. {value:<><realformat}.");
+
+    /// <summary>
+    /// Reported on a call to one of the RandomSkunk.StructuredLogging
+    /// Trace/Debug/Information/Warning/Error/Critical/Write extension methods whose
+    /// <c>message</c> argument applies a method call or <c>+</c> concatenation directly to an
+    /// interpolated string literal (e.g. <c>logger.Debug($"..." .ToUpper())</c> or
+    /// <c>logger.Debug($"..." + suffix)</c>).
+    /// </summary>
+    public static readonly DiagnosticDescriptor InterpolatedStringOperationAppliedToMessageArgument = new(
+        id: "RSSL0009",
+        title: "Don't apply an operation to an interpolated message before logging",
+        messageFormat: "This message argument applies {0} directly to an interpolated string literal; this binds the plain 'string' overload instead of the interpolated-string-handler overload, so the message is always built eagerly (even when this level is disabled) and any '<PropertyName>' tag is handed to the value's IFormattable.ToString(format) as a real format string instead of being parsed as a property tag - pass the interpolated string directly to the logging call instead",
+        category: "Reliability",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "The disabled-level optimization and the <PropertyName> tag format both depend on an interpolated string literal binding directly to a logging call's interpolated-string-handler overload. Applying a method call or '+' concatenation directly to the literal (e.g. `logger.Debug($\"User {id}\".ToUpper())` or `logger.Debug($\"count: \" + count)`) forces the plain `string message` overload instead: the string is built eagerly regardless of level, and any <PropertyName> tag is handed to the interpolated value's IFormattable.ToString(format) as a genuine .NET format string, which usually throws FormatException at the log call site the first time that code path runs.");
+
+    /// <summary>
+    /// Reported on a call to one of the RandomSkunk.StructuredLogging
+    /// Trace/Debug/Information/Warning/Error/Critical/Write extension methods whose
+    /// <c>message</c> argument is the result of calling some other ("wrapper" or "helper") method
+    /// that was itself handed an interpolated string literal as one of its arguments (e.g.
+    /// <c>logger.Debug(FormatMessage($"..."))</c>).
+    /// </summary>
+    public static readonly DiagnosticDescriptor InterpolatedStringPassedToHelperMethodArgument = new(
+        id: "RSSL0010",
+        title: "Don't pass an interpolated message through a helper method before logging",
+        messageFormat: "This message argument is a call to {0}, which was itself handed an interpolated string literal as an argument; unless {0} is itself written with an [InterpolatedStringHandler] parameter, this binds the plain 'string' overload instead of the interpolated-string-handler overload, so the message is always built eagerly (even when this level is disabled) and any '<PropertyName>' tag is handed to the value's IFormattable.ToString(format) as a real format string instead of being parsed as a property tag - pass the interpolated string directly to the logging call instead",
+        category: "Reliability",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "The disabled-level optimization and the <PropertyName> tag format both depend on an interpolated string literal binding directly to a logging call's interpolated-string-handler overload. Passing the literal through a wrapper/helper method first (e.g. `logger.Debug(FormatMessage($\"User {id:<UserId>}\"))`) forces the ordinary compiler-provided handler to build it eagerly as soon as the helper is called, regardless of whether the level is enabled, and whatever plain string the helper returns then binds the logging call's plain `string message` overload instead - any <PropertyName> tag is handed to the interpolated value's IFormattable.ToString(format) as a genuine .NET format string, which usually throws FormatException while evaluating the argument, before the helper method even runs.");
 }

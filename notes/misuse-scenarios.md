@@ -31,6 +31,34 @@ analyzer that flags the common defeating patterns (a method call/operator
 applied directly to an interpolated-string-literal argument of one of our
 logger methods, e.g. `logger.Debug($"...".ToUpper())`) as a warning.
 
+**Status:** Done. Documentation added as a top-level "Common pitfalls" section
+in the README (after "Migrating from `Microsoft.Extensions.Logging`", before
+"Operation logging") covering the method-call/concatenation form, the
+local-variable form, and the wrapper/helper-method form. Analyzer for the
+method-call/operator form shipped as
+`InterpolatedStringMessageExpressionAnalyzer`/`RSSL0009` (warning): flags a
+RandomSkunk.StructuredLogging call whose `message` argument applies a method
+call or `+` concatenation directly to an interpolated string literal (e.g.
+`logger.Debug($"...".ToUpper())`, `logger.Debug($"..." + suffix)`, including
+chained calls like `.ToUpper().Trim()`). Deliberately does *not* flag the
+case where the literal is behind a local variable first (that's `RSSL0007`'s
+concern). No code fix - like `RSSL0007`, there's no single mechanical
+rewrite that's always correct. Documented in the README's analyzers table
+and cross-referenced from "Common pitfalls".
+
+Analyzer for the wrapper/helper-method form (third bullet) shipped as
+`InterpolatedStringHelperMethodArgumentAnalyzer`/`RSSL0010` (warning): flags
+a RandomSkunk.StructuredLogging call whose `message` argument is a call to
+some other method that was itself handed an interpolated string literal as
+one of its arguments (e.g. `logger.Debug(FormatMessage($"..."))`), including
+through a chain of nested helper calls (`FormatMessage(FormatMessage($"..."))`).
+Deliberately does *not* flag the literal being behind a local variable first
+(`RSSL0007`'s concern) or a method called directly on the literal
+(`RSSL0009`'s concern) - those are separate patterns with separate
+diagnostics. No code fix, same reasoning as `RSSL0007`/`RSSL0009`.
+Documented in the README's analyzers table and cross-referenced from
+"Common pitfalls".
+
 ## 2. `string msg = $"...{x:<Name>}..."` is actively dangerous, not just inert — ✅ Complete
 
 If a developer assigns the interpolated string to a `string` *before* passing
@@ -342,7 +370,7 @@ Two buckets stand out as most worth addressing first:
 
 | # | Scenario | Decision |
 |---|----------|----------|
-| 1 | Defeating the disabled-check optimization | Document + analyzer (warning) |
+| 1 | Defeating the disabled-check optimization | ✅ Documented (README "Common pitfalls") + analyzers shipped as `RSSL0009`/`RSSL0010` |
 | 2 | `string msg = $"...{x:<Name>}..."` assigned before logging | ✅ Document (top pitfall) + analyzer — shipped as `RSSL0007` |
 | 3 | Missing `>` in a tag → runtime `FormatException` | ✅ Fixed: throws `UnterminatedLogPropertyTagException` (analyzer idea still outstanding) |
 | 4 | Duplicate property names never deduped | Document (+ future analyzer idea) |
