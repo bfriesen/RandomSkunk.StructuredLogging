@@ -59,6 +59,14 @@ diagnostics. No code fix, same reasoning as `RSSL0007`/`RSSL0009`.
 Documented in the README's analyzers table and cross-referenced from
 "Common pitfalls".
 
+**Scope narrowed:** `RSSL0007`/`RSSL0009`/`RSSL0010` were later scoped down
+to only fire when the interpolated string literal actually captures a
+`<PropertyName>` tag (e.g. `$"{amount:<Amount>}"`). A tagless interpolated
+string that loses the interpolated-string-handler overload only loses the
+disabled-level evaluation optimization - a real but lower-severity concern
+these three diagnostics don't police, to keep them from firing on every
+plain `.ToUpper()`/helper-method/local-variable pattern in a codebase.
+
 ## 2. `string msg = $"...{x:<Name>}..."` is actively dangerous, not just inert — ✅ Complete
 
 If a developer assigns the interpolated string to a `string` *before* passing

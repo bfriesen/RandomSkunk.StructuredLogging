@@ -9,13 +9,15 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 /// <summary>
 /// Flags a call to one of the RandomSkunk.StructuredLogging
 /// Trace/Debug/Information/Warning/Error/Critical/Write extension methods whose <c>message</c>
-/// argument is a local variable declared with an interpolated string initializer (e.g.
-/// <c>string msg = $"User {id}"; logger.Debug(msg);</c>). Assigning the interpolated string to a
-/// <c>string</c> local first forces the call to bind the plain <c>string message</c> overload
-/// instead of the interpolated-string-handler overload, silently defeating both the
-/// disabled-level evaluation optimization and the <c>&lt;PropertyName&gt;</c> tag format (whose
-/// tags become genuine, usually-invalid .NET format strings handed to
-/// <c>IFormattable.ToString(format)</c>).
+/// argument is a local variable declared with an interpolated string initializer that captures at
+/// least one <c>&lt;PropertyName&gt;</c> tag (e.g.
+/// <c>string msg = $"User {id:&lt;UserId&gt;}"; logger.Debug(msg);</c>). Assigning the
+/// interpolated string to a <c>string</c> local first forces the call to bind the plain
+/// <c>string message</c> overload instead of the interpolated-string-handler overload, silently
+/// defeating both the disabled-level evaluation optimization and the tag format (which becomes a
+/// genuine, usually-invalid .NET format string handed to <c>IFormattable.ToString(format)</c>).
+/// Only fires when a tag is actually at stake - a tagless interpolated string local only loses the
+/// disabled-level optimization, which this analyzer doesn't police.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class InterpolatedStringLocalMessageAnalyzer : DiagnosticAnalyzer
@@ -85,8 +87,9 @@ public sealed class InterpolatedStringLocalMessageAnalyzer : DiagnosticAnalyzer
 
     /// <summary>
     /// If <paramref name="value"/> is a reference to a local variable declared with an
-    /// interpolated string initializer (e.g. <c>string msg = $"...";</c>), returns the local's
-    /// name; otherwise returns <see langword="null"/>.
+    /// interpolated string initializer that captures at least one <c>&lt;PropertyName&gt;</c> tag
+    /// (e.g. <c>string msg = $"User {id:&lt;UserId&gt;}";</c>), returns the local's name; otherwise
+    /// returns <see langword="null"/>.
     /// </summary>
     private static string? TryGetInterpolatedStringInitializer(IOperation value)
     {
@@ -99,8 +102,11 @@ public sealed class InterpolatedStringLocalMessageAnalyzer : DiagnosticAnalyzer
 
         foreach (SyntaxReference syntaxReference in local.DeclaringSyntaxReferences)
         {
-            if (syntaxReference.GetSyntax() is VariableDeclaratorSyntax { Initializer.Value: InterpolatedStringExpressionSyntax })
+            if (syntaxReference.GetSyntax() is VariableDeclaratorSyntax { Initializer.Value: InterpolatedStringExpressionSyntax interpolatedString } &&
+                InterpolatedStringTagFormatDetection.ContainsPropertyTag(interpolatedString))
+            {
                 return local.Name;
+            }
         }
 
         return null;

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -9,13 +10,16 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 /// Flags a call to one of the RandomSkunk.StructuredLogging
 /// Trace/Debug/Information/Warning/Error/Critical/Write extension methods whose <c>message</c>
 /// argument is the result of calling some other ("wrapper" or "helper") method that was itself
-/// handed an interpolated string literal as one of its arguments (e.g.
-/// <c>logger.Debug(FormatMessage($"User {id}"))</c>). Because the helper method's parameter isn't
-/// one of this library's <c>[InterpolatedStringHandler]</c> types, the literal is built eagerly by
-/// the ordinary compiler-provided handler regardless of whether the helper's caller checked
+/// handed an interpolated string literal capturing at least one <c>&lt;PropertyName&gt;</c> tag as
+/// one of its arguments (e.g. <c>logger.Debug(FormatMessage($"User {id:&lt;UserId&gt;}"))</c>).
+/// Because the helper method's parameter isn't one of this library's
+/// <c>[InterpolatedStringHandler]</c> types, the literal is built eagerly by the ordinary
+/// compiler-provided handler regardless of whether the helper's caller checked
 /// <c>IsEnabled</c> first - and whatever plain <c>string</c> the helper returns then binds
 /// <c>logger.Debug</c>'s plain <c>string message</c> overload, silently defeating both the
-/// disabled-level evaluation optimization and the <c>&lt;PropertyName&gt;</c> tag format.
+/// disabled-level evaluation optimization and the tag format. Only fires when a tag is actually
+/// at stake - a tagless interpolated string literal only loses the disabled-level optimization,
+/// which this analyzer doesn't police.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class InterpolatedStringHelperMethodArgumentAnalyzer : DiagnosticAnalyzer
@@ -85,10 +89,11 @@ public sealed class InterpolatedStringHelperMethodArgumentAnalyzer : DiagnosticA
 
     /// <summary>
     /// If <paramref name="value"/> is a call to some helper method that was itself handed an
-    /// interpolated string literal as one of its arguments (directly, or through a chain of
-    /// further helper-method calls) - not through an intervening local variable, which is
-    /// <c>RSSL0007</c>'s concern instead - returns a short description of the helper method for
-    /// the diagnostic message; otherwise returns <see langword="null"/>.
+    /// interpolated string literal capturing at least one <c>&lt;PropertyName&gt;</c> tag as one
+    /// of its arguments (directly, or through a chain of further helper-method calls) - not
+    /// through an intervening local variable, which is <c>RSSL0007</c>'s concern instead - returns
+    /// a short description of the helper method for the diagnostic message; otherwise returns
+    /// <see langword="null"/>.
     /// </summary>
     private static string? TryDescribeHelperMethodCall(IOperation value)
     {
@@ -97,7 +102,7 @@ public sealed class InterpolatedStringHelperMethodArgumentAnalyzer : DiagnosticA
 
         foreach (IArgumentOperation argument in invocation.Arguments)
         {
-            if (ContainsInterpolatedStringLiteral(argument.Value))
+            if (ContainsInterpolatedStringLiteralWithPropertyTag(argument.Value))
                 return $"'{invocation.TargetMethod.Name}(...)'";
         }
 
@@ -105,23 +110,26 @@ public sealed class InterpolatedStringHelperMethodArgumentAnalyzer : DiagnosticA
     }
 
     /// <summary>
-    /// Returns whether <paramref name="operation"/> is directly an interpolated string literal, or
-    /// a call to a helper method that was itself (recursively) handed one as an argument - i.e.
-    /// without passing through a local variable, field, property, or any other indirection along
-    /// the way.
+    /// Returns whether <paramref name="operation"/> is directly an interpolated string literal
+    /// capturing at least one <c>&lt;PropertyName&gt;</c> tag, or a call to a helper method that
+    /// was itself (recursively) handed one as an argument - i.e. without passing through a local
+    /// variable, field, property, or any other indirection along the way.
     /// </summary>
-    private static bool ContainsInterpolatedStringLiteral(IOperation operation)
+    private static bool ContainsInterpolatedStringLiteralWithPropertyTag(IOperation operation)
     {
         IOperation unwrapped = Unwrap(operation);
 
-        if (unwrapped is IInterpolatedStringOperation)
-            return true;
+        if (unwrapped is IInterpolatedStringOperation interpolatedStringOperation)
+        {
+            return interpolatedStringOperation.Syntax is InterpolatedStringExpressionSyntax interpolatedString &&
+                InterpolatedStringTagFormatDetection.ContainsPropertyTag(interpolatedString);
+        }
 
         if (unwrapped is IInvocationOperation invocation)
         {
             foreach (IArgumentOperation argument in invocation.Arguments)
             {
-                if (ContainsInterpolatedStringLiteral(argument.Value))
+                if (ContainsInterpolatedStringLiteralWithPropertyTag(argument.Value))
                     return true;
             }
         }

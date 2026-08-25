@@ -7,17 +7,17 @@ namespace RandomSkunk.StructuredLogging.Analyzers.Tests;
 public class InterpolatedStringMessageExpressionAnalyzerTests
 {
     [Theory]
-    [InlineData("""logger.Trace($"User {userId}".ToUpper());""")]
-    [InlineData("""logger.Debug($"User {userId}".ToUpper());""")]
-    [InlineData("""logger.Information($"User {userId}".ToUpper());""")]
-    [InlineData("""logger.Warning($"User {userId}".ToUpper());""")]
-    [InlineData("""logger.Error($"User {userId}".ToUpper());""")]
-    [InlineData("""logger.Critical($"User {userId}".ToUpper());""")]
-    [InlineData("""logger.Write(LogLevel.Information, $"User {userId}".ToUpper());""")]
-    [InlineData("""logger.Debug(new EventId(1, "Name"), $"User {userId}".ToUpper());""")]
-    [InlineData("""logger.Debug(new Exception(), $"User {userId}".ToUpper());""")]
-    [InlineData("""logger.Debug(new EventId(1, "Name"), new Exception(), $"User {userId}".ToUpper());""")]
-    [InlineData("""logger.Debug($"User {userId}".ToUpper(), ("UserId", userId));""")]
+    [InlineData("""logger.Trace($"User {userId:<UserId>}".ToUpper());""")]
+    [InlineData("""logger.Debug($"User {userId:<UserId>}".ToUpper());""")]
+    [InlineData("""logger.Information($"User {userId:<UserId>}".ToUpper());""")]
+    [InlineData("""logger.Warning($"User {userId:<UserId>}".ToUpper());""")]
+    [InlineData("""logger.Error($"User {userId:<UserId>}".ToUpper());""")]
+    [InlineData("""logger.Critical($"User {userId:<UserId>}".ToUpper());""")]
+    [InlineData("""logger.Write(LogLevel.Information, $"User {userId:<UserId>}".ToUpper());""")]
+    [InlineData("""logger.Debug(new EventId(1, "Name"), $"User {userId:<UserId>}".ToUpper());""")]
+    [InlineData("""logger.Debug(new Exception(), $"User {userId:<UserId>}".ToUpper());""")]
+    [InlineData("""logger.Debug(new EventId(1, "Name"), new Exception(), $"User {userId:<UserId>}".ToUpper());""")]
+    [InlineData("""logger.Debug($"User {userId:<UserId>}".ToUpper(), ("UserId", userId));""")]
     public async Task MethodCallAppliedToInterpolatedStringLiteral_IsFlagged(string statement)
     {
         string source = TestSource.WrapInMethodBody(statement);
@@ -34,7 +34,7 @@ public class InterpolatedStringMessageExpressionAnalyzerTests
     [Fact]
     public async Task ChainedMethodCallAppliedToInterpolatedStringLiteral_IsFlagged()
     {
-        string source = TestSource.WrapInMethodBody("""logger.Debug($"User {userId}".ToUpper().Trim());""");
+        string source = TestSource.WrapInMethodBody("""logger.Debug($"User {userId:<UserId>}".ToUpper().Trim());""");
 
         ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new InterpolatedStringMessageExpressionAnalyzer());
 
@@ -46,9 +46,9 @@ public class InterpolatedStringMessageExpressionAnalyzerTests
     }
 
     [Theory]
-    [InlineData("""logger.Debug($"count: " + userId);""")]
-    [InlineData("""logger.Debug(userId + $"count: ");""")]
-    [InlineData("""logger.Debug("prefix " + $"count: {userId}" + " suffix");""")]
+    [InlineData("""logger.Debug($"count: {userId:<UserId>}" + userId);""")]
+    [InlineData("""logger.Debug(userId + $"count: {userId:<UserId>}");""")]
+    [InlineData("""logger.Debug("prefix " + $"count: {userId:<UserId>}" + " suffix");""")]
     public async Task ConcatenationAppliedToInterpolatedStringLiteral_IsFlagged(string statement)
     {
         string source = TestSource.WrapInMethodBody(statement);
@@ -65,7 +65,7 @@ public class InterpolatedStringMessageExpressionAnalyzerTests
     [Fact]
     public async Task InterpolatedStringLiteralPassedDirectly_IsNotFlagged()
     {
-        string source = TestSource.WrapInMethodBody("""logger.Debug($"User {userId}");""");
+        string source = TestSource.WrapInMethodBody("""logger.Debug($"User {userId:<UserId>}");""");
 
         ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new InterpolatedStringMessageExpressionAnalyzer());
 
@@ -89,9 +89,24 @@ public class InterpolatedStringMessageExpressionAnalyzerTests
         // looks for an operation applied straight to the interpolated string literal itself.
         string source = TestSource.WrapInMethodBody(
             """
-            string msg = $"User {userId}";
+            string msg = $"User {userId:<UserId>}";
             logger.Debug(msg.ToUpper());
             """);
+
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new InterpolatedStringMessageExpressionAnalyzer());
+
+        diagnostics.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("""logger.Debug($"User {userId}".ToUpper());""")]
+    [InlineData("""logger.Debug($"count: " + userId);""")]
+    public async Task InterpolatedStringLiteralWithoutPropertyTag_IsNotFlagged(string statement)
+    {
+        // No interpolation hole in the literal uses the <PropertyName> tag format, so there's no
+        // property tag at stake - only the disabled-level evaluation optimization is lost, which
+        // this analyzer doesn't police.
+        string source = TestSource.WrapInMethodBody(statement);
 
         ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new InterpolatedStringMessageExpressionAnalyzer());
 
@@ -111,7 +126,7 @@ public class InterpolatedStringMessageExpressionAnalyzerTests
     [Fact]
     public async Task MethodCallOnInterpolatedStringLiteralPassedToLoggerExtensionsMethod_IsNotFlagged()
     {
-        string source = TestSource.WrapInMethodBody("""logger.LogInformation($"User {userId}".ToUpper());""");
+        string source = TestSource.WrapInMethodBody("""logger.LogInformation($"User {userId:<UserId>}".ToUpper());""");
 
         ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new InterpolatedStringMessageExpressionAnalyzer());
 
@@ -123,8 +138,8 @@ public class InterpolatedStringMessageExpressionAnalyzerTests
     {
         string source = TestSource.WrapInMethodBody(
             """
-            logger.Debug($"first {userId}".ToUpper());
-            logger.Information($"second {userId}" + " suffix");
+            logger.Debug($"first {userId:<UserId>}".ToUpper());
+            logger.Information($"second {userId:<UserId>}" + " suffix");
             """);
 
         ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new InterpolatedStringMessageExpressionAnalyzer());

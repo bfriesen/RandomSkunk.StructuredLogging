@@ -9,57 +9,57 @@ public class InterpolatedStringLocalMessageAnalyzerTests
     [Theory]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Trace(msg);
         """)]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Debug(msg);
         """)]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Information(msg);
         """)]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Warning(msg);
         """)]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Error(msg);
         """)]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Critical(msg);
         """)]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Write(LogLevel.Information, msg);
         """)]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Debug(new EventId(1, "Name"), msg);
         """)]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Debug(new Exception(), msg);
         """)]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Debug(new EventId(1, "Name"), new Exception(), msg);
         """)]
     [InlineData(
         """
-        string msg = $"User {userId}";
+        string msg = $"User {userId:<UserId>}";
         logger.Debug(msg, ("UserId", userId));
         """)]
     public async Task InterpolatedStringLocalPassedAsMessage_IsFlagged(string statement)
@@ -78,7 +78,24 @@ public class InterpolatedStringLocalMessageAnalyzerTests
     [Fact]
     public async Task InterpolatedStringLiteralPassedDirectly_IsNotFlagged()
     {
-        string source = TestSource.WrapInMethodBody("""logger.Debug($"User {userId}");""");
+        string source = TestSource.WrapInMethodBody("""logger.Debug($"User {userId:<UserId>}");""");
+
+        ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new InterpolatedStringLocalMessageAnalyzer());
+
+        diagnostics.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task InterpolatedStringLocalWithoutPropertyTag_IsNotFlagged()
+    {
+        // No interpolation hole in the local's initializer uses the <PropertyName> tag format, so
+        // there's no property tag at stake - only the disabled-level evaluation optimization is
+        // lost, which this analyzer doesn't police.
+        string source = TestSource.WrapInMethodBody(
+            """
+            string msg = $"User {userId}";
+            logger.Debug(msg);
+            """);
 
         ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new InterpolatedStringLocalMessageAnalyzer());
 
@@ -114,7 +131,7 @@ public class InterpolatedStringLocalMessageAnalyzerTests
     {
         string source = TestSource.WrapInMethodBody(
             """
-            string msg = $"User {userId}";
+            string msg = $"User {userId:<UserId>}";
             logger.LogInformation(msg);
             """);
 
@@ -128,8 +145,8 @@ public class InterpolatedStringLocalMessageAnalyzerTests
     {
         string source = TestSource.WrapInMethodBody(
             """
-            string first = $"first {userId}";
-            string second = $"second {userId}";
+            string first = $"first {userId:<UserId>}";
+            string second = $"second {userId:<UserId>}";
             logger.Debug(first);
             logger.Information(second);
             """);
