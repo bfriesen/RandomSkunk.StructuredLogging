@@ -20,7 +20,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 internal sealed class OperationLogState : IDisposable
 {
     public readonly ILogger Logger;
-    public readonly LogLevel Level;
+    public LogLevel Level { get; private set; }
     public readonly EventId EventId;
     public readonly DateTimeOffset StartTime;
     public readonly Stopwatch Stopwatch;
@@ -65,6 +65,16 @@ internal sealed class OperationLogState : IDisposable
 
     public void AddProperty(string propertyName, object? value) =>
         (Properties ??= new(capacity: 8)).Add(new(propertyName, value));
+
+    /// <summary>
+    /// Raises <see cref="Level"/> to <paramref name="level"/> if it's more severe than the operation's
+    /// current level, leaving it unchanged otherwise - see <see cref="IOperationLog.Escalate"/>.
+    /// </summary>
+    public void Escalate(LogLevel level)
+    {
+        if (level > Level)
+            Level = level;
+    }
 
     /// <summary>
     /// Appends a newline followed by the "[elapsed] " timestamp prefix that starts every journal line,

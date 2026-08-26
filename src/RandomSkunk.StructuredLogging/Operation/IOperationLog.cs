@@ -49,12 +49,29 @@ public interface IOperationLog : IDisposable
     /// <summary>
     /// Records the exception for this operation. On the root operation, this becomes the <c>Exception</c>
     /// argument of the final log entry. On a sub-operation, this instead appends a "failed" line describing
-    /// it to the journal.
+    /// it to the journal. This does not, by itself, change the level the final log entry is written at -
+    /// call <see cref="Escalate"/> as well if the exception should also raise the operation's level.
     /// </summary>
     /// <param name="exception">The exception to record.</param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
     /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
     IOperationLog SetException(Exception exception);
+
+    /// <summary>
+    /// Raises the level the operation's final log entry is written at, if <paramref name="level"/> is more
+    /// severe than the operation's current level - otherwise this is a no-op. Unlike the level passed to
+    /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>,
+    /// which also determines up front whether the operation journals anything at all, this can only raise
+    /// the level of an already-enabled operation - it never re-enables a disabled one. Can be called on the
+    /// root operation or any nested sub-operation; either way it affects the one level the eventual entry
+    /// gets written at, the same way <see cref="AddProperty{T}"/> affects the one set of properties.
+    /// Typically called alongside <see cref="SetException"/>, but useful on its own too - e.g. a business
+    /// failure that never throws (a rejected/backordered/declined result) can still warrant a higher level.
+    /// </summary>
+    /// <param name="level">The level to escalate to, if more severe than the operation's current level.</param>
+    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
+    IOperationLog Escalate(LogLevel level);
 
     /// <summary>
     /// Adds a structured property to the operation's final log entry. Unlike the built-in

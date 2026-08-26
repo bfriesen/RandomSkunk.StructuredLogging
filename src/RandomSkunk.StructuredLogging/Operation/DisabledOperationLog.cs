@@ -52,6 +52,8 @@ internal sealed class DisabledOperationLog : IOperationLog
 
     public IOperationLog SetException(Exception exception) => this;
 
+    public IOperationLog Escalate(LogLevel level) => this;
+
     public IOperationLog SetResult<T>(T value) => this;
 
     public IOperationLog Append(string text) => this;

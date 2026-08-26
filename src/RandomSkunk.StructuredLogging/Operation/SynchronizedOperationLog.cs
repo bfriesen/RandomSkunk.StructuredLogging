@@ -42,6 +42,13 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
         return this;
     }
 
+    public IOperationLog Escalate(LogLevel level)
+    {
+        lock (gate)
+            inner.Escalate(level);
+        return this;
+    }
+
     public IOperationLog SetResult<T>(T value)
     {
         lock (gate)

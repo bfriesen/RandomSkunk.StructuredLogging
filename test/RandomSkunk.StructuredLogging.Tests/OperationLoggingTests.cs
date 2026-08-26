@@ -390,6 +390,66 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void Escalate_MoreSevere_RaisesLevelOnFinalEntry()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.Escalate(LogLevel.Error);
+
+        logger.LastLevel.Should().Be(LogLevel.Error);
+    }
+
+    [Fact]
+    public void Escalate_LessSevere_DoesNotLowerLevel()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name", LogLevel.Warning))
+            log.Escalate(LogLevel.Information);
+
+        logger.LastLevel.Should().Be(LogLevel.Warning);
+    }
+
+    [Fact]
+    public void Escalate_ReturnsSameLogForChaining()
+    {
+        RecordingLogger logger = new();
+        InvalidOperationException exception = new("boom");
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.SetException(exception).Escalate(LogLevel.Error);
+
+        logger.LastException.Should().BeSameAs(exception);
+        logger.LastLevel.Should().Be(LogLevel.Error);
+    }
+
+    [Fact]
+    public void SubOperation_Escalate_RaisesLevelOnRootFinalEntry()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            using IOperationLog subLog = log.BeginSubOperation("Fetch");
+            subLog.Escalate(LogLevel.Critical);
+        }
+
+        logger.LastLevel.Should().Be(LogLevel.Critical);
+    }
+
+    [Fact]
+    public void Disabled_Escalate_DoesNotEnableLogging()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.Escalate(LogLevel.Critical);
+
+        logger.LogCallCount.Should().Be(0);
+    }
+
+    [Fact]
     public void Append_AddsLineToOperationLog()
     {
         RecordingLogger logger = new();
