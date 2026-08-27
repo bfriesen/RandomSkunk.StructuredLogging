@@ -178,11 +178,9 @@ names and tuple-arg names are almost always literals).
     That's not a valid custom numeric format string, but .NET doesn't throw
     for that — it echoes the unrecognized characters back verbatim, so the
     message silently renders as `<Amount>F2` instead of the formatted number,
-    and no property is captured at all. See
-    `PropertyTagCaptureTests.EmptyTagEscapeHatch_CannotAlsoCaptureAProperty`
-    for a reproduction. The fix for a developer in this situation is simply
-    to put the property name in the *first* (and only) tag —
-    `{value:<Amount>F2}` — rather than stacking a second one.
+    and no property is captured at all. The fix for a developer in this
+    situation is simply to put the property name in the *first* (and only)
+    tag — `{value:<Amount>F2}` — rather than stacking a second one.
 - A stray space breaks destructuring detection silently: `{x:< @Foo>}` is
   *not* recognized as destructure-mode (the `@` check is position-exact at
   index 1) — instead `" @Foo"` (with leading space) becomes the literal
