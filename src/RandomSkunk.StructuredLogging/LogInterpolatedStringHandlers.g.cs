@@ -14,6 +14,7 @@ public ref struct TraceInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
     private List<KeyValuePair<string, object?>>? _capturedProperties;
+    internal readonly bool IsEnabled;
 
     /// <summary>
     /// Initializes the handler and checks whether the Trace level is enabled for <paramref name="logger"/>.
@@ -24,7 +25,7 @@ public ref struct TraceInterpolatedStringHandler
     /// <param name="handlerIsValid">Set to <see langword="false"/> when the Trace level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public TraceInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
-        handlerIsValid = logger.IsEnabled(LogLevel.Trace);
+        IsEnabled = handlerIsValid = logger.IsEnabled(LogLevel.Trace);
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
@@ -116,6 +117,7 @@ public ref struct DebugInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
     private List<KeyValuePair<string, object?>>? _capturedProperties;
+    internal readonly bool IsEnabled;
 
     /// <summary>
     /// Initializes the handler and checks whether the Debug level is enabled for <paramref name="logger"/>.
@@ -126,7 +128,7 @@ public ref struct DebugInterpolatedStringHandler
     /// <param name="handlerIsValid">Set to <see langword="false"/> when the Debug level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public DebugInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
-        handlerIsValid = logger.IsEnabled(LogLevel.Debug);
+        IsEnabled = handlerIsValid = logger.IsEnabled(LogLevel.Debug);
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
@@ -218,6 +220,7 @@ public ref struct InformationInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
     private List<KeyValuePair<string, object?>>? _capturedProperties;
+    internal readonly bool IsEnabled;
 
     /// <summary>
     /// Initializes the handler and checks whether the Information level is enabled for <paramref name="logger"/>.
@@ -228,7 +231,7 @@ public ref struct InformationInterpolatedStringHandler
     /// <param name="handlerIsValid">Set to <see langword="false"/> when the Information level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public InformationInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
-        handlerIsValid = logger.IsEnabled(LogLevel.Information);
+        IsEnabled = handlerIsValid = logger.IsEnabled(LogLevel.Information);
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
@@ -320,6 +323,7 @@ public ref struct WarningInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
     private List<KeyValuePair<string, object?>>? _capturedProperties;
+    internal readonly bool IsEnabled;
 
     /// <summary>
     /// Initializes the handler and checks whether the Warning level is enabled for <paramref name="logger"/>.
@@ -330,7 +334,7 @@ public ref struct WarningInterpolatedStringHandler
     /// <param name="handlerIsValid">Set to <see langword="false"/> when the Warning level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public WarningInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
-        handlerIsValid = logger.IsEnabled(LogLevel.Warning);
+        IsEnabled = handlerIsValid = logger.IsEnabled(LogLevel.Warning);
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
@@ -422,6 +426,7 @@ public ref struct ErrorInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
     private List<KeyValuePair<string, object?>>? _capturedProperties;
+    internal readonly bool IsEnabled;
 
     /// <summary>
     /// Initializes the handler and checks whether the Error level is enabled for <paramref name="logger"/>.
@@ -432,7 +437,7 @@ public ref struct ErrorInterpolatedStringHandler
     /// <param name="handlerIsValid">Set to <see langword="false"/> when the Error level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public ErrorInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
-        handlerIsValid = logger.IsEnabled(LogLevel.Error);
+        IsEnabled = handlerIsValid = logger.IsEnabled(LogLevel.Error);
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
@@ -524,6 +529,7 @@ public ref struct CriticalInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
     private List<KeyValuePair<string, object?>>? _capturedProperties;
+    internal readonly bool IsEnabled;
 
     /// <summary>
     /// Initializes the handler and checks whether the Critical level is enabled for <paramref name="logger"/>.
@@ -534,7 +540,7 @@ public ref struct CriticalInterpolatedStringHandler
     /// <param name="handlerIsValid">Set to <see langword="false"/> when the Critical level is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public CriticalInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, out bool handlerIsValid)
     {
-        handlerIsValid = logger.IsEnabled(LogLevel.Critical);
+        IsEnabled = handlerIsValid = logger.IsEnabled(LogLevel.Critical);
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;
@@ -626,6 +632,7 @@ public ref struct WriteInterpolatedStringHandler
 {
     private DefaultInterpolatedStringHandler _handler;
     private List<KeyValuePair<string, object?>>? _capturedProperties;
+    internal readonly bool IsEnabled;
 
     /// <summary>
     /// Initializes the handler and checks whether <paramref name="level"/> is enabled for <paramref name="logger"/>.
@@ -637,7 +644,7 @@ public ref struct WriteInterpolatedStringHandler
     /// <param name="handlerIsValid">Set to <see langword="false"/> when <paramref name="level"/> is not enabled for <paramref name="logger"/>, so the compiler skips evaluating and appending the interpolated string's arguments.</param>
     public WriteInterpolatedStringHandler(int literalLength, int formattedCount, ILogger logger, LogLevel level, out bool handlerIsValid)
     {
-        handlerIsValid = logger.IsEnabled(level);
+        IsEnabled = handlerIsValid = logger.IsEnabled(level);
         _handler = handlerIsValid
             ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)
             : default;

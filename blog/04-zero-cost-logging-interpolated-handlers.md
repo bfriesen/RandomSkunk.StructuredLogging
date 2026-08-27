@@ -45,10 +45,11 @@ hole is evaluated, whether it wants the rest of the holes evaluated at all.
 
 Each of RandomSkunk.StructuredLogging's level methods — `Trace`, `Debug`, `Information`, `Warning`,
 `Error`, `Critical`, and the level-as-argument `Write` — has its own handler struct (e.g.
-`DebugInterpolatedStringHandler`). Its constructor calls `logger.IsEnabled(level)` and reports the
-result back to the compiler through an `out bool handlerIsValid` parameter — this isn't a flag the
-handler stores and checks itself; it's read by the *compiler-generated call-site code*, not by
-`AppendFormatted`.
+`DebugInterpolatedStringHandler`). Its constructor calls `logger.IsEnabled(level)` once and uses the
+result twice: reported back to the compiler through an `out bool handlerIsValid` parameter, read by
+the *compiler-generated call-site code* (not by `AppendFormatted`) to decide whether to evaluate the
+interpolation holes at all; and separately stored on the handler itself, as an `IsEnabled` property
+the method body reads afterward instead of calling `logger.IsEnabled` a second time.
 
 That's the piece that actually skips the holes: the compiler generates code that evaluates each
 hole's expression immediately before its own `AppendFormatted` call, one hole at a time, guarded by
@@ -76,10 +77,11 @@ the sequence is:
 3. The compiler's generated code for each hole checks `handlerIsValid` before evaluating that
    hole's expression. Because it's already `false`, `key` and `ExpensiveLookup(key)` are never
    evaluated, and neither `AppendFormatted` call ever runs.
-4. `Debug`'s method body doesn't rely on `handlerIsValid` at all — it independently calls
-   `logger.IsEnabled(LogLevel.Debug)` again itself and returns without touching `ILogger.Log` if
-   that's `false`. This second check is what actually decides whether to log; `handlerIsValid`'s
-   only job was gating the interpolation work that happens *before* the method body runs.
+4. `Debug`'s method body checks the handler's own `IsEnabled` property — set from the exact same
+   `logger.IsEnabled(LogLevel.Debug)` result the constructor already computed in step 1 — and
+   returns without touching `ILogger.Log` if that's `false`. It doesn't call `logger.IsEnabled`
+   again itself; the handler already did that work, so the method body just reads the answer back
+   off it instead of asking `logger` a second time.
 
 If Debug is enabled, the same sequence runs, but every step actually does its work: the handler
 builds the message text (delegating to a wrapped `DefaultInterpolatedStringHandler` — more on that

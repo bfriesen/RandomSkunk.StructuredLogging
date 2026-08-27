@@ -131,11 +131,12 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("{");
     sb.AppendLine("    private DefaultInterpolatedStringHandler _handler;");
     sb.AppendLine("    private List<KeyValuePair<string, object?>>? _capturedProperties;");
+    sb.AppendLine("    internal readonly bool IsEnabled;");
     sb.AppendLine();
     WriteDocComment(sb, "    ", ctorSummary, parameters: ctorParamDocs);
     sb.AppendLine($"    public {typeName}({ctorParams})");
     sb.AppendLine("    {");
-    sb.AppendLine($"        handlerIsValid = {enabledCheck};");
+    sb.AppendLine($"        IsEnabled = handlerIsValid = {enabledCheck};");
     sb.AppendLine("        _handler = handlerIsValid");
     sb.AppendLine("            ? new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.InvariantCulture)");
     sb.AppendLine("            : default;");
@@ -498,7 +499,8 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
         capturedPropertiesExpr = "Array.Empty<KeyValuePair<string, object?>>()";
     }
 
-    sb.AppendLine($"        if (!logger.IsEnabled({group.LevelExpr}))");
+    string enabledCheckExpr = useHandler ? "message.IsEnabled" : $"logger.IsEnabled({group.LevelExpr})";
+    sb.AppendLine($"        if (!{enabledCheckExpr})");
     sb.AppendLine("            return;");
     sb.AppendLine();
 

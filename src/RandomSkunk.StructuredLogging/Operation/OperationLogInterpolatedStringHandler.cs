@@ -35,6 +35,12 @@ public ref struct OperationLogInterpolatedStringHandler
     private readonly StringBuilder? _rentedBuilder;
 
     /// <summary>
+    /// Whether the operation was enabled when this handler was constructed - <see langword="false"/> means
+    /// none of this handler's interpolated arguments were evaluated.
+    /// </summary>
+    internal readonly bool IsEnabled;
+
+    /// <summary>
     /// Initializes the handler and checks whether <paramref name="log"/> is enabled.
     /// </summary>
     /// <param name="literalLength">The total number of characters in the interpolated string's literal text.</param>
@@ -126,12 +132,6 @@ public ref struct OperationLogInterpolatedStringHandler
     /// <param name="value">The string to append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
-
-    /// <summary>
-    /// Whether the operation was enabled when this handler was constructed - <see langword="false"/> means
-    /// none of this handler's interpolated arguments were evaluated.
-    /// </summary>
-    internal bool IsEnabled { get; }
 
     /// <summary>
     /// The real journal this handler wrote directly into, or <see langword="null"/> if it wrote into

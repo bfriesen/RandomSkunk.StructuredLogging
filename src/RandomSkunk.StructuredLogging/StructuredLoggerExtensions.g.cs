@@ -25,7 +25,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -50,7 +50,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -78,7 +78,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -109,7 +109,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -143,7 +143,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -180,7 +180,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -220,7 +220,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -244,7 +244,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -272,7 +272,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -304,7 +304,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -339,7 +339,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -377,7 +377,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -418,7 +418,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -462,7 +462,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -917,7 +917,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -940,7 +940,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -966,7 +966,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -995,7 +995,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -1027,7 +1027,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -1062,7 +1062,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -1100,7 +1100,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -1122,7 +1122,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -1148,7 +1148,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -1178,7 +1178,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -1211,7 +1211,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -1247,7 +1247,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -1286,7 +1286,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -1328,7 +1328,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -1755,7 +1755,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -1778,7 +1778,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -1804,7 +1804,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -1833,7 +1833,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -1865,7 +1865,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -1900,7 +1900,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -1938,7 +1938,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -1960,7 +1960,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -1986,7 +1986,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2016,7 +2016,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2049,7 +2049,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2085,7 +2085,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2124,7 +2124,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2166,7 +2166,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2591,7 +2591,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -2612,7 +2612,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -2636,7 +2636,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -2663,7 +2663,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -2693,7 +2693,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -2726,7 +2726,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -2762,7 +2762,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -2782,7 +2782,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2806,7 +2806,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2834,7 +2834,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2865,7 +2865,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2899,7 +2899,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2936,7 +2936,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -2976,7 +2976,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Trace))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -3377,7 +3377,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -3402,7 +3402,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -3430,7 +3430,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -3461,7 +3461,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -3495,7 +3495,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -3532,7 +3532,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -3572,7 +3572,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -3596,7 +3596,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -3624,7 +3624,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -3656,7 +3656,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -3691,7 +3691,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -3729,7 +3729,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -3770,7 +3770,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -3814,7 +3814,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -4269,7 +4269,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -4292,7 +4292,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -4318,7 +4318,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -4347,7 +4347,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -4379,7 +4379,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -4414,7 +4414,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -4452,7 +4452,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -4474,7 +4474,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -4500,7 +4500,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -4530,7 +4530,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -4563,7 +4563,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -4599,7 +4599,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -4638,7 +4638,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -4680,7 +4680,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -5107,7 +5107,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -5130,7 +5130,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -5156,7 +5156,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -5185,7 +5185,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -5217,7 +5217,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -5252,7 +5252,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -5290,7 +5290,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -5312,7 +5312,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -5338,7 +5338,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -5368,7 +5368,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -5401,7 +5401,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -5437,7 +5437,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -5476,7 +5476,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -5518,7 +5518,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -5943,7 +5943,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -5964,7 +5964,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -5988,7 +5988,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -6015,7 +6015,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -6045,7 +6045,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -6078,7 +6078,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -6114,7 +6114,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -6134,7 +6134,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -6158,7 +6158,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -6186,7 +6186,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -6217,7 +6217,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -6251,7 +6251,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -6288,7 +6288,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -6328,7 +6328,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Debug))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -6729,7 +6729,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -6754,7 +6754,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -6782,7 +6782,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -6813,7 +6813,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -6847,7 +6847,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -6884,7 +6884,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -6924,7 +6924,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -6948,7 +6948,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -6976,7 +6976,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7008,7 +7008,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7043,7 +7043,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7081,7 +7081,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7122,7 +7122,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7166,7 +7166,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7621,7 +7621,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -7644,7 +7644,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -7670,7 +7670,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -7699,7 +7699,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -7731,7 +7731,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -7766,7 +7766,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -7804,7 +7804,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -7826,7 +7826,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7852,7 +7852,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7882,7 +7882,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7915,7 +7915,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7951,7 +7951,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -7990,7 +7990,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -8032,7 +8032,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -8459,7 +8459,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -8482,7 +8482,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -8508,7 +8508,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -8537,7 +8537,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -8569,7 +8569,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -8604,7 +8604,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -8642,7 +8642,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -8664,7 +8664,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -8690,7 +8690,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -8720,7 +8720,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -8753,7 +8753,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -8789,7 +8789,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -8828,7 +8828,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -8870,7 +8870,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -9295,7 +9295,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -9316,7 +9316,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -9340,7 +9340,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -9367,7 +9367,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -9397,7 +9397,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -9430,7 +9430,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -9466,7 +9466,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -9486,7 +9486,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -9510,7 +9510,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -9538,7 +9538,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -9569,7 +9569,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -9603,7 +9603,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -9640,7 +9640,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -9680,7 +9680,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Information))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -10081,7 +10081,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -10106,7 +10106,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -10134,7 +10134,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -10165,7 +10165,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -10199,7 +10199,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -10236,7 +10236,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -10276,7 +10276,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -10300,7 +10300,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -10328,7 +10328,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -10360,7 +10360,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -10395,7 +10395,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -10433,7 +10433,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -10474,7 +10474,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -10518,7 +10518,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -10973,7 +10973,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -10996,7 +10996,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -11022,7 +11022,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -11051,7 +11051,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -11083,7 +11083,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -11118,7 +11118,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -11156,7 +11156,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -11178,7 +11178,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -11204,7 +11204,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -11234,7 +11234,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -11267,7 +11267,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -11303,7 +11303,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -11342,7 +11342,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -11384,7 +11384,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -11811,7 +11811,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -11834,7 +11834,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -11860,7 +11860,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -11889,7 +11889,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -11921,7 +11921,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -11956,7 +11956,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -11994,7 +11994,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -12016,7 +12016,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12042,7 +12042,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12072,7 +12072,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12105,7 +12105,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12141,7 +12141,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12180,7 +12180,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12222,7 +12222,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12647,7 +12647,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -12668,7 +12668,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -12692,7 +12692,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -12719,7 +12719,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -12749,7 +12749,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -12782,7 +12782,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -12818,7 +12818,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -12838,7 +12838,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12862,7 +12862,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12890,7 +12890,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12921,7 +12921,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12955,7 +12955,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -12992,7 +12992,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -13032,7 +13032,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Warning))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -13433,7 +13433,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -13458,7 +13458,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -13486,7 +13486,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -13517,7 +13517,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -13551,7 +13551,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -13588,7 +13588,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -13628,7 +13628,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -13652,7 +13652,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -13680,7 +13680,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -13712,7 +13712,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -13747,7 +13747,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -13785,7 +13785,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -13826,7 +13826,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -13870,7 +13870,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -14325,7 +14325,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -14348,7 +14348,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -14374,7 +14374,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -14403,7 +14403,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -14435,7 +14435,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -14470,7 +14470,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -14508,7 +14508,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -14530,7 +14530,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -14556,7 +14556,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -14586,7 +14586,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -14619,7 +14619,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -14655,7 +14655,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -14694,7 +14694,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -14736,7 +14736,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -15163,7 +15163,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -15186,7 +15186,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -15212,7 +15212,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -15241,7 +15241,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -15273,7 +15273,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -15308,7 +15308,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -15346,7 +15346,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -15368,7 +15368,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -15394,7 +15394,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -15424,7 +15424,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -15457,7 +15457,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -15493,7 +15493,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -15532,7 +15532,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -15574,7 +15574,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -15999,7 +15999,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -16020,7 +16020,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -16044,7 +16044,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -16071,7 +16071,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -16101,7 +16101,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -16134,7 +16134,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -16170,7 +16170,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -16190,7 +16190,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -16214,7 +16214,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -16242,7 +16242,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -16273,7 +16273,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -16307,7 +16307,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -16344,7 +16344,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -16384,7 +16384,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Error))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -16785,7 +16785,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -16810,7 +16810,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -16838,7 +16838,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -16869,7 +16869,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -16903,7 +16903,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -16940,7 +16940,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -16980,7 +16980,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -17004,7 +17004,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -17032,7 +17032,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -17064,7 +17064,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -17099,7 +17099,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -17137,7 +17137,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -17178,7 +17178,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -17222,7 +17222,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -17677,7 +17677,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -17700,7 +17700,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -17726,7 +17726,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -17755,7 +17755,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -17787,7 +17787,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -17822,7 +17822,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -17860,7 +17860,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -17882,7 +17882,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -17908,7 +17908,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -17938,7 +17938,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -17971,7 +17971,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -18007,7 +18007,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -18046,7 +18046,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -18088,7 +18088,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -18515,7 +18515,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -18538,7 +18538,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -18564,7 +18564,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -18593,7 +18593,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -18625,7 +18625,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -18660,7 +18660,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -18698,7 +18698,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -18720,7 +18720,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -18746,7 +18746,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -18776,7 +18776,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -18809,7 +18809,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -18845,7 +18845,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -18884,7 +18884,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -18926,7 +18926,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -19351,7 +19351,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -19372,7 +19372,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -19396,7 +19396,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -19423,7 +19423,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -19453,7 +19453,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -19486,7 +19486,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -19522,7 +19522,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -19542,7 +19542,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -19566,7 +19566,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -19594,7 +19594,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -19625,7 +19625,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -19659,7 +19659,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -19696,7 +19696,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -19736,7 +19736,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(LogLevel.Critical))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -20139,7 +20139,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -20166,7 +20166,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -20196,7 +20196,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -20229,7 +20229,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -20265,7 +20265,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -20304,7 +20304,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -20346,7 +20346,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -20372,7 +20372,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -20402,7 +20402,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -20436,7 +20436,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -20473,7 +20473,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -20513,7 +20513,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -20556,7 +20556,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -20602,7 +20602,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -21087,7 +21087,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -21112,7 +21112,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -21140,7 +21140,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -21171,7 +21171,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -21205,7 +21205,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -21242,7 +21242,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -21282,7 +21282,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -21306,7 +21306,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -21334,7 +21334,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -21366,7 +21366,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -21401,7 +21401,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -21439,7 +21439,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -21480,7 +21480,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -21524,7 +21524,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -21981,7 +21981,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -22006,7 +22006,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -22034,7 +22034,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -22065,7 +22065,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -22099,7 +22099,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -22136,7 +22136,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -22176,7 +22176,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -22200,7 +22200,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -22228,7 +22228,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -22260,7 +22260,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -22295,7 +22295,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -22333,7 +22333,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -22374,7 +22374,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -22418,7 +22418,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -22873,7 +22873,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState state = new(messageText, message.GetCapturedProperties(), Array.Empty<KeyValuePair<string, object?>>());
@@ -22896,7 +22896,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1> state = new(messageText, message.GetCapturedProperties(), logProperty1);
@@ -22922,7 +22922,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2);
@@ -22951,7 +22951,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3);
@@ -22983,7 +22983,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4);
@@ -23018,7 +23018,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5);
@@ -23056,7 +23056,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         LogPropertiesState<T1, T2, T3, T4, T5, T6> state = new(messageText, message.GetCapturedProperties(), logProperty1, logProperty2, logProperty3, logProperty4, logProperty5, logProperty6);
@@ -23078,7 +23078,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -23104,7 +23104,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -23134,7 +23134,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -23167,7 +23167,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -23203,7 +23203,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -23242,7 +23242,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
@@ -23284,7 +23284,7 @@ public static class StructuredLoggerExtensions
     {
         string messageText = message.ToStringAndClear();
 
-        if (!logger.IsEnabled(level))
+        if (!message.IsEnabled)
             return;
 
         IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();
