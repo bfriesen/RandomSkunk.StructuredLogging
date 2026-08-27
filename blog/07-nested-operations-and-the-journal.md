@@ -30,6 +30,12 @@ underlying journal and property list — there's no per-level object graph to re
 shared journal that every `IOperationLog` in the tree appends to, each sub-operation's lines
 appearing at the point in elapsed time they actually happened.
 
+The `$"Reserve {item.Sku}"` and `$"reserved {reserved} of {item.Quantity}"` arguments above aren't
+ordinary string interpolation, either — `BeginSubOperation` and `Append` both have a handler-backed
+overload that skips evaluating those holes entirely on a disabled operation, and otherwise writes
+straight into the journal rather than building a throwaway string first. [Post 9](09-performance-internals-pooling-and-thread-safety.md)
+covers how that works.
+
 ## Root vs. sub-operation: same interface, different behavior
 
 `IOperationLog`'s members split into two groups. Some behave identically no matter which level you

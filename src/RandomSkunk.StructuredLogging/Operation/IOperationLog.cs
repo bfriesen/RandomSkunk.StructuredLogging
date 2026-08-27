@@ -115,6 +115,17 @@ public interface IOperationLog : IDisposable
     IOperationLog Append(string text);
 
     /// <summary>
+    /// Appends a line of free text to the operation's journal, which becomes the message of the
+    /// final log entry. Unlike <see cref="Append(string)"/>, <paramref name="text"/>'s interpolated
+    /// arguments are only evaluated if <see cref="IsEnabled"/> is <see langword="true"/> - see
+    /// <see cref="OperationLogInterpolatedStringHandler"/>.
+    /// </summary>
+    /// <param name="text">The text to append.</param>
+    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
+    IOperationLog Append([InterpolatedStringHandlerArgument("")] ref OperationLogInterpolatedStringHandler text);
+
+    /// <summary>
     /// Appends a line of free text to the operation's journal in the form <c>`valueName`: value</c>,
     /// rendering <paramref name="value"/> via <see cref="IFormattable"/>/<see cref="object.ToString"/>.
     /// <paramref name="valueName"/> defaults to the source text of the <paramref name="value"/> argument
@@ -157,4 +168,16 @@ public interface IOperationLog : IDisposable
     /// <returns>An <see cref="IOperationLog"/> representing the nested sub-operation.</returns>
     /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
     IOperationLog BeginSubOperation(string operationName);
+
+    /// <summary>
+    /// Begins a nested sub-operation, like <see cref="BeginSubOperation(string)"/>. Unlike that overload,
+    /// <paramref name="operationName"/>'s interpolated arguments are only evaluated if
+    /// <see cref="IsEnabled"/> is <see langword="true"/> - see
+    /// <see cref="OperationLogInterpolatedStringHandler"/>. Useful when building the sub-operation's name
+    /// is itself non-trivial and shouldn't be paid for on a disabled operation.
+    /// </summary>
+    /// <param name="operationName">The sub-operation's name, used in its journal lines (e.g. "started"/"complete").</param>
+    /// <returns>An <see cref="IOperationLog"/> representing the nested sub-operation.</returns>
+    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
+    IOperationLog BeginSubOperation([InterpolatedStringHandlerArgument("")] ref OperationLogInterpolatedStringHandler operationName);
 }

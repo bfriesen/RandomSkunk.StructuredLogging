@@ -332,7 +332,11 @@ check that yourself before doing work that would otherwise go to waste.
   every sub-operation, and never changes afterward - not even `Escalate` can turn a disabled
   operation into an enabled one. Useful for skipping work that only feeds an `AddProperty`/
   `AppendValue`/`AppendJson` call, e.g. `if (log.IsEnabled) log.AppendJson(BuildExpensiveDiagnostics());`.
-- `IOperationLog.Append(text)` - appends a free-text line to the journal.
+- `IOperationLog.Append(text)` - appends a free-text line to the journal. `text` can be a plain
+  `string` or an interpolated string (`$"..."`); an interpolated argument's holes are only
+  evaluated when `IsEnabled` is `true`, same as the structured-logging message parameters, and -
+  when the operation isn't `threadSafe: true` - are written straight into the journal instead of
+  building a separate string first.
 - `IOperationLog.AppendValue<T>(value, [valueName])` - appends `` `valueName`: value ``, where
   `valueName` defaults to the value expression's source text (via `CallerArgumentExpression`), so
   `log.AppendValue(order.Total)` appends `` `order.Total`: 42.50 `` with no name to spell out.
@@ -341,6 +345,8 @@ check that yourself before doing work that would otherwise go to waste.
 - `IOperationLog.BeginSubOperation(name)` - starts a nested `IOperationLog`, immediately
   appending a "started" line to the journal; disposing it appends a "complete" line. Sub-operations
   never write their own log entry - only the root operation does, once, when *it's* disposed.
+  `name` can be a plain `string` or an interpolated string, with the same disabled-skips-evaluation
+  behavior as `Append`.
 - `IOperationLog.SetException(exception)` - on the root, sets the final log entry's `Exception`.
   On a sub-operation, appends a "failed" line to the journal instead.
 - `IOperationLog.SetResult<T>(value)` - on the root, sets the `Operation.Result` structured

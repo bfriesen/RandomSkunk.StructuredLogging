@@ -483,6 +483,68 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void Append_Interpolated_AddsLineToOperationLog()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.Append($"reserved {5} of {10}");
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("reserved 5 of 10");
+    }
+
+    [Fact]
+    public void Append_Interpolated_Disabled_DoesNotEvaluateInterpolationHoles()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+        int evaluationCount = 0;
+
+        int GetValue()
+        {
+            evaluationCount++;
+            return 42;
+        }
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.Append($"Value: {GetValue()}");
+
+        evaluationCount.Should().Be(0);
+        logger.LogCallCount.Should().Be(0);
+    }
+
+    [Fact]
+    public void Append_Interpolated_ThreadSafe_AddsLineToOperationLog()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name", threadSafe: true))
+            log.Append($"reserved {5} of {10}");
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("reserved 5 of 10");
+    }
+
+    [Fact]
+    public void Append_Interpolated_ThreadSafe_Disabled_DoesNotEvaluateInterpolationHoles()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+        int evaluationCount = 0;
+
+        int GetValue()
+        {
+            evaluationCount++;
+            return 42;
+        }
+
+        using (IOperationLog log = logger.BeginOperation("Name", threadSafe: true))
+            log.Append($"Value: {GetValue()}");
+
+        evaluationCount.Should().Be(0);
+        logger.LogCallCount.Should().Be(0);
+    }
+
+    [Fact]
     public void AppendValue_UsesCallerArgumentExpressionForDefaultName()
     {
         RecordingLogger logger = new();
@@ -534,6 +596,94 @@ public class OperationLoggingTests
         string journal = logger.LastMessage!;
         journal.Should().Contain("`Fetch` started.");
         journal.Should().Contain("`Fetch` complete.");
+    }
+
+    [Fact]
+    public void BeginSubOperation_Interpolated_AppendsStartedAndCompleteLinesWithInterpolatedName()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            using IOperationLog subLog = log.BeginSubOperation($"Fetch-{42}");
+        }
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("`Fetch-42` started.");
+        journal.Should().Contain("`Fetch-42` complete.");
+    }
+
+    [Fact]
+    public void BeginSubOperation_Interpolated_NameIsReusedInSetResultAndSetException()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            using IOperationLog subLog = log.BeginSubOperation($"Fetch-{42}");
+            subLog.SetResult("done").SetException(new InvalidOperationException("boom"));
+        }
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("`Fetch-42` result: done");
+        journal.Should().Contain("`Fetch-42` failed:");
+    }
+
+    [Fact]
+    public void BeginSubOperation_Interpolated_Disabled_DoesNotEvaluateInterpolationHoles()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+        int evaluationCount = 0;
+
+        int GetValue()
+        {
+            evaluationCount++;
+            return 42;
+        }
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        using (IOperationLog subLog = log.BeginSubOperation($"Fetch-{GetValue()}"))
+        {
+        }
+
+        evaluationCount.Should().Be(0);
+        logger.LogCallCount.Should().Be(0);
+    }
+
+    [Fact]
+    public void BeginSubOperation_Interpolated_ThreadSafe_AppendsStartedAndCompleteLines()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name", threadSafe: true))
+        {
+            using IOperationLog subLog = log.BeginSubOperation($"Fetch-{42}");
+        }
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("`Fetch-42` started.");
+        journal.Should().Contain("`Fetch-42` complete.");
+    }
+
+    [Fact]
+    public void BeginSubOperation_Interpolated_ThreadSafe_Disabled_DoesNotEvaluateInterpolationHoles()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+        int evaluationCount = 0;
+
+        int GetValue()
+        {
+            evaluationCount++;
+            return 42;
+        }
+
+        using (IOperationLog log = logger.BeginOperation("Name", threadSafe: true))
+        using (IOperationLog subLog = log.BeginSubOperation($"Fetch-{GetValue()}"))
+        {
+        }
+
+        evaluationCount.Should().Be(0);
+        logger.LogCallCount.Should().Be(0);
     }
 
     [Fact]

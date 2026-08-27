@@ -12,6 +12,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// </summary>
 /// <typeparam name="TSelf">The most-derived type, which implements <see cref="IOperationLog"/>.</typeparam>
 internal abstract class OperationLog<TSelf>(OperationLogState state, string operationName)
+    : IJournalOwner
     where TSelf : OperationLog<TSelf>, IOperationLog
 {
     protected readonly OperationLogState _state = state;
@@ -39,32 +40,64 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
         return (TSelf)this;
     }
 
-    public IOperationLog Append(string text)
+    /// <summary>
+    /// Throws if the root operation has been disposed, then appends the "[elapsed] " timestamp prefix
+    /// that starts every journal line - see <see cref="IJournalOwner"/>.
+    /// </summary>
+    public StringBuilder BeginJournalEntry()
     {
         _state.ThrowIfDisposed();
-        _state.BeginJournalEntry().Append(text);
+        return _state.BeginJournalEntry();
+    }
+
+    public IOperationLog Append(string text)
+    {
+        BeginJournalEntry().Append(text);
+        return (TSelf)this;
+    }
+
+    public IOperationLog Append(ref OperationLogInterpolatedStringHandler text)
+    {
+        // The handler already wrote everything directly into the journal (via BeginJournalEntry, in
+        // its constructor) while it was being built - nothing left to do here.
         return (TSelf)this;
     }
 
     public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
-        _state.ThrowIfDisposed();
-        _state.BeginJournalEntry().Append($"`{valueName}`: {ValueFormatting.Format(value)}");
+        BeginJournalEntry().Append($"`{valueName}`: {ValueFormatting.Format(value)}");
         return (TSelf)this;
     }
 
     public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
-        _state.ThrowIfDisposed();
-        StringBuilder journal = _state.BeginJournalEntry().Append($"`{valueName}`: ");
+        StringBuilder journal = BeginJournalEntry().Append($"`{valueName}`: ");
         ValueFormatting.AppendJson(journal, value);
         return (TSelf)this;
     }
 
     public IOperationLog BeginSubOperation(string subOperationName)
     {
-        _state.ThrowIfDisposed();
-        _state.BeginJournalEntry().Append($"`{subOperationName}` started.");
+        BeginJournalEntry().Append($"`{subOperationName}` started.");
+        return new ChildOperationLog(_state, subOperationName);
+    }
+
+    public IOperationLog BeginSubOperation(ref OperationLogInterpolatedStringHandler operationName)
+    {
+        if (operationName.DirectTarget is not StringBuilder journal)
+        {
+            // Can't happen for RootOperationLog/ChildOperationLog - both are IJournalOwner, so the
+            // handler always writes directly into the real journal - but fall back safely rather than
+            // assume it, in case that ever changes.
+            string fallbackName = operationName.RentedBuilder?.ToString() ?? string.Empty;
+            if (operationName.RentedBuilder is StringBuilder rented)
+                OperationLogPools.Journals.Return(rented);
+            return BeginSubOperation(fallbackName);
+        }
+
+        int start = operationName.DirectStartIndex;
+        string subOperationName = journal.ToString(start, journal.Length - start);
+        journal.Insert(start, '`').Append("` started.");
         return new ChildOperationLog(_state, subOperationName);
     }
 

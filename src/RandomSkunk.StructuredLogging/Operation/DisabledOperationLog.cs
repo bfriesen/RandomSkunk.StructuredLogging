@@ -42,11 +42,17 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog
 
     public IOperationLog Append(string text) => this;
 
+    // The handler's constructor already saw IsEnabled == false and skipped evaluating text's
+    // interpolated arguments entirely - nothing was written anywhere.
+    public IOperationLog Append(ref OperationLogInterpolatedStringHandler text) => this;
+
     public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
 
     public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
 
     public IOperationLog BeginSubOperation(string operationName) => this;
+
+    public IOperationLog BeginSubOperation(ref OperationLogInterpolatedStringHandler operationName) => this;
 
     public void Dispose()
     {
