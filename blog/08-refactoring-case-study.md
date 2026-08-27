@@ -165,11 +165,14 @@ A rejected order now produces one entry, at `Warning`:
 Operation: FulfillOrder
 Start Time: 2026-08-19 12:56:31.417 -04:00
 ------------------------------------------
+[0.001] Operation escalated from Information to Warning.
 [0.001] Operation complete.
 ```
 
 with `OrderId` and `Operation.Result` (the `Rejected(reason)` value) as structured properties — the
-rejection reason is captured without ever needing its own log line. A successful order produces one
+rejection reason is captured without ever needing its own log line, and the journal itself explains
+why this entry is at `Warning` instead of the operation's usual `Information`. A successful order
+produces one
 entry, at `Information`, whose message shows the full three-step timeline exactly the way post 7's
 example did. Either way, there's exactly one thing to find per order, not up to seven, and nothing
 about the log stream depends on interleaving working out in your favor.

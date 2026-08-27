@@ -353,6 +353,14 @@ check that yourself before doing work that would otherwise go to waste.
   property; on a sub-operation, appends a result line to the journal instead. Typically called via
   the fluent `value.RecordResultTo(log)` extension method so it can be chained directly onto
   a `return` expression.
+- `IOperationLog.Escalate(level)` - raises the level the final entry is written at, if `level` is
+  more severe than the operation's current level; otherwise a no-op. Never re-enables an operation
+  whose level was disabled up front at `BeginOperation`. When it actually raises the level, it also
+  appends a journal line naming both levels - `Operation escalated from Information to Warning.` on
+  the root, `` `PaymentCheck` escalated from Information to Warning. `` on a sub-operation - so the
+  final entry's level is self-explanatory without having to search the rest of the journal for why.
+  Useful even without an exception, e.g. a rejected/backordered/declined result that should still
+  raise the log level: `log.Escalate(LogLevel.Warning);`.
 - `value.RecordValueTo(log, [valueName])` / `value.RecordJsonTo(log, [valueName])` -
   fluent equivalents of `AppendValue`/`AppendJson` that return `value` unchanged, for chaining
   inline into an expression, e.g. `var total = order.Total.RecordValueTo(log);`.

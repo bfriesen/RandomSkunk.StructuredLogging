@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
@@ -21,6 +23,15 @@ internal sealed class ChildOperationLog(OperationLogState state, string operatio
     {
         _state.ThrowIfDisposed();
         _state.BeginJournalEntry().Append($"`{_operationName}` result: {ValueFormatting.Format(value)}");
+        return this;
+    }
+
+    public IOperationLog Escalate(LogLevel level)
+    {
+        _state.ThrowIfDisposed();
+        LogLevel previousLevel = _state.Escalate(level);
+        if (level > previousLevel)
+            BeginJournalEntry().Append($"`{_operationName}` escalated from {previousLevel} to {level}.");
         return this;
     }
 

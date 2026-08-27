@@ -87,10 +87,20 @@ using (IOperationLog paymentLog = log.BeginSubOperation("ChargePayment"))
 }
 ```
 
+That last call, if it actually raises the level, also appends its own journal line -
+`` `ChargePayment` escalated from Information to Warning. `` here, or just
+`Operation escalated from Information to Warning.` when called on the root - so a reader looking at
+the final entry's `Warning` level doesn't have to go hunting through the rest of the journal to find
+out why it isn't the usual `Information`.
+
 A few things worth being precise about:
 
 - **It only raises, never lowers.** `Escalate(LogLevel.Warning)` on an operation already at `Error`
   is a no-op — it only takes effect if `level` is *more severe* than the operation's current level.
+- **The journal line only appears when it actually escalates.** Calling `Escalate` unconditionally
+  on every exit path — success and failure alike, rather than branching just to decide whether to
+  call it — is a common enough pattern that a no-op call staying silent matters: it keeps the
+  journal free of noise for the common case where nothing needed raising.
 - **It can't re-enable a disabled operation.** If the operation was begun at a level `IsEnabled`
   said was off, it never journaled anything in the first place, and `Escalate` on it is a no-op too
   (there's nothing to escalate). This is different from the level passed to `BeginOperation`, which

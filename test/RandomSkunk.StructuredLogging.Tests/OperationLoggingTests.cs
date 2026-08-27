@@ -471,6 +471,66 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void Escalate_MoreSevere_AppendsJournalLineWithPreviousAndNewLevel()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.Escalate(LogLevel.Error);
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("Operation escalated from Information to Error.");
+    }
+
+    [Fact]
+    public void Escalate_LessSevere_DoesNotAppendJournalLine()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name", LogLevel.Warning))
+            log.Escalate(LogLevel.Information);
+
+        string journal = logger.LastMessage!;
+        journal.Should().NotContain("escalated");
+    }
+
+    [Fact]
+    public void Escalate_SameLevel_DoesNotAppendJournalLine()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name", LogLevel.Warning))
+            log.Escalate(LogLevel.Warning);
+
+        string journal = logger.LastMessage!;
+        journal.Should().NotContain("escalated");
+    }
+
+    [Fact]
+    public void SubOperation_Escalate_AppendsJournalLineWithSubOperationName()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            using IOperationLog subLog = log.BeginSubOperation("Fetch");
+            subLog.Escalate(LogLevel.Critical);
+        }
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("`Fetch` escalated from Information to Critical.");
+    }
+
+    [Fact]
+    public void Disabled_Escalate_DoesNotThrow()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        log.Escalate(LogLevel.Critical);
+    }
+
+    [Fact]
     public void Append_AddsLineToOperationLog()
     {
         RecordingLogger logger = new();
@@ -811,6 +871,22 @@ public class OperationLoggingTests
         Action dispose = leakedSubLog.Dispose;
 
         dispose.Should().Throw<ObjectDisposedException>();
+    }
+
+    [Fact]
+    public void LeakedSubOperation_EscalatedAfterRootDisposed_ThrowsObjectDisposedException()
+    {
+        RecordingLogger logger = new();
+
+        IOperationLog leakedSubLog;
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            leakedSubLog = log.BeginSubOperation("Fetch");
+        }
+
+        Action escalate = () => leakedSubLog.Escalate(LogLevel.Information);
+
+        escalate.Should().Throw<ObjectDisposedException>();
     }
 
     [Fact]

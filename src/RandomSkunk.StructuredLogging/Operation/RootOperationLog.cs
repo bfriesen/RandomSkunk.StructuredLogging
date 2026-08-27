@@ -19,6 +19,15 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
         return this;
     }
 
+    public IOperationLog Escalate(LogLevel level)
+    {
+        _state.ThrowIfDisposed();
+        LogLevel previousLevel = _state.Escalate(level);
+        if (level > previousLevel)
+            BeginJournalEntry().Append($"Operation escalated from {previousLevel} to {level}.");
+        return this;
+    }
+
     public IOperationLog SetResult<T>(T value)
     {
         _state.ThrowIfDisposed();

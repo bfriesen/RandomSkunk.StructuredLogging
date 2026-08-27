@@ -70,10 +70,18 @@ internal sealed class OperationLogState : IDisposable
     /// Raises <see cref="Level"/> to <paramref name="level"/> if it's more severe than the operation's
     /// current level, leaving it unchanged otherwise - see <see cref="IOperationLog.Escalate"/>.
     /// </summary>
-    public void Escalate(LogLevel level)
+    /// <returns>
+    /// The level <see cref="Level"/> was set to just before this call - the same as the new
+    /// <see cref="Level"/> (i.e. nothing changed) when this call was a no-op, or the previous, less
+    /// severe level when it actually escalated. Callers can compare the return value against the new
+    /// <see cref="Level"/> to tell which happened.
+    /// </returns>
+    public LogLevel Escalate(LogLevel level)
     {
-        if (level > Level)
+        LogLevel previousLevel = Level;
+        if (level > previousLevel)
             Level = level;
+        return previousLevel;
     }
 
     /// <summary>

@@ -33,13 +33,6 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
         return (TSelf)this;
     }
 
-    public IOperationLog Escalate(LogLevel level)
-    {
-        _state.ThrowIfDisposed();
-        _state.Escalate(level);
-        return (TSelf)this;
-    }
-
     /// <summary>
     /// Throws if the root operation has been disposed, then appends the "[elapsed] " timestamp prefix
     /// that starts every journal line - see <see cref="IJournalOwner"/>.
