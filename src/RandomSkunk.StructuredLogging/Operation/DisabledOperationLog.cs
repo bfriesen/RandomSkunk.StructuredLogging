@@ -26,6 +26,8 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog
 
     public EventId EventId => eventId;
 
+    public bool IsEnabled => false;
+
     public IOperationLog AddProperty<T>(string name, T value)
     {
         (_properties ??= new(capacity: 8)).Add(new(name, value));

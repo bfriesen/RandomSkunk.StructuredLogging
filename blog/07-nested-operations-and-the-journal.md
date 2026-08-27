@@ -40,6 +40,8 @@ they're called:
   property list on the final entry.
 - **`EventId`** — the same value everywhere in the tree; it's the `EventId` the *final* entry gets
   written with.
+- **`IsEnabled`** — the same value everywhere in the tree too, since a sub-operation always matches
+  whatever its parent already decided at `BeginOperation`.
 - **`Escalate`** — affects the one level the eventual entry is written at, regardless of which
   level in the tree calls it (more on this below).
 - **`Append`/`AppendValue`/`AppendJson`** — always write to the one shared journal.

@@ -37,6 +37,19 @@ public interface IOperationLog : IDisposable
     EventId EventId { get; }
 
     /// <summary>
+    /// Whether this operation is actually journaling - <see langword="false"/> if the level passed to
+    /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>
+    /// was disabled on the logger at that time, <see langword="true"/> otherwise. The same value on the
+    /// root operation and every nested sub-operation, since <see cref="BeginSubOperation"/> always
+    /// produces a sub-operation that matches its parent. Never changes after the operation begins - in
+    /// particular, <see cref="Escalate"/> can raise the level the final entry is written at, but it can't
+    /// turn a disabled operation into an enabled one. Useful for skipping expensive work that would only
+    /// go into an <see cref="AddProperty{T}"/>/<see cref="AppendValue{T}"/>/<see cref="AppendJson{T}"/>
+    /// call whose result would otherwise be discarded, e.g. <c>if (log.IsEnabled) log.AppendJson(BuildExpensiveDiagnostics());</c>.
+    /// </summary>
+    bool IsEnabled { get; }
+
+    /// <summary>
     /// Records the exception for this operation. On the root operation, this becomes the <c>Exception</c>
     /// argument of the final log entry. On a sub-operation, this instead appends a "failed" line describing
     /// it to the journal. This does not, by itself, change the level the final log entry is written at -

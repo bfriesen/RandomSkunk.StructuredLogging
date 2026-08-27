@@ -309,6 +309,72 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void IsEnabled_True_WhenLevelIsEnabled()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name");
+
+        log.IsEnabled.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsEnabled_False_WhenLevelIsDisabled()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+
+        using IOperationLog log = logger.BeginOperation("Name");
+
+        log.IsEnabled.Should().BeFalse();
+    }
+
+    [Fact]
+    public void IsEnabled_ThreadSafe_MatchesInnerLog()
+    {
+        RecordingLogger enabledLogger = new();
+        RecordingLogger disabledLogger = new() { Enabled = false };
+
+        using IOperationLog enabledLog = enabledLogger.BeginOperation("Name", threadSafe: true);
+        using IOperationLog disabledLog = disabledLogger.BeginOperation("Name", threadSafe: true);
+
+        enabledLog.IsEnabled.Should().BeTrue();
+        disabledLog.IsEnabled.Should().BeFalse();
+    }
+
+    [Fact]
+    public void SubOperation_IsEnabled_MatchesRoots()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        using IOperationLog subLog = log.BeginSubOperation("Fetch");
+
+        subLog.IsEnabled.Should().BeTrue();
+    }
+
+    [Fact]
+    public void SubOperation_Disabled_IsEnabledMatchesRoots()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        using IOperationLog subLog = log.BeginSubOperation("Fetch");
+
+        subLog.IsEnabled.Should().BeFalse();
+    }
+
+    [Fact]
+    public void Escalate_DoesNotChangeIsEnabled()
+    {
+        RecordingLogger logger = new() { Enabled = false };
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        log.Escalate(LogLevel.Critical);
+
+        log.IsEnabled.Should().BeFalse();
+    }
+
+    [Fact]
     public void SetResult_SetsOperationResultProperty()
     {
         RecordingLogger logger = new();

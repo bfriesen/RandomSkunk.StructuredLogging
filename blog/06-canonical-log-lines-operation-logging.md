@@ -100,6 +100,15 @@ never accumulates a journal and never writes anything — `Append`/`AddProperty`
 etc. all become no-ops. You don't need to guard the whole block with an `IsEnabled` check yourself;
 the cost of an operation you're not logging is close to nothing.
 
+`IOperationLog` exposes that same answer back to you, as `log.IsEnabled` — not to guard the whole
+block (you still don't need that), but for the rarer case where building a value to hand to
+`AddProperty`/`AppendValue`/`AppendJson` is itself expensive enough to be worth skipping:
+
+```csharp
+if (log.IsEnabled)
+    log.AppendJson(BuildExpensiveDiagnosticSnapshot());
+```
+
 ## This is additive, not a replacement
 
 Operation logging doesn't replace the `Information`/`Debug`/etc. extension methods from earlier

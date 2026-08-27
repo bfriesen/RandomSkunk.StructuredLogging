@@ -23,6 +23,8 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
 
     public EventId EventId => _state.EventId;
 
+    public bool IsEnabled => true;
+
     public IOperationLog AddProperty<T>(string propertyName, T value)
     {
         _state.ThrowIfDisposed();

@@ -306,7 +306,8 @@ Start Time: 2026-08-19 12:56:31.417 -04:00
 If the logger's level is disabled, `BeginOperation` returns an `IOperationLog` that never writes a
 log entry and never accumulates a journal - no need to guard the call yourself. `EventId` and
 `Properties` (via `AddProperty`) still behave normally even when disabled, since code may read them
-regardless of whether the operation ends up logging anything.
+regardless of whether the operation ends up logging anything; `IsEnabled` reports `false` so you can
+check that yourself before doing work that would otherwise go to waste.
 
 ### API at a glance
 
@@ -326,6 +327,11 @@ regardless of whether the operation ends up logging anything.
   and every sub-operation. Useful for tagging a log line written elsewhere - e.g. from within the
   operation, or from code the operation called into - with the same `EventId` as the operation's
   own final entry, so the two can be correlated in a backend that indexes/filters by `EventId`.
+- `IOperationLog.IsEnabled` - whether the operation is actually journaling, i.e. whether the level
+  passed to `BeginOperation` was enabled on the logger at the time. Same value on the root and
+  every sub-operation, and never changes afterward - not even `Escalate` can turn a disabled
+  operation into an enabled one. Useful for skipping work that only feeds an `AddProperty`/
+  `AppendValue`/`AppendJson` call, e.g. `if (log.IsEnabled) log.AppendJson(BuildExpensiveDiagnostics());`.
 - `IOperationLog.Append(text)` - appends a free-text line to the journal.
 - `IOperationLog.AppendValue<T>(value, [valueName])` - appends `` `valueName`: value ``, where
   `valueName` defaults to the value expression's source text (via `CallerArgumentExpression`), so
