@@ -61,7 +61,7 @@ public static class LoggerOperationExtensions
             return rootOperationLog;
         }
 
-        DisabledOperationLog disabledLog = new(eventId, operationName);
+        DisabledOperationLog disabledLog = new(eventId);
         if (threadSafe)
             return new SynchronizedOperationLog(disabledLog, disabledLog.Gate);
         return disabledLog;

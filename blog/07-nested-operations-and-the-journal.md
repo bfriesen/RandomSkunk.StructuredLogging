@@ -52,9 +52,6 @@ Others are deliberately asymmetric, because only the root operation ever produce
   entry.
 - **`SetException(exception)`** — on the root, becomes the final log entry's `Exception`. On a
   sub-operation, it appends a "failed" line to the journal describing the exception instead.
-- **`OperationName`** — the one property that's *not* shared. Each level keeps its own name: the
-  root's is whatever `BeginOperation` was given, a sub-operation's is whatever its own
-  `BeginSubOperation` call was given.
 
 This asymmetry isn't an inconsistency to work around — it's the whole point. A sub-operation
 represents a step *within* the story, not a story of its own; its result and its exception are

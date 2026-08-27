@@ -12,9 +12,9 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// to the ancestor journal it was created from instead.
 /// Every sub-operation shares the root operation's journal, so once the root <see cref="IOperationLog"/> has
 /// been disposed, calling any member other than <see cref="IDisposable.Dispose"/>, <see cref="Properties"/>,
-/// <see cref="EventId"/>, or <see cref="OperationName"/> on a sub-operation still referenced from outside the
-/// root's <c>using</c> scope throws <see cref="ObjectDisposedException"/>, rather than risking corruption of
-/// an unrelated operation's journal.
+/// or <see cref="EventId"/> on a sub-operation still referenced from outside the root's <c>using</c> scope
+/// throws <see cref="ObjectDisposedException"/>, rather than risking corruption of an unrelated operation's
+/// journal.
 /// </summary>
 public interface IOperationLog : IDisposable
 {
@@ -35,16 +35,6 @@ public interface IOperationLog : IDisposable
     /// written elsewhere (e.g. from within the operation) back to the operation's own final entry.
     /// </summary>
     EventId EventId { get; }
-
-    /// <summary>
-    /// The name this operation was created with - the <c>operationName</c> argument to
-    /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>
-    /// for the root operation, or to <see cref="BeginSubOperation"/> for a sub-operation. Unlike
-    /// <see cref="EventId"/> and <see cref="Properties"/>, this is specific to each level of the
-    /// operation tree rather than shared - a sub-operation's <see cref="OperationName"/> is its own
-    /// name, not its ancestor's.
-    /// </summary>
-    string OperationName { get; }
 
     /// <summary>
     /// Records the exception for this operation. On the root operation, this becomes the <c>Exception</c>
