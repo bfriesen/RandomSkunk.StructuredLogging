@@ -7,10 +7,11 @@ namespace RandomSkunk.StructuredLogging;
 /// format specifier also capture the interpolated value as a structured property. An empty tag
 /// ("&lt;&gt;") opts out of capturing while still allowing the remaining format text to start
 /// with '&lt;'. A tag whose name starts with '@' (e.g. "&lt;@PropertyName&gt;" or "&lt;@&gt;")
-/// additionally renders the value into the message using Serilog-style destructured formatting
-/// (see <see cref="LogPropertyDestructuring"/>) instead of <see cref="IFormattable"/>/<see cref="object.ToString"/>
-/// formatting; any format text following such a tag is parsed but ignored, since destructured
-/// rendering fully replaces ordinary formatting.
+/// requests Serilog-style destructured capture (see <see cref="LogPropertyDestructuring"/>): if no
+/// format follows the tag, the value is also rendered into the message using destructured
+/// formatting instead of <see cref="IFormattable"/>/<see cref="object.ToString"/> formatting; if a
+/// format does follow the tag, that format is honored for the message exactly like an ordinary
+/// tag, and destructuring only affects how the property is captured (its name gets an '@' prefix).
 /// </summary>
 internal static class LogPropertyTagFormat
 {
@@ -72,8 +73,11 @@ public sealed class UnterminatedLogPropertyTagException : FormatException
 /// </summary>
 /// <param name="PropertyName">The structured property name to capture the value under, or <see langword="null"/> if none.</param>
 /// <param name="Format">
-/// The remaining format text after the tag. Ignored when <paramref name="Destructure"/> is
-/// <see langword="true"/>, since destructured rendering fully replaces ordinary formatting.
+/// The remaining format text after the tag, or <see langword="null"/> if there is none. When
+/// <paramref name="Destructure"/> is <see langword="true"/> and this is <see langword="null"/>,
+/// the value is rendered into the message using destructured formatting instead. A non-null
+/// <see cref="Format"/> is always honored for the message - even when <paramref name="Destructure"/>
+/// is <see langword="true"/> - so destructuring then only affects how the property is captured.
 /// </param>
 /// <param name="Destructure">Whether the tag requested Serilog-style destructured formatting (a "&lt;@..." tag).</param>
 internal readonly record struct TagFormat(string? PropertyName, string? Format, bool Destructure = false);

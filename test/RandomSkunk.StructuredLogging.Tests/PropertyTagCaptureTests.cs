@@ -133,7 +133,7 @@ public class PropertyTagCaptureTests
 
         logger.LastMessage.Should().Be("Item added to cart: OrderItem { CartId: 123, ItemId: 456, Quantity: 1 }");
         KeyValuePair<string, object?> property = logger.LastProperties.Should().ContainSingle().Which;
-        property.Key.Should().Be("Item");
+        property.Key.Should().Be("@Item");
         property.Value.Should().BeSameAs(item);
     }
 
@@ -150,14 +150,60 @@ public class PropertyTagCaptureTests
     }
 
     [Fact]
-    public void TaggedDestructuringFormat_IgnoresTrailingFormatText()
+    public void TaggedDestructuringFormat_WithTrailingFormat_HonorsFormatForMessage_AndPrefixesCapturedKey()
     {
         RecordingLogger logger = new();
         OrderItem item = new(123, 456, 1);
 
-        logger.Trace($"Item: {item:<@Item>SomeIgnoredText}");
+        logger.Trace($"Item: {item:<@Item>SomeFormatText}");
 
-        logger.LastMessage.Should().Be("Item: OrderItem { CartId: 123, ItemId: 456, Quantity: 1 }");
+        // OrderItem doesn't implement IFormattable, so the trailing format text has no visible
+        // effect on its own rendering - but the message no longer goes through destructured
+        // rendering at all now that a format follows the tag, which is the observable part: it
+        // falls back to OrderItem's own record-generated ToString() ("=", not the destructuring
+        // renderer's ":") instead of LogPropertyDestructuring's output.
+        logger.LastMessage.Should().Be("Item: OrderItem { CartId = 123, ItemId = 456, Quantity = 1 }");
+        KeyValuePair<string, object?> property = logger.LastProperties.Should().ContainSingle().Which;
+        property.Key.Should().Be("@Item");
+        property.Value.Should().BeSameAs(item);
+    }
+
+    [Fact]
+    public void TaggedDestructuringFormat_WithTrailingNumericFormat_FormatsMessageInsteadOfDestructuring()
+    {
+        RecordingLogger logger = new();
+        double amount = 3.14159;
+
+        logger.Information($"Total: {amount:<@Amount>F3}");
+
+        logger.LastMessage.Should().Be("Total: 3.142");
+        KeyValuePair<string, object?> property = logger.LastProperties.Should().ContainSingle().Which;
+        property.Key.Should().Be("@Amount");
+        property.Value.Should().Be(amount);
+    }
+
+    [Fact]
+    public void EmptyDestructuringTag_WithTrailingFormat_BehavesLikeEmptyTag_NoCapture()
+    {
+        RecordingLogger logger = new();
+        double amount = 3.14159;
+
+        logger.Information($"Total: {amount:<@>F3}");
+
+        logger.LastMessage.Should().Be("Total: 3.142");
+        logger.LastProperties.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void TaggedDestructuringFormat_WithAlignmentAndTrailingFormat_HonorsFormatForMessage()
+    {
+        RecordingLogger logger = new();
+        double amount = 3.14159;
+
+        logger.Information($"Total: {amount,8:<@Amount>F3}");
+
+        logger.LastMessage.Should().Be("Total:    3.142");
+        logger.LastProperties.Should().ContainSingle().Which.Key.Should().Be("@Amount");
     }
 
     [Fact]

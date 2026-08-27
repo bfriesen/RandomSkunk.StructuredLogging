@@ -42,14 +42,18 @@ opening an issue about.
 
 A few things under active consideration for future releases:
 
-- **Making the trailing format after a `<@PropertyName>` destructuring tag meaningful**, instead of
-  silently discarding it as it does today — letting the message text apply a real format (e.g.
-  `F3`) while the captured property still signals to a downstream sink that the raw value should be
-  destructured. This is a real behavior change, not just an addition, so it'll come with its own
-  version bump and a closer look at the exact rules once it's settled.
 - **A couple of small "unnecessary tag" analyzers** — for instance, flagging a `<>` no-capture
   escape hatch used in a case where it isn't actually needed (nothing about the surrounding format
-  starts with `<`), since it's easy to reach for out of habit even where it does nothing.
+  starts with `<`), since it's easy to reach for out of habit even where it does nothing. Also
+  flagging the newly-meaningful-but-genuinely-ambiguous `<@>F3` — an empty destructuring tag with a
+  trailing format reads like it might mean either "destructure" or "format," and it's not obvious
+  at a glance which one wins (it's the format - see the trailing-format change below), so this is
+  worth a nudge toward whichever of `<>F3` or `<@>` the developer actually meant.
+
+The trailing format after a `<@PropertyName>` destructuring tag is no longer silently discarded, as
+of this post's writing — it's now honored for the message exactly like an ordinary `<PropertyName>`
+tag, while the captured property still gets an `@`-prefixed key to signal destructuring to a
+downstream sink. [Post 3](03-property-tags-deep-dive.md) covers the exact rules.
 
 Nothing here is committed to a release yet — if any of it would materially affect how you're using
 the library today, the issue tracker above is the place to weigh in before it ships.

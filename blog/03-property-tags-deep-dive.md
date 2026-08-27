@@ -73,14 +73,28 @@ Serilog-style destructured formatting.
 ```csharp
 logger.Trace($"Item added to cart: {item:<@Item>}");
 // message text:          "Item added to cart: OrderItem { CartId: 123, ItemId: 456, Quantity: 1 }"
-// structured properties:  Item = <the raw OrderItem instance>
+// structured properties:  @Item = <the raw OrderItem instance>
 ```
 
-The captured structured property is unaffected — it's still the raw `OrderItem` instance, exactly
-as if you'd used a plain `<Item>` tag. Destructuring only changes what ends up in the message text.
-Any format specifier text after a `<@...>` tag's closing `>` is parsed but ignored, since
-destructured rendering fully replaces ordinary formatting — there's no "destructure, but also
-apply this format string" combination.
+The captured value is unaffected — it's still the raw `OrderItem` instance. What *does* change is
+the property's key: it gets an `@` prefix (`@Item`, not `Item`) so a Serilog-style sink recognizes
+it as a request to destructure the raw value at processing time, rather than logging it as an
+opaque scalar. Destructuring is a request about *capture*, not just about the message - the two
+just happen to line up by default.
+
+That "by default" matters, because a format specifier *can* follow a `<@...>` tag, and when it
+does, it's honored for the message exactly like an ordinary `<PropertyName>` tag:
+
+```csharp
+logger.Information($"Total: {amount:<@Amount>F3}");
+// message text:          "Total: 3.142"                    (amount.ToString("F3"), not destructured)
+// structured properties: @Amount = <the raw amount value>  (still flagged for the sink to destructure)
+```
+
+That decouples "how the value looks in the message" from "how the sink should capture it" — you
+can format the message however reads best while still telling the sink this value is worth
+destructuring. Only when there's *no* trailing format does the message itself fall back to
+destructured rendering, which is the common case and the one shown in the first example above.
 
 Destructured rendering follows a small set of rules:
 
@@ -104,7 +118,10 @@ logger.Trace($"Item added to cart: {item:<@>}");
 // same message text, but nothing is added to the structured properties
 ```
 
-If you want neither destructured rendering nor capture, just skip the tag entirely.
+If you want neither destructured rendering nor capture, just skip the tag entirely. And if you
+stack a trailing format onto the empty form (`<@>F3`), it behaves exactly like the plain `<>F3`
+escape hatch from the previous section — no capture, format the message with `F3` — since once
+there's no property name, the `@` has nothing left to attach destructuring semantics to.
 
 ## Why this is cheap
 

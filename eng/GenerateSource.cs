@@ -93,7 +93,7 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
         ? $"logger.IsEnabled(LogLevel.{fixedLevel})"
         : "logger.IsEnabled(level)";
 
-    const string destructureDoc = " A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) additionally renders the value into the message using Serilog-style destructured formatting instead of <see cref=\"IFormattable\"/>/<see cref=\"object.ToString\"/> formatting; any format text after such a tag is ignored, and the captured property value (if any) is always the raw, undestructured value.";
+    const string destructureDoc = " A tag whose name starts with <c>@</c> (e.g. <c>&lt;@PropertyName&gt;</c> or <c>&lt;@&gt;</c>) requests Serilog-style destructured capture. If no format follows the tag, the value is also rendered into the message using destructured formatting instead of <see cref=\"IFormattable\"/>/<see cref=\"object.ToString\"/> formatting; if a format does follow the tag, that format is honored for the message exactly like an ordinary tag, and destructuring only affects how the property is captured. Either way, a captured property name is prefixed with <c>@</c> (e.g. <c>@PropertyName</c>) to signal the destructuring request downstream; the captured value itself is always the raw, undestructured value.";
 
     string typeSummary = fixedLevel is not null
         ? $"Interpolated string handler for the message parameter of the {fixedLevel}-level <see cref=\"StructuredLoggerExtensions\"/> methods. Building the message is skipped when the {fixedLevel} level is not enabled for the target <see cref=\"ILogger\"/>. A format starting with an <c>&lt;PropertyName&gt;</c> tag also captures that interpolated value as a structured property named <c>PropertyName</c>; any remaining format text after the tag is used to format the value in the message. An empty tag (<c>&lt;&gt;</c>) opts out of capturing while still allowing the remaining format to start with '&lt;'.{destructureDoc}"
@@ -172,9 +172,9 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    {");
     sb.AppendLine("        TagFormat tag = LogPropertyTagFormat.Parse(format);");
     sb.AppendLine("        if (tag.PropertyName is not null)");
-    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
+    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? \"@\" + tag.PropertyName : tag.PropertyName, value));");
     sb.AppendLine();
-    sb.AppendLine("        if (tag.Destructure)");
+    sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
     sb.AppendLine("            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));");
     sb.AppendLine("        else");
     sb.AppendLine("            _handler.AppendFormatted(value, tag.Format);");
@@ -207,9 +207,9 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    {");
     sb.AppendLine("        TagFormat tag = LogPropertyTagFormat.Parse(format);");
     sb.AppendLine("        if (tag.PropertyName is not null)");
-    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
+    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? \"@\" + tag.PropertyName : tag.PropertyName, value));");
     sb.AppendLine();
-    sb.AppendLine("        if (tag.Destructure)");
+    sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
     sb.AppendLine("            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);");
     sb.AppendLine("        else");
     sb.AppendLine("            _handler.AppendFormatted(value, alignment, tag.Format);");

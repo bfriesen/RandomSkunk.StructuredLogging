@@ -52,7 +52,7 @@ with `@` — only the message-rendering half of the behavior is even in play.
 
 Two options:
 
-- **(Leaning toward this one) Be consistent with the non-destructuring
+- **(Chosen) Be consistent with the non-destructuring
   `<>` escape hatch.** `<>F3` today means "no capture, use `F3` as the real
   format." By the same logic, `<@>F3` would mean "no capture, use `F3` as the
   real format" too — i.e., once there's no property name, the `@` no longer
@@ -70,10 +70,33 @@ Two options:
   between `<@Name>F3` (format honored) and `<@>F3` (format ignored) that
   would need to be called out explicitly in docs.
 
-**Status:** Undecided — leaning toward the first option (consistency with
-`<>`), but not settled. Needs a decision before implementation.
+**Status:** Decided - went with the first option. Implementation turned out
+to need no special-casing at all: once message rendering only special-cases
+`Destructure && Format is null` (see below), an empty tag with a trailing
+format falls out of that same rule automatically, since it was never about
+`PropertyName` being empty in the first place - just about whether `Format`
+is present.
 
-**Regardless of which option is chosen, add an analyzer.** `{amount:<@>F3}`
+**Implemented** (core behavior, not the analyzer below): `LogPropertyTagFormat`'s
+`TagFormat.Format` is now honored for the message whenever it's non-null,
+regardless of `Destructure` - `AppendFormatted<T>` only renders via
+`LogPropertyDestructuring.Render` when `Destructure && Format is null`, and
+otherwise defers to ordinary `IFormattable`/`ToString()` formatting exactly
+like a non-destructuring tag. A captured property (when `PropertyName` is
+non-null) is now keyed as `"@" + PropertyName` whenever `Destructure` is
+`true`, independent of whether a format follows the tag - matching the
+convention `LogPropertyTagFormatMigration`/`StructuredLoggerExtensionsInvocationMigration`
+in the analyzers project already used for round-tripping a destructuring
+tag through a `(string Name, T Value)` tuple argument (which has no
+separate `Destructure` flag to preserve otherwise), so this wasn't a new
+convention invented for this feature - it was already the established one
+elsewhere in the codebase. `eng/GenerateSource.cs`, `LogPropertyTagFormat.cs`'s
+doc comments, `CLAUDE.md`, `README.md`, and `notes/misuse-scenarios.md` #5
+are updated to match; `PropertyTagCaptureTests` covers the new
+trailing-format-honored and `@`-prefixed-capture behavior, including the
+alignment overload and the empty-tag-with-format case.
+
+**Still open: add an analyzer.** `{amount:<@>F3}`
 is inherently ambiguous to a reader — it's not obvious at a glance whether the
 trailing format is honored or discarded, since both an empty-property-name
 tag and destructuring are stacked together. Whichever behavior we pick, the
@@ -92,30 +115,11 @@ A code fix could offer both choices explicitly (one fix arm rewriting to
 `<>F3`-equivalent-with-destructuring-dropped, the other to `<@>` with the
 format text deleted), letting the developer pick which behavior they meant
 rather than requiring them to remember which one the ambiguous form silently
-resolves to. This analyzer is worth adding independent of which option for
-the open question above is chosen, since the ambiguity/confusion exists
-either way — it just makes the "simplify instead of relying on it" case even
-stronger once trailing-format-after-`<@Name>` becomes meaningful elsewhere.
-
-### Implementation notes (once decided)
-
-- `TagFormat.Format` is currently documented as "Ignored when `Destructure`
-  is `true`" — that doc comment and the callers that currently skip using
-  `Format` when `Destructure` is true (the `AppendFormatted<T>` overloads in
-  the generated interpolated-string-handler structs) need updating.
-- Need to decide the exact captured property name shape: is it always
-  `"@" + PropertyName"`, or should the library store `PropertyName` unprefixed
-  plus a separate `Destructure` flag on the captured entry (closer to how
-  `TagFormat` itself models it internally) and let the *sink integration*
-  decide whether/how to signal destructuring? Prefixing with `@` bakes in a
-  Serilog-specific convention; storing it unprefixed is more sink-agnostic
-  but requires each `ILogger`/sink pairing to know to look for a
-  library-specific "destructure this" signal, which today doesn't exist for
-  captured properties (`AddProperty`/tag-capture currently just deposit a
-  plain `object?` value).
-- Existing tests that assert trailing format after `<@...>` is ignored (if
-  any — check `PropertyTagCaptureTests`/`PropertyTagDestructuringTests`) will
-  need updating to assert the new behavior instead.
+resolves to. This analyzer is worth adding regardless of the option chosen
+above, since the ambiguity/confusion exists either way — it just makes the
+"simplify instead of relying on it" case even stronger now that
+trailing-format-after-`<@Name>` is meaningful elsewhere. Not yet
+implemented - this is the remaining part of item #1.
 
 ## 2. Analyzer: flag an unnecessary `<>` no-capture escape hatch
 

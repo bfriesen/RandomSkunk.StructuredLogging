@@ -185,13 +185,19 @@ names and tuple-arg names are almost always literals).
   *not* recognized as destructure-mode (the `@` check is position-exact at
   index 1) — instead `" @Foo"` (with leading space) becomes the literal
   property name.
-- Format text after a `<@...>` tag is silently discarded — `{amount:<@Amount>C}`
-  does not apply currency formatting; no warning.
+- ~~Format text after a `<@...>` tag is silently discarded~~ — **fixed**, see
+  `notes/planned-features.md` item #1. `{amount:<@Amount>C}` now applies
+  currency formatting to the message (instead of destructured rendering) and
+  still captures the property, as `@Amount`, for a downstream sink to
+  destructure. An empty destructuring tag with a trailing format (`<@>F3`)
+  behaves exactly like the plain `<>F3` escape hatch, consistent with the
+  fact that there's no property name left for the `@` to mean anything for.
+  What's still ambiguous: `{amount:<@>F3}` doesn't read obviously as "no
+  destructuring, format with F3" at a glance — `notes/planned-features.md`
+  item #1 tracks adding an analyzer for that specific combination.
 
-**Decision:** Document. Also consider an analyzer that flags format text
-following a `<@...>` tag (since it's always silently discarded) as a warning —
-worth a quick feasibility look, lower priority than #1/#3/#4 since it's a
-narrower case.
+**Decision:** Document the remaining points above (the stray-space pitfall,
+one-tag-per-hole).
 
 ## 6. Destructuring captures the raw value, not the rendered text
 

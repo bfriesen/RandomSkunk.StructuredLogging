@@ -106,26 +106,42 @@ hole is appended, rather than silently treating `<UserId` as a real format strin
 use the `<>` escape hatch shown above. The analyzers package catches this at compile time instead —
 see `RSSL0008` below.
 
-#### `<@PropertyName>` — Serilog-style destructured message text
+#### `<@PropertyName>` — Serilog-style destructured capture
 
-A tag whose name starts with `@` renders the value into the *message text* using Serilog-style
-destructured formatting instead of `ToString()`/`IFormattable` formatting, while still capturing
-the raw, undestructured value as the structured property (destructuring never changes what gets
-captured — only how it's rendered into the message):
+A tag whose name starts with `@` requests Serilog-style destructured capture. With no format after
+the tag, the value is also rendered into the *message text* using destructured formatting instead
+of `ToString()`/`IFormattable` formatting:
 
 ```csharp
 logger.Trace($"Item added to cart: {item:<@Item>}");
 // message text:          "Item added to cart: OrderItem { CartId: 123, ItemId: 456, Quantity: 1 }"
-// structured properties: Item = <the raw OrderItem instance>
+// structured properties: @Item = <the raw OrderItem instance>
 
 logger.Trace($"Item added to cart: {item:<@>}");
 // same message text, but the empty destructuring tag doesn't capture a structured property
 ```
 
+The captured property's key gets an `@` prefix (Serilog's own destructuring operator, distinct
+from this library's tag syntax) so a Serilog-style sink knows to destructure the raw value at
+processing time — the captured *value* is always the raw, undestructured object either way; only
+the key changes.
+
+A format after the tag is honored for the message exactly like an ordinary `<PropertyName>` tag,
+decoupling how the value looks in the message from how the sink should capture it:
+
+```csharp
+logger.Information($"Total: {amount:<@Amount>F3}");
+// message text:          "Total: 3.142"                      (amount.ToString("F3"), not destructured)
+// structured properties: @Amount = <the raw amount value>    (still flagged for the sink to destructure)
+```
+
 The empty destructuring tag (`<@>`) is only useful when you don't want to capture the value but
 still want it *rendered into the message* using destructured formatting rather than
 `ToString()`/`IFormattable`. If you don't want destructured rendering either, skip the tag
-entirely.
+entirely. A format after an empty destructuring tag (`<@>F3`) behaves exactly like a plain `<>F3`
+— no capture (there's no property name to prefix), format the message with `F3` — since once
+there's no name, the `@` has nothing left to attach destructuring semantics to for capture
+purposes.
 
 Rendering rules: objects render as `TypeName { Prop1: Value1, Prop2: Value2 }` (anonymous types
 omit the type name); collections render as `[item1, item2]`; dictionaries render as
@@ -133,8 +149,7 @@ omit the type name); collections render as `[item1, item2]`; dictionaries render
 `bool`, enums, `DateTime`, `Guid`, etc.) render unquoted using invariant culture; `null` renders as
 `null`. Nested objects/collections are capped at 10 levels deep and 10 items per
 collection/dictionary (both shown as `...` when exceeded), and a self-referencing object renders
-`<circular reference>` instead of recursing forever. Any format text after a `<@...>` tag's
-closing `>` is ignored, since destructured rendering fully replaces ordinary formatting.
+`<circular reference>` instead of recursing forever.
 
 ### 3. Dynamic properties, or more than 6 — build a collection
 
