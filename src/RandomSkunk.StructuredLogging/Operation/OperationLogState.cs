@@ -48,19 +48,47 @@ internal sealed class OperationLogState : IDisposable
 
         StartTime = DateTimeOffset.Now;
 
-        string operationLine = "Operation: " + operationName;
-        string? eventIdLine = eventId != default ? "EventId: " + eventId : null;
-        string startTimeLine = string.Create(
-            CultureInfo.InvariantCulture,
-            $"Start Time: {StartTime:yyyy-MM-dd HH:mm:ss.fff zzz}");
-        int dashCount = Math.Max(operationLine.Length, Math.Max(eventIdLine?.Length ?? 0, startTimeLine.Length));
+        // Each header line is appended straight to the journal and measured in place, rather than being
+        // built as its own string first just so the dashed rule can be sized to the longest of them - the
+        // line's length is simply how far the journal grew while writing it.
+        int dashCount = 0;
 
-        _journal.Append(operationLine).Append('\n');
-        if (eventIdLine is not null)
-            _journal.Append(eventIdLine).Append('\n');
-        _journal.Append(startTimeLine).Append('\n');
+        _journal.Append("Operation: ").Append(operationName);
+        dashCount = EndHeaderLine(_journal, dashCount, lineStart: 0);
+
+        if (eventId != default)
+        {
+            int lineStart = _journal.Length;
+            _journal.Append("EventId: ");
+
+            // EventId.ToString() is `Name ?? Id.ToString(InvariantCulture)`; spelling that out here keeps
+            // the same text without allocating it as a string on the way in.
+            if (eventId.Name is string eventIdName)
+                _journal.Append(eventIdName);
+            else
+                _journal.Append(CultureInfo.InvariantCulture, $"{eventId.Id}");
+
+            dashCount = EndHeaderLine(_journal, dashCount, lineStart);
+        }
+
+        int startTimeLineStart = _journal.Length;
+        _journal.Append(CultureInfo.InvariantCulture, $"Start Time: {StartTime:yyyy-MM-dd HH:mm:ss.fff zzz}");
+        dashCount = EndHeaderLine(_journal, dashCount, startTimeLineStart);
+
         _journal.Append('-', dashCount);
         Stopwatch = Stopwatch.StartNew();
+    }
+
+    /// <summary>
+    /// Terminates a header line just written to <paramref name="journal"/> starting at
+    /// <paramref name="lineStart"/>, returning the running longest-line length the dashed rule under the
+    /// header is sized from.
+    /// </summary>
+    private static int EndHeaderLine(StringBuilder journal, int dashCount, int lineStart)
+    {
+        int lineLength = journal.Length - lineStart;
+        journal.Append('\n');
+        return Math.Max(dashCount, lineLength);
     }
 
     public void AddProperty(string propertyName, object? value) =>

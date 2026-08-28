@@ -155,6 +155,46 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void Journal_WithUnnamedEventId_UsesEventIdNumberInHeaderLine()
+    {
+        RecordingLogger logger = new();
+        EventId eventId = new(42);
+
+        using (logger.BeginOperation(eventId, "Name"))
+        {
+        }
+
+        string journal = logger.LastMessage!;
+
+        // An EventId with no name renders as its number - the header has to match EventId.ToString()
+        // exactly, since that's what it used to be built from.
+        journal.Should().Contain("\nEventId: 42\n");
+        journal.Should().Contain($"\nEventId: {eventId}\n");
+    }
+
+    [Fact]
+    public void Journal_WithNegativeUnnamedEventId_UsesInvariantNegativeSign()
+    {
+        CultureInfo originalCulture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fr-FR");
+
+        try
+        {
+            RecordingLogger logger = new();
+
+            using (logger.BeginOperation(new EventId(-7), "Name"))
+            {
+            }
+
+            logger.LastMessage.Should().Contain("\nEventId: -7\n");
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
+    }
+
+    [Fact]
     public void Journal_TimestampsUseInvariantCultureRegardlessOfCurrentCulture()
     {
         CultureInfo originalCulture = CultureInfo.CurrentCulture;
