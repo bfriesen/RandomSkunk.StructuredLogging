@@ -20,7 +20,8 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
     
     private int _disposed;
 
-    public IReadOnlyList<KeyValuePair<string, object?>> Properties => _state.Properties ?? [];
+    public IReadOnlyList<KeyValuePair<string, object?>> Properties =>
+        _state.Properties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 
     public EventId EventId => _state.EventId;
 

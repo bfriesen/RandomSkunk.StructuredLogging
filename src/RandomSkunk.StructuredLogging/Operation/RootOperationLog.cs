@@ -49,7 +49,7 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
             _state.AddProperty("Operation.Result", _state.Result);
 
         _state.Logger.Write(
-            _state.Properties ?? [],
+            _state.Properties ?? (IReadOnlyCollection<KeyValuePair<string, object?>>)[],
             _state.Level,
             _state.EventId,
             _state.Exception,

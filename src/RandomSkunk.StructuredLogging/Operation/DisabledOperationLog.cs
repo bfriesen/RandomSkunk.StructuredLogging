@@ -22,7 +22,7 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog
     public object Gate => this;
 
     public IReadOnlyList<KeyValuePair<string, object?>> Properties =>
-        (IReadOnlyList<KeyValuePair<string, object?>>?)_properties ?? [];
+        _properties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 
     public EventId EventId => eventId;
 

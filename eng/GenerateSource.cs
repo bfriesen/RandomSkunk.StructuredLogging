@@ -236,7 +236,7 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    internal string ToStringAndClear() => _handler.ToStringAndClear();");
     sb.AppendLine();
     sb.AppendLine("    internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>");
-    sb.AppendLine("        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();");
+    sb.AppendLine("        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];");
     sb.AppendLine("}");
 }
 

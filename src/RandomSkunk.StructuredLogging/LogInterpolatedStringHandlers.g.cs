@@ -106,7 +106,7 @@ public ref struct TraceInterpolatedStringHandler
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
-        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 }
 
 /// <summary>
@@ -209,7 +209,7 @@ public ref struct DebugInterpolatedStringHandler
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
-        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 }
 
 /// <summary>
@@ -312,7 +312,7 @@ public ref struct InformationInterpolatedStringHandler
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
-        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 }
 
 /// <summary>
@@ -415,7 +415,7 @@ public ref struct WarningInterpolatedStringHandler
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
-        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 }
 
 /// <summary>
@@ -518,7 +518,7 @@ public ref struct ErrorInterpolatedStringHandler
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
-        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 }
 
 /// <summary>
@@ -621,7 +621,7 @@ public ref struct CriticalInterpolatedStringHandler
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
-        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 }
 
 /// <summary>
@@ -725,5 +725,5 @@ public ref struct WriteInterpolatedStringHandler
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
     internal IReadOnlyList<KeyValuePair<string, object?>> GetCapturedProperties() =>
-        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)Array.Empty<KeyValuePair<string, object?>>();
+        _capturedProperties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 }
