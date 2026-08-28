@@ -24,10 +24,27 @@ internal sealed class ObjectPool<T>(Func<T> factory, Action<T> reset, Func<T, bo
 
     private readonly ConcurrentBag<T> _items = [];
 
+    // Tracks _items.Count without ever reading ConcurrentBag<T>.Count, which freezes the bag - it takes
+    // the global lock plus every per-thread queue lock - to produce an exact answer. That's around 50ns
+    // per call and doesn't scale at all: reading it from every Return serializes the whole pool, which is
+    // precisely the wrong behavior for the threadSafe path, where the Journals pool sees a rent/return
+    // per Append rather than one per operation. This counter is kept in lockstep with _items instead:
+    // incremented before an Add and decremented after a successful TryTake, so the only skew a racing
+    // thread can observe is the pool looking momentarily fuller than it is - which at worst drops an item
+    // that could have been pooled. MaxSize is a heuristic, so that's a fine trade for an uncontended read.
+    private int _count;
+
     /// <summary>
     /// Rents an item from the pool, or creates a new one if the pool is empty.
     /// </summary>
-    public T Rent() => _items.TryTake(out T? item) ? item : factory();
+    public T Rent()
+    {
+        if (!_items.TryTake(out T? item))
+            return factory();
+
+        Interlocked.Decrement(ref _count);
+        return item;
+    }
 
     /// <summary>
     /// Resets <paramref name="item"/> and, if the pool isn't already at capacity and <c>shouldPool</c>
@@ -38,7 +55,10 @@ internal sealed class ObjectPool<T>(Func<T> factory, Action<T> reset, Func<T, bo
     {
         reset(item);
 
-        if (_items.Count < MaxSize && shouldPool(item))
-            _items.Add(item);
+        if (Volatile.Read(ref _count) >= MaxSize || !shouldPool(item))
+            return;
+
+        Interlocked.Increment(ref _count);
+        _items.Add(item);
     }
 }
