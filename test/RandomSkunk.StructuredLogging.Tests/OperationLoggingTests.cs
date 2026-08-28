@@ -969,6 +969,91 @@ public class OperationLoggingTests
         act2.Should().Throw<ArgumentNullException>();
     }
 
+    [Fact]
+    public void AppendValue_NullValue_RendersNullLiteral()
+    {
+        RecordingLogger logger = new();
+        string? missing = null;
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.AppendValue(missing);
+
+        logger.LastMessage.Should().Contain("`missing`: null");
+    }
+
+    [Fact]
+    public void AppendValue_NonFormattableValue_UsesToString()
+    {
+        RecordingLogger logger = new();
+        NonFormattable value = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.AppendValue(value);
+
+        logger.LastMessage.Should().Contain("`value`: custom-to-string");
+    }
+
+    [Fact]
+    public void AppendValue_ToStringReturnsNull_RendersNullLiteral()
+    {
+        RecordingLogger logger = new();
+        NullToString value = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.AppendValue(value);
+
+        logger.LastMessage.Should().Contain("`value`: null");
+    }
+
+    [Fact]
+    public void AppendValue_UsesInvariantCultureRegardlessOfCurrentCulture()
+    {
+        CultureInfo originalCulture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fr-FR");
+
+        try
+        {
+            RecordingLogger logger = new();
+            decimal total = 42.5m;
+            double ratio = 0.25d;
+
+            using (IOperationLog log = logger.BeginOperation("Name"))
+                log.AppendValue(total).AppendValue(ratio);
+
+            // fr-FR would render these as "42,5" / "0,25" if the current culture leaked in.
+            logger.LastMessage.Should().Contain("`total`: 42.5");
+            logger.LastMessage.Should().Contain("`ratio`: 0.25");
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
+    }
+
+    [Fact]
+    public void SubOperation_SetResult_NullValue_RendersNullLiteral()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            using IOperationLog subLog = log.BeginSubOperation("Fetch");
+            subLog.SetResult<string?>(null);
+        }
+
+        logger.LastMessage.Should().Contain("`Fetch` result: null");
+    }
+
+    private sealed class NonFormattable
+    {
+        public override string ToString() => "custom-to-string";
+    }
+
+    private sealed class NullToString
+    {
+        public override string? ToString() => null;
+    }
+
     private static int CountOccurrences(string text, string value)
     {
         int count = 0;

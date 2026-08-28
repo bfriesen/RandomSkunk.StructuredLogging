@@ -14,16 +14,33 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// </summary>
 internal static class ValueFormatting
 {
-    public static string Format<T>(T value)
+    /// <summary>
+    /// Appends <paramref name="value"/> to <paramref name="journal"/> as plain text, rendered via
+    /// <see cref="IFormattable"/>/<see cref="object.ToString"/> with
+    /// <see cref="CultureInfo.InvariantCulture"/>, or the literal <c>null</c> when it has no text of its
+    /// own. Appends rather than returning a <see cref="string"/> so that a value the journal is only going
+    /// to absorb anyway never becomes an intermediate allocation: for the common case of an
+    /// <see cref="ISpanFormattable"/> value (every built-in numeric type, <see cref="DateTime"/>,
+    /// <see cref="Guid"/>, ...) the interpolated string handler formats it straight into
+    /// <paramref name="journal"/>'s current chunk, with neither a boxed value nor a rendered string.
+    /// </summary>
+    public static void AppendValue<T>(StringBuilder journal, T value)
     {
-        object? boxed = value;
-
-        return boxed switch
+        if (value is null)
         {
-            null => "null",
-            IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
-            _ => boxed.ToString() ?? "null",
-        };
+            journal.Append("null");
+            return;
+        }
+
+        if (value is IFormattable)
+        {
+            journal.Append(CultureInfo.InvariantCulture, $"{value}");
+            return;
+        }
+
+        // Not IFormattable, so there's nothing to format into - ToString() is the only rendering available,
+        // and a type whose ToString() returns null still reads as "null" in the journal.
+        journal.Append(value.ToString() ?? "null");
     }
 
     /// <summary>

@@ -59,7 +59,8 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
 
     public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
-        BeginJournalEntry().Append($"`{valueName}`: {ValueFormatting.Format(value)}");
+        StringBuilder journal = BeginJournalEntry().Append($"`{valueName}`: ");
+        ValueFormatting.AppendValue(journal, value);
         return (TSelf)this;
     }
 

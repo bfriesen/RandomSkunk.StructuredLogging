@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging.Operation;
@@ -22,7 +23,8 @@ internal sealed class ChildOperationLog(OperationLogState state, string operatio
     public IOperationLog SetResult<T>(T value)
     {
         _state.ThrowIfDisposed();
-        _state.BeginJournalEntry().Append($"`{_operationName}` result: {ValueFormatting.Format(value)}");
+        StringBuilder journal = _state.BeginJournalEntry().Append($"`{_operationName}` result: ");
+        ValueFormatting.AppendValue(journal, value);
         return this;
     }
 
