@@ -24,9 +24,13 @@ internal static class LogPropertyDestructuring
     private const int MaxDepth = 10;
     private const int MaxCollectionItems = 10;
 
-    // Reflected property lists are cached per-Type since destructuring is reflection-based and a
-    // given type is typically destructured repeatedly across many log calls.
-    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> PropertyCache = new();
+    // Reflected property lists and the display name (or null for an anonymous type, which omits
+    // the type name entirely) are cached together per-Type, since destructuring is
+    // reflection-based and a given type is typically destructured repeatedly across many log
+    // calls - both are pure functions of Type alone, so there's no reason to redo either the
+    // reflection or the (for a generic type, non-trivial) display-name string building on every
+    // single call.
+    private static readonly ConcurrentDictionary<Type, DestructuringTypeInfo> TypeCache = new();
 
     /// <summary>
     /// Renders <paramref name="value"/> as Serilog-style destructured text.
@@ -88,10 +92,10 @@ internal static class LogPropertyDestructuring
             return;
         }
 
-        AppendObject(sb, value, type, depth, ancestors, showTypeName: !IsAnonymousType(type));
+        AppendObject(sb, value, type, depth, ancestors);
     }
 
-    private static void AppendObject(StringBuilder sb, object value, Type type, int depth, HashSet<object>? ancestors, bool showTypeName)
+    private static void AppendObject(StringBuilder sb, object value, Type type, int depth, HashSet<object>? ancestors)
     {
         if (!TryEnter(value, type, ref ancestors))
         {
@@ -101,18 +105,20 @@ internal static class LogPropertyDestructuring
 
         try
         {
-            if (showTypeName)
+            DestructuringTypeInfo typeInfo = TypeCache.GetOrAdd(type, static t => new DestructuringTypeInfo(
+                DisplayName: IsAnonymousType(t) ? null : GetFriendlyTypeName(t),
+                Properties: [.. t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(p => p.CanRead && p.GetIndexParameters().Length == 0)]));
+
+            if (typeInfo.DisplayName is not null)
             {
-                sb.Append(GetFriendlyTypeName(type));
+                sb.Append(typeInfo.DisplayName);
                 sb.Append(' ');
             }
 
             sb.Append('{');
 
-            PropertyInfo[] properties = PropertyCache.GetOrAdd(
-                type, static t => [..
-                    t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                        .Where(p => p.CanRead && p.GetIndexParameters().Length == 0)]);
+            PropertyInfo[] properties = typeInfo.Properties;
 
             for (int i = 0; i < properties.Length; i++)
             {
@@ -303,4 +309,8 @@ internal static class LogPropertyDestructuring
         string typeArgs = string.Join(", ", type.GetGenericArguments().Select(GetFriendlyTypeName));
         return $"{name}<{typeArgs}>";
     }
+
+    // DisplayName is null for an anonymous type, which omits the type name from the rendered
+    // output entirely - see AppendObject.
+    private sealed record DestructuringTypeInfo(string? DisplayName, PropertyInfo[] Properties);
 }
