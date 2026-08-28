@@ -32,19 +32,26 @@ internal static class LogPropertyTagFormat
 
     private static TagFormat ParseCore(string format)
     {
+        // format is known to start with '<' (checked by Parse). A '@' immediately after it
+        // marks a destructuring tag, but that '@' is deliberately left in place rather than
+        // skipped: slicing the tag starting right after '<' means a destructuring tag's name
+        // (e.g. "@PropertyName") already carries its '@' prefix once `tag` is turned into a
+        // string below, with no separate string concatenation needed to add it back.
         ReadOnlySpan<char> span = format;
         bool destructure = span.Length > 1 && span[1] == '@';
-        int tagStart = destructure ? 2 : 1;
-        int closeIndex = span[tagStart..].IndexOf('>');
+        int closeIndex = span[1..].IndexOf('>');
 
         if (closeIndex < 0)
             throw new UnterminatedLogPropertyTagException(format);
 
-        ReadOnlySpan<char> tag = span.Slice(tagStart, closeIndex);
-        ReadOnlySpan<char> remaining = span[(tagStart + closeIndex + 1)..];
+        ReadOnlySpan<char> tag = span.Slice(1, closeIndex);
+        ReadOnlySpan<char> remaining = span[(closeIndex + 2)..];
 
+        // An empty tag ("<>") or a bare destructuring tag with no name ("<@>") both mean "no
+        // property to capture" - the latter is just "@" once sliced, since the '@' was kept
+        // rather than stripped.
         return new TagFormat(
-            tag.IsEmpty ? null : tag.ToString(),
+            tag.IsEmpty || (tag.Length == 1 && tag[0] == '@') ? null : tag.ToString(),
             remaining.IsEmpty ? null : remaining.ToString(),
             destructure);
     }
@@ -71,7 +78,11 @@ public sealed class UnterminatedLogPropertyTagException : FormatException
 /// format text to use when formatting the value into the message, and whether the tag requested
 /// Serilog-style destructured formatting (a "&lt;@..." tag).
 /// </summary>
-/// <param name="PropertyName">The structured property name to capture the value under, or <see langword="null"/> if none.</param>
+/// <param name="PropertyName">
+/// The structured property name to capture the value under, or <see langword="null"/> if none.
+/// Already carries the '@' prefix when <paramref name="Destructure"/> is <see langword="true"/>,
+/// so callers can use it as-is without re-checking <paramref name="Destructure"/>.
+/// </param>
 /// <param name="Format">
 /// The remaining format text after the tag, or <see langword="null"/> if there is none. When
 /// <paramref name="Destructure"/> is <see langword="true"/> and this is <see langword="null"/>,

@@ -172,7 +172,7 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    {");
     sb.AppendLine("        TagFormat tag = LogPropertyTagFormat.Parse(format);");
     sb.AppendLine("        if (tag.PropertyName is not null)");
-    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? \"@\" + tag.PropertyName : tag.PropertyName, value));");
+    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
     sb.AppendLine();
     sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
     sb.AppendLine("            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));");
@@ -207,7 +207,7 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    {");
     sb.AppendLine("        TagFormat tag = LogPropertyTagFormat.Parse(format);");
     sb.AppendLine("        if (tag.PropertyName is not null)");
-    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? \"@\" + tag.PropertyName : tag.PropertyName, value));");
+    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
     sb.AppendLine();
     sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
     sb.AppendLine("            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);");

@@ -55,7 +55,7 @@ public ref struct TraceInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
@@ -82,7 +82,7 @@ public ref struct TraceInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
@@ -158,7 +158,7 @@ public ref struct DebugInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
@@ -185,7 +185,7 @@ public ref struct DebugInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
@@ -261,7 +261,7 @@ public ref struct InformationInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
@@ -288,7 +288,7 @@ public ref struct InformationInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
@@ -364,7 +364,7 @@ public ref struct WarningInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
@@ -391,7 +391,7 @@ public ref struct WarningInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
@@ -467,7 +467,7 @@ public ref struct ErrorInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
@@ -494,7 +494,7 @@ public ref struct ErrorInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
@@ -570,7 +570,7 @@ public ref struct CriticalInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
@@ -597,7 +597,7 @@ public ref struct CriticalInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
@@ -674,7 +674,7 @@ public ref struct WriteInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
@@ -701,7 +701,7 @@ public ref struct WriteInterpolatedStringHandler
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
         if (tag.PropertyName is not null)
-            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.Destructure ? "@" + tag.PropertyName : tag.PropertyName, value));
+            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
             _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
