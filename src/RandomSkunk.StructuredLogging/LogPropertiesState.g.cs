@@ -14,28 +14,35 @@ internal readonly struct LogPropertiesState<T1> : IReadOnlyList<KeyValuePair<str
     public static readonly Func<LogPropertiesState<T1>, Exception?, string> Formatter = static (state, _) => state._message;
 
     private readonly string _message;
-    private readonly IReadOnlyList<KeyValuePair<string, object?>> _explicitProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _logProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _capturedProperties;
     private readonly string _name1;
     private readonly T1 _value1;
 
-    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> explicitProperties, (string Name, T1 Value) property1)
+    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> logProperties, IReadOnlyList<KeyValuePair<string, object?>> capturedProperties, (string Name, T1 Value) property1)
     {
         _message = message;
-        _explicitProperties = explicitProperties;
+        _logProperties = logProperties;
+        _capturedProperties = capturedProperties;
         _name1 = property1.Name;
         _value1 = property1.Value;
     }
 
-    public int Count => _explicitProperties.Count + 1;
+    public int Count => _logProperties.Count + _capturedProperties.Count + 1;
 
     public KeyValuePair<string, object?> this[int index]
     {
         get
         {
-            if (index < _explicitProperties.Count)
-                return _explicitProperties[index];
+            if (index < _logProperties.Count)
+                return _logProperties[index];
 
-            return (index - _explicitProperties.Count) switch
+            index -= _logProperties.Count;
+
+            if (index < _capturedProperties.Count)
+                return _capturedProperties[index];
+
+            return (index - _capturedProperties.Count) switch
             {
                 0 => new(_name1, _value1),
                 _ => throw new ArgumentOutOfRangeException(nameof(index)),
@@ -64,32 +71,39 @@ internal readonly struct LogPropertiesState<T1, T2> : IReadOnlyList<KeyValuePair
     public static readonly Func<LogPropertiesState<T1, T2>, Exception?, string> Formatter = static (state, _) => state._message;
 
     private readonly string _message;
-    private readonly IReadOnlyList<KeyValuePair<string, object?>> _explicitProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _logProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _capturedProperties;
     private readonly string _name1;
     private readonly T1 _value1;
     private readonly string _name2;
     private readonly T2 _value2;
 
-    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> explicitProperties, (string Name, T1 Value) property1, (string Name, T2 Value) property2)
+    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> logProperties, IReadOnlyList<KeyValuePair<string, object?>> capturedProperties, (string Name, T1 Value) property1, (string Name, T2 Value) property2)
     {
         _message = message;
-        _explicitProperties = explicitProperties;
+        _logProperties = logProperties;
+        _capturedProperties = capturedProperties;
         _name1 = property1.Name;
         _value1 = property1.Value;
         _name2 = property2.Name;
         _value2 = property2.Value;
     }
 
-    public int Count => _explicitProperties.Count + 2;
+    public int Count => _logProperties.Count + _capturedProperties.Count + 2;
 
     public KeyValuePair<string, object?> this[int index]
     {
         get
         {
-            if (index < _explicitProperties.Count)
-                return _explicitProperties[index];
+            if (index < _logProperties.Count)
+                return _logProperties[index];
 
-            return (index - _explicitProperties.Count) switch
+            index -= _logProperties.Count;
+
+            if (index < _capturedProperties.Count)
+                return _capturedProperties[index];
+
+            return (index - _capturedProperties.Count) switch
             {
                 0 => new(_name1, _value1),
                 1 => new(_name2, _value2),
@@ -119,7 +133,8 @@ internal readonly struct LogPropertiesState<T1, T2, T3> : IReadOnlyList<KeyValue
     public static readonly Func<LogPropertiesState<T1, T2, T3>, Exception?, string> Formatter = static (state, _) => state._message;
 
     private readonly string _message;
-    private readonly IReadOnlyList<KeyValuePair<string, object?>> _explicitProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _logProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _capturedProperties;
     private readonly string _name1;
     private readonly T1 _value1;
     private readonly string _name2;
@@ -127,10 +142,11 @@ internal readonly struct LogPropertiesState<T1, T2, T3> : IReadOnlyList<KeyValue
     private readonly string _name3;
     private readonly T3 _value3;
 
-    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> explicitProperties, (string Name, T1 Value) property1, (string Name, T2 Value) property2, (string Name, T3 Value) property3)
+    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> logProperties, IReadOnlyList<KeyValuePair<string, object?>> capturedProperties, (string Name, T1 Value) property1, (string Name, T2 Value) property2, (string Name, T3 Value) property3)
     {
         _message = message;
-        _explicitProperties = explicitProperties;
+        _logProperties = logProperties;
+        _capturedProperties = capturedProperties;
         _name1 = property1.Name;
         _value1 = property1.Value;
         _name2 = property2.Name;
@@ -139,16 +155,21 @@ internal readonly struct LogPropertiesState<T1, T2, T3> : IReadOnlyList<KeyValue
         _value3 = property3.Value;
     }
 
-    public int Count => _explicitProperties.Count + 3;
+    public int Count => _logProperties.Count + _capturedProperties.Count + 3;
 
     public KeyValuePair<string, object?> this[int index]
     {
         get
         {
-            if (index < _explicitProperties.Count)
-                return _explicitProperties[index];
+            if (index < _logProperties.Count)
+                return _logProperties[index];
 
-            return (index - _explicitProperties.Count) switch
+            index -= _logProperties.Count;
+
+            if (index < _capturedProperties.Count)
+                return _capturedProperties[index];
+
+            return (index - _capturedProperties.Count) switch
             {
                 0 => new(_name1, _value1),
                 1 => new(_name2, _value2),
@@ -179,7 +200,8 @@ internal readonly struct LogPropertiesState<T1, T2, T3, T4> : IReadOnlyList<KeyV
     public static readonly Func<LogPropertiesState<T1, T2, T3, T4>, Exception?, string> Formatter = static (state, _) => state._message;
 
     private readonly string _message;
-    private readonly IReadOnlyList<KeyValuePair<string, object?>> _explicitProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _logProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _capturedProperties;
     private readonly string _name1;
     private readonly T1 _value1;
     private readonly string _name2;
@@ -189,10 +211,11 @@ internal readonly struct LogPropertiesState<T1, T2, T3, T4> : IReadOnlyList<KeyV
     private readonly string _name4;
     private readonly T4 _value4;
 
-    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> explicitProperties, (string Name, T1 Value) property1, (string Name, T2 Value) property2, (string Name, T3 Value) property3, (string Name, T4 Value) property4)
+    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> logProperties, IReadOnlyList<KeyValuePair<string, object?>> capturedProperties, (string Name, T1 Value) property1, (string Name, T2 Value) property2, (string Name, T3 Value) property3, (string Name, T4 Value) property4)
     {
         _message = message;
-        _explicitProperties = explicitProperties;
+        _logProperties = logProperties;
+        _capturedProperties = capturedProperties;
         _name1 = property1.Name;
         _value1 = property1.Value;
         _name2 = property2.Name;
@@ -203,16 +226,21 @@ internal readonly struct LogPropertiesState<T1, T2, T3, T4> : IReadOnlyList<KeyV
         _value4 = property4.Value;
     }
 
-    public int Count => _explicitProperties.Count + 4;
+    public int Count => _logProperties.Count + _capturedProperties.Count + 4;
 
     public KeyValuePair<string, object?> this[int index]
     {
         get
         {
-            if (index < _explicitProperties.Count)
-                return _explicitProperties[index];
+            if (index < _logProperties.Count)
+                return _logProperties[index];
 
-            return (index - _explicitProperties.Count) switch
+            index -= _logProperties.Count;
+
+            if (index < _capturedProperties.Count)
+                return _capturedProperties[index];
+
+            return (index - _capturedProperties.Count) switch
             {
                 0 => new(_name1, _value1),
                 1 => new(_name2, _value2),
@@ -244,7 +272,8 @@ internal readonly struct LogPropertiesState<T1, T2, T3, T4, T5> : IReadOnlyList<
     public static readonly Func<LogPropertiesState<T1, T2, T3, T4, T5>, Exception?, string> Formatter = static (state, _) => state._message;
 
     private readonly string _message;
-    private readonly IReadOnlyList<KeyValuePair<string, object?>> _explicitProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _logProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _capturedProperties;
     private readonly string _name1;
     private readonly T1 _value1;
     private readonly string _name2;
@@ -256,10 +285,11 @@ internal readonly struct LogPropertiesState<T1, T2, T3, T4, T5> : IReadOnlyList<
     private readonly string _name5;
     private readonly T5 _value5;
 
-    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> explicitProperties, (string Name, T1 Value) property1, (string Name, T2 Value) property2, (string Name, T3 Value) property3, (string Name, T4 Value) property4, (string Name, T5 Value) property5)
+    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> logProperties, IReadOnlyList<KeyValuePair<string, object?>> capturedProperties, (string Name, T1 Value) property1, (string Name, T2 Value) property2, (string Name, T3 Value) property3, (string Name, T4 Value) property4, (string Name, T5 Value) property5)
     {
         _message = message;
-        _explicitProperties = explicitProperties;
+        _logProperties = logProperties;
+        _capturedProperties = capturedProperties;
         _name1 = property1.Name;
         _value1 = property1.Value;
         _name2 = property2.Name;
@@ -272,16 +302,21 @@ internal readonly struct LogPropertiesState<T1, T2, T3, T4, T5> : IReadOnlyList<
         _value5 = property5.Value;
     }
 
-    public int Count => _explicitProperties.Count + 5;
+    public int Count => _logProperties.Count + _capturedProperties.Count + 5;
 
     public KeyValuePair<string, object?> this[int index]
     {
         get
         {
-            if (index < _explicitProperties.Count)
-                return _explicitProperties[index];
+            if (index < _logProperties.Count)
+                return _logProperties[index];
 
-            return (index - _explicitProperties.Count) switch
+            index -= _logProperties.Count;
+
+            if (index < _capturedProperties.Count)
+                return _capturedProperties[index];
+
+            return (index - _capturedProperties.Count) switch
             {
                 0 => new(_name1, _value1),
                 1 => new(_name2, _value2),
@@ -314,7 +349,8 @@ internal readonly struct LogPropertiesState<T1, T2, T3, T4, T5, T6> : IReadOnlyL
     public static readonly Func<LogPropertiesState<T1, T2, T3, T4, T5, T6>, Exception?, string> Formatter = static (state, _) => state._message;
 
     private readonly string _message;
-    private readonly IReadOnlyList<KeyValuePair<string, object?>> _explicitProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _logProperties;
+    private readonly IReadOnlyList<KeyValuePair<string, object?>> _capturedProperties;
     private readonly string _name1;
     private readonly T1 _value1;
     private readonly string _name2;
@@ -328,10 +364,11 @@ internal readonly struct LogPropertiesState<T1, T2, T3, T4, T5, T6> : IReadOnlyL
     private readonly string _name6;
     private readonly T6 _value6;
 
-    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> explicitProperties, (string Name, T1 Value) property1, (string Name, T2 Value) property2, (string Name, T3 Value) property3, (string Name, T4 Value) property4, (string Name, T5 Value) property5, (string Name, T6 Value) property6)
+    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> logProperties, IReadOnlyList<KeyValuePair<string, object?>> capturedProperties, (string Name, T1 Value) property1, (string Name, T2 Value) property2, (string Name, T3 Value) property3, (string Name, T4 Value) property4, (string Name, T5 Value) property5, (string Name, T6 Value) property6)
     {
         _message = message;
-        _explicitProperties = explicitProperties;
+        _logProperties = logProperties;
+        _capturedProperties = capturedProperties;
         _name1 = property1.Name;
         _value1 = property1.Value;
         _name2 = property2.Name;
@@ -346,16 +383,21 @@ internal readonly struct LogPropertiesState<T1, T2, T3, T4, T5, T6> : IReadOnlyL
         _value6 = property6.Value;
     }
 
-    public int Count => _explicitProperties.Count + 6;
+    public int Count => _logProperties.Count + _capturedProperties.Count + 6;
 
     public KeyValuePair<string, object?> this[int index]
     {
         get
         {
-            if (index < _explicitProperties.Count)
-                return _explicitProperties[index];
+            if (index < _logProperties.Count)
+                return _logProperties[index];
 
-            return (index - _explicitProperties.Count) switch
+            index -= _logProperties.Count;
+
+            if (index < _capturedProperties.Count)
+                return _capturedProperties[index];
+
+            return (index - _capturedProperties.Count) switch
             {
                 0 => new(_name1, _value1),
                 1 => new(_name2, _value2),

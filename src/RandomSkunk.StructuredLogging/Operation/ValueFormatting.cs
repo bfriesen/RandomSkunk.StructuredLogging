@@ -14,12 +14,17 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// </summary>
 internal static class ValueFormatting
 {
-    public static string Format<T>(T value) => value switch
+    public static string Format<T>(T value)
     {
-        null => "null",
-        IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
-        _ => value.ToString() ?? "null",
-    };
+        object? boxed = value;
+
+        return boxed switch
+        {
+            null => "null",
+            IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
+            _ => boxed.ToString() ?? "null",
+        };
+    }
 
     /// <summary>
     /// Serializes <paramref name="value"/> as indented JSON directly into <paramref name="journal"/>,

@@ -275,7 +275,8 @@ static void AppendGenericState(StringBuilder sb, int arity)
     sb.AppendLine($"    public static readonly Func<LogPropertiesState<{typeParams}>, Exception?, string> Formatter = static (state, _) => state._message;");
     sb.AppendLine();
     sb.AppendLine("    private readonly string _message;");
-    sb.AppendLine("    private readonly IReadOnlyList<KeyValuePair<string, object?>> _explicitProperties;");
+    sb.AppendLine("    private readonly IReadOnlyList<KeyValuePair<string, object?>> _logProperties;");
+    sb.AppendLine("    private readonly IReadOnlyList<KeyValuePair<string, object?>> _capturedProperties;");
 
     foreach (int i in Enumerable.Range(1, arity))
     {
@@ -284,10 +285,11 @@ static void AppendGenericState(StringBuilder sb, int arity)
     }
 
     sb.AppendLine();
-    sb.AppendLine($"    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> explicitProperties, {ctorParams})");
+    sb.AppendLine($"    public LogPropertiesState(string message, IReadOnlyList<KeyValuePair<string, object?>> logProperties, IReadOnlyList<KeyValuePair<string, object?>> capturedProperties, {ctorParams})");
     sb.AppendLine("    {");
     sb.AppendLine("        _message = message;");
-    sb.AppendLine("        _explicitProperties = explicitProperties;");
+    sb.AppendLine("        _logProperties = logProperties;");
+    sb.AppendLine("        _capturedProperties = capturedProperties;");
 
     foreach (int i in Enumerable.Range(1, arity))
     {
@@ -297,16 +299,21 @@ static void AppendGenericState(StringBuilder sb, int arity)
 
     sb.AppendLine("    }");
     sb.AppendLine();
-    sb.AppendLine($"    public int Count => _explicitProperties.Count + {arity};");
+    sb.AppendLine($"    public int Count => _logProperties.Count + _capturedProperties.Count + {arity};");
     sb.AppendLine();
     sb.AppendLine("    public KeyValuePair<string, object?> this[int index]");
     sb.AppendLine("    {");
     sb.AppendLine("        get");
     sb.AppendLine("        {");
-    sb.AppendLine("            if (index < _explicitProperties.Count)");
-    sb.AppendLine("                return _explicitProperties[index];");
+    sb.AppendLine("            if (index < _logProperties.Count)");
+    sb.AppendLine("                return _logProperties[index];");
     sb.AppendLine();
-    sb.AppendLine("            return (index - _explicitProperties.Count) switch");
+    sb.AppendLine("            index -= _logProperties.Count;");
+    sb.AppendLine();
+    sb.AppendLine("            if (index < _capturedProperties.Count)");
+    sb.AppendLine("                return _capturedProperties[index];");
+    sb.AppendLine();
+    sb.AppendLine("            return (index - _capturedProperties.Count) switch");
     sb.AppendLine("            {");
 
     foreach (int i in Enumerable.Range(1, arity))
@@ -505,28 +512,18 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     sb.AppendLine();
 
     if (includeCollection)
-    {
         sb.AppendLine("        IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();");
 
-        if (arity == 0)
-        {
-            sb.AppendLine($"        {stateType} state = new({messageTextExpr}, {capturedPropertiesExpr}, logPropertiesList);");
-        }
-        else
-        {
-            sb.AppendLine($"        ConcatPropertyList explicitProperties = new(logPropertiesList, {capturedPropertiesExpr});");
-            string propArgs = string.Join(", ", Enumerable.Range(1, arity).Select(i => $"{propertyParamPrefix}{i}"));
-            sb.AppendLine($"        {stateType} state = new({messageTextExpr}, explicitProperties, {propArgs});");
-        }
-    }
-    else if (arity == 0)
+    string logPropertiesExpr = includeCollection ? "logPropertiesList" : "Array.Empty<KeyValuePair<string, object?>>()";
+
+    if (arity == 0)
     {
-        sb.AppendLine($"        {stateType} state = new({messageTextExpr}, {capturedPropertiesExpr}, Array.Empty<KeyValuePair<string, object?>>());");
+        sb.AppendLine($"        {stateType} state = new({messageTextExpr}, {capturedPropertiesExpr}, {logPropertiesExpr});");
     }
     else
     {
-        string propArgs = string.Join(", ", Enumerable.Range(1, arity).Select(i => $"logProperty{i}"));
-        sb.AppendLine($"        {stateType} state = new({messageTextExpr}, {capturedPropertiesExpr}, {propArgs});");
+        string propArgs = string.Join(", ", Enumerable.Range(1, arity).Select(i => $"{propertyParamPrefix}{i}"));
+        sb.AppendLine($"        {stateType} state = new({messageTextExpr}, {logPropertiesExpr}, {capturedPropertiesExpr}, {propArgs});");
     }
 
     sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, {stateType}.Formatter);");
