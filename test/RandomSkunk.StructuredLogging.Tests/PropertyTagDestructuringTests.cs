@@ -196,11 +196,112 @@ public class PropertyTagDestructuringTests
         logger.LastMessage.Should().Be("Point: Point { X: 1, Y: 2 }");
     }
 
+    [Fact]
+    public void SharedReferenceInSiblingBranches_RendersFullyInBoth()
+    {
+        RecordingLogger logger = new();
+        Node shared = new() { Name = "shared" };
+        Fork fork = new() { Left = shared, Right = shared };
+
+        logger.Trace($"Fork: {fork:<@>}");
+
+        // The same instance appearing twice is not a cycle - cycle tracking is ancestor-stack scoped, so
+        // the second branch must still render in full rather than reporting a circular reference.
+        logger.LastMessage.Should().Be(
+            "Fork: Fork { Left: Node { Name: \"shared\", Next: null }, Right: Node { Name: \"shared\", Next: null } }");
+    }
+
+    [Fact]
+    public void RepeatedRenders_ProduceIdenticalOutput()
+    {
+        RecordingLogger logger = new();
+        Node node = new() { Name = "A", Next = new Node { Name = "B" } };
+
+        logger.Trace($"Node: {node:<@>}");
+        string first = logger.LastMessage!;
+
+        // The scratch buffer and the ancestor stack are thread-static and reused across renders; anything
+        // left behind in either would show up as drift here.
+        for (int i = 0; i < 5; i++)
+        {
+            logger.Trace($"Node: {node:<@>}");
+            logger.LastMessage.Should().Be(first);
+        }
+    }
+
+    [Fact]
+    public void RenderAfterCircularReference_IsUnaffected()
+    {
+        RecordingLogger logger = new();
+        Node cyclic = new() { Name = "A" };
+        cyclic.Next = cyclic;
+        Node clean = new() { Name = "B" };
+
+        logger.Trace($"Node: {cyclic:<@>}");
+        logger.Trace($"Node: {clean:<@>}");
+
+        // Bailing out of a cycle unwinds through a different path than a normal return - the reused
+        // ancestor stack still has to come back empty for the next render.
+        logger.LastMessage.Should().Be("Node: Node { Name: \"B\", Next: null }");
+    }
+
+    [Fact]
+    public void PropertyGetterLogsWhileRendering_BothRendersAreCorrect()
+    {
+        RecordingLogger outer = new();
+        RecordingLogger inner = new();
+
+        // The scratch buffer and ancestor stack are thread-static, so a getter that logs a destructured
+        // value reenters the renderer on the same thread while the outer render is still building. The
+        // nested render has to get its own scratch state rather than scribbling into the outer one's.
+        LogsWhileRendering value = new(inner);
+
+        outer.Trace($"Outer: {value:<@>}");
+
+        inner.LastMessage.Should().Be("Inner: Node { Name: \"nested\", Next: null }");
+        outer.LastMessage.Should().Be("Outer: LogsWhileRendering { Nested: 99 }");
+    }
+
+    [Fact]
+    public void ConcurrentRenders_DoNotShareScratchBuffers()
+    {
+        Node node = new() { Name = "A", Next = new Node { Name = "B" } };
+        string[] results = new string[2000];
+
+        Parallel.For(0, results.Length, i =>
+        {
+            RecordingLogger logger = new();
+            logger.Trace($"Node: {node:<@>}");
+            results[i] = logger.LastMessage!;
+        });
+
+        results.Distinct().Should().ContainSingle();
+    }
+
     private sealed class Node
     {
         public string Name { get; set; } = "";
 
         public Node? Next { get; set; }
+    }
+
+    private sealed class Fork
+    {
+        public Node? Left { get; set; }
+
+        public Node? Right { get; set; }
+    }
+
+    private sealed class LogsWhileRendering(RecordingLogger inner)
+    {
+        public int Nested
+        {
+            get
+            {
+                inner.Trace($"Inner: {new Node { Name = "nested" }:<@>}");
+                return 99;
+            }
+        }
     }
 
     private sealed class ThrowingProperty

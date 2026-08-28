@@ -58,7 +58,7 @@ public ref struct TraceInterpolatedStringHandler
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
         else
             _handler.AppendFormatted(value, tag.Format);
     }
@@ -161,7 +161,7 @@ public ref struct DebugInterpolatedStringHandler
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
         else
             _handler.AppendFormatted(value, tag.Format);
     }
@@ -264,7 +264,7 @@ public ref struct InformationInterpolatedStringHandler
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
         else
             _handler.AppendFormatted(value, tag.Format);
     }
@@ -367,7 +367,7 @@ public ref struct WarningInterpolatedStringHandler
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
         else
             _handler.AppendFormatted(value, tag.Format);
     }
@@ -470,7 +470,7 @@ public ref struct ErrorInterpolatedStringHandler
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
         else
             _handler.AppendFormatted(value, tag.Format);
     }
@@ -573,7 +573,7 @@ public ref struct CriticalInterpolatedStringHandler
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
         else
             _handler.AppendFormatted(value, tag.Format);
     }
@@ -677,7 +677,7 @@ public ref struct WriteInterpolatedStringHandler
             (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));
+            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
         else
             _handler.AppendFormatted(value, tag.Format);
     }

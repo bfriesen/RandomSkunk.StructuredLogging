@@ -175,7 +175,7 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
     sb.AppendLine();
     sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
-    sb.AppendLine("            _handler.AppendLiteral(LogPropertyDestructuring.Render(value));");
+    sb.AppendLine("            LogPropertyDestructuring.AppendDestructured(ref _handler, value);");
     sb.AppendLine("        else");
     sb.AppendLine("            _handler.AppendFormatted(value, tag.Format);");
     sb.AppendLine("    }");
@@ -209,6 +209,10 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("        if (tag.PropertyName is not null)");
     sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
     sb.AppendLine();
+    // Unlike the non-aligned overload above, this one can't use AppendDestructured: padding the rendered
+    // text to `alignment` needs it as a single contiguous string, so the intermediate Render() allocation
+    // is unavoidable here. Rendering into an alignment is a rare enough combination not to warrant
+    // hand-rolling the padding around a chunk-by-chunk append.
     sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
     sb.AppendLine("            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);");
     sb.AppendLine("        else");
