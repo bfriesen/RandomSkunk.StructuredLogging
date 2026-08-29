@@ -186,6 +186,13 @@ logger.Warning(scopeProperties, MyEventIds.SlowRequest, $"Slow request to {path:
 Properties end up in this order: the collection's entries, then tag-captured properties, then the
 trailing per-call properties argument(s).
 
+A collection that is already an `IReadOnlyList<KeyValuePair<string, object?>>` — such as a
+`List<KeyValuePair<string, object?>>` — is used exactly as passed. Anything else, `Dictionary<string,
+object?>` included, is copied into an array once per call, since the properties have to be
+addressable by index. The copy is a single small array and rarely worth thinking about, but if
+you're building the collection yourself on a hot path, building a `List` instead of a `Dictionary`
+avoids it entirely.
+
 All four options can be combined freely in a single call — tags in the message, static tuples
 after it, and (if needed) a leading collection — as long as the total structured property count
 stays within what the chosen overload supports.
