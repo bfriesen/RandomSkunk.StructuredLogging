@@ -536,15 +536,15 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
 
     string logPropertiesExpr = includeCollection ? "logPropertiesList" : "Array.Empty<KeyValuePair<string, object?>>()";
 
-    if (arity == 0)
-    {
-        sb.AppendLine($"        {stateType} state = new({messageTextExpr}, {capturedPropertiesExpr}, {logPropertiesExpr});");
-    }
-    else
-    {
-        string propArgs = string.Join(", ", Enumerable.Range(1, arity).Select(i => $"{propertyParamPrefix}{i}"));
-        sb.AppendLine($"        {stateType} state = new({messageTextExpr}, {logPropertiesExpr}, {capturedPropertiesExpr}, {propArgs});");
-    }
+    // Every arity passes the two collection slots in the same order - logProperties, then
+    // capturedProperties - so the documented property order (the collection's entries, then
+    // tag-captured properties, then the trailing per-call properties) holds no matter how many
+    // per-call properties the overload takes. Arity 0 differs only in having no trailing arguments.
+    string stateArgs = $"{messageTextExpr}, {logPropertiesExpr}, {capturedPropertiesExpr}";
+    if (arity > 0)
+        stateArgs += ", " + string.Join(", ", Enumerable.Range(1, arity).Select(i => $"{propertyParamPrefix}{i}"));
+
+    sb.AppendLine($"        {stateType} state = new({stateArgs});");
 
     sb.AppendLine($"        logger.Log({group.LevelExpr}, {combo.EventIdArg}, state, {combo.ExceptionArg}, {stateType}.Formatter);");
     sb.AppendLine("    }");

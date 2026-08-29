@@ -105,9 +105,31 @@ public class PropertyTagCaptureTests
 
         logger.Debug(extraProperties, $"Hello, {name:<UserName>}!");
 
-        logger.LastProperties.Should().HaveCount(2);
-        logger.LastProperties![0].Should().Be(new KeyValuePair<string, object?>("UserName", "Alice"));
-        logger.LastProperties![1].Should().Be(new KeyValuePair<string, object?>("RequestId", 7));
+        // The collection's entries come first, then tag-captured properties - the order the README
+        // documents and every other arity already used.
+        logger.LastProperties.Should().Equal(
+            new KeyValuePair<string, object?>("RequestId", 7),
+            new KeyValuePair<string, object?>("UserName", "Alice"));
+    }
+
+    [Fact]
+    public void CollectionAndTagOrder_DoesNotDependOnPerCallPropertyCount()
+    {
+        RecordingLogger logger = new();
+        string name = "Alice";
+        Dictionary<string, object?> extraProperties = new() { ["RequestId"] = 7 };
+
+        logger.Debug(extraProperties, $"Hello, {name:<UserName>}!");
+        List<string> withoutPerCallProperty = logger.LastProperties!.Select(p => p.Key).ToList();
+
+        logger.Debug(extraProperties, $"Hello, {name:<UserName>}!", ("Extra", 1));
+        List<string> withPerCallProperty = logger.LastProperties!.Select(p => p.Key).ToList();
+
+        // Adding a per-call property must append to the end, never reshuffle what was already there:
+        // the 0-arity overload used to put captured properties before the collection while every
+        // other arity did the opposite, so this call pair silently flipped duplicate-key precedence.
+        withoutPerCallProperty.Should().Equal("RequestId", "UserName");
+        withPerCallProperty.Should().Equal("RequestId", "UserName", "Extra");
     }
 
     [Fact]
