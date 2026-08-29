@@ -6,20 +6,20 @@ namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Base class for <see cref="SynchronizedOperationLog"/> and <see cref="SynchronizedSubOperationLog"/>,
-/// holding the <see cref="ISubOperationLog"/> members whose implementation is identical between the two -
-/// everything except <see cref="IOperationLog.SetException"/>/<see cref="IOperationLog.SetResult{T}"/>,
-/// which only the root decorator has. Implements <see cref="ISubOperationLog"/> itself (rather than leaving
-/// that to <typeparamref name="TOperationLog"/>-specific derived classes, the way <see cref="OperationLog{TOperationLog}"/>
-/// does via <c>TOperationLog</c>) because every member here returns <see cref="ISubOperationLog"/> regardless of
-/// whether <typeparamref name="TOperationLog"/> is <see cref="IOperationLog"/> or <see cref="ISubOperationLog"/> -
-/// there's no derived-type-specific return type to recover the way <c>OperationLog{TOperationLog}</c> needs to.
+/// holding the <see cref="IOperationLogBase{TOperationLog}"/> members whose implementation is identical between the
+/// two - everything except <see cref="IOperationLog.SetException"/>/<see cref="IOperationLog.SetResult{T}"/>,
+/// which only the root decorator has. Implements <see cref="IOperationLogBase{TOperationLog}"/> itself (rather than
+/// leaving that to <typeparamref name="TOperationLog"/>-specific derived classes, the way
+/// <see cref="OperationLog{TOperationLog}"/> does via its own type parameter) because every member here can return
+/// <typeparamref name="TOperationLog"/> directly - the wrapped log's own interface - the same way
+/// <c>OperationLog{TOperationLog}</c> returns its type parameter.
 /// </summary>
 /// <typeparam name="TOperationLog">
 /// The wrapped log's type - <see cref="IOperationLog"/> for <see cref="SynchronizedOperationLog"/>,
 /// <see cref="ISubOperationLog"/> for <see cref="SynchronizedSubOperationLog"/>.
 /// </typeparam>
-internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLog inner, object gate) : ISubOperationLog
-    where TOperationLog : ISubOperationLog
+internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLog inner, object gate) : IOperationLogBase<TOperationLog>
+    where TOperationLog : class, IOperationLogBase<TOperationLog>
 {
     protected readonly TOperationLog _inner = inner;
     protected readonly object _gate = gate;
@@ -37,48 +37,48 @@ internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLo
 
     public bool IsEnabled => _inner.IsEnabled;
 
-    public ISubOperationLog AddProperty<T>(string name, T value)
+    public TOperationLog AddProperty<T>(string name, T value)
     {
         lock (_gate)
             _inner.AddProperty(name, value);
-        return this;
+        return (TOperationLog)(object)this;
     }
 
-    public ISubOperationLog AppendException(Exception exception)
+    public TOperationLog AppendException(Exception exception)
     {
         lock (_gate)
             _inner.AppendException(exception);
-        return this;
+        return (TOperationLog)(object)this;
     }
 
-    public ISubOperationLog AppendResult<T>(T value)
+    public TOperationLog AppendResult<T>(T value)
     {
         lock (_gate)
             _inner.AppendResult(value);
-        return this;
+        return (TOperationLog)(object)this;
     }
 
-    public ISubOperationLog Escalate(LogLevel level)
+    public TOperationLog Escalate(LogLevel level)
     {
         lock (_gate)
             _inner.Escalate(level);
-        return this;
+        return (TOperationLog)(object)this;
     }
 
-    public ISubOperationLog Append(string text)
+    public TOperationLog Append(string text)
     {
         lock (_gate)
             _inner.Append(text);
-        return this;
+        return (TOperationLog)(object)this;
     }
 
     // The handler evaluated text into a private buffer, not the shared journal, precisely because it
     // can't hold `_gate` while doing so - see OperationLogInterpolatedStringHandler's doc comment. Splice
     // that buffer into the real journal here, under the lock, then return it to the pool.
-    public ISubOperationLog Append(ref OperationLogInterpolatedStringHandler text)
+    public TOperationLog Append(ref OperationLogInterpolatedStringHandler text)
     {
         if (!text.IsEnabled)
-            return this;
+            return (TOperationLog)(object)this;
 
         StringBuilder rented = text.RentedBuilder!;
         try
@@ -102,21 +102,21 @@ internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLo
             OperationLogPools.Journals.Return(rented);
         }
 
-        return this;
+        return (TOperationLog)(object)this;
     }
 
-    public ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    public TOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
         lock (_gate)
             _inner.AppendValue(value, valueName);
-        return this;
+        return (TOperationLog)(object)this;
     }
 
-    public ISubOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    public TOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
         lock (_gate)
             _inner.AppendJson(value, valueName);
-        return this;
+        return (TOperationLog)(object)this;
     }
 
     public ISubOperationLog BeginSubOperation(string operationName)

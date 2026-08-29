@@ -11,7 +11,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// that wraps this type when an operation is begun with <c>threadSafe: true</c>.
 /// </summary>
 internal sealed class RootOperationLog(OperationLogState state, string operationName)
-    : OperationLog<RootOperationLog>(state, operationName), IOperationLog
+    : OperationLog<IOperationLog>(state, operationName), IOperationLog
 {
     public IOperationLog SetException(Exception exception)
     {
@@ -28,14 +28,14 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
         return this;
     }
 
-    public ISubOperationLog AppendException(Exception exception)
+    public IOperationLog AppendException(Exception exception)
     {
         _state.ThrowIfDisposed();
         BeginJournalEntry().Append($"Operation failed:\n{exception}");
         return this;
     }
 
-    public ISubOperationLog AppendResult<T>(T value)
+    public IOperationLog AppendResult<T>(T value)
     {
         _state.ThrowIfDisposed();
         StringBuilder journal = BeginJournalEntry().Append("Operation result: ");
@@ -43,7 +43,7 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
         return this;
     }
 
-    public ISubOperationLog Escalate(LogLevel level)
+    public IOperationLog Escalate(LogLevel level)
     {
         _state.ThrowIfDisposed();
         LogLevel previousLevel = _state.Escalate(level);

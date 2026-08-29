@@ -58,8 +58,8 @@ public class UndisposedOperationLogAnalyzerTests
         IOperationLog log = logger.BeginOperation("Op");
         ((IDisposable)log).Dispose();
         """)]
-    [InlineData("""using var log = logger.BeginOperation("Op").AddProperty("Name", "value");""")]
-    [InlineData("""using var log = logger.BeginOperation("Op").SetResult(1).AddProperty("Name", "value");""")]
+    [InlineData("""using IOperationLog log = logger.BeginOperation("Op").AddProperty("Name", "value");""")]
+    [InlineData("""using var log = logger.BeginOperation("Op").AddProperty("Name", "value").SetResult(1);""")]
     [InlineData(
         """
         IOperationLog log = logger.BeginOperation("Op");

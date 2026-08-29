@@ -96,7 +96,7 @@ internal sealed class OperationLogState : IDisposable
 
     /// <summary>
     /// Raises <see cref="Level"/> to <paramref name="level"/> if it's more severe than the operation's
-    /// current level, leaving it unchanged otherwise - see <see cref="ISubOperationLog.Escalate"/>.
+    /// current level, leaving it unchanged otherwise - see <see cref="IOperationLogBase{TOperationLog}.Escalate"/>.
     /// </summary>
     /// <returns>
     /// The level <see cref="Level"/> was set to just before this call - the same as the new

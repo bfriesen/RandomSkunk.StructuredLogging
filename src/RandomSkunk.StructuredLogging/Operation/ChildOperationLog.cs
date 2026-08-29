@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
-/// A nested sub-operation returned by <see cref="ISubOperationLog.BeginSubOperation(string)"/> (on either the root
+/// A nested sub-operation returned by <see cref="IOperationLogBase{TOperationLog}.BeginSubOperation(string)"/> (on either the root
 /// operation or another sub-operation). Never writes its own log entry - every member only ever appends
 /// to the shared <see cref="OperationLogState._journal"/>. Applies no synchronization of its own - see
 /// <see cref="SynchronizedSubOperationLog"/> for the decorator that wraps this type when an operation is
 /// begun with <c>threadSafe: true</c>.
 /// </summary>
 internal sealed class ChildOperationLog(OperationLogState state, string operationName)
-    : OperationLog<ChildOperationLog>(state, operationName), ISubOperationLog
+    : OperationLog<ISubOperationLog>(state, operationName), ISubOperationLog
 {
     public ISubOperationLog AppendException(Exception exception)
     {

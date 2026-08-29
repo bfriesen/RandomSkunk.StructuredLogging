@@ -6,19 +6,23 @@ namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Base class for <see cref="RootOperationLog"/> and <see cref="ChildOperationLog"/>, holding the members
-/// whose implementations are identical between the two. Does not implement <see cref="ISubOperationLog"/>
-/// itself - <typeparamref name="TOperationLog"/> lets these members return the concrete derived type (which does
-/// implement it, either directly or via <see cref="IOperationLog"/>) without each derived class having to
-/// redeclare them.
+/// whose implementations are identical between the two. Does not implement <see cref="IOperationLogBase{TOperationLog}"/>
+/// itself - <typeparamref name="TOperationLog"/> is the interface (<see cref="IOperationLog"/> for
+/// <see cref="RootOperationLog"/>, <see cref="ISubOperationLog"/> for <see cref="ChildOperationLog"/>) that
+/// the concrete derived class actually implements, letting these members return it directly via
+/// <c>(TOperationLog)this</c> without each derived class redeclaring them.
 /// </summary>
-/// <typeparam name="TOperationLog">The most-derived type, which implements <see cref="ISubOperationLog"/>.</typeparam>
+/// <typeparam name="TOperationLog">
+/// The interface the most-derived type implements - <see cref="IOperationLog"/> or
+/// <see cref="ISubOperationLog"/>.
+/// </typeparam>
 internal abstract class OperationLog<TOperationLog>(OperationLogState state, string operationName)
     : IJournalOwner
-    where TOperationLog : OperationLog<TOperationLog>, ISubOperationLog
+    where TOperationLog : class, IOperationLogBase<TOperationLog>
 {
     protected readonly OperationLogState _state = state;
     protected readonly string _operationName = operationName;
-    
+
     private int _disposed;
 
     public IReadOnlyList<KeyValuePair<string, object?>> Properties =>
@@ -30,11 +34,11 @@ internal abstract class OperationLog<TOperationLog>(OperationLogState state, str
     public bool IsEnabled => true;
 #pragma warning restore CA1822 // Mark members as static
 
-    public ISubOperationLog AddProperty<T>(string propertyName, T value)
+    public TOperationLog AddProperty<T>(string propertyName, T value)
     {
         _state.ThrowIfDisposed();
         _state.AddProperty(propertyName, value);
-        return (TOperationLog)this;
+        return (TOperationLog)(object)this;
     }
 
     /// <summary>
@@ -47,33 +51,33 @@ internal abstract class OperationLog<TOperationLog>(OperationLogState state, str
         return _state.BeginJournalEntry();
     }
 
-    public ISubOperationLog Append(string text)
+    public TOperationLog Append(string text)
     {
         BeginJournalEntry().Append(text);
-        return (TOperationLog)this;
+        return (TOperationLog)(object)this;
     }
 
 #pragma warning disable IDE0060 // Remove unused parameter
-    public ISubOperationLog Append(ref OperationLogInterpolatedStringHandler text)
+    public TOperationLog Append(ref OperationLogInterpolatedStringHandler text)
     {
         // The handler already wrote everything directly into the journal (via BeginJournalEntry, in
         // its constructor) while it was being built - nothing left to do here.
-        return (TOperationLog)this;
+        return (TOperationLog)(object)this;
     }
 #pragma warning restore IDE0060 // Remove unused parameter
 
-    public ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    public TOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
         StringBuilder journal = BeginJournalEntry().Append($"`{valueName}`: ");
         ValueFormatting.AppendValue(journal, value);
-        return (TOperationLog)this;
+        return (TOperationLog)(object)this;
     }
 
-    public ISubOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    public TOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
         StringBuilder journal = BeginJournalEntry().Append($"`{valueName}`: ");
         ValueFormatting.AppendJson(journal, value);
-        return (TOperationLog)this;
+        return (TOperationLog)(object)this;
     }
 
     public ISubOperationLog BeginSubOperation(string subOperationName)

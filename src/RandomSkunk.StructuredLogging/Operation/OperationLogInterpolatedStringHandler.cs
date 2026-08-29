@@ -5,25 +5,32 @@ namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Interpolated string handler for the <c>text</c>/<c>operationName</c> parameter of
-/// <see cref="ISubOperationLog.Append(ref OperationLogInterpolatedStringHandler)"/> and
-/// <see cref="ISubOperationLog.BeginSubOperation(ref OperationLogInterpolatedStringHandler)"/>. Building the
-/// interpolated content is skipped entirely when <see cref="ISubOperationLog.IsEnabled"/> is
-/// <see langword="false"/>, the same short-circuit the structured-logging message handlers apply for a
+/// <see cref="IOperationLogBase{TOperationLog}.Append(ref OperationLogInterpolatedStringHandler)"/> and
+/// <see cref="IOperationLogBase{TOperationLog}.BeginSubOperation(ref OperationLogInterpolatedStringHandler)"/>.
+/// Building the interpolated content is skipped entirely when <see cref="IOperationLogBase{TOperationLog}.IsEnabled"/>
+/// is <see langword="false"/>, the same short-circuit the structured-logging message handlers apply for a
 /// disabled <see cref="Microsoft.Extensions.Logging.LogLevel"/>.
+/// <para>
+/// Two constructors, one per receiver type (<see cref="IOperationLog"/>, <see cref="ISubOperationLog"/>),
+/// since the two interfaces are deliberately unrelated (see <see cref="IOperationLogBase{TOperationLog}"/>) and the
+/// interpolated-string-handler pattern binds a constructor overload to the receiver's exact static type -
+/// both just forward to a shared private constructor after pulling out the two things that differ per
+/// receiver type (<c>IsEnabled</c>, and whether it's an <see cref="IJournalOwner"/>).
+/// </para>
 /// <para>
 /// When the operation owns a real journal (<see cref="IJournalOwner"/> - in practice
 /// <see cref="RootOperationLog"/>/<see cref="ChildOperationLog"/>), this handler writes directly into it,
 /// skipping the throwaway intermediate <see cref="string"/> the non-handler overloads build. Otherwise (in
-/// practice a <see cref="SynchronizedOperationLog"/>) it writes into a private buffer rented from
-/// <see cref="OperationLogPools.Journals"/> instead - deliberately never the shared journal directly,
-/// because the lock that makes concurrent access to it safe can't be acquired here: this handler's
-/// constructor and its <c>AppendFormatted</c> calls all run as part of *argument evaluation*, before
-/// <see cref="ISubOperationLog.Append(ref OperationLogInterpolatedStringHandler)"/>'s method body (and
-/// therefore any lock taken inside it) ever runs. If a hole's expression were to throw partway through
-/// with the lock already held, the method body - and any code that would release it - would never run,
-/// deadlocking the operation's shared gate permanently. Writing into a private, thread-local buffer instead
-/// means a throw there only discards that buffer, which is never returned to the pool - a bounded,
-/// self-healing loss, not a deadlock.
+/// practice a <see cref="SynchronizedOperationLog"/>/<see cref="SynchronizedSubOperationLog"/>) it writes
+/// into a private buffer rented from <see cref="OperationLogPools.Journals"/> instead - deliberately never
+/// the shared journal directly, because the lock that makes concurrent access to it safe can't be acquired
+/// here: this handler's constructor and its <c>AppendFormatted</c> calls all run as part of *argument
+/// evaluation*, before <see cref="IOperationLogBase{TOperationLog}.Append(ref OperationLogInterpolatedStringHandler)"/>'s
+/// method body (and therefore any lock taken inside it) ever runs. If a hole's expression were to throw
+/// partway through with the lock already held, the method body - and any code that would release it - would
+/// never run, deadlocking the operation's shared gate permanently. Writing into a private, thread-local
+/// buffer instead means a throw there only discards that buffer, which is never returned to the pool - a
+/// bounded, self-healing loss, not a deadlock.
 /// </para>
 /// </summary>
 [InterpolatedStringHandler]
@@ -45,14 +52,34 @@ public ref struct OperationLogInterpolatedStringHandler
     /// </summary>
     /// <param name="literalLength">The total number of characters in the interpolated string's literal text.</param>
     /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
-    /// <param name="log">The operation log the text is being built for.</param>
+    /// <param name="log">The root operation log the text is being built for.</param>
+    /// <param name="handlerIsValid">
+    /// Set to <see langword="false"/> when <paramref name="log"/> is not enabled, so the compiler skips
+    /// evaluating and appending the interpolated string's arguments.
+    /// </param>
+    public OperationLogInterpolatedStringHandler(int literalLength, int formattedCount, IOperationLog log, out bool handlerIsValid)
+        : this(literalLength, formattedCount, log.IsEnabled, log as IJournalOwner, out handlerIsValid)
+    {
+    }
+
+    /// <summary>
+    /// Initializes the handler and checks whether <paramref name="log"/> is enabled.
+    /// </summary>
+    /// <param name="literalLength">The total number of characters in the interpolated string's literal text.</param>
+    /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
+    /// <param name="log">The sub-operation log the text is being built for.</param>
     /// <param name="handlerIsValid">
     /// Set to <see langword="false"/> when <paramref name="log"/> is not enabled, so the compiler skips
     /// evaluating and appending the interpolated string's arguments.
     /// </param>
     public OperationLogInterpolatedStringHandler(int literalLength, int formattedCount, ISubOperationLog log, out bool handlerIsValid)
+        : this(literalLength, formattedCount, log.IsEnabled, log as IJournalOwner, out handlerIsValid)
     {
-        IsEnabled = handlerIsValid = log.IsEnabled;
+    }
+
+    private OperationLogInterpolatedStringHandler(int literalLength, int formattedCount, bool isEnabled, IJournalOwner? journalOwner, out bool handlerIsValid)
+    {
+        IsEnabled = handlerIsValid = isEnabled;
 
         if (!IsEnabled)
         {
@@ -64,9 +91,9 @@ public ref struct OperationLogInterpolatedStringHandler
         }
 
         StringBuilder target;
-        if (log is IJournalOwner owner)
+        if (journalOwner is not null)
         {
-            target = owner.BeginJournalEntry();
+            target = journalOwner.BeginJournalEntry();
             _directTarget = target;
             _directStartIndex = target.Length;
             _rentedBuilder = null;

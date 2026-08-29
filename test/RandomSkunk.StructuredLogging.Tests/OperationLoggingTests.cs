@@ -18,9 +18,9 @@ public class OperationLoggingTests
                 .AddProperty("x", 1)
                 .Append("hi")
                 .AppendValue(5)
-                .AppendJson(new { A = 1 });
-            log.SetResult(1);
-            log.SetException(new InvalidOperationException());
+                .AppendJson(new { A = 1 })
+                .SetResult(1)
+                .SetException(new InvalidOperationException());
 
             using ISubOperationLog subLog = log.BeginSubOperation("Sub");
             subLog.AddProperty("y", 2).AppendResult(3).AppendException(new InvalidOperationException());

@@ -10,7 +10,8 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// tree - root and every nested sub-operation - synchronizes on one lock, matching the single
 /// <see cref="OperationLogState"/> they all share underneath. Adds <see cref="SetException"/>/
 /// <see cref="SetResult{T}"/> to the members <see cref="SynchronizedOperationLogBase{TOperationLog}"/> already
-/// provides, the same way <see cref="IOperationLog"/> adds them to <see cref="ISubOperationLog"/>.
+/// provides - the two members that only <see cref="IOperationLog"/> declares, not
+/// <see cref="ISubOperationLog"/>.
 /// </summary>
 internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
     : SynchronizedOperationLogBase<IOperationLog>(inner, gate), IOperationLog

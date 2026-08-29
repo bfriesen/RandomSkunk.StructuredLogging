@@ -9,4 +9,4 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// already declares.
 /// </summary>
 internal sealed class SynchronizedSubOperationLog(ISubOperationLog inner, object gate)
-    : SynchronizedOperationLogBase<ISubOperationLog>(inner, gate);
+    : SynchronizedOperationLogBase<ISubOperationLog>(inner, gate), ISubOperationLog;

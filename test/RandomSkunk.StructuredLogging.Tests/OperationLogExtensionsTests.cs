@@ -59,7 +59,7 @@ public class OperationLogExtensionsTests
     [Fact]
     public void AppendResultTo_NullLog_ThrowsArgumentNullException()
     {
-        Func<string> act = () => "value".AppendResultTo(null!);
+        Func<string> act = () => "value".AppendResultTo<string, IOperationLog>(null!);
 
         act.Should().Throw<ArgumentNullException>();
     }
@@ -80,7 +80,7 @@ public class OperationLogExtensionsTests
     [Fact]
     public void RecordPropertyTo_NullLog_ThrowsArgumentNullException()
     {
-        Func<string> act = () => "value".RecordPropertyTo(null!, "PropertyName");
+        Func<string> act = () => "value".RecordPropertyTo<string, IOperationLog>(null!, "PropertyName");
 
         act.Should().Throw<ArgumentNullException>();
     }
@@ -115,7 +115,7 @@ public class OperationLogExtensionsTests
     [Fact]
     public void RecordValueTo_NullLog_ThrowsArgumentNullException()
     {
-        Func<int> act = () => 1.RecordValueTo(null!);
+        Func<int> act = () => 1.RecordValueTo<int, IOperationLog>(null!);
 
         act.Should().Throw<ArgumentNullException>();
     }
@@ -138,7 +138,7 @@ public class OperationLogExtensionsTests
     [Fact]
     public void RecordJsonTo_NullLog_ThrowsArgumentNullException()
     {
-        var act = () => new { A = 1 }.RecordJsonTo(null!);
+        var act = () => new { A = 1 }.RecordJsonTo<object, IOperationLog>(null!);
 
         act.Should().Throw<ArgumentNullException>();
     }

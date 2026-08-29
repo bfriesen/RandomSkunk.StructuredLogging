@@ -103,14 +103,14 @@ public class UndisposedOperationLogCodeFixProviderTests
     [Fact]
     public async Task AddUsingDeclaration_ExistingDeclarationWithFluentChain_KeepsTheChain()
     {
-        string source = Wrap("""var log = logger.BeginOperation("Op").AddProperty("Name", "value");""");
+        string source = Wrap("""IOperationLog log = logger.BeginOperation("Op").AddProperty("Name", "value");""");
 
         string? fixedSource = await CodeFixVerifier.TryApplyFixAsync(
             source, new UndisposedOperationLogAnalyzer(), new UndisposedOperationLogCodeFixProvider(),
             action => action.Title == "Add a 'using' declaration");
 
         fixedSource.Should().NotBeNull();
-        fixedSource.Should().Be(Wrap("""using var log = logger.BeginOperation("Op").AddProperty("Name", "value");"""));
+        fixedSource.Should().Be(Wrap("""using IOperationLog log = logger.BeginOperation("Op").AddProperty("Name", "value");"""));
     }
 
     [Fact]
