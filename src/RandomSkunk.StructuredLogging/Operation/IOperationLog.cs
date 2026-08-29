@@ -11,10 +11,11 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// <see cref="BeginSubOperation"/>, never writes its own log entry - disposing it appends a "complete" line
 /// to the ancestor journal it was created from instead.
 /// Every sub-operation shares the root operation's journal, so once the root <see cref="IOperationLog"/> has
-/// been disposed, calling any member other than <see cref="IDisposable.Dispose"/>, <see cref="Properties"/>,
-/// or <see cref="EventId"/> on a sub-operation still referenced from outside the root's <c>using</c> scope
+/// been disposed, calling any member other than <see cref="Properties"/>, <see cref="EventId"/>, or
+/// <see cref="IsEnabled"/> on a sub-operation still referenced from outside the root's <c>using</c> scope
 /// throws <see cref="ObjectDisposedException"/>, rather than risking corruption of an unrelated operation's
-/// journal.
+/// journal. That includes <see cref="IDisposable.Dispose"/>: it's only safe to call once per sub-operation -
+/// disposing one after the root is already disposed throws like everything else.
 /// </summary>
 public interface IOperationLog : IDisposable
 {

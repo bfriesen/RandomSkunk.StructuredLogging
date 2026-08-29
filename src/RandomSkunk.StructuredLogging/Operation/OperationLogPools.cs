@@ -3,10 +3,9 @@ using System.Text;
 namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
-/// The pools <see cref="OperationLogState"/> rents its journal <see cref="StringBuilder"/> and property
-/// list from (returned by <see cref="OperationLogState.Dispose"/> once an operation's single log entry has
-/// been flushed), and <see cref="ValueFormatting.AppendJson{T}"/> rents its scratch
-/// <see cref="PooledJsonWriter"/> from.
+/// The pools <see cref="OperationLogState"/> rents its journal <see cref="StringBuilder"/> from (returned
+/// by <see cref="OperationLogState.Dispose"/> once an operation's single log entry has been flushed), and
+/// <see cref="ValueFormatting.AppendJson{T}"/> rents its scratch <see cref="PooledJsonWriter"/> from.
 /// </summary>
 internal static class OperationLogPools
 {
