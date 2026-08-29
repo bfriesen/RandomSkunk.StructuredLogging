@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Globalization;
@@ -21,6 +22,10 @@ namespace RandomSkunk.StructuredLogging;
 /// </summary>
 internal static class LogPropertyDestructuring
 {
+    // The characters AppendQuotedString has to escape. SearchValues gives IndexOfAny a vectorized
+    // scan, which is what makes bulk-copying the runs between escapes worthwhile.
+    private static readonly SearchValues<char> EscapedChars = SearchValues.Create("\"\\\n\r\t");
+
     private const int MaxDepth = 10;
     private const int MaxCollectionItems = 10;
 
@@ -366,17 +371,33 @@ internal static class LogPropertyDestructuring
     {
         sb.Append('"');
 
-        foreach (char ch in value)
+        // Copies the runs between escapes in bulk rather than appending a character at a time. Most
+        // destructured strings need no escaping at all, so the common path is a single vectorized scan
+        // that finds nothing followed by one span copy.
+        ReadOnlySpan<char> remaining = value;
+
+        while (!remaining.IsEmpty)
         {
-            switch (ch)
+            int escapeIndex = remaining.IndexOfAny(EscapedChars);
+
+            if (escapeIndex < 0)
             {
-                case '"': sb.Append("\\\""); break;
-                case '\\': sb.Append("\\\\"); break;
-                case '\n': sb.Append("\\n"); break;
-                case '\r': sb.Append("\\r"); break;
-                case '\t': sb.Append("\\t"); break;
-                default: sb.Append(ch); break;
+                sb.Append(remaining);
+                break;
             }
+
+            sb.Append(remaining[..escapeIndex]);
+            sb.Append(remaining[escapeIndex] switch
+            {
+                '"' => "\\\"",
+                '\\' => "\\\\",
+                '\n' => "\\n",
+                '\r' => "\\r",
+                // IndexOfAny matched one of EscapedChars, so nothing else can reach this arm.
+                _ => "\\t",
+            });
+
+            remaining = remaining[(escapeIndex + 1)..];
         }
 
         sb.Append('"');

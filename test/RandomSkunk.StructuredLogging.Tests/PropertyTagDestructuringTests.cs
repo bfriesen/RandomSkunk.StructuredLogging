@@ -61,6 +61,30 @@ public class PropertyTagDestructuringTests
         logger.LastMessage.Should().Be("Value: \"hello \\\"world\\\"\"");
     }
 
+    [Theory]
+    [InlineData("", "\"\"")]
+    [InlineData("plain", "\"plain\"")]
+    [InlineData("a\"b", "\"a\\\"b\"")]
+    [InlineData("a\\b", "\"a\\\\b\"")]
+    [InlineData("a\nb", "\"a\\nb\"")]
+    [InlineData("a\rb", "\"a\\rb\"")]
+    [InlineData("a\tb", "\"a\\tb\"")]
+    [InlineData("\"leading", "\"\\\"leading\"")]
+    [InlineData("trailing\"", "\"trailing\\\"\"")]
+    [InlineData("\"\"", "\"\\\"\\\"\"")]
+    [InlineData("\n\t\r\\\"", "\"\\n\\t\\r\\\\\\\"\"")]
+    public void StringEscaping_HandlesEveryEscapeAndBoundary(string value, string expected)
+    {
+        RecordingLogger logger = new();
+
+        // Escaped runs are copied in bulk between escapes, so the boundaries are what can go wrong:
+        // an escape at the very start or end, two in a row, a string that is nothing but escapes, and
+        // one with none at all.
+        logger.Trace($"Value: {value:<@>}");
+
+        logger.LastMessage.Should().Be($"Value: {expected}");
+    }
+
     [Fact]
     public void CharScalar_RendersQuoted()
     {
