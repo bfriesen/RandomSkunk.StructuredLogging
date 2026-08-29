@@ -267,4 +267,38 @@ public class PropertyTagCaptureTests
 
         act.Should().NotThrow();
     }
+
+    [Fact]
+    public void TaggedDestructuringFormat_ValueType_CapturesRawValue_AndRendersDestructuredMessage()
+    {
+        RecordingLogger logger = new();
+        Coordinates value = new(3, 4);
+
+        // A value type that is both captured and destructure-rendered is boxed once and the same box
+        // used for both, rather than converted to object separately for each. The captured property has
+        // to stay the raw value - equal to the original, not the rendered text.
+        logger.Trace($"At: {value:<@Position>}");
+
+        logger.LastMessage.Should().Be("At: Coordinates { X: 3, Y: 4 }");
+        KeyValuePair<string, object?> property = logger.LastProperties.Should().ContainSingle().Which;
+        property.Key.Should().Be("@Position");
+        property.Value.Should().Be(value);
+    }
+
+    [Fact]
+    public void TaggedDestructuringFormat_ValueTypeScalar_CapturesRawValue()
+    {
+        RecordingLogger logger = new();
+        decimal amount = 19.95m;
+
+        logger.Trace($"Total: {amount:<@Amount>}");
+
+        logger.LastMessage.Should().Be("Total: 19.95");
+        KeyValuePair<string, object?> property = logger.LastProperties.Should().ContainSingle().Which;
+        property.Key.Should().Be("@Amount");
+        property.Value.Should().Be(amount);
+        property.Value.Should().BeOfType<decimal>();
+    }
+
+    private readonly record struct Coordinates(int X, int Y);
 }

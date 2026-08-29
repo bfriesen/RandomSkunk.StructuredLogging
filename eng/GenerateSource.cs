@@ -171,21 +171,24 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    public void AppendFormatted<T>(T value, string? format)");
     sb.AppendLine("    {");
     sb.AppendLine("        TagFormat tag = LogPropertyTagFormat.Parse(format);");
-    sb.AppendLine("        if (tag.PropertyName is not null)");
-    // Capacity 2, not List's default growth: a message that captures at all almost always captures one
-    // or two properties, and both fit without the default's 4-slot first allocation. Three or more pays
-    // for the abandoned 2-slot array, which the far greater frequency of the one/two cases outweighs.
+    sb.AppendLine();
+    // The destructuring branch goes first so it can box the value once: rendering takes it as object,
+    // and so does capturing it, but letting each conversion happen on its own boxes a value type twice.
+    sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
     sb.AppendLine("        {");
-    sb.AppendLine("            // Capacity 2: a message that captures anything almost always captures one or two");
-    sb.AppendLine("            // properties, and both fit without List's default 4-slot first allocation.");
-    sb.AppendLine("            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);");
-    sb.AppendLine("            _capturedProperties.Add(new(tag.PropertyName, value));");
+    sb.AppendLine("            object? boxed = value;");
+    sb.AppendLine();
+    sb.AppendLine("            if (tag.PropertyName is not null)");
+    sb.AppendLine("                Capture(tag.PropertyName, boxed);");
+    sb.AppendLine();
+    sb.AppendLine("            LogPropertyDestructuring.AppendDestructured(ref _handler, boxed);");
+    sb.AppendLine("            return;");
     sb.AppendLine("        }");
     sb.AppendLine();
-    sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
-    sb.AppendLine("            LogPropertyDestructuring.AppendDestructured(ref _handler, value);");
-    sb.AppendLine("        else");
-    sb.AppendLine("            _handler.AppendFormatted(value, tag.Format);");
+    sb.AppendLine("        if (tag.PropertyName is not null)");
+    sb.AppendLine("            Capture(tag.PropertyName, value);");
+    sb.AppendLine();
+    sb.AppendLine("        _handler.AppendFormatted(value, tag.Format);");
     sb.AppendLine("    }");
     sb.AppendLine();
     WriteDocComment(
@@ -214,25 +217,26 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    public void AppendFormatted<T>(T value, int alignment, string? format)");
     sb.AppendLine("    {");
     sb.AppendLine("        TagFormat tag = LogPropertyTagFormat.Parse(format);");
-    sb.AppendLine("        if (tag.PropertyName is not null)");
-    // Capacity 2, not List's default growth: a message that captures at all almost always captures one
-    // or two properties, and both fit without the default's 4-slot first allocation. Three or more pays
-    // for the abandoned 2-slot array, which the far greater frequency of the one/two cases outweighs.
+    sb.AppendLine();
+    // Same single-box ordering as the non-aligned overload above. This one can't use AppendDestructured
+    // though: padding the rendered text to `alignment` needs it as a single contiguous string, so the
+    // intermediate Render() allocation is unavoidable here. Rendering into an alignment is a rare enough
+    // combination not to warrant hand-rolling the padding around a chunk-by-chunk append.
+    sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
     sb.AppendLine("        {");
-    sb.AppendLine("            // Capacity 2: a message that captures anything almost always captures one or two");
-    sb.AppendLine("            // properties, and both fit without List's default 4-slot first allocation.");
-    sb.AppendLine("            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);");
-    sb.AppendLine("            _capturedProperties.Add(new(tag.PropertyName, value));");
+    sb.AppendLine("            object? boxed = value;");
+    sb.AppendLine();
+    sb.AppendLine("            if (tag.PropertyName is not null)");
+    sb.AppendLine("                Capture(tag.PropertyName, boxed);");
+    sb.AppendLine();
+    sb.AppendLine("            _handler.AppendFormatted(LogPropertyDestructuring.Render(boxed), alignment);");
+    sb.AppendLine("            return;");
     sb.AppendLine("        }");
     sb.AppendLine();
-    // Unlike the non-aligned overload above, this one can't use AppendDestructured: padding the rendered
-    // text to `alignment` needs it as a single contiguous string, so the intermediate Render() allocation
-    // is unavoidable here. Rendering into an alignment is a rare enough combination not to warrant
-    // hand-rolling the padding around a chunk-by-chunk append.
-    sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
-    sb.AppendLine("            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);");
-    sb.AppendLine("        else");
-    sb.AppendLine("            _handler.AppendFormatted(value, alignment, tag.Format);");
+    sb.AppendLine("        if (tag.PropertyName is not null)");
+    sb.AppendLine("            Capture(tag.PropertyName, value);");
+    sb.AppendLine();
+    sb.AppendLine("        _handler.AppendFormatted(value, alignment, tag.Format);");
     sb.AppendLine("    }");
     sb.AppendLine();
     WriteDocComment(
@@ -252,6 +256,11 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
             ("alignment", alignmentDoc),
         ]);
     sb.AppendLine("    public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);");
+    sb.AppendLine();
+    sb.AppendLine("    // Capacity 2: a message that captures anything almost always captures one or two");
+    sb.AppendLine("    // properties, and both fit without List's default 4-slot first allocation.");
+    sb.AppendLine("    private void Capture(string propertyName, object? value) =>");
+    sb.AppendLine("        (_capturedProperties ??= new List<KeyValuePair<string, object?>>(2)).Add(new(propertyName, value));");
     sb.AppendLine();
     sb.AppendLine("    internal string ToStringAndClear() => _handler.ToStringAndClear();");
     sb.AppendLine();

@@ -54,18 +54,22 @@ public ref struct TraceInterpolatedStringHandler
     public void AppendFormatted<T>(T value, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
-        else
-            _handler.AppendFormatted(value, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            LogPropertyDestructuring.AppendDestructured(ref _handler, boxed);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -86,18 +90,22 @@ public ref struct TraceInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
-        else
-            _handler.AppendFormatted(value, alignment, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(boxed), alignment);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -112,6 +120,11 @@ public ref struct TraceInterpolatedStringHandler
     /// <param name="value">The string to append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
+
+    // Capacity 2: a message that captures anything almost always captures one or two
+    // properties, and both fit without List's default 4-slot first allocation.
+    private void Capture(string propertyName, object? value) =>
+        (_capturedProperties ??= new List<KeyValuePair<string, object?>>(2)).Add(new(propertyName, value));
 
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
@@ -167,18 +180,22 @@ public ref struct DebugInterpolatedStringHandler
     public void AppendFormatted<T>(T value, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
-        else
-            _handler.AppendFormatted(value, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            LogPropertyDestructuring.AppendDestructured(ref _handler, boxed);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -199,18 +216,22 @@ public ref struct DebugInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
-        else
-            _handler.AppendFormatted(value, alignment, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(boxed), alignment);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -225,6 +246,11 @@ public ref struct DebugInterpolatedStringHandler
     /// <param name="value">The string to append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
+
+    // Capacity 2: a message that captures anything almost always captures one or two
+    // properties, and both fit without List's default 4-slot first allocation.
+    private void Capture(string propertyName, object? value) =>
+        (_capturedProperties ??= new List<KeyValuePair<string, object?>>(2)).Add(new(propertyName, value));
 
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
@@ -280,18 +306,22 @@ public ref struct InformationInterpolatedStringHandler
     public void AppendFormatted<T>(T value, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
-        else
-            _handler.AppendFormatted(value, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            LogPropertyDestructuring.AppendDestructured(ref _handler, boxed);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -312,18 +342,22 @@ public ref struct InformationInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
-        else
-            _handler.AppendFormatted(value, alignment, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(boxed), alignment);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -338,6 +372,11 @@ public ref struct InformationInterpolatedStringHandler
     /// <param name="value">The string to append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
+
+    // Capacity 2: a message that captures anything almost always captures one or two
+    // properties, and both fit without List's default 4-slot first allocation.
+    private void Capture(string propertyName, object? value) =>
+        (_capturedProperties ??= new List<KeyValuePair<string, object?>>(2)).Add(new(propertyName, value));
 
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
@@ -393,18 +432,22 @@ public ref struct WarningInterpolatedStringHandler
     public void AppendFormatted<T>(T value, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
-        else
-            _handler.AppendFormatted(value, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            LogPropertyDestructuring.AppendDestructured(ref _handler, boxed);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -425,18 +468,22 @@ public ref struct WarningInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
-        else
-            _handler.AppendFormatted(value, alignment, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(boxed), alignment);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -451,6 +498,11 @@ public ref struct WarningInterpolatedStringHandler
     /// <param name="value">The string to append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
+
+    // Capacity 2: a message that captures anything almost always captures one or two
+    // properties, and both fit without List's default 4-slot first allocation.
+    private void Capture(string propertyName, object? value) =>
+        (_capturedProperties ??= new List<KeyValuePair<string, object?>>(2)).Add(new(propertyName, value));
 
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
@@ -506,18 +558,22 @@ public ref struct ErrorInterpolatedStringHandler
     public void AppendFormatted<T>(T value, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
-        else
-            _handler.AppendFormatted(value, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            LogPropertyDestructuring.AppendDestructured(ref _handler, boxed);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -538,18 +594,22 @@ public ref struct ErrorInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
-        else
-            _handler.AppendFormatted(value, alignment, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(boxed), alignment);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -564,6 +624,11 @@ public ref struct ErrorInterpolatedStringHandler
     /// <param name="value">The string to append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
+
+    // Capacity 2: a message that captures anything almost always captures one or two
+    // properties, and both fit without List's default 4-slot first allocation.
+    private void Capture(string propertyName, object? value) =>
+        (_capturedProperties ??= new List<KeyValuePair<string, object?>>(2)).Add(new(propertyName, value));
 
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
@@ -619,18 +684,22 @@ public ref struct CriticalInterpolatedStringHandler
     public void AppendFormatted<T>(T value, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
-        else
-            _handler.AppendFormatted(value, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            LogPropertyDestructuring.AppendDestructured(ref _handler, boxed);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -651,18 +720,22 @@ public ref struct CriticalInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
-        else
-            _handler.AppendFormatted(value, alignment, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(boxed), alignment);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -677,6 +750,11 @@ public ref struct CriticalInterpolatedStringHandler
     /// <param name="value">The string to append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
+
+    // Capacity 2: a message that captures anything almost always captures one or two
+    // properties, and both fit without List's default 4-slot first allocation.
+    private void Capture(string propertyName, object? value) =>
+        (_capturedProperties ??= new List<KeyValuePair<string, object?>>(2)).Add(new(propertyName, value));
 
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
@@ -733,18 +811,22 @@ public ref struct WriteInterpolatedStringHandler
     public void AppendFormatted<T>(T value, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            LogPropertyDestructuring.AppendDestructured(ref _handler, value);
-        else
-            _handler.AppendFormatted(value, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            LogPropertyDestructuring.AppendDestructured(ref _handler, boxed);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, tag.Format);
     }
 
     /// <summary>
@@ -765,18 +847,22 @@ public ref struct WriteInterpolatedStringHandler
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
         TagFormat tag = LogPropertyTagFormat.Parse(format);
-        if (tag.PropertyName is not null)
-        {
-            // Capacity 2: a message that captures anything almost always captures one or two
-            // properties, and both fit without List's default 4-slot first allocation.
-            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);
-            _capturedProperties.Add(new(tag.PropertyName, value));
-        }
 
         if (tag.Destructure && tag.Format is null)
-            _handler.AppendFormatted(LogPropertyDestructuring.Render(value), alignment);
-        else
-            _handler.AppendFormatted(value, alignment, tag.Format);
+        {
+            object? boxed = value;
+
+            if (tag.PropertyName is not null)
+                Capture(tag.PropertyName, boxed);
+
+            _handler.AppendFormatted(LogPropertyDestructuring.Render(boxed), alignment);
+            return;
+        }
+
+        if (tag.PropertyName is not null)
+            Capture(tag.PropertyName, value);
+
+        _handler.AppendFormatted(value, alignment, tag.Format);
     }
 
     /// <summary>
@@ -791,6 +877,11 @@ public ref struct WriteInterpolatedStringHandler
     /// <param name="value">The string to append.</param>
     /// <param name="alignment">The minimum number of characters the formatted value should occupy in the message; positive values right-align with padding, negative values left-align with padding.</param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
+
+    // Capacity 2: a message that captures anything almost always captures one or two
+    // properties, and both fit without List's default 4-slot first allocation.
+    private void Capture(string propertyName, object? value) =>
+        (_capturedProperties ??= new List<KeyValuePair<string, object?>>(2)).Add(new(propertyName, value));
 
     internal string ToStringAndClear() => _handler.ToStringAndClear();
 
