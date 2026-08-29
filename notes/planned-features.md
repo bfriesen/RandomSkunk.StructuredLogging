@@ -4,16 +4,42 @@ Working notes on features that are planned but not yet designed/implemented in
 detail. Unlike `misuse-scenarios.md` (surprising/buggy existing behavior),
 these are intentional additions to the API surface or behavior.
 
+Items are **never renumbered** - several sections cross-reference each other by
+number, and shipped items are kept rather than deleted because their design
+notes explain why the code looks the way it does. Each section's status is
+recorded in a `**Status:**` line at its end; this index is the fast way to see
+what's actually left:
+
+| # | Item | Status |
+|---|------|--------|
+| 1 | Honor trailing format after a `<@...>` destructuring tag | **Shipped** (core) — analyzer for the ambiguous `<@>F3` form still **open** |
+| 2 | Analyzer: flag an unnecessary `<>` no-capture escape hatch | **Open** — not started |
+| 3 | Interpolated-string-handler overloads for `Append`/`BeginSubOperation` | **Shipped** |
+| 4 | `Escalate` writes a journal line only when it actually escalates | **Shipped** |
+| 5 | Skip the redundant second `IsEnabled` check on handler overloads | **Shipped** |
+| 6 | Add an `IsEnabled` property to `IOperationLog` | **Shipped** |
+| 7 | Remove `IOperationLog.OperationName` | **Shipped** |
+
+So: the only unbuilt work here is item #2, plus the analyzer half of item #1.
+Both are analyzers for confusing-but-legal tag formats, and neither has been
+started.
+
 ## 1. Apply trailing format text to the message after a destructuring tag, instead of discarding it
 
-Currently, any format text following a `<@PropertyName>` (or `<@>`) tag is
-parsed by `LogPropertyTagFormat.ParseCore` but silently ignored — see
-`TagFormat.Format`'s doc comment ("Ignored when `Destructure` is `true`") and
-misuse-scenarios.md #5's last bullet. For example:
+> **The core behavior described here has shipped** — trailing format after a
+> `<@...>` tag is honored now. Only the analyzer at the end of this section is
+> still open. The text below is written in the present tense of *before* the
+> change; see the two status blocks at the end for what actually landed.
+
+At the time of writing, any format text following a `<@PropertyName>` (or `<@>`)
+tag was parsed by `LogPropertyTagFormat.ParseCore` but silently ignored — see
+`TagFormat.Format`'s doc comment (then reading "Ignored when `Destructure` is
+`true`") and misuse-scenarios.md #5's last bullet. For example:
 
 ```csharp
 logger.Information($"Example: {amount:<@Amount>F3}");
-// today: message text is the destructured rendering of `amount`; "F3" is discarded
+// then: message text is the destructured rendering of `amount`; "F3" is discarded
+// now:  "F3" formats the message, and the property is captured as "@Amount"
 ```
 
 **Planned change:** Stop discarding the trailing format. Instead:
@@ -295,7 +321,18 @@ and `DisabledOperationLog.BeginSubOperation` no longer needs to construct
 The enabled path is unaffected either way: `RootOperationLog`/
 `ChildOperationLog` already fully evaluate the name today and continue to.
 
-**Status:** Design settled for both `Append` and `BeginSubOperation` - the
+**Status: IMPLEMENTED.** Landed as designed, after #7 as sequenced. See
+`Operation/OperationLogInterpolatedStringHandler.cs`, the handler overloads on
+`IOperationLog.Append`/`BeginSubOperation`, `OperationLog<TSelf>`'s
+`IJournalOwner` implementation, and `SynchronizedOperationLog`'s two splicing
+overloads. The original design note is kept below because the reasoning about
+why the handler can't take `SynchronizedOperationLog`'s lock - its constructor
+and `AppendFormatted` calls all run during argument evaluation, before any
+method body - is not obvious from the code alone.
+
+Original note, sequencing included, follows.
+
+**Status (at time of writing):** Design settled for both `Append` and `BeginSubOperation` - the
 `IJournalOwner`/rented-buffer approach above applies uniformly to both (the
 same handler shape, just targeting different journal-write call sites).
 Ready to implement, sequenced *after* item #7 (`OperationName` removal)
@@ -357,7 +394,11 @@ before mutating `Level`, so it can be returned alongside (or instead of) the
 caller compare it against the new `state.Level` to decide whether anything
 changed.
 
-**Status:** Feasible as described - ready to implement once prioritized.
+**Status: IMPLEMENTED.** `OperationLogState.Escalate` now returns the previous
+`LogLevel` instead of `void`, and `RootOperationLog`/`ChildOperationLog` append
+their respective journal lines only when the level actually rose - see
+`RootOperationLog.cs:27` and `ChildOperationLog.cs:36`. Covered by
+`OperationLoggingTests`.
 
 ## 5. Skip the redundant second `IsEnabled` check for interpolated-handler message overloads
 
@@ -410,8 +451,10 @@ information the handler already has stored a moment earlier.
 - The `ToStringAndClear()` call stays unconditional, exactly as today, for
   the pooled-buffer reason already documented in the generator.
 
-**Status:** Feasible as described, no open questions - ready to implement
-once prioritized.
+**Status: IMPLEMENTED.** `eng/GenerateSource.cs` emits `message.IsEnabled` for
+the handler overloads and `logger.IsEnabled(level)` only for the plain-`string`
+ones (`enabledCheckExpr`, GenerateSource.cs:551), so a handler overload dispatches
+to `ILogger.IsEnabled` exactly once.
 
 ## 6. Add an `IsEnabled` property to `IOperationLog`
 
@@ -477,10 +520,11 @@ place, not only use the members that stay well-behaved either way.
   signature (parameterless property vs. a method taking a `LogLevel`), and a
   different interface, so both can be in scope without ambiguity.
 
-**Status:** Feasible as described, no open questions - ready to implement
-once prioritized. Note it's an interface addition, so it lands as a breaking
-change for any external `IOperationLog` implementation (none are known to
-exist outside this library today).
+**Status: IMPLEMENTED.** `IOperationLog.IsEnabled` (IOperationLog.cs:50), with
+`DisabledOperationLog` hardcoding `false`. It also became load-bearing beyond its
+original motivation: `OperationLogInterpolatedStringHandler`'s constructor checks
+it to skip evaluating interpolation holes on a disabled operation, which is what
+makes #3's handler overloads worth having.
 
 ## 7. Remove `IOperationLog.OperationName`
 
@@ -534,6 +578,9 @@ added for symmetry with `EventId`/`Properties` rather than a real need.
   line, and (on the root) the final `Operation.Name` property. Only the
   ability to read it back out of an `IOperationLog` afterward goes away.
 
-**Status:** Decided - ready to implement. Should land before or alongside
-#3's `BeginSubOperation` handler overload, since it's what makes that
-overload's disabled-path optimization safe (see #3 above).
+**Status: IMPLEMENTED.** `OperationName` is gone from `IOperationLog`; each
+level's `name` is now used only in that level's own journal lines (`_operationName`
+on the implementations). Landed before #3, as sequenced. A consequence worth
+remembering: with no per-level name on the interface, a root and every
+sub-operation under a disabled logger are behaviorally identical, which is why
+`DisabledOperationLog.BeginSubOperation` can just return `this`.
