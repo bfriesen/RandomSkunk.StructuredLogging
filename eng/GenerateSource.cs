@@ -260,6 +260,15 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    // Capacity 2: a message that captures anything almost always captures one or two");
     sb.AppendLine("    // properties, and both fit without List's default 4-slot first allocation.");
     sb.AppendLine("    private void Capture(string propertyName, object? value) =>");
+    // capacity 2 rather than List's default 0->4->8 growth. A message that captures anything at all
+    // almost always captures one or two properties, and both fit a 2-slot array (56 bytes) instead of
+    // the default's 4-slot first allocation (88 bytes). Capturing three or more pays 56 bytes for the
+    // abandoned 2-slot array, so this is a bet on the distribution of capture counts, not a free win -
+    // it comes out ahead as long as fewer than ~36% of capturing calls capture 3+.
+    //
+    // Deliberately a constant rather than derived from formattedCount: sizing to the hole count would
+    // make a message with many holes but one tag worse than the default, and would cost a field on
+    // every handler just to carry the count to the first capture.
     sb.AppendLine("        (_capturedProperties ??= new List<KeyValuePair<string, object?>>(2)).Add(new(propertyName, value));");
     sb.AppendLine();
     sb.AppendLine("    internal string ToStringAndClear() => _handler.ToStringAndClear();");
@@ -544,6 +553,24 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     sb.AppendLine("            return;");
     sb.AppendLine();
 
+    // A List arrives as an IReadOnlyList and is used as passed; anything else (a Dictionary, most
+    // commonly) is copied once per call - 96 B/op against 40 B for a 2-entry collection, exactly one
+    // 24 + 2x16 array. That eager copy is deliberate; don't try to make it lazy.
+    //
+    // Every lazy alternative is worse for a library that can't know how its sink reads the state.
+    // Caching a lazily-materialized array needs somewhere to put it, and LogPropertiesState is a
+    // readonly struct passed by value through Log<TState>: a cache field only sticks once a sink boxes
+    // it, and MEL hands the state to each provider separately, so several providers would each box and
+    // each materialize. Making it reliable means allocating a holder on every log call - charging every
+    // caller to spare the Dictionary ones. Enumerating to position i in the indexer avoids the holder
+    // but is worse where it matters: a 7-entry dictionary read by an index-based sink becomes ~28
+    // enumerator steps and 7 boxed enumerators, several hundred bytes against the 96 it was trying to
+    // save, and O(n^2) for anything larger.
+    //
+    // There's also no waste to remove here: Enumerable.ToArray takes the ICollection<T>.CopyTo path, so
+    // it's already a single allocation with no enumerator and no growth. The cost is bounded,
+    // predictable, paid only by callers who chose a non-list collection, and avoidable by passing a
+    // List (noted in the README).
     if (includeCollection)
         sb.AppendLine("        IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();");
 
