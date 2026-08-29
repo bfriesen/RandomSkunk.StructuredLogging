@@ -172,7 +172,15 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    {");
     sb.AppendLine("        TagFormat tag = LogPropertyTagFormat.Parse(format);");
     sb.AppendLine("        if (tag.PropertyName is not null)");
-    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
+    // Capacity 2, not List's default growth: a message that captures at all almost always captures one
+    // or two properties, and both fit without the default's 4-slot first allocation. Three or more pays
+    // for the abandoned 2-slot array, which the far greater frequency of the one/two cases outweighs.
+    sb.AppendLine("        {");
+    sb.AppendLine("            // Capacity 2: a message that captures anything almost always captures one or two");
+    sb.AppendLine("            // properties, and both fit without List's default 4-slot first allocation.");
+    sb.AppendLine("            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);");
+    sb.AppendLine("            _capturedProperties.Add(new(tag.PropertyName, value));");
+    sb.AppendLine("        }");
     sb.AppendLine();
     sb.AppendLine("        if (tag.Destructure && tag.Format is null)");
     sb.AppendLine("            LogPropertyDestructuring.AppendDestructured(ref _handler, value);");
@@ -207,7 +215,15 @@ static void AppendHandler(StringBuilder sb, string typeName, string? fixedLevel)
     sb.AppendLine("    {");
     sb.AppendLine("        TagFormat tag = LogPropertyTagFormat.Parse(format);");
     sb.AppendLine("        if (tag.PropertyName is not null)");
-    sb.AppendLine("            (_capturedProperties ??= new List<KeyValuePair<string, object?>>()).Add(new(tag.PropertyName, value));");
+    // Capacity 2, not List's default growth: a message that captures at all almost always captures one
+    // or two properties, and both fit without the default's 4-slot first allocation. Three or more pays
+    // for the abandoned 2-slot array, which the far greater frequency of the one/two cases outweighs.
+    sb.AppendLine("        {");
+    sb.AppendLine("            // Capacity 2: a message that captures anything almost always captures one or two");
+    sb.AppendLine("            // properties, and both fit without List's default 4-slot first allocation.");
+    sb.AppendLine("            _capturedProperties ??= new List<KeyValuePair<string, object?>>(2);");
+    sb.AppendLine("            _capturedProperties.Add(new(tag.PropertyName, value));");
+    sb.AppendLine("        }");
     sb.AppendLine();
     // Unlike the non-aligned overload above, this one can't use AppendDestructured: padding the rendered
     // text to `alignment` needs it as a single contiguous string, so the intermediate Render() allocation
