@@ -6,14 +6,15 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 
 /// <summary>
 /// Shared by <see cref="UndisposedOperationLogAnalyzer"/> (RSSL0006) and its code fix provider.
-/// <c>IOperationLog</c>'s <c>AddProperty</c>/<c>Append</c>/<c>AppendValue</c>/<c>AppendJson</c>/
-/// <c>SetException</c>/<c>SetResult</c> methods are all fluent - they return the same instance
-/// they were called on - so a value produced by <c>BeginOperation</c>/<c>BeginSubOperation</c> is
-/// still that same, still-undisposed <c>IOperationLog</c> after being threaded through any chain
-/// of these calls, e.g. <c>logger.BeginOperation("Op").AddProperty("Name", value)</c>. Both the
-/// analyzer and the code fix need to reason about the *outermost* link in such a chain - the
-/// expression a developer would actually assign, wrap in a <c>using</c>, or dispose - rather than
-/// the inner <c>BeginOperation</c>/<c>BeginSubOperation</c> call the diagnostic anchors on.
+/// <c>ISubOperationLog</c>'s <c>AddProperty</c>/<c>Append</c>/<c>AppendValue</c>/<c>AppendJson</c>/
+/// <c>AppendException</c>/<c>AppendResult</c> methods, and <c>IOperationLog</c>'s additional
+/// <c>SetException</c>/<c>SetResult</c>, are all fluent - they return the same instance they were
+/// called on - so a value produced by <c>BeginOperation</c>/<c>BeginSubOperation</c> is still that
+/// same, still-undisposed operation log after being threaded through any chain of these calls, e.g.
+/// <c>logger.BeginOperation("Op").AddProperty("Name", value)</c>. Both the analyzer and the code fix
+/// need to reason about the *outermost* link in such a chain - the expression a developer would
+/// actually assign, wrap in a <c>using</c>, or dispose - rather than the inner
+/// <c>BeginOperation</c>/<c>BeginSubOperation</c> call the diagnostic anchors on.
 /// </summary>
 internal static class OperationLogChain
 {
@@ -23,23 +24,28 @@ internal static class OperationLogChain
         "Append",
         "AppendValue",
         "AppendJson",
+        "AppendException",
+        "AppendResult",
         "SetException",
         "SetResult");
 
     /// <summary>
     /// Walks from <paramref name="operationLogValue"/> (an expression whose value is an
-    /// <c>IOperationLog</c>) up through any chain of fluent <c>IOperationLog</c> calls made
-    /// directly on it, returning the outermost link - the expression whose value is what a
-    /// developer would actually need to dispose.
+    /// <c>IOperationLog</c>/<c>ISubOperationLog</c>) up through any chain of fluent calls made
+    /// directly on it - declared on either interface, since <c>BeginSubOperation</c> produces an
+    /// <c>ISubOperationLog</c> while <c>BeginOperation</c> produces an <c>IOperationLog</c> - returning
+    /// the outermost link: the expression whose value is what a developer would actually need to
+    /// dispose.
     /// </summary>
-    public static IOperation GetOutermost(IOperation operationLogValue, INamedTypeSymbol operationLogType)
+    public static IOperation GetOutermost(IOperation operationLogValue, INamedTypeSymbol operationLogType, INamedTypeSymbol subOperationLogType)
     {
         IOperation current = SkipConversions(operationLogValue);
 
         while (current.Parent is IInvocationOperation outer
             && outer.Instance == current
             && FluentMethodNames.Contains(outer.TargetMethod.Name)
-            && SymbolEqualityComparer.Default.Equals(outer.TargetMethod.ContainingType, operationLogType))
+            && (SymbolEqualityComparer.Default.Equals(outer.TargetMethod.ContainingType, operationLogType)
+                || SymbolEqualityComparer.Default.Equals(outer.TargetMethod.ContainingType, subOperationLogType)))
         {
             current = SkipConversions(outer);
         }

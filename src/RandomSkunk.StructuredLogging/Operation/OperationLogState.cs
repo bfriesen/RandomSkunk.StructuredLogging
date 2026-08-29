@@ -11,7 +11,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// accumulated anywhere in the tree as exactly one log entry. This type applies no synchronization of its
 /// own - concurrent use (e.g. sub-operations run via <c>Task.WhenAll</c>) is only safe when the operation
 /// was begun with <c>threadSafe: true</c> (see <see cref="LoggerOperationExtensions"/>), which wraps every
-/// <see cref="IOperationLog"/> (root or sub-operation) in a locking decorator instead.
+/// <see cref="ISubOperationLog"/> (root or sub-operation) in a locking decorator instead.
 /// <see cref="_journal"/> is rented from <see cref="OperationLogPools"/> and returned there by
 /// <see cref="Dispose"/>, called from <see cref="RootOperationLog.DisposeCore"/> - neither must be
 /// touched by any <see cref="ChildOperationLog"/> still in scope after the root operation has been
@@ -96,7 +96,7 @@ internal sealed class OperationLogState : IDisposable
 
     /// <summary>
     /// Raises <see cref="Level"/> to <paramref name="level"/> if it's more severe than the operation's
-    /// current level, leaving it unchanged otherwise - see <see cref="IOperationLog.Escalate"/>.
+    /// current level, leaving it unchanged otherwise - see <see cref="ISubOperationLog.Escalate"/>.
     /// </summary>
     /// <returns>
     /// The level <see cref="Level"/> was set to just before this call - the same as the new
@@ -133,13 +133,13 @@ internal sealed class OperationLogState : IDisposable
 
     /// <summary>
     /// Throws <see cref="ObjectDisposedException"/> if the root operation has already been disposed - see
-    /// <see cref="IsDisposed"/>. Called by every <see cref="OperationLog{TSelf}"/> member that would
+    /// <see cref="IsDisposed"/>. Called by every <see cref="OperationLog{TOperationLog}"/> member that would
     /// otherwise read or write this shared state.
     /// </summary>
     public void ThrowIfDisposed()
     {
         if (IsDisposed)
-            throw new ObjectDisposedException(nameof(IOperationLog), "Cannot use an operation log after the root operation has been disposed.");
+            throw new ObjectDisposedException(nameof(ISubOperationLog), "Cannot use an operation log after the root operation has been disposed.");
     }
 
     private StringBuilder AppendTimestamp(TimeSpan elapsed) =>

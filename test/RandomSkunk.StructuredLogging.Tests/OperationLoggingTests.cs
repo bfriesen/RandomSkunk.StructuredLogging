@@ -18,12 +18,12 @@ public class OperationLoggingTests
                 .AddProperty("x", 1)
                 .Append("hi")
                 .AppendValue(5)
-                .AppendJson(new { A = 1 })
-                .SetResult(1)
-                .SetException(new InvalidOperationException());
+                .AppendJson(new { A = 1 });
+            log.SetResult(1);
+            log.SetException(new InvalidOperationException());
 
-            using IOperationLog subLog = log.BeginSubOperation("Sub");
-            subLog.AddProperty("y", 2).SetResult(3).SetException(new InvalidOperationException());
+            using ISubOperationLog subLog = log.BeginSubOperation("Sub");
+            subLog.AddProperty("y", 2).AppendResult(3).AppendException(new InvalidOperationException());
         }
 
         logger.LogCallCount.Should().Be(0);
@@ -268,7 +268,7 @@ public class OperationLoggingTests
         RecordingLogger logger = new();
 
         using IOperationLog log = logger.BeginOperation("Name");
-        using IOperationLog subLog = log.BeginSubOperation("Fetch");
+        using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
         subLog.AddProperty("Count", 5);
 
         log.Properties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Count", 5));
@@ -329,7 +329,7 @@ public class OperationLoggingTests
         EventId eventId = new(42, "Custom");
 
         using IOperationLog log = logger.BeginOperation(eventId, "Name");
-        using IOperationLog subLog = log.BeginSubOperation("Fetch");
+        using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
 
         subLog.EventId.Should().Be(eventId);
     }
@@ -341,7 +341,7 @@ public class OperationLoggingTests
         EventId eventId = new(42, "Custom");
 
         using IOperationLog log = logger.BeginOperation(eventId, "Name");
-        using IOperationLog subLog = log.BeginSubOperation("Fetch");
+        using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
         subLog.AddProperty("Count", 5);
 
         subLog.EventId.Should().Be(eventId);
@@ -387,7 +387,7 @@ public class OperationLoggingTests
         RecordingLogger logger = new();
 
         using IOperationLog log = logger.BeginOperation("Name");
-        using IOperationLog subLog = log.BeginSubOperation("Fetch");
+        using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
 
         subLog.IsEnabled.Should().BeTrue();
     }
@@ -398,7 +398,7 @@ public class OperationLoggingTests
         RecordingLogger logger = new() { Enabled = false };
 
         using IOperationLog log = logger.BeginOperation("Name");
-        using IOperationLog subLog = log.BeginSubOperation("Fetch");
+        using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
 
         subLog.IsEnabled.Should().BeFalse();
     }
@@ -451,6 +451,35 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void AppendResult_AppendsJournalLine_DoesNotSetOperationResultProperty()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.AppendResult("done");
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("Operation result: done");
+        logger.LastProperties!.Any(kvp => kvp.Key == "Operation.Result").Should().BeFalse();
+    }
+
+    [Fact]
+    public void AppendException_AppendsJournalLine_DoesNotSetExceptionOnFinalEntry()
+    {
+        RecordingLogger logger = new();
+        InvalidOperationException exception = new("boom");
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.AppendException(exception);
+
+        logger.LastException.Should().BeNull();
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("Operation failed:");
+        journal.Should().Contain(exception.ToString());
+    }
+
+    [Fact]
     public void Escalate_MoreSevere_RaisesLevelOnFinalEntry()
     {
         RecordingLogger logger = new();
@@ -492,7 +521,7 @@ public class OperationLoggingTests
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            using IOperationLog subLog = log.BeginSubOperation("Fetch");
+            using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
             subLog.Escalate(LogLevel.Critical);
         }
 
@@ -553,7 +582,7 @@ public class OperationLoggingTests
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            using IOperationLog subLog = log.BeginSubOperation("Fetch");
+            using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
             subLog.Escalate(LogLevel.Critical);
         }
 
@@ -690,7 +719,7 @@ public class OperationLoggingTests
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            using IOperationLog subLog = log.BeginSubOperation("Fetch");
+            using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
         }
 
         string journal = logger.LastMessage!;
@@ -705,7 +734,7 @@ public class OperationLoggingTests
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            using IOperationLog subLog = log.BeginSubOperation($"Fetch-{42}");
+            using ISubOperationLog subLog = log.BeginSubOperation($"Fetch-{42}");
         }
 
         string journal = logger.LastMessage!;
@@ -714,14 +743,14 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void BeginSubOperation_Interpolated_NameIsReusedInSetResultAndSetException()
+    public void BeginSubOperation_Interpolated_NameIsReusedInAppendResultAndAppendException()
     {
         RecordingLogger logger = new();
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            using IOperationLog subLog = log.BeginSubOperation($"Fetch-{42}");
-            subLog.SetResult("done").SetException(new InvalidOperationException("boom"));
+            using ISubOperationLog subLog = log.BeginSubOperation($"Fetch-{42}");
+            subLog.AppendResult("done").AppendException(new InvalidOperationException("boom"));
         }
 
         string journal = logger.LastMessage!;
@@ -742,7 +771,7 @@ public class OperationLoggingTests
         }
 
         using (IOperationLog log = logger.BeginOperation("Name"))
-        using (IOperationLog subLog = log.BeginSubOperation($"Fetch-{GetValue()}"))
+        using (ISubOperationLog subLog = log.BeginSubOperation($"Fetch-{GetValue()}"))
         {
         }
 
@@ -757,7 +786,7 @@ public class OperationLoggingTests
 
         using (IOperationLog log = logger.BeginOperation("Name", threadSafe: true))
         {
-            using IOperationLog subLog = log.BeginSubOperation($"Fetch-{42}");
+            using ISubOperationLog subLog = log.BeginSubOperation($"Fetch-{42}");
         }
 
         string journal = logger.LastMessage!;
@@ -778,7 +807,7 @@ public class OperationLoggingTests
         }
 
         using (IOperationLog log = logger.BeginOperation("Name", threadSafe: true))
-        using (IOperationLog subLog = log.BeginSubOperation($"Fetch-{GetValue()}"))
+        using (ISubOperationLog subLog = log.BeginSubOperation($"Fetch-{GetValue()}"))
         {
         }
 
@@ -793,7 +822,7 @@ public class OperationLoggingTests
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            using IOperationLog subLog = log.BeginSubOperation("Fetch");
+            using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
             subLog.AddProperty("Count", 5);
         }
 
@@ -801,14 +830,14 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void SubOperation_SetResult_AppendsJournalLine_NotRootResultProperty()
+    public void SubOperation_AppendResult_AppendsJournalLine_NotRootResultProperty()
     {
         RecordingLogger logger = new();
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            using IOperationLog subLog = log.BeginSubOperation("Fetch");
-            subLog.SetResult(99);
+            using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
+            subLog.AppendResult(99);
         }
 
         string journal = logger.LastMessage!;
@@ -817,15 +846,15 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void SubOperation_SetException_AppendsJournalLineAndDoesNotSetRootException()
+    public void SubOperation_AppendException_AppendsJournalLineAndDoesNotSetRootException()
     {
         RecordingLogger logger = new();
         InvalidOperationException exception = new("boom");
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            using IOperationLog subLog = log.BeginSubOperation("Fetch");
-            subLog.SetException(exception);
+            using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
+            subLog.AppendException(exception);
         }
 
         logger.LastException.Should().BeNull();
@@ -842,8 +871,8 @@ public class OperationLoggingTests
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            using IOperationLog outerLog = log.BeginSubOperation("Outer");
-            using IOperationLog innerLog = outerLog.BeginSubOperation("Inner");
+            using ISubOperationLog outerLog = log.BeginSubOperation("Outer");
+            using ISubOperationLog innerLog = outerLog.BeginSubOperation("Inner");
         }
 
         string journal = logger.LastMessage!;
@@ -872,7 +901,7 @@ public class OperationLoggingTests
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            IOperationLog subLog = log.BeginSubOperation("Fetch");
+            ISubOperationLog subLog = log.BeginSubOperation("Fetch");
             subLog.Dispose();
             subLog.Dispose();
         }
@@ -886,7 +915,7 @@ public class OperationLoggingTests
     {
         RecordingLogger logger = new();
 
-        IOperationLog leakedSubLog;
+        ISubOperationLog leakedSubLog;
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
             leakedSubLog = log.BeginSubOperation("Fetch");
@@ -902,7 +931,7 @@ public class OperationLoggingTests
     {
         RecordingLogger logger = new();
 
-        IOperationLog leakedSubLog;
+        ISubOperationLog leakedSubLog;
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
             leakedSubLog = log.BeginSubOperation("Fetch");
@@ -918,7 +947,7 @@ public class OperationLoggingTests
     {
         RecordingLogger logger = new();
 
-        IOperationLog leakedSubLog;
+        ISubOperationLog leakedSubLog;
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
             leakedSubLog = log.BeginSubOperation("Fetch");
@@ -938,7 +967,7 @@ public class OperationLoggingTests
         {
             IEnumerable<Task> tasks = Enumerable.Range(0, 20).Select(i => Task.Run(() =>
             {
-                using IOperationLog subLog = log.BeginSubOperation($"Sub{i}");
+                using ISubOperationLog subLog = log.BeginSubOperation($"Sub{i}");
                 subLog.AddProperty($"P{i}", i);
                 subLog.AppendValue(i, "value");
             }));
@@ -1031,14 +1060,14 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void SubOperation_SetResult_NullValue_RendersNullLiteral()
+    public void SubOperation_AppendResult_NullValue_RendersNullLiteral()
     {
         RecordingLogger logger = new();
 
         using (IOperationLog log = logger.BeginOperation("Name"))
         {
-            using IOperationLog subLog = log.BeginSubOperation("Fetch");
-            subLog.SetResult<string?>(null);
+            using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
+            subLog.AppendResult<string?>(null);
         }
 
         logger.LastMessage.Should().Contain("`Fetch` result: null");

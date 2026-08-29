@@ -27,6 +27,44 @@ public class OperationLogExtensionsTests
     }
 
     [Fact]
+    public void AppendResultTo_ReturnsValueUnchangedAndAppendsJournalLine()
+    {
+        RecordingLogger logger = new();
+
+        string result;
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            result = "shipped".AppendResultTo(log);
+
+        result.Should().Be("shipped");
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("Operation result: shipped");
+        logger.LastProperties!.Any(kvp => kvp.Key == "Operation.Result").Should().BeFalse();
+    }
+
+    [Fact]
+    public void AppendResultTo_SubOperation_AppendsJournalLineUnderSubOperationName()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
+            "done".AppendResultTo(subLog);
+        }
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("`Fetch` result: done");
+    }
+
+    [Fact]
+    public void AppendResultTo_NullLog_ThrowsArgumentNullException()
+    {
+        Func<string> act = () => "value".AppendResultTo(null!);
+
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
     public void RecordPropertyTo_ReturnsValueUnchangedAndSetsProperty()
     {
         RecordingLogger logger = new();

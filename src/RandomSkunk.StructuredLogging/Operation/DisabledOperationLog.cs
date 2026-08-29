@@ -26,7 +26,7 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog
 
     public bool IsEnabled => false;
 
-    public IOperationLog AddProperty<T>(string name, T value)
+    public ISubOperationLog AddProperty<T>(string name, T value)
     {
         (_properties ??= new(capacity: 8)).Add(new(name, value));
         return this;
@@ -34,23 +34,27 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog
 
     public IOperationLog SetException(Exception exception) => this;
 
-    public IOperationLog Escalate(LogLevel level) => this;
+    public ISubOperationLog Escalate(LogLevel level) => this;
 
     public IOperationLog SetResult<T>(T value) => this;
 
-    public IOperationLog Append(string text) => this;
+    public ISubOperationLog AppendException(Exception exception) => this;
+
+    public ISubOperationLog AppendResult<T>(T value) => this;
+
+    public ISubOperationLog Append(string text) => this;
 
     // The handler's constructor already saw IsEnabled == false and skipped evaluating text's
     // interpolated arguments entirely - nothing was written anywhere.
-    public IOperationLog Append(ref OperationLogInterpolatedStringHandler text) => this;
+    public ISubOperationLog Append(ref OperationLogInterpolatedStringHandler text) => this;
 
-    public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
+    public ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
 
-    public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
+    public ISubOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null) => this;
 
-    public IOperationLog BeginSubOperation(string operationName) => this;
+    public ISubOperationLog BeginSubOperation(string operationName) => this;
 
-    public IOperationLog BeginSubOperation(ref OperationLogInterpolatedStringHandler operationName) => this;
+    public ISubOperationLog BeginSubOperation(ref OperationLogInterpolatedStringHandler operationName) => this;
 
     public void Dispose()
     {

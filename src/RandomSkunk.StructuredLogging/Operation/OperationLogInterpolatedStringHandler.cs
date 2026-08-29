@@ -5,9 +5,9 @@ namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Interpolated string handler for the <c>text</c>/<c>operationName</c> parameter of
-/// <see cref="IOperationLog.Append(ref OperationLogInterpolatedStringHandler)"/> and
-/// <see cref="IOperationLog.BeginSubOperation(ref OperationLogInterpolatedStringHandler)"/>. Building the
-/// interpolated content is skipped entirely when <see cref="IOperationLog.IsEnabled"/> is
+/// <see cref="ISubOperationLog.Append(ref OperationLogInterpolatedStringHandler)"/> and
+/// <see cref="ISubOperationLog.BeginSubOperation(ref OperationLogInterpolatedStringHandler)"/>. Building the
+/// interpolated content is skipped entirely when <see cref="ISubOperationLog.IsEnabled"/> is
 /// <see langword="false"/>, the same short-circuit the structured-logging message handlers apply for a
 /// disabled <see cref="Microsoft.Extensions.Logging.LogLevel"/>.
 /// <para>
@@ -18,7 +18,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// <see cref="OperationLogPools.Journals"/> instead - deliberately never the shared journal directly,
 /// because the lock that makes concurrent access to it safe can't be acquired here: this handler's
 /// constructor and its <c>AppendFormatted</c> calls all run as part of *argument evaluation*, before
-/// <see cref="IOperationLog.Append(ref OperationLogInterpolatedStringHandler)"/>'s method body (and
+/// <see cref="ISubOperationLog.Append(ref OperationLogInterpolatedStringHandler)"/>'s method body (and
 /// therefore any lock taken inside it) ever runs. If a hole's expression were to throw partway through
 /// with the lock already held, the method body - and any code that would release it - would never run,
 /// deadlocking the operation's shared gate permanently. Writing into a private, thread-local buffer instead
@@ -50,7 +50,7 @@ public ref struct OperationLogInterpolatedStringHandler
     /// Set to <see langword="false"/> when <paramref name="log"/> is not enabled, so the compiler skips
     /// evaluating and appending the interpolated string's arguments.
     /// </param>
-    public OperationLogInterpolatedStringHandler(int literalLength, int formattedCount, IOperationLog log, out bool handlerIsValid)
+    public OperationLogInterpolatedStringHandler(int literalLength, int formattedCount, ISubOperationLog log, out bool handlerIsValid)
     {
         IsEnabled = handlerIsValid = log.IsEnabled;
 

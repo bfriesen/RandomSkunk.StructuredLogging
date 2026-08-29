@@ -30,7 +30,7 @@ public class UndisposedOperationLogAnalyzerTests
         string source = Wrap(
             """
             using IOperationLog log = logger.BeginOperation("Op");
-            IOperationLog subLog = log.BeginSubOperation("SubOp");
+            ISubOperationLog subLog = log.BeginSubOperation("SubOp");
             """);
 
         ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new UndisposedOperationLogAnalyzer());
@@ -58,8 +58,8 @@ public class UndisposedOperationLogAnalyzerTests
         IOperationLog log = logger.BeginOperation("Op");
         ((IDisposable)log).Dispose();
         """)]
-    [InlineData("""using IOperationLog log = logger.BeginOperation("Op").AddProperty("Name", "value");""")]
-    [InlineData("""using var log = logger.BeginOperation("Op").AddProperty("Name", "value").SetResult(1);""")]
+    [InlineData("""using var log = logger.BeginOperation("Op").AddProperty("Name", "value");""")]
+    [InlineData("""using var log = logger.BeginOperation("Op").SetResult(1).AddProperty("Name", "value");""")]
     [InlineData(
         """
         IOperationLog log = logger.BeginOperation("Op");
@@ -80,7 +80,7 @@ public class UndisposedOperationLogAnalyzerTests
         string source = Wrap(
             """
             using IOperationLog log = logger.BeginOperation("Op");
-            using IOperationLog subLog = log.BeginSubOperation("SubOp");
+            using ISubOperationLog subLog = log.BeginSubOperation("SubOp");
             """);
 
         ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new UndisposedOperationLogAnalyzer());
@@ -107,7 +107,7 @@ public class UndisposedOperationLogAnalyzerTests
         string source = Wrap(
             """
             using IOperationLog log = logger.BeginOperation("Op");
-            using IOperationLog subLog = log.BeginSubOperation("SubOp").AddProperty("Name", "value");
+            using ISubOperationLog subLog = log.BeginSubOperation("SubOp").AddProperty("Name", "value");
             """);
 
         ImmutableArray<Diagnostic> diagnostics = await AnalyzerVerifier.GetDiagnosticsAsync(source, new UndisposedOperationLogAnalyzer());

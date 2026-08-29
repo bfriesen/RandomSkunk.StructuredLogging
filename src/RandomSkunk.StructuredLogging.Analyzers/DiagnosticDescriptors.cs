@@ -88,17 +88,17 @@ public static class DiagnosticDescriptors
 
     /// <summary>
     /// Reported on a call to <c>BeginOperation</c>/<c>BeginSubOperation</c> whose returned
-    /// <c>IOperationLog</c> isn't visibly disposed. Forgetting to dispose it means no log entry
-    /// (not even a partial one) is ever written for the operation.
+    /// <c>IOperationLog</c>/<c>ISubOperationLog</c> isn't visibly disposed. Forgetting to dispose it
+    /// means no log entry (not even a partial one) is ever written for the operation.
     /// </summary>
     public static readonly DiagnosticDescriptor UndisposedOperationLog = new(
         id: "RSSL0006",
         title: "Dispose the operation log",
-        messageFormat: "The IOperationLog returned by '{0}' should be disposed, typically with a 'using' declaration or statement, so its journal is written as a log entry",
+        messageFormat: "The operation log returned by '{0}' should be disposed, typically with a 'using' declaration or statement, so its journal is written as a log entry",
         category: "Reliability",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "BeginOperation/BeginSubOperation return an IOperationLog whose disposal is what actually writes its log entry (root) or 'complete' journal line (sub-operation). Nothing enforces disposal, and forgetting it silently drops the entire journal - no exception, no partial log entry - and leaks the operation's pooled StringBuilder. This is the operation-logging analog of CA2000, which can't catch this itself: its escape analysis anchors on 'new' expressions visible in the consuming compilation, and BeginOperation's internal object construction is opaque, living inside the already-compiled library assembly.");
+        description: "BeginOperation returns an IOperationLog and BeginSubOperation returns an ISubOperationLog, whose disposal is what actually writes its log entry (root) or 'complete' journal line (sub-operation). Nothing enforces disposal, and forgetting it silently drops the entire journal - no exception, no partial log entry - and leaks the operation's pooled StringBuilder. This is the operation-logging analog of CA2000, which can't catch this itself: its escape analysis anchors on 'new' expressions visible in the consuming compilation, and BeginOperation's internal object construction is opaque, living inside the already-compiled library assembly.");
 
     /// <summary>
     /// Reported on a local variable that's initialized from an interpolated string expression and

@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging.Operation;
@@ -19,20 +20,35 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
         return this;
     }
 
-    public IOperationLog Escalate(LogLevel level)
-    {
-        _state.ThrowIfDisposed();
-        LogLevel previousLevel = _state.Escalate(level);
-        if (level > previousLevel)
-            BeginJournalEntry().Append($"Operation escalated from {previousLevel} to {level}.");
-        return this;
-    }
-
     public IOperationLog SetResult<T>(T value)
     {
         _state.ThrowIfDisposed();
         _state.Result = value;
         _state.HasResult = true;
+        return this;
+    }
+
+    public ISubOperationLog AppendException(Exception exception)
+    {
+        _state.ThrowIfDisposed();
+        BeginJournalEntry().Append($"Operation failed:\n{exception}");
+        return this;
+    }
+
+    public ISubOperationLog AppendResult<T>(T value)
+    {
+        _state.ThrowIfDisposed();
+        StringBuilder journal = BeginJournalEntry().Append("Operation result: ");
+        ValueFormatting.AppendValue(journal, value);
+        return this;
+    }
+
+    public ISubOperationLog Escalate(LogLevel level)
+    {
+        _state.ThrowIfDisposed();
+        LogLevel previousLevel = _state.Escalate(level);
+        if (level > previousLevel)
+            BeginJournalEntry().Append($"Operation escalated from {previousLevel} to {level}.");
         return this;
     }
 
