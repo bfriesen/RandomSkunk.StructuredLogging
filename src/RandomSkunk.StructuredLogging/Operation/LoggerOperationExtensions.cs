@@ -63,7 +63,16 @@ public static class LoggerOperationExtensions
 
         DisabledOperationLog disabledLog = new(eventId);
         if (threadSafe)
-            return new SynchronizedOperationLog(disabledLog, disabledLog.Gate);
+        {
+            // A gate of its own, unlike the enabled path above, which locks on the OperationLogState the
+            // whole tree already shares. That state is internal and never leaves the library, so it can't
+            // be locked on from outside; a DisabledOperationLog is handed straight back to the caller as an
+            // IOperationLog on the non-thread-safe path below, and a gate callers can reach is a gate they
+            // can deadlock. Allocated here rather than held as a field on DisabledOperationLog so the
+            // common disabled path - no synchronization at all - stays a single allocation.
+            return new SynchronizedOperationLog(disabledLog, new object());
+        }
+
         return disabledLog;
     }
 }

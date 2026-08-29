@@ -19,8 +19,6 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog
 {
     private List<KeyValuePair<string, object?>>? _properties;
 
-    public object Gate => this;
-
     public IReadOnlyList<KeyValuePair<string, object?>> Properties =>
         _properties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 
