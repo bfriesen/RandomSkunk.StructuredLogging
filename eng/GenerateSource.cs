@@ -513,11 +513,15 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
 
     if (useHandler)
     {
-        // ToStringAndClear() must run unconditionally: it returns the handler's rented buffer to
-        // ArrayPool<char>.Shared, and skipping that when the level is disabled would leak the buffer.
-        sb.AppendLine("        string messageText = message.ToStringAndClear();");
-        sb.AppendLine();
-        messageTextExpr = "messageText";
+        // Both of these are evaluated in the state constructor's argument list, after the level check
+        // emitted below. Building the message only once the level is known to be enabled is safe: a
+        // disabled handler never rented a buffer to return, because its constructor sets handlerIsValid
+        // to false, so the compiler skips the interpolation holes entirely and leaves the inner
+        // DefaultInterpolatedStringHandler `default` - nothing for ToStringAndClear() to hand back to
+        // ArrayPool<char>.Shared, and nothing to clear. Their relative order is safe too: arguments
+        // evaluate left to right, and ToStringAndClear() clears only the inner handler, never the
+        // captured-property list GetCapturedProperties() returns.
+        messageTextExpr = "message.ToStringAndClear()";
         capturedPropertiesExpr = "message.GetCapturedProperties()";
     }
     else
