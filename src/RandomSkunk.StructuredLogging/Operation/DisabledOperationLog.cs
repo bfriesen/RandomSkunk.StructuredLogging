@@ -12,7 +12,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// operation ends up writing a log entry - e.g. to tag an unrelated log line with the operation's
 /// <see cref="EventId"/>, or to pass <see cref="Properties"/> to another structured log call. Every other
 /// member is a no-op. A root and every sub-operation begun from it are behaviorally identical - there's no
-/// per-level state left to distinguish them - so <see cref="BeginSubOperation"/> just returns
+/// per-level state left to distinguish them - so <see cref="BeginSubOperation(string)"/> just returns
 /// <see langword="this"/> instead of allocating.
 /// </summary>
 internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog

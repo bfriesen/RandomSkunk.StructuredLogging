@@ -9,7 +9,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// or <see cref="ChildOperationLog"/>, though this decorator doesn't depend on that) so every member is
 /// synchronized on a shared <paramref name="gate"/>, making it safe to use the operation concurrently (e.g.
 /// sub-operations run via <c>Task.WhenAll</c>). Created by <see cref="LoggerOperationExtensions"/> when an
-/// operation is begun with <c>threadSafe: true</c>. <see cref="BeginSubOperation"/> wraps the resulting
+/// operation is begun with <c>threadSafe: true</c>. <see cref="BeginSubOperation(string)"/> wraps the resulting
 /// sub-operation in another <see cref="SynchronizedOperationLog"/> using this same <paramref name="gate"/>,
 /// so the whole operation tree - root and every nested sub-operation - synchronizes on one lock, matching
 /// the single <see cref="OperationLogState"/> they all share underneath.

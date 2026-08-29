@@ -8,7 +8,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>.
 /// Disposing the root <see cref="IOperationLog"/> writes exactly one log entry summarizing everything that
 /// happened during the operation, including any nested sub-operation activity. A sub-operation, returned by
-/// <see cref="BeginSubOperation"/>, never writes its own log entry - disposing it appends a "complete" line
+/// <see cref="BeginSubOperation(string)"/>, never writes its own log entry - disposing it appends a "complete" line
 /// to the ancestor journal it was created from instead.
 /// Every sub-operation shares the root operation's journal, so once the root <see cref="IOperationLog"/> has
 /// been disposed, calling any member other than <see cref="Properties"/>, <see cref="EventId"/>, or
@@ -41,7 +41,7 @@ public interface IOperationLog : IDisposable
     /// Whether this operation is actually journaling - <see langword="false"/> if the level passed to
     /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>
     /// was disabled on the logger at that time, <see langword="true"/> otherwise. The same value on the
-    /// root operation and every nested sub-operation, since <see cref="BeginSubOperation"/> always
+    /// root operation and every nested sub-operation, since <see cref="BeginSubOperation(string)"/> always
     /// produces a sub-operation that matches its parent. Never changes after the operation begins - in
     /// particular, <see cref="Escalate"/> can raise the level the final entry is written at, but it can't
     /// turn a disabled operation into an enabled one. Useful for skipping expensive work that would only
