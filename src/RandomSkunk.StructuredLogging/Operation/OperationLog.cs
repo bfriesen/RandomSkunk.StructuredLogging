@@ -25,7 +25,9 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
 
     public EventId EventId => _state.EventId;
 
+#pragma warning disable CA1822 // Mark members as static
     public bool IsEnabled => true;
+#pragma warning restore CA1822 // Mark members as static
 
     public IOperationLog AddProperty<T>(string propertyName, T value)
     {
@@ -50,12 +52,14 @@ internal abstract class OperationLog<TSelf>(OperationLogState state, string oper
         return (TSelf)this;
     }
 
+#pragma warning disable IDE0060 // Remove unused parameter
     public IOperationLog Append(ref OperationLogInterpolatedStringHandler text)
     {
         // The handler already wrote everything directly into the journal (via BeginJournalEntry, in
         // its constructor) while it was being built - nothing left to do here.
         return (TSelf)this;
     }
+#pragma warning restore IDE0060 // Remove unused parameter
 
     public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {

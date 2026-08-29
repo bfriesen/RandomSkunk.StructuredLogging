@@ -120,10 +120,10 @@ public class PropertyTagCaptureTests
         Dictionary<string, object?> extraProperties = new() { ["RequestId"] = 7 };
 
         logger.Debug(extraProperties, $"Hello, {name:<UserName>}!");
-        List<string> withoutPerCallProperty = logger.LastProperties!.Select(p => p.Key).ToList();
+        List<string> withoutPerCallProperty = [.. logger.LastProperties!.Select(p => p.Key)];
 
         logger.Debug(extraProperties, $"Hello, {name:<UserName>}!", ("Extra", 1));
-        List<string> withPerCallProperty = logger.LastProperties!.Select(p => p.Key).ToList();
+        List<string> withPerCallProperty = [.. logger.LastProperties!.Select(p => p.Key)];
 
         // Adding a per-call property must append to the end, never reshuffle what was already there:
         // the 0-arity overload used to put captured properties before the collection while every

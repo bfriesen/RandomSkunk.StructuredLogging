@@ -133,7 +133,7 @@ public class PropertyTagDestructuringTests
     public void Collection_RendersAsBracketList()
     {
         RecordingLogger logger = new();
-        List<int> values = new() { 1, 2, 3 };
+        List<int> values = [1, 2, 3];
 
         logger.Trace($"Values: {values:<@>}");
 
@@ -191,7 +191,7 @@ public class PropertyTagDestructuringTests
     public void LargeCollection_CapsAtTenItems()
     {
         RecordingLogger logger = new();
-        List<int> values = Enumerable.Range(1, 15).ToList();
+        List<int> values = [.. Enumerable.Range(1, 15)];
 
         logger.Trace($"Values: {values:<@>}");
 
@@ -332,7 +332,9 @@ public class PropertyTagDestructuringTests
     {
         public int Good { get; set; } = 1;
 
+#pragma warning disable CA1822 // Mark members as static
         public int Bad => throw new InvalidOperationException("boom");
+#pragma warning restore CA1822 // Mark members as static
     }
 
     private readonly record struct Point(int X, int Y);
