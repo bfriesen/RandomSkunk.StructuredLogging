@@ -298,4 +298,53 @@ public class StructuredLoggerExtensionsTests
 
         logger.LastMessage.Should().Be("[7    ]");
     }
+
+    [Fact]
+    public void EnumeratorMatchesIndexer_AcrossPropertyShapes()
+    {
+        RecordingLogger logger = new();
+        Dictionary<string, object?> collection = new() { ["A"] = 1, ["B"] = 2 };
+        string name = "Alice";
+
+        // Pins the documented property order - the collection's entries, then tag-captured properties,
+        // then the trailing per-call properties - across every shape that combines them, including the
+        // 0-arity state, which is a separate hand-written type from the generic ones. Sinks read the
+        // state both by index and by foreach, so the two paths also have to agree; GetEnumerator
+        // currently delegates to the indexer, and this keeps that honest if it is ever reimplemented.
+        logger.Debug($"plain");
+        KeysOf(logger).Should().BeEmpty();
+
+        logger.Debug($"Hello, {name:<UserName>}!");
+        KeysOf(logger).Should().Equal("UserName");
+
+        logger.Debug(collection, $"Hello, {name:<UserName>}!");
+        KeysOf(logger).Should().Equal("A", "B", "UserName");
+
+        logger.Debug(collection, $"Hello, {name:<UserName>}!", ("C", 3));
+        KeysOf(logger).Should().Equal("A", "B", "UserName", "C");
+
+        logger.Debug(collection, $"Hello, {name:<UserName>}!", ("C", 3), ("D", 4), ("E", 5), ("F", 6), ("G", 7), ("H", 8));
+        KeysOf(logger).Should().Equal("A", "B", "UserName", "C", "D", "E", "F", "G", "H");
+    }
+
+    /// <summary>
+    /// Asserts that enumerating the last logged state yields exactly what indexing it 0..Count-1 does,
+    /// then returns the property names in order so the caller can assert on the sequence itself.
+    /// </summary>
+    private static List<string> KeysOf(RecordingLogger logger)
+    {
+        IReadOnlyList<KeyValuePair<string, object?>> properties = logger.LastProperties!;
+
+        List<KeyValuePair<string, object?>> enumerated = new();
+        foreach (KeyValuePair<string, object?> property in properties)
+            enumerated.Add(property);
+
+        List<KeyValuePair<string, object?>> indexed = new();
+        for (int i = 0; i < properties.Count; i++)
+            indexed.Add(properties[i]);
+
+        enumerated.Should().Equal(indexed);
+
+        return enumerated.Select(property => property.Key).ToList();
+    }
 }
