@@ -37,7 +37,7 @@ In documentation examples (README, doc comments, etc.), name `IOperationLog` var
 - Pack the library for NuGet: `dotnet pack src/RandomSkunk.StructuredLogging`
 - Regenerate the generated source files (see below): `dotnet run eng/GenerateSource.cs`, run from the repo root
 
-Green baseline as of 2026-08-29: 940 passing, 0 failing, 0 skipped — 169 library tests and 301 analyzer tests, each run against both `net8.0` and `net10.0`. The analyzer project dominates the wall time (~10s per TFM against well under 1s for the library). After changing `eng/GenerateSource.cs`, re-run the generator *and* `dotnet test`, then commit the regenerated `.g.cs` diff along with the generator change — the generated files are checked in, so a stale one is a real defect rather than a build artifact.
+Green baseline as of 2026-08-30: 950 passing, 0 failing, 0 skipped — 174 library tests and 301 analyzer tests, each run against both `net8.0` and `net10.0`. The analyzer project dominates the wall time (~10s per TFM against well under 1s for the library). After changing `eng/GenerateSource.cs`, re-run the generator *and* `dotnet test`, then commit the regenerated `.g.cs` diff along with the generator change — the generated files are checked in, so a stale one is a real defect rather than a build artifact.
 
 ## Architecture
 
