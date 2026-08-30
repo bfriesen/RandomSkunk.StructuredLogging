@@ -5,19 +5,22 @@ namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Extension methods for recording a value to an operation's (or sub-operation's) journal, or recording a
-/// value returned from an operation as that operation's result. All but <see cref="RecordResultTo{T}"/> are
+/// value returned from an operation as that operation's result. All but <see cref="SetResultTo{T}"/> are
 /// generic over a <c>TLog</c> type parameter, constrained to <see cref="IOperationLogBase{TOperationLog}"/>, so a
 /// single method works whether <c>log</c> is an <see cref="IOperationLog"/> or an
 /// <see cref="ISubOperationLog"/> - the two are deliberately unrelated interfaces (see
 /// <see cref="IOperationLogBase{TOperationLog}"/>), so without this a non-generic parameter typed as one would
-/// reject the other.
+/// reject the other. Each method's name mirrors the <see cref="IOperationLogBase{TOperationLog}"/>/
+/// <see cref="IOperationLog"/> member it calls, plus a <c>To</c> suffix - e.g. <see cref="SetResultTo{T}"/>
+/// calls <see cref="IOperationLog.SetResult{T}"/>, <see cref="AppendResultTo{T, TLog}"/> calls
+/// <see cref="IOperationLogBase{TOperationLog}.AppendResult{T}"/>.
 /// </summary>
 public static class OperationLogExtensions
 {
     /// <summary>
     /// Sets <paramref name="result"/> as the <c>Operation.Result</c> of the root operation <paramref name="log"/>
     /// belongs to, then returns <paramref name="result"/> unchanged - so this can be chained directly onto a
-    /// return expression, e.g. <c>return OrderResult.Shipped(...).RecordResultTo(log);</c>. See
+    /// return expression, e.g. <c>return OrderResult.Shipped(...).SetResultTo(log);</c>. See
     /// <see cref="IOperationLog.SetResult{T}"/>. Only available on the root <see cref="IOperationLog"/> -
     /// for a sub-operation, use <see cref="AppendResultTo{T, TLog}"/> instead.
     /// </summary>
@@ -26,7 +29,7 @@ public static class OperationLogExtensions
     /// <param name="log">The root operation the result belongs to.</param>
     /// <returns><paramref name="result"/>, unchanged.</returns>
     [return: NotNullIfNotNull(nameof(result))]
-    public static T RecordResultTo<T>(this T result, IOperationLog log)
+    public static T SetResultTo<T>(this T result, IOperationLog log)
     {
         ArgumentNullException.ThrowIfNull(log);
 
@@ -40,7 +43,7 @@ public static class OperationLogExtensions
     /// can be chained directly onto a return expression, e.g.
     /// <c>return allocation.RecordAsShipped().AppendResultTo(subLog);</c>. See
     /// <see cref="IOperationLogBase{TOperationLog}.AppendResult{T}"/>. Available on the root operation or any
-    /// sub-operation; on the root, use <see cref="RecordResultTo{T}"/> instead if the result should also
+    /// sub-operation; on the root, use <see cref="SetResultTo{T}"/> instead if the result should also
     /// become the final entry's <c>Operation.Result</c> structured property.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
@@ -62,7 +65,7 @@ public static class OperationLogExtensions
     /// Adds <paramref name="propertyValue"/> as a structured property named <paramref name="propertyName"/>
     /// to the operation <paramref name="log"/> belongs to, then returns <paramref name="propertyValue"/>
     /// unchanged - so this can be chained directly onto an expression, e.g.
-    /// <c>var orderId = order.Id.RecordPropertyTo(log, "OrderId");</c>. See
+    /// <c>var orderId = order.Id.AddPropertyTo(log, "OrderId");</c>. See
     /// <see cref="IOperationLogBase{TOperationLog}.AddProperty{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of the property value.</typeparam>
@@ -72,7 +75,7 @@ public static class OperationLogExtensions
     /// <param name="propertyName">The name to record the property under.</param>
     /// <returns><paramref name="propertyValue"/>, unchanged.</returns>
     [return: NotNullIfNotNull(nameof(propertyValue))]
-    public static T RecordPropertyTo<T, TLog>(this T propertyValue, TLog log, string propertyName)
+    public static T AddPropertyTo<T, TLog>(this T propertyValue, TLog log, string propertyName)
         where TLog : IOperationLogBase<TLog>
     {
         ArgumentNullException.ThrowIfNull(log);
@@ -84,7 +87,7 @@ public static class OperationLogExtensions
     /// <summary>
     /// Records <paramref name="value"/> to the journal of the operation <paramref name="log"/> belongs to,
     /// in the form <c>`valueName`: value</c>, then returns <paramref name="value"/> unchanged - so this can
-    /// be chained directly onto an expression, e.g. <c>var total = order.Total.RecordValueTo(log);</c>.
+    /// be chained directly onto an expression, e.g. <c>var total = order.Total.AppendValueTo(log);</c>.
     /// See <see cref="IOperationLogBase{TOperationLog}.AppendValue{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
@@ -97,7 +100,7 @@ public static class OperationLogExtensions
     /// </param>
     /// <returns><paramref name="value"/>, unchanged.</returns>
     [return: NotNullIfNotNull(nameof(value))]
-    public static T RecordValueTo<T, TLog>(this T value, TLog log, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    public static T AppendValueTo<T, TLog>(this T value, TLog log, [CallerArgumentExpression(nameof(value))] string? valueName = null)
         where TLog : IOperationLogBase<TLog>
     {
         ArgumentNullException.ThrowIfNull(log);
@@ -110,7 +113,7 @@ public static class OperationLogExtensions
     /// Records <paramref name="value"/> to the journal of the operation <paramref name="log"/> belongs to,
     /// in the form <c>`valueName`: value</c> with <paramref name="value"/> rendered as indented JSON, then
     /// returns <paramref name="value"/> unchanged - so this can be chained directly onto an expression, e.g.
-    /// <c>var order = FetchOrder(id).RecordJsonTo(log);</c>. See
+    /// <c>var order = FetchOrder(id).AppendJsonTo(log);</c>. See
     /// <see cref="IOperationLogBase{TOperationLog}.AppendJson{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
@@ -123,7 +126,7 @@ public static class OperationLogExtensions
     /// </param>
     /// <returns><paramref name="value"/>, unchanged.</returns>
     [return: NotNullIfNotNull(nameof(value))]
-    public static T RecordJsonTo<T, TLog>(this T value, TLog log, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    public static T AppendJsonTo<T, TLog>(this T value, TLog log, [CallerArgumentExpression(nameof(value))] string? valueName = null)
         where TLog : IOperationLogBase<TLog>
     {
         ArgumentNullException.ThrowIfNull(log);

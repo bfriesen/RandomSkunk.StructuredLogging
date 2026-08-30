@@ -6,22 +6,22 @@ namespace RandomSkunk.StructuredLogging.Tests;
 public class OperationLogExtensionsTests
 {
     [Fact]
-    public void RecordResultTo_ReturnsValueUnchangedAndSetsOperationResult()
+    public void SetResultTo_ReturnsValueUnchangedAndSetsOperationResult()
     {
         RecordingLogger logger = new();
 
         string result;
         using (IOperationLog log = logger.BeginOperation("Name"))
-            result = "shipped".RecordResultTo(log);
+            result = "shipped".SetResultTo(log);
 
         result.Should().Be("shipped");
         logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Operation.Result", "shipped"));
     }
 
     [Fact]
-    public void RecordResultTo_NullLog_ThrowsArgumentNullException()
+    public void SetResultTo_NullLog_ThrowsArgumentNullException()
     {
-        Func<string> act = () => "value".RecordResultTo(null!);
+        Func<string> act = () => "value".SetResultTo(null!);
 
         act.Should().Throw<ArgumentNullException>();
     }
@@ -65,34 +65,34 @@ public class OperationLogExtensionsTests
     }
 
     [Fact]
-    public void RecordPropertyTo_ReturnsValueUnchangedAndSetsProperty()
+    public void AddPropertyTo_ReturnsValueUnchangedAndSetsProperty()
     {
         RecordingLogger logger = new();
 
         int orderId;
         using (IOperationLog log = logger.BeginOperation("Name"))
-            orderId = 42.RecordPropertyTo(log, "OrderId");
+            orderId = 42.AddPropertyTo(log, "OrderId");
 
         orderId.Should().Be(42);
         logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("OrderId", 42));
     }
 
     [Fact]
-    public void RecordPropertyTo_NullLog_ThrowsArgumentNullException()
+    public void AddPropertyTo_NullLog_ThrowsArgumentNullException()
     {
-        Func<string> act = () => "value".RecordPropertyTo<string, IOperationLog>(null!, "PropertyName");
+        Func<string> act = () => "value".AddPropertyTo<string, IOperationLog>(null!, "PropertyName");
 
         act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
-    public void RecordValueTo_ReturnsValueUnchangedAndAppendsJournalLine()
+    public void AppendValueTo_ReturnsValueUnchangedAndAppendsJournalLine()
     {
         RecordingLogger logger = new();
 
         int value;
         using (IOperationLog log = logger.BeginOperation("Name"))
-            value = 7.RecordValueTo(log, "Count");
+            value = 7.AppendValueTo(log, "Count");
 
         value.Should().Be(7);
         string journal = logger.LastMessage!;
@@ -100,34 +100,34 @@ public class OperationLogExtensionsTests
     }
 
     [Fact]
-    public void RecordValueTo_DefaultName_UsesCallerArgumentExpression()
+    public void AppendValueTo_DefaultName_UsesCallerArgumentExpression()
     {
         RecordingLogger logger = new();
         var order = new { Total = 42.5m };
 
         using (IOperationLog log = logger.BeginOperation("Name"))
-            order.Total.RecordValueTo(log);
+            order.Total.AppendValueTo(log);
 
         string journal = logger.LastMessage!;
         journal.Should().Contain("`order.Total`: 42.5");
     }
 
     [Fact]
-    public void RecordValueTo_NullLog_ThrowsArgumentNullException()
+    public void AppendValueTo_NullLog_ThrowsArgumentNullException()
     {
-        Func<int> act = () => 1.RecordValueTo<int, IOperationLog>(null!);
+        Func<int> act = () => 1.AppendValueTo<int, IOperationLog>(null!);
 
         act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
-    public void RecordJsonTo_ReturnsValueUnchangedAndAppendsJsonJournalLine()
+    public void AppendJsonTo_ReturnsValueUnchangedAndAppendsJsonJournalLine()
     {
         RecordingLogger logger = new();
 
         object value;
         using (IOperationLog log = logger.BeginOperation("Name"))
-            value = new { A = 1 }.RecordJsonTo(log, "Payload");
+            value = new { A = 1 }.AppendJsonTo(log, "Payload");
 
         value.Should().BeEquivalentTo(new { A = 1 });
         string journal = logger.LastMessage!;
@@ -136,9 +136,9 @@ public class OperationLogExtensionsTests
     }
 
     [Fact]
-    public void RecordJsonTo_NullLog_ThrowsArgumentNullException()
+    public void AppendJsonTo_NullLog_ThrowsArgumentNullException()
     {
-        var act = () => new { A = 1 }.RecordJsonTo<object, IOperationLog>(null!);
+        var act = () => new { A = 1 }.AppendJsonTo<object, IOperationLog>(null!);
 
         act.Should().Throw<ArgumentNullException>();
     }

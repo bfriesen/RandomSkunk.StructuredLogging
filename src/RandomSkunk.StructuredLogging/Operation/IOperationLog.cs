@@ -41,7 +41,7 @@ public interface IOperationLog : IOperationLogBase<IOperationLog>
     /// itself to the journal - it only appends a one-line "Operation result set." marker (or "Operation result
     /// set again, overwriting the previous value." on a second or later call), so the journal records *when*
     /// this was called and whether it happened more than once without duplicating the formatted value.
-    /// Typically called via the <see cref="OperationLogExtensions.RecordResultTo{T}"/> extension
+    /// Typically called via the <see cref="OperationLogExtensions.SetResultTo{T}"/> extension
     /// method rather than directly, so it can be chained onto a return expression. Calling this more than
     /// once overwrites any result set by an earlier call - the journal marker above is the only warning that
     /// happens.

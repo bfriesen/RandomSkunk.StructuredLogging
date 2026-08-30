@@ -303,7 +303,7 @@ using (var paymentLog = log.BeginSubOperation("ChargePayment"))
     }
 }
 
-return order.RecordResultTo(log);
+return order.SetResultTo(log);
 ```
 
 Disposing `log` writes a single log entry whose message *is* the full journal - every
@@ -414,12 +414,12 @@ check that yourself before doing work that would otherwise go to waste.
   `Operation.Result` structured property directly. Unlike `AppendResult` above, it doesn't write
   the formatted value to the journal - it appends a one-line `Operation result set.` marker instead
   (`Operation result set again, overwriting the previous value.` on a second or later call). Typically
-  called via the fluent `value.RecordResultTo(log)` extension method (root only - a sub-operation
+  called via the fluent `value.SetResultTo(log)` extension method (root only - a sub-operation
   uses `AppendResultTo` above instead) so it can be chained directly onto a `return` expression.
-- `value.RecordValueTo(log, [valueName])` / `value.RecordJsonTo(log, [valueName])` /
-  `value.RecordPropertyTo(log, name)` - fluent equivalents of `AppendValue`/`AppendJson`/
+- `value.AppendValueTo(log, [valueName])` / `value.AppendJsonTo(log, [valueName])` /
+  `value.AddPropertyTo(log, name)` - fluent equivalents of `AppendValue`/`AppendJson`/
   `AddProperty` that return `value` unchanged, for chaining inline into an expression, e.g.
-  `var total = order.Total.RecordValueTo(log);`. Each works whether `log` is an `IOperationLog` or
+  `var total = order.Total.AppendValueTo(log);`. Each works whether `log` is an `IOperationLog` or
   an `ISubOperationLog`.
 
 Every method returns the exact interface it was called on, so calls can be chained:

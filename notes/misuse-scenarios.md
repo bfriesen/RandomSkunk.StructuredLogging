@@ -347,7 +347,7 @@ fixed for the whole tree.
 
 Unlike the interpolated-string message builders, these take plain typed
 parameters — C# has no way to defer evaluation of a method argument.
-`expensiveComputation().RecordResultTo(log)` always pays for
+`expensiveComputation().SetResultTo(log)` always pays for
 `expensiveComputation()` even when the operation is disabled. This breaks the
 mental model a developer will have built from the headline "logging that
 skips work when disabled" feature.
