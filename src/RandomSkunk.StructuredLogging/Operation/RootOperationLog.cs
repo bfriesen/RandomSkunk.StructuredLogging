@@ -59,19 +59,29 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
         string journal = _state.BeginJournalEntry()
             .Append("Operation complete.")
             .ToString();
-        _state.Dispose();
 
         if (_state.HasResult)
-            _state.AddProperty("Operation.Result", _state.Result);
+            _state.Logger.Write(
+                _state.Properties ?? (IReadOnlyCollection<KeyValuePair<string, object?>>)[],
+                _state.Level,
+                _state.EventId,
+                _state.Exception,
+                journal,
+                ("Operation.Name", _operationName),
+                ("Operation.StartTime", _state.StartTime),
+                ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds),
+                ("Operation.Result", _state.Result));
+        else
+            _state.Logger.Write(
+                _state.Properties ?? (IReadOnlyCollection<KeyValuePair<string, object?>>)[],
+                _state.Level,
+                _state.EventId,
+                _state.Exception,
+                journal,
+                ("Operation.Name", _operationName),
+                ("Operation.StartTime", _state.StartTime),
+                ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds));
 
-        _state.Logger.Write(
-            _state.Properties ?? (IReadOnlyCollection<KeyValuePair<string, object?>>)[],
-            _state.Level,
-            _state.EventId,
-            _state.Exception,
-            journal,
-            ("Operation.Name", _operationName),
-            ("Operation.StartTime", _state.StartTime),
-            ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds));
+        _state.Dispose();
     }
 }
