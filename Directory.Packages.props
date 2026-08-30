@@ -7,8 +7,16 @@
   <ItemGroup>
     <PackageVersion Include="AwesomeAssertions" Version="9.4.0" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.6.0" />
+    <!--
+      The Roslyn version the analyzer package compiles against is its *floor*, not a preference: an
+      analyzer built against a newer Roslyn than the consumer's host provides fails to load with
+      CS9057, silently costing that consumer all ten diagnostics and every code fix. 4.8.0 is the
+      Roslyn in the earliest .NET 8 SDK (and VS 2022 17.8), matching this library's oldest supported
+      TFM. The analyzers use no API newer than this - the full analyzer test suite passes against
+      it - so raising it would only shrink the set of hosts that can load the package.
+    -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
