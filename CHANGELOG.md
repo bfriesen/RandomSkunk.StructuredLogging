@@ -62,6 +62,9 @@ First stable release. The API is now considered settled; subsequent 1.x releases
 - The `Microsoft.Extensions.Logging.Abstractions` floor is now per-target-framework - 8.0.0 for
   `net8.0`, 10.0.0 for `net10.0` - instead of 10.0.9 for both, so installing this package no longer
   drags a .NET 8 application onto the 10.x abstractions.
+- `AssemblyVersion` is pinned to `<major>.0.0.0`, so every 1.x build shares one assembly identity
+  and a patch or minor upgrade is a binary drop-in. `FileVersion`/`InformationalVersion` still carry
+  the full version.
 
 ### Removed
 

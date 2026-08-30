@@ -10,6 +10,13 @@
 
   <PropertyGroup>
     <Version>1.0.0</Version>
+    <!--
+      AssemblyVersion is pinned to <major>.0.0.0 so every 1.x build is binary-identical in identity
+      and a patch or minor upgrade is a drop-in replacement, with no assembly-version mismatch for a
+      consumer that compiled against an earlier 1.x. FileVersion and InformationalVersion still carry
+      the full version (and, via SourceLink, the commit), so a specific build stays identifiable.
+    -->
+    <AssemblyVersion>$(Version.Split('.')[0]).0.0.0</AssemblyVersion>
     <RepositoryUrl>https://github.com/bfriesen/RandomSkunk.StructuredLogging</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/bfriesen/RandomSkunk.StructuredLogging</PackageProjectUrl>
