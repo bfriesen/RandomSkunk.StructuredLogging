@@ -32,6 +32,20 @@ internal sealed class OperationLogState : IDisposable
     public Exception? Exception;
 
     /// <summary>
+    /// The dashed rule under the header is always this many characters - not sized to the longest header
+    /// line, since the "Properties: ..." line <see cref="FinalizeHeader"/> inserts can grow arbitrarily
+    /// long with the operation's own property names.
+    /// </summary>
+    private const int HeaderRuleLength = 40;
+
+    /// <summary>
+    /// Position in <see cref="_journal"/> where the dashed rule under the header begins - the position
+    /// <see cref="FinalizeHeader"/> inserts the "Properties: ..." line at, once the final set of property
+    /// names is known.
+    /// </summary>
+    private readonly int _dashLineStart;
+
+    /// <summary>
     /// Set by <see cref="Dispose"/>, once the root operation has finished writing its log entry
     /// and returned <see cref="_journal"/> to <see cref="OperationLogPools"/>. From that point on, the
     /// <see cref="StringBuilder"/> instance may already be in use by a different, unrelated operation, so any
@@ -48,17 +62,10 @@ internal sealed class OperationLogState : IDisposable
 
         StartTime = DateTimeOffset.Now;
 
-        // Each header line is appended straight to the journal and measured in place, rather than being
-        // built as its own string first just so the dashed rule can be sized to the longest of them - the
-        // line's length is simply how far the journal grew while writing it.
-        int dashCount = 0;
-
-        _journal.Append("Operation: ").Append(operationName);
-        dashCount = EndHeaderLine(_journal, dashCount, lineStart: 0);
+        _journal.Append("Operation: ").Append(operationName).Append('\n');
 
         if (eventId != default)
         {
-            int lineStart = _journal.Length;
             _journal.Append("EventId: ");
 
             // EventId.ToString() is `Name ?? Id.ToString(InvariantCulture)`; spelling that out here keeps
@@ -68,31 +75,54 @@ internal sealed class OperationLogState : IDisposable
             else
                 _journal.Append(CultureInfo.InvariantCulture, $"{eventId.Id}");
 
-            dashCount = EndHeaderLine(_journal, dashCount, lineStart);
+            _journal.Append('\n');
         }
 
-        int startTimeLineStart = _journal.Length;
-        _journal.Append(CultureInfo.InvariantCulture, $"Start Time: {StartTime:yyyy-MM-dd HH:mm:ss.fff zzz}");
-        dashCount = EndHeaderLine(_journal, dashCount, startTimeLineStart);
+        _journal.Append(CultureInfo.InvariantCulture, $"Start Time: {StartTime:yyyy-MM-dd HH:mm:ss.fff zzz}").Append('\n');
 
-        _journal.Append('-', dashCount);
+        _dashLineStart = _journal.Length;
+        _journal.Append('-', HeaderRuleLength);
         Stopwatch = Stopwatch.StartNew();
-    }
-
-    /// <summary>
-    /// Terminates a header line just written to <paramref name="journal"/> starting at
-    /// <paramref name="lineStart"/>, returning the running longest-line length the dashed rule under the
-    /// header is sized from.
-    /// </summary>
-    private static int EndHeaderLine(StringBuilder journal, int dashCount, int lineStart)
-    {
-        int lineLength = journal.Length - lineStart;
-        journal.Append('\n');
-        return Math.Max(dashCount, lineLength);
     }
 
     public void AddProperty(string propertyName, object? value) =>
         (Properties ??= new(capacity: 8)).Add(new(propertyName, value));
+
+    /// <summary>
+    /// Inserts a "Properties:" header line followed by a markdown-style bulleted list naming
+    /// <c>Operation.Name</c>, <c>Operation.StartTime</c>, <c>Operation.DurationSeconds</c>,
+    /// <c>Operation.Result</c> (only when <see cref="HasResult"/>), and every key in <see cref="Properties"/>
+    /// - immediately above the dashed rule. Built entirely from interned literals and this state's own
+    /// fields via successive <see cref="StringBuilder.Insert(int, string)"/> calls at an advancing offset,
+    /// so it allocates nothing beyond what <see cref="Properties"/> already holds. Called once, by
+    /// <see cref="RootOperationLog.DisposeCore"/>, only after every property is known: <see cref="Properties"/>
+    /// can grow for the whole lifetime of the operation via <see cref="AddProperty"/>, and
+    /// <see cref="HasResult"/> isn't settled until the moment the root operation is disposed.
+    /// </summary>
+    public void FinalizeHeader()
+    {
+        int position = InsertAt(_dashLineStart, "Properties:\n- Operation.Name\n- Operation.StartTime\n- Operation.DurationSeconds");
+
+        if (HasResult)
+            position = InsertAt(position, "\n- Operation.Result");
+
+        if (Properties is not null)
+        {
+            foreach (KeyValuePair<string, object?> property in Properties)
+            {
+                position = InsertAt(position, "\n- ");
+                position = InsertAt(position, property.Key);
+            }
+        }
+
+        _journal.Insert(position, '\n');
+    }
+
+    private int InsertAt(int position, string text)
+    {
+        _journal.Insert(position, text);
+        return position + text.Length;
+    }
 
     /// <summary>
     /// Raises <see cref="Level"/> to <paramref name="level"/> if it's more severe than the operation's

@@ -116,10 +116,41 @@ public class OperationLoggingTests
         DateTimeOffset startTime = (DateTimeOffset)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.StartTime").Value!;
 
         string startTimeLine = "Start Time: " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff zzz", CultureInfo.InvariantCulture);
-        string dashes = new string('-', Math.Max("Operation: Name".Length, startTimeLine.Length));
+        const string propertiesLines = "Properties:\n- Operation.Name\n- Operation.StartTime\n- Operation.DurationSeconds";
+        string dashes = new string('-', 40);
 
-        journal.Should().StartWith($"Operation: Name\n{startTimeLine}\n{dashes}\n");
+        journal.Should().StartWith($"Operation: Name\n{startTimeLine}\n{propertiesLines}\n{dashes}\n");
         journal.Should().NotContain("Operation started at");
+    }
+
+    [Fact]
+    public void Journal_HeaderPropertiesLineIncludesResultAndAddedProperties()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            log.AddProperty("Foo", 1).AddProperty("Bar", 2).SetResult("done");
+        }
+
+        string journal = logger.LastMessage!;
+
+        journal.Should().Contain("\nProperties:\n- Operation.Name\n- Operation.StartTime\n- Operation.DurationSeconds\n- Operation.Result\n- Foo\n- Bar\n");
+    }
+
+    [Fact]
+    public void Journal_HeaderPropertiesLineOmitsResultWhenNotSet()
+    {
+        RecordingLogger logger = new();
+
+        using (logger.BeginOperation("Name"))
+        {
+        }
+
+        string journal = logger.LastMessage!;
+
+        journal.Should().Contain("\nProperties:\n- Operation.Name\n- Operation.StartTime\n- Operation.DurationSeconds\n");
+        journal.Should().NotContain("Operation.Result");
     }
 
     [Fact]
@@ -149,9 +180,10 @@ public class OperationLoggingTests
         DateTimeOffset startTime = (DateTimeOffset)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.StartTime").Value!;
 
         string startTimeLine = "Start Time: " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff zzz", CultureInfo.InvariantCulture);
-        string dashes = new string('-', new[] { "Operation: Name".Length, "EventId: SomeEvent".Length, startTimeLine.Length }.Max());
+        const string propertiesLines = "Properties:\n- Operation.Name\n- Operation.StartTime\n- Operation.DurationSeconds";
+        string dashes = new string('-', 40);
 
-        journal.Should().StartWith($"Operation: Name\nEventId: SomeEvent\n{startTimeLine}\n{dashes}\n");
+        journal.Should().StartWith($"Operation: Name\nEventId: SomeEvent\n{startTimeLine}\n{propertiesLines}\n{dashes}\n");
     }
 
     [Fact]
@@ -210,7 +242,7 @@ public class OperationLoggingTests
 
             string journal = logger.LastMessage!;
 
-            journal.Should().MatchRegex(@"^Operation: Name\nStart Time: \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{2}:\d{2}\n-+\n");
+            journal.Should().MatchRegex(@"^Operation: Name\nStart Time: \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3} [+-]\d{2}:\d{2}\nProperties:\n- Operation\.Name\n- Operation\.StartTime\n- Operation\.DurationSeconds\n-+\n");
             journal.Should().MatchRegex(@"\[\d+\.\d{3}\] Operation complete\.$");
         }
         finally

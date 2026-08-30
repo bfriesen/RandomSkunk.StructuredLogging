@@ -294,11 +294,11 @@ using (var paymentLog = log.BeginSubOperation("ChargePayment"))
     try
     {
         var receipt = await paymentGateway.ChargeAsync(orderId);
-        paymentLog.SetResult(receipt);
+        paymentLog.AppendResult(receipt);
     }
     catch (Exception ex)
     {
-        paymentLog.SetException(ex);
+        paymentLog.AppendException(ex);
         throw;
     }
 }
@@ -311,13 +311,20 @@ Disposing `log` writes a single log entry whose message *is* the full journal - 
 timestamped with elapsed seconds - and whose structured properties include `Operation.Name`,
 `Operation.StartTime`, `Operation.DurationSeconds`, `Operation.Result` (if set), and any properties
 added via `AddProperty`. The journal's header starts with the operation name; if `BeginOperation` was
-called with a non-default `EventId`, the next header line shows its value; the header always ends with
-a `Start Time` line:
+called with a non-default `EventId`, the next header line shows its value; then a `Start Time` line;
+then a `Properties:` line followed by a bulleted list naming every structured property the final entry
+will carry - the built-ins above plus any added via `AddProperty` - ending with a dashed rule:
 
 ```
 Operation: FulfillOrder
 Start Time: 2026-08-19 12:56:31.417 -04:00
-------------------------------------------
+Properties:
+- Operation.Name
+- Operation.StartTime
+- Operation.DurationSeconds
+- Operation.Result
+- OrderId
+----------------------------------------
 [0.002] Validating order 42
 [0.003] `ChargePayment` started.
 [0.041] `ChargePayment` result: Receipt { Id = ..., Amount = 99.00 }
@@ -335,47 +342,57 @@ check that yourself before doing work that would otherwise go to waste.
 
 - `logger.BeginOperation(name)` / `logger.BeginOperation(eventId, name)` - both take optional
   `level` (default `LogLevel.Information`) and `threadSafe` (default `false`) parameters, and
-  return an `IOperationLog`. The same interface represents both the root operation and every
-  nested sub-operation - there's no separate sub-operation type.
-- `IOperationLog.AddProperty<T>(name, value)` - adds a structured property to the final entry.
-- `IOperationLog.Properties` - the properties added so far via `AddProperty`, as an
+  return the root `IOperationLog`. `IOperationLog.BeginSubOperation(name)` starts a nested
+  sub-operation, returned as a separate `ISubOperationLog`. `IOperationLog` and `ISubOperationLog`
+  are deliberately unrelated interfaces - neither extends the other - so a chain of calls on one
+  keeps returning that same interface rather than widening to a shared ancestor, and so a
+  sub-operation reference can never reach the root-only members below. Both extend a shared
+  `IOperationLogBase<TSelf>` interface for everything else, listed here as members of `log`
+  regardless of which concrete interface it is.
+- `log.AddProperty<T>(name, value)` - adds a structured property to the final entry. Available on
+  the root and every sub-operation.
+- `log.Properties` - the properties added so far via `AddProperty`, as an
   `IReadOnlyList<KeyValuePair<string, object?>>`, readable while the operation is still open (the
   final entry isn't written until `Dispose`). The root and every sub-operation share the same
   list, since they all contribute to the one eventual entry. Under `threadSafe: true`, this
   returns a point-in-time snapshot rather than a live view, so it's safe to enumerate even while
   another thread is concurrently calling `AddProperty`.
-- `IOperationLog.EventId` - the `EventId` the operation was begun with (via
+- `log.EventId` - the `EventId` the operation was begun with (via
   `BeginOperation(eventId, name, ...)`), or `default` if none was given. Same value on the root
   and every sub-operation. Useful for tagging a log line written elsewhere - e.g. from within the
   operation, or from code the operation called into - with the same `EventId` as the operation's
   own final entry, so the two can be correlated in a backend that indexes/filters by `EventId`.
-- `IOperationLog.IsEnabled` - whether the operation is actually journaling, i.e. whether the level
+- `log.IsEnabled` - whether the operation is actually journaling, i.e. whether the level
   passed to `BeginOperation` was enabled on the logger at the time. Same value on the root and
   every sub-operation, and never changes afterward - not even `Escalate` can turn a disabled
   operation into an enabled one. Useful for skipping work that only feeds an `AddProperty`/
   `AppendValue`/`AppendJson` call, e.g. `if (log.IsEnabled) log.AppendJson(BuildExpensiveDiagnostics());`.
-- `IOperationLog.Append(text)` - appends a free-text line to the journal. `text` can be a plain
+- `log.Append(text)` - appends a free-text line to the journal. `text` can be a plain
   `string` or an interpolated string (`$"..."`); an interpolated argument's holes are only
   evaluated when `IsEnabled` is `true`, same as the structured-logging message parameters, and -
   when the operation isn't `threadSafe: true` - are written straight into the journal instead of
   building a separate string first.
-- `IOperationLog.AppendValue<T>(value, [valueName])` - appends `` `valueName`: value ``, where
+- `log.AppendValue<T>(value, [valueName])` - appends `` `valueName`: value ``, where
   `valueName` defaults to the value expression's source text (via `CallerArgumentExpression`), so
   `log.AppendValue(order.Total)` appends `` `order.Total`: 42.50 `` with no name to spell out.
-- `IOperationLog.AppendJson<T>(value, [valueName])` - same as `AppendValue`, but `value` is
+- `log.AppendJson<T>(value, [valueName])` - same as `AppendValue`, but `value` is
   rendered as indented JSON instead of via `ToString()`/`IFormattable`.
-- `IOperationLog.BeginSubOperation(name)` - starts a nested `IOperationLog`, immediately
+- `log.BeginSubOperation(name)` - starts a nested `ISubOperationLog`, immediately
   appending a "started" line to the journal; disposing it appends a "complete" line. Sub-operations
   never write their own log entry - only the root operation does, once, when *it's* disposed.
-  `name` can be a plain `string` or an interpolated string, with the same disabled-skips-evaluation
-  behavior as `Append`.
-- `IOperationLog.SetException(exception)` - on the root, sets the final log entry's `Exception`.
-  On a sub-operation, appends a "failed" line to the journal instead.
-- `IOperationLog.SetResult<T>(value)` - on the root, sets the `Operation.Result` structured
-  property; on a sub-operation, appends a result line to the journal instead. Typically called via
-  the fluent `value.RecordResultTo(log)` extension method so it can be chained directly onto
-  a `return` expression.
-- `IOperationLog.Escalate(level)` - raises the level the final entry is written at, if `level` is
+  Always returns `ISubOperationLog`, even when called on another sub-operation. `name` can be a
+  plain `string` or an interpolated string, with the same disabled-skips-evaluation behavior as
+  `Append`.
+- `log.AppendException(exception)` - appends a "failed" line to the journal describing
+  `exception` (`` `name` failed: ... `` on a sub-operation, `Operation failed: ...` on the root).
+  Available on the root and every sub-operation. Unlike `IOperationLog.SetException` (below), this
+  never sets the final entry's `Exception` property by itself.
+- `log.AppendResult<T>(value)` - appends a result line to the journal (`` `name` result: ... `` on
+  a sub-operation, `Operation result: ...` on the root). Available on the root and every
+  sub-operation. Unlike `IOperationLog.SetResult` (below), this never sets the `Operation.Result`
+  structured property by itself. Typically called via the fluent `value.AppendResultTo(log)`
+  extension method so it can be chained directly onto a `return` expression.
+- `log.Escalate(level)` - raises the level the final entry is written at, if `level` is
   more severe than the operation's current level; otherwise a no-op. Never re-enables an operation
   whose level was disabled up front at `BeginOperation`. When it actually raises the level, it also
   appends a journal line naming both levels - `Operation escalated from Information to Warning.` on
@@ -383,12 +400,23 @@ check that yourself before doing work that would otherwise go to waste.
   final entry's level is self-explanatory without having to search the rest of the journal for why.
   Useful even without an exception, e.g. a rejected/backordered/declined result that should still
   raise the log level: `log.Escalate(LogLevel.Warning);`.
-- `value.RecordValueTo(log, [valueName])` / `value.RecordJsonTo(log, [valueName])` -
-  fluent equivalents of `AppendValue`/`AppendJson` that return `value` unchanged, for chaining
-  inline into an expression, e.g. `var total = order.Total.RecordValueTo(log);`.
+- `IOperationLog.SetException(exception)` - **root only**; not on `ISubOperationLog`. Sets the
+  final log entry's `Exception` structured property directly, with no journal side effect. A
+  sub-operation that wants to fail the root's own entry holds onto the root `IOperationLog` (not
+  the sub-operation) and calls this on it directly; otherwise use `AppendException` above.
+- `IOperationLog.SetResult<T>(value)` - **root only**; not on `ISubOperationLog`. Sets the
+  `Operation.Result` structured property directly, with no journal side effect. Typically called
+  via the fluent `value.RecordResultTo(log)` extension method (root only - a sub-operation uses
+  `AppendResultTo` above instead) so it can be chained directly onto a `return` expression.
+- `value.RecordValueTo(log, [valueName])` / `value.RecordJsonTo(log, [valueName])` /
+  `value.RecordPropertyTo(log, name)` - fluent equivalents of `AppendValue`/`AppendJson`/
+  `AddProperty` that return `value` unchanged, for chaining inline into an expression, e.g.
+  `var total = order.Total.RecordValueTo(log);`. Each works whether `log` is an `IOperationLog` or
+  an `ISubOperationLog`.
 
-Every method returns the same `IOperationLog`, so calls can be chained:
-`log.AddProperty("OrderId", orderId).Append("Order validated");`.
+Every method returns the exact interface it was called on, so calls can be chained:
+`log.AddProperty("OrderId", orderId).Append("Order validated");` keeps returning `IOperationLog`
+when `log` is the root, and `ISubOperationLog` when it's a sub-operation.
 
 `log.Properties` implements `IReadOnlyCollection<KeyValuePair<string, object?>>`, so it can be
 passed directly as the leading collection argument (option 4 above) to an ordinary structured log
@@ -437,10 +465,10 @@ flags an undisposed `IOperationLog` and offers a code fix to wrap it in a `using
 block. As always, `using var log = logger.BeginOperation(...);` is the simplest way to avoid the
 problem in the first place.
 
-A sub-operation's `IOperationLog` only ever appends to the root operation's shared journal - it
+A sub-operation's `ISubOperationLog` only ever appends to the root operation's shared journal - it
 never writes its own log entry. If a sub-operation reference outlives the root (e.g. it's leaked
 out of scope, or held by a fire-and-forget task), any attempt to use it - `AddProperty`, `Append`,
-`AppendValue`, `AppendJson`, `BeginSubOperation`, `SetException`, `SetResult`, or `Dispose` -
+`AppendValue`, `AppendJson`, `BeginSubOperation`, `AppendException`, `AppendResult`, or `Dispose` -
 throws `ObjectDisposedException` once the root has been disposed, rather than silently mutating a
 pooled `StringBuilder` that may already have been handed out to a completely different operation
 elsewhere in the app.

@@ -55,6 +55,7 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
     protected override void DisposeCore()
     {
         _state.Stopwatch.Stop();
+        _state.FinalizeHeader();
 
         string journal = _state.BeginJournalEntry()
             .Append("Operation complete.")
