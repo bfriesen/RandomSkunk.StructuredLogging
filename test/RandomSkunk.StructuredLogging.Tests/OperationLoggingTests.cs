@@ -183,7 +183,7 @@ public class OperationLoggingTests
         const string propertiesLines = "Properties:\n- Operation.Name\n- Operation.StartTime\n- Operation.DurationSeconds";
         string dashes = new string('-', 40);
 
-        journal.Should().StartWith($"Operation: Name\nEventId: SomeEvent\n{startTimeLine}\n{propertiesLines}\n{dashes}\n");
+        journal.Should().StartWith($"Operation: Name\nEvent Id: SomeEvent\n{startTimeLine}\n{propertiesLines}\n{dashes}\n");
     }
 
     [Fact]
@@ -200,8 +200,8 @@ public class OperationLoggingTests
 
         // An EventId with no name renders as its number - the header has to match EventId.ToString()
         // exactly, since that's what it used to be built from.
-        journal.Should().Contain("\nEventId: 42\n");
-        journal.Should().Contain($"\nEventId: {eventId}\n");
+        journal.Should().Contain("\nEvent Id: 42\n");
+        journal.Should().Contain($"\nEvent Id: {eventId}\n");
     }
 
     [Fact]
@@ -218,7 +218,7 @@ public class OperationLoggingTests
             {
             }
 
-            logger.LastMessage.Should().Contain("\nEventId: -7\n");
+            logger.LastMessage.Should().Contain("\nEvent Id: -7\n");
         }
         finally
         {

@@ -66,7 +66,7 @@ internal sealed class OperationLogState : IDisposable
 
         if (eventId != default)
         {
-            _journal.Append("EventId: ");
+            _journal.Append("Event Id: ");
 
             // EventId.ToString() is `Name ?? Id.ToString(InvariantCulture)`; spelling that out here keeps
             // the same text without allocating it as a string on the way in.
