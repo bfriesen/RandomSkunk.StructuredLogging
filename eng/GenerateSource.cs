@@ -12,11 +12,17 @@ string[] levels = ["Trace", "Debug", "Information", "Warning", "Error", "Critica
 string outputDir = Path.Combine(Directory.GetCurrentDirectory(), "src", "RandomSkunk.StructuredLogging");
 Directory.CreateDirectory(outputDir);
 
-File.WriteAllText(Path.Combine(outputDir, "LogInterpolatedStringHandlers.g.cs"), GenerateHandlers(levels));
-File.WriteAllText(Path.Combine(outputDir, "LogPropertiesState.g.cs"), GenerateGenericStates(MaxArity));
-File.WriteAllText(Path.Combine(outputDir, "StructuredLoggerExtensions.g.cs"), GenerateExtensionMethods(levels, MaxArity));
+WriteGeneratedFile(Path.Combine(outputDir, "LogInterpolatedStringHandlers.g.cs"), GenerateHandlers(levels));
+WriteGeneratedFile(Path.Combine(outputDir, "LogPropertiesState.g.cs"), GenerateGenericStates(MaxArity));
+WriteGeneratedFile(Path.Combine(outputDir, "StructuredLoggerExtensions.g.cs"), GenerateExtensionMethods(levels, MaxArity));
 
 Console.WriteLine($"Generated files written to {outputDir}");
+
+// StringBuilder.AppendLine (used throughout the Generate* methods below) writes
+// Environment.NewLine, which is CRLF on Windows - normalize to LF so the generated
+// files' line endings don't depend on the host OS the generator happens to run on.
+static void WriteGeneratedFile(string path, string content) =>
+    File.WriteAllText(path, content.ReplaceLineEndings("\n"));
 
 static string Ordinal(int n) => n switch
 {
