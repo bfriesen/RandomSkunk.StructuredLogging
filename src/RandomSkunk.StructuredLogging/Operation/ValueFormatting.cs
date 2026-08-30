@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
@@ -50,6 +51,8 @@ internal static class ValueFormatting
     /// transcodes those bytes to UTF-16 through an <see cref="ArrayPool{T}"/>-rented <see langword="char"/>
     /// buffer appended straight to <paramref name="journal"/>.
     /// </summary>
+    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
+    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
     public static void AppendJson<T>(StringBuilder journal, T value)
     {
         PooledJsonWriter pooled = OperationLogPools.JsonWriters.Rent();

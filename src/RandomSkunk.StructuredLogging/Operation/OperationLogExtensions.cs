@@ -125,6 +125,8 @@ public static class OperationLogExtensions
     /// argument expression, via <see cref="CallerArgumentExpressionAttribute"/>.
     /// </param>
     /// <returns><paramref name="value"/>, unchanged.</returns>
+    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
+    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
     [return: NotNullIfNotNull(nameof(value))]
     public static T AppendJsonTo<T, TLog>(this T value, TLog log, [CallerArgumentExpression(nameof(value))] string? valueName = null)
         where TLog : IOperationLogBase<TLog>

@@ -6,6 +6,18 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
+  <!--
+    Marks the assembly trim-safe and turns on the trim/AOT/single-file analyzers, so that any
+    reflection this library performs either carries a [RequiresUnreferencedCode]/[RequiresDynamicCode]
+    annotation (surfacing as a build warning in a consumer's trimmed or Native AOT app) or an
+    [UnconditionalSuppressMessage] documenting why trimming it is safe. Without this, a consumer
+    publishing trimmed or AOT gets no warning at all - see LogPropertyDestructuring.cs and
+    Operation/ValueFormatting.cs, the library's only two reflection sites.
+  -->
+  <PropertyGroup>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
   <PropertyGroup>
     <PackageId>RandomSkunk.StructuredLogging</PackageId>
     <Authors>Brian Friesen</Authors>

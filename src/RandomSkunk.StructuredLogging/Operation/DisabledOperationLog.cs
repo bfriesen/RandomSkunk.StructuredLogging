@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging.Operation;
@@ -78,8 +79,12 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog, ISu
 
     ISubOperationLog IOperationLogBase<ISubOperationLog>.AppendValue<T>(T value, string? valueName) => this;
 
+    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
+    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
     IOperationLog IOperationLogBase<IOperationLog>.AppendJson<T>(T value, string? valueName) => this;
 
+    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
+    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
     ISubOperationLog IOperationLogBase<ISubOperationLog>.AppendJson<T>(T value, string? valueName) => this;
 
     public ISubOperationLog BeginSubOperation(string operationName) => this;

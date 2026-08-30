@@ -481,6 +481,27 @@ throws `ObjectDisposedException` once the root has been disposed, rather than si
 pooled `StringBuilder` that may already have been handed out to a completely different operation
 elsewhere in the app.
 
+## Trimming and Native AOT
+
+The library is marked trim-safe (`IsAotCompatible`), and every logging call, structured property,
+and operation-logging member is safe to use from a trimmed or Native AOT application - with one
+exception, plus one caveat.
+
+**`AppendJson` is not AOT safe.** `IOperationLog.AppendJson`/`ISubOperationLog.AppendJson` (and the
+`AppendJsonTo` extension) serialize an arbitrary value with reflection-based `System.Text.Json`,
+which throws in a Native AOT app and can lose members under trimming. They're annotated
+`[RequiresUnreferencedCode]`/`[RequiresDynamicCode]`, so calling them from a trimmed or AOT project
+produces build warnings `IL2026`/`IL3050` rather than failing silently at run time. Use
+`AppendValue` instead, or preserve the serialized type.
+
+**Destructuring degrades gracefully.** The [`<@PropertyName>` destructuring tag](#2-propertyname-format-tags--capture-a-value-thats-also-in-the-message)
+reflects over the runtime type of whatever value it's given, which can't be statically analyzed. It
+does *not* warn, because it can't break: a property the trimmer removed is simply absent from the
+rendered text, the type's surviving properties still render, and nothing throws. If you need a
+particular type rendered in full from a trimmed app, preserve it (`[DynamicDependency]`, a
+`DynamicallyAccessedMembers` annotation on your own code, or an ILLink descriptor) - or attach the
+value with `AddProperty`/a tuple argument instead of destructuring it into the message.
+
 ## Analyzers
 
 [![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.Analyzers.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging.Analyzers)

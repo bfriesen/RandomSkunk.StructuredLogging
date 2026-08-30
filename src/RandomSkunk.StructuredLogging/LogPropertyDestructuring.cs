@@ -1,6 +1,7 @@
 using System.Buffers;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -208,10 +209,7 @@ internal static class LogPropertyDestructuring
 
         try
         {
-            DestructuringTypeInfo typeInfo = TypeCache.GetOrAdd(type, static t => new DestructuringTypeInfo(
-                DisplayName: IsAnonymousType(t) ? null : GetFriendlyTypeName(t),
-                Properties: [.. t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                    .Where(p => p.CanRead && p.GetIndexParameters().Length == 0)]));
+            DestructuringTypeInfo typeInfo = TypeCache.GetOrAdd(type, static t => CreateTypeInfo(t));
 
             if (typeInfo.DisplayName is not null)
             {
@@ -432,6 +430,25 @@ internal static class LogPropertyDestructuring
         type == typeof(Guid) ||
         type == typeof(Uri) ||
         type == typeof(Version);
+
+    /// <summary>
+    /// Reflects <paramref name="type"/>'s readable, non-indexer public instance properties and its display
+    /// name, for <see cref="TypeCache"/>.
+    /// </summary>
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2070:UnrecognizedReflectionPattern",
+        Justification = "Destructuring reflects over the runtime type of a value the caller supplied, which can't be " +
+            "statically determined - the whole point of the <@PropertyName> tag is to render whatever object it's " +
+            "given. Trimming degrades this gracefully rather than breaking it: a property the trimmer removed is " +
+            "simply absent from the rendered text, the type's surviving properties still render, and nothing throws. " +
+            "A consumer who needs a particular type rendered in full from a trimmed app should preserve that type " +
+            "(via [DynamicDependency], a DynamicallyAccessedMembers annotation on their own code, or an ILLink " +
+            "descriptor), or attach the value with AddProperty instead of destructuring it into the message.")]
+    private static DestructuringTypeInfo CreateTypeInfo(Type type) => new(
+        DisplayName: IsAnonymousType(type) ? null : GetFriendlyTypeName(type),
+        Properties: [.. type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.CanRead && p.GetIndexParameters().Length == 0)]);
 
     private static bool IsAnonymousType(Type type) =>
         type.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false) &&

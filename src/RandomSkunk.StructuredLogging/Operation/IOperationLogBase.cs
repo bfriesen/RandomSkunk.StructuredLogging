@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 
@@ -163,6 +164,15 @@ public interface IOperationLogBase<TOperationLog> : IDisposable
     /// </param>
     /// <returns>This <typeparamref name="TOperationLog"/>, so calls can be chained.</returns>
     /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
+    /// <remarks>
+    /// This is the one member of this interface that isn't trimming/Native AOT safe: it serializes
+    /// <paramref name="value"/> with reflection-based <see cref="System.Text.Json.JsonSerializer"/>, so it is
+    /// annotated <see cref="RequiresUnreferencedCodeAttribute"/>/<see cref="RequiresDynamicCodeAttribute"/> and
+    /// warns at the call site in a trimmed or AOT-published application. Use <see cref="AppendValue{T}"/> there
+    /// instead, or preserve the serialized type.
+    /// </remarks>
+    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
+    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
     TOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
 
     /// <summary>
