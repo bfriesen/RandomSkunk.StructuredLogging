@@ -545,7 +545,7 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     else
     {
         messageTextExpr = "message";
-        capturedPropertiesExpr = "Array.Empty<KeyValuePair<string, object?>>()";
+        capturedPropertiesExpr = "[]";
     }
 
     string enabledCheckExpr = useHandler ? "message.IsEnabled" : $"logger.IsEnabled({group.LevelExpr})";
@@ -574,7 +574,7 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     if (includeCollection)
         sb.AppendLine("        IReadOnlyList<KeyValuePair<string, object?>> logPropertiesList = logProperties as IReadOnlyList<KeyValuePair<string, object?>> ?? logProperties.ToArray();");
 
-    string logPropertiesExpr = includeCollection ? "logPropertiesList" : "Array.Empty<KeyValuePair<string, object?>>()";
+    string logPropertiesExpr = includeCollection ? "logPropertiesList" : "[]";
 
     // Every arity passes the two collection slots in the same order - logProperties, then
     // capturedProperties - so the documented property order (the collection's entries, then
