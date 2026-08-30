@@ -6,128 +6,9 @@ parsing, destructuring, property capture, and operation logging. Intended as
 input for future work (README "Common Pitfalls" section, analyzer ideas,
 possible guard rails in the implementation).
 
-## 1. Silently defeating the "don't evaluate when disabled" optimization
-
-The perf trick only fires when the message argument is *statically* an
-interpolated-string-literal bound to the handler overload. Anything that
-forces the argument through the plain `string` overload instead makes C#
-build the string eagerly, regardless of level, with none of the tag parsing:
-
-- `logger.Debug($"...".ToUpper())` or any method call/`+`-concat applied to
-  the interpolated string
-- Assigning to a `string` local first: `string msg = $"User {name}";
-  logger.Debug(msg);`
-- A ternary mixing an interpolated string with a plain string often infers
-  `string`, not the handler type
-- Passing the interpolated string through a wrapper/helper method that isn't
-  itself written with the `[InterpolatedStringHandler]` + `logger` pattern
-
-None of these fail to compile or throw — they just quietly become as
-expensive as pre-library `ILogger` calls, defeating the reason someone chose
-this library.
-
-**Decision:** Document in README "Common Pitfalls". Also try building an
-analyzer that flags the common defeating patterns (a method call/operator
-applied directly to an interpolated-string-literal argument of one of our
-logger methods, e.g. `logger.Debug($"...".ToUpper())`) as a warning.
-
-**Status:** Done. Documentation added as a top-level "Common pitfalls" section
-in the README (after "Migrating from `Microsoft.Extensions.Logging`", before
-"Operation logging") covering the method-call/concatenation form, the
-local-variable form, and the wrapper/helper-method form. Analyzer for the
-method-call/operator form shipped as
-`InterpolatedStringMessageExpressionAnalyzer`/`RSSL0009` (warning): flags a
-RandomSkunk.StructuredLogging call whose `message` argument applies a method
-call or `+` concatenation directly to an interpolated string literal (e.g.
-`logger.Debug($"...".ToUpper())`, `logger.Debug($"..." + suffix)`, including
-chained calls like `.ToUpper().Trim()`). Deliberately does *not* flag the
-case where the literal is behind a local variable first (that's `RSSL0007`'s
-concern). No code fix - like `RSSL0007`, there's no single mechanical
-rewrite that's always correct. Documented in the README's analyzers table
-and cross-referenced from "Common pitfalls".
-
-Analyzer for the wrapper/helper-method form (third bullet) shipped as
-`InterpolatedStringHelperMethodArgumentAnalyzer`/`RSSL0010` (warning): flags
-a RandomSkunk.StructuredLogging call whose `message` argument is a call to
-some other method that was itself handed an interpolated string literal as
-one of its arguments (e.g. `logger.Debug(FormatMessage($"..."))`), including
-through a chain of nested helper calls (`FormatMessage(FormatMessage($"..."))`).
-Deliberately does *not* flag the literal being behind a local variable first
-(`RSSL0007`'s concern) or a method called directly on the literal
-(`RSSL0009`'s concern) - those are separate patterns with separate
-diagnostics. No code fix, same reasoning as `RSSL0007`/`RSSL0009`.
-Documented in the README's analyzers table and cross-referenced from
-"Common pitfalls".
-
-**Scope narrowed:** `RSSL0007`/`RSSL0009`/`RSSL0010` were later scoped down
-to only fire when the interpolated string literal actually captures a
-`<PropertyName>` tag (e.g. `$"{amount:<Amount>}"`). A tagless interpolated
-string that loses the interpolated-string-handler overload only loses the
-disabled-level evaluation optimization - a real but lower-severity concern
-these three diagnostics don't police, to keep them from firing on every
-plain `.ToUpper()`/helper-method/local-variable pattern in a codebase.
-
-## 2. `string msg = $"...{x:<Name>}..."` is actively dangerous, not just inert — ✅ Complete
-
-If a developer assigns the interpolated string to a `string` *before* passing
-it to the logger, the compiler uses the ordinary interpolation handler, not
-this library's. `<Name>` (or `<@Name>`) is then handed to `x`'s real
-`IFormattable.ToString(format)` as a genuine .NET format string. Most types
-don't understand `"<Name>"` as a format — this throws `FormatException` at
-the log call site in production, and only when that code path actually runs
-(e.g., someone enables Debug logging to troubleshoot an issue and the app
-starts throwing).
-
-**Decision:** Document prominently as the top pitfall. Also addresses the
-second bullet of #1 (`string msg = $"User {name}"; logger.Debug(msg);`),
-since both are the same underlying pattern — assigning an interpolated
-string to a local before passing it to the logger.
-
-**Status:** Done. `InterpolatedStringLocalMessageAnalyzer` ships as
-`RSSL0007` (warning): flags a call to a RandomSkunk.StructuredLogging
-Trace/Debug/Information/Warning/Error/Critical/Write method whose `message`
-argument is a local variable declared with an interpolated string
-initializer. Documented in the README's analyzers table.
-
-## 3. A missing `>` in a tag is a silent runtime format bug, not a compile error — ✅ Complete (fix)
-
-`{value:<UserId}` (typo, no closing `>`) parses to `TagFormat(null,
-"<UserId")` — capture is silently skipped, and the *entire* literal
-`"<UserId"` becomes the real format string passed to `value`'s
-`IFormattable`. Same failure mode as #2: works fine until the log level is
-enabled, then throws or renders garbage. Nothing about this is flagged at
-compile time.
-
-**Decision:** Fix. Since the `<>` escape exists specifically for "I want a
-real format starting with `<`," any other unterminated `<...` tag is almost
-certainly a typo. Change `LogPropertyTagFormat.ParseCore` to throw a clear
-`FormatException` at the point of use instead of silently passing the raw
-text through as a format string. Also try building an analyzer that flags an
-unterminated `<...` tag literal as a warning at compile time, since format
-specifiers in interpolated holes are always compile-time constants.
-
-**Status:** Fix done. `LogPropertyTagFormat.ParseCore` now throws a new
-`UnterminatedLogPropertyTagException` (a `FormatException` subclass) when a
-tag starting with `<` has no matching `>`, instead of silently treating the
-raw text as a real format string. The exception carries a message pointing
-at the `<>` escape hatch as the fix. Thrown at the point of use (inside
-`AppendFormatted<T>`), so it only fires when the interpolation hole is
-actually appended (i.e., the log level is enabled) — consistent with the
-rest of the tag-parsing behavior. Covered by
-`PropertyTagCaptureTests.UnterminatedTag_ThrowsFormatException` and
-`UnterminatedTag_Disabled_DoesNotThrow`.
-
-Analyzer also done: `UnterminatedLogPropertyTagAnalyzer` ships as `RSSL0008`
-(Error, unlike every other analyzer in this package which is Warning/Info/
-Hidden — an unterminated tag is unconditionally a bug, not a style
-suggestion). It flags an interpolation hole whose format specifier starts
-with `<` but never closes with `>`, scoped to holes that convert to one of
-the library's interpolated-string-handler types (mirroring
-`LogPropertyTagFormatAnalyzer`'s RSSL0002 scoping). No code fix was
-requested/added - the diagnostic exists to surface the typo at compile time,
-not to auto-correct it (there's no single right fix: it could be a missing
-`>`, a missing property name, or the developer meant the `<>` escape).
-Documented in the README's analyzers table.
+Items are never renumbered, and a scenario is deleted once it's resolved - hence
+the gaps in the numbering. The summary at the end records which ones were removed
+and what shipped in their place.
 
 ## 4. Duplicate property names are never deduplicated, anywhere
 
@@ -185,16 +66,11 @@ names and tuple-arg names are almost always literals).
   *not* recognized as destructure-mode (the `@` check is position-exact at
   index 1) — instead `" @Foo"` (with leading space) becomes the literal
   property name.
-- ~~Format text after a `<@...>` tag is silently discarded~~ — **fixed**, see
-  `notes/planned-features.md` item #1. `{amount:<@Amount>C}` now applies
-  currency formatting to the message (instead of destructured rendering) and
-  still captures the property, as `@Amount`, for a downstream sink to
-  destructure. An empty destructuring tag with a trailing format (`<@>F3`)
-  behaves exactly like the plain `<>F3` escape hatch, consistent with the
-  fact that there's no property name left for the `@` to mean anything for.
-  What's still ambiguous: `{amount:<@>F3}` doesn't read obviously as "no
-  destructuring, format with F3" at a glance — `notes/planned-features.md`
-  item #1 tracks adding an analyzer for that specific combination.
+- `{amount:<@>F3}` doesn't read obviously as "no destructuring, format with
+  F3" at a glance, even though that is exactly what it does — identical to the
+  plain `<>F3` escape hatch, since there's no property name left for the `@`
+  to attach to. `notes/planned-features.md` item #1 tracks adding an analyzer
+  for that specific combination.
 
 **Decision:** Document the remaining points above (the stray-space pitfall,
 one-tag-per-hole).
@@ -232,82 +108,6 @@ they did.
 
 **Decision:** Document as a known tradeoff; not fixable without doubling the
 generated surface area.
-
-## 9. Operation logging: forgetting `using` silently drops the entire journal — ✅ Complete
-
-`BeginOperation` returns an `IDisposable`; nothing enforces disposal. Forget
-it, and no log entry is ever written — not even a partial one — and the
-pooled `StringBuilder` never returns to `OperationLogPools`, quietly starving
-the pool for other operations.
-
-**Decision:** Document + analyzer. Verified experimentally (scratch project
-referencing the `0.10.1-alpha04` build with `AnalysisMode=All` and
-`dotnet_diagnostic.CA2000.severity=warning` forced on) that **CA2000 does
-not catch this**: its escape analysis anchors on `new`-expressions visible
-in the consuming compilation, and `BeginOperation`'s internal `new
-RootOperationLog(...)`/`new DisabledOperationLog(...)` live inside the
-already-compiled library DLL, opaque to CA2000. A `new StreamReader(...)`
-left undisposed in the same test project *did* get flagged, confirming
-CA2000 works generally but simply can't see through a factory method from a
-referenced assembly. Since consumers only ever obtain an `IOperationLog` via
-`BeginOperation`/`BeginSubOperation` (never `new`), CA2000 will essentially
-never fire here in practice — this needs our own analyzer (flag a local
-typed `IOperationLog`/assigned from `BeginOperation`/`BeginSubOperation`
-that isn't disposed on all paths) rather than relying on CA2000.
-
-**Status:** Done. `UndisposedOperationLogAnalyzer` ships as `RSSL0006`
-(warning), with two code fixes (add a `using` declaration / add an empty
-`using` block) and correct handling of `IOperationLog`'s fluent
-`AddProperty`/`Append`/`AppendValue`/`AppendJson`/`SetException`/`SetResult`
-chain, since those all return the same instance that needs disposing.
-Documented in the README's new "Common pitfalls" subsection under
-"Operation logging".
-
-## 10. Operation logging: using a sub-operation after the root is disposed corrupts an unrelated log entry — ✅ Complete
-
-The nastiest one found. `RootOperationLog.DisposeCore()` returns the shared
-journal `StringBuilder` to the pool. If any `ChildOperationLog` reference is
-still alive (e.g., leaked out of scope, or a fire-and-forget task holding it)
-and appends to it afterward, it may now be mutating a `StringBuilder` that's
-been handed out to a completely different, unrelated operation elsewhere in
-the app. The bug manifests as garbled text in some other log line, with no
-exception and no connection back to the actual root cause.
-
-**Decision:** Fix (planned). Add a disposed/generation guard to
-`OperationLogState` so a `ChildOperationLog` used after the root's
-`Dispose()` throws `ObjectDisposedException` instead of silently mutating a
-pooled `StringBuilder` that's been handed to a different operation.
-
-**Status:** Done. `OperationLogState` gained an `IsDisposed` flag, set the
-moment the root returns the journal `StringBuilder` to `OperationLogPools`
-(`ReturnJournalToPool`), plus a `ThrowIfDisposed()` helper. Every mutating
-member on `OperationLog<TSelf>` (`AddProperty`, `Append`, `AppendValue`,
-`AppendJson`, `BeginSubOperation`) and on `RootOperationLog`/
-`ChildOperationLog` (`SetException`, `SetResult`, and `ChildOperationLog`'s
-`DisposeCore`) now calls it first, so any leaked `ChildOperationLog` used or
-disposed after the root has been disposed throws `ObjectDisposedException`
-instead of touching a `StringBuilder` that may already belong to a different
-operation. `IOperationLog`'s XML docs document the new exception. Covered by
-`OperationLoggingTests.LeakedSubOperation_UsedAfterRootDisposed_ThrowsObjectDisposedException`
-and `LeakedSubOperation_DisposedAfterRootDisposed_ThrowsObjectDisposedException`.
-
-## 11. Not thread-safe by default, and it's easy to reach for concurrently — ✅ Complete
-
-`IOperationLog` feels like the natural thing to close over in
-`Task.WhenAll`/`Parallel.ForEach` sub-operations, but concurrent use without
-`threadSafe: true` races on the shared `StringBuilder`/`List<Properties>` —
-corruption or lost writes, no exception guaranteeing a loud failure.
-
-**Decision:** Document only. This is an intentional opt-in design
-(`threadSafe: true`), just needs to be prominent in the README.
-
-**Status:** Done. Already documented in the README's dedicated "Thread
-safety" subsection (under "Operation logging"), which predates this notes
-file — added back when thread-safety was made opt-in
-(`338ecef`/`93a5fa1`). States plainly that operation logs are "not
-thread-safe by default," shows the `threadSafe: true` opt-in with a
-`Task.WhenAll` sub-operation example, and explains the whole tree (root +
-every nested sub-operation) shares one lock. No further action needed.
 
 ## 12. `SetException`/`SetResult` on a sub-operation don't do what they look like they do
 
@@ -366,44 +166,29 @@ raised.
 **Decision:** Document only. Matches canonical-log-line semantics; not
 something to special-case.
 
-## Rough priority
-
-Two buckets stand out as most worth addressing first:
-
-- **(a)** Anything that turns an interpolated-string call into a plain-`string`
-  call defeats both the perf trick and the tag-capture feature, with the
-  worst case being an actual runtime `FormatException` from a `<Tag>` leaking
-  into `IFormattable.ToString` (#1, #2, #3).
-- **(b)** Operation logging's shared, pooled, non-thread-safe state means
-  sub-operation lifetime mistakes can corrupt logs from a totally different
-  operation elsewhere in the app (#9, #10, #11).
-
 ## Decisions summary
 
 | # | Scenario | Decision |
 |---|----------|----------|
-| 1 | Defeating the disabled-check optimization | ✅ Documented (README "Common pitfalls") + analyzers shipped as `RSSL0009`/`RSSL0010` |
-| 2 | `string msg = $"...{x:<Name>}..."` assigned before logging | ✅ Document (top pitfall) + analyzer — shipped as `RSSL0007` |
-| 3 | Missing `>` in a tag → runtime `FormatException` | ✅ Fixed: throws `UnterminatedLogPropertyTagException` (analyzer idea still outstanding) |
 | 4 | Duplicate property names never deduped | Document (+ future analyzer idea) |
-| 5 | `<>`/`<@>` edge cases | Document (+ consider analyzer for text after `<@...>`) |
+| 5 | `<>`/`<@>` edge cases | Document (+ consider analyzer for `<@>` with a trailing format) |
 | 6 | Destructuring captures raw (live) value | Document (by design) |
 | 7 | Destructuring skips fields | Fix (backlog, not urgent) |
 | 8 | Tag-based capture always boxes | Document (known tradeoff) |
-| 9 | Forgetting `using` drops the journal | ✅ Document + analyzer (CA2000 confirmed *not* to catch this) — shipped as `RSSL0006` |
-| 10 | Sub-operation used after root disposed corrupts unrelated log | ✅ Fixed: `ObjectDisposedException` guard |
-| 11 | Not thread-safe by default | ✅ Document (intentional opt-in) — already covered by README's "Thread safety" subsection |
 | 12 | Sub-operation `SetException`/`SetResult` don't touch root | Document (more prominently) |
 | 13 | `Operation.*` reserved property names | Fix (throw `ArgumentException`) |
 | 14 | Level frozen at `BeginOperation` | Document (intentional) |
 | 15 | Operation-log args always eagerly evaluated | Document (C# limitation) |
 | 16 | `BeginSubOperation` writes "started" unconditionally | Document (by design) |
 
-Planned code changes: **#13** (fix); **#7** (backlog
-enhancement). Analyzer ideas to investigate: **#1**, **#3** (fix shipped;
-analyzer still outstanding), **#4** (stretch), **#5** (stretch, lower
-priority). **#2** shipped as `RSSL0007` (also covers the second bullet of
-#1). **#3** fix shipped as `UnterminatedLogPropertyTagException`. **#9**
-shipped as `RSSL0006`. **#10** shipped as an `ObjectDisposedException` guard
-in `OperationLogState`. **#11** confirmed already documented in the README's
-"Thread safety" subsection.
+Planned code changes: **#13** (fix); **#7** (backlog enhancement). Analyzer
+ideas to investigate: **#4** (stretch), **#5** (stretch, lower priority) - the
+latter tracked in `notes/planned-features.md` item #1. Everything else here is
+a documentation task.
+
+Scenarios 1, 2, 3, 9, 10 and 11 were resolved and removed: 1/2/3 shipped as
+`RSSL0009`/`RSSL0010`, `RSSL0007` and `RSSL0008` (plus
+`UnterminatedLogPropertyTagException`) alongside the README's "Common
+pitfalls" section, 9 as `RSSL0006`, 10 as the `ObjectDisposedException` guard
+in `OperationLogState`, and 11 was already covered by the README's "Thread
+safety" subsection. Their notes are in git history.
