@@ -455,6 +455,53 @@ await Task.WhenAll(items.Select(async item =>
 }));
 ```
 
+### Testing code that takes an `IOperationLog`
+
+Two recipes, depending on what the code under test needs.
+
+**A real, silent operation log.** If the code just needs *an* operation log and the test doesn't care
+what it records, begin one on `NullLogger.Instance`. The level is disabled, so you get the library's
+own no-op implementation - no journal, no log entry - while `EventId` and `Properties` still behave
+exactly as they would on an enabled operation:
+
+```csharp
+using IOperationLog log = NullLogger.Instance.BeginOperation("Test");
+```
+
+**A test double you can assert on.** Don't mock `IOperationLog`/`ISubOperationLog` directly.
+`Append` and `BeginSubOperation` each have an overload taking an interpolated string handler - a
+`ref struct` parameter that Moq, NSubstitute, and anything else built on Castle DynamicProxy can't
+forward. The proxy generated for those two members is invalid, so `log.Append($"...")` throws
+`InvalidProgramException` at run time; since that's the idiomatic call, a mock of the interface fails
+on contact with the code it's meant to test.
+
+Use `FakeOperationLog` instead - a single do-nothing type implementing both `IOperationLog` and
+`ISubOperationLog`. Every fluent member has a mockable `void`-returning counterpart with the same name
+(`Append`, `AddProperty`, `BeginSubOperation`, and so on); the interpolated-handler overloads hand the
+already-built text to it as a plain string. Subclass `FakeOperationLog`, or hand it to your mocking
+framework and set up or verify those members directly:
+
+```csharp
+Mock<FakeOperationLog> log = new();
+
+ProcessOrder(log.Object, orderId: 42);      // internally calls log.Append($"Fetching order {orderId}")
+
+log.Verify(x => x.Append("Fetching order 42"), Times.Once);
+```
+
+No `CallBase` needed: the members you set up or verify return `void`, so an unconfigured mock simply
+does nothing rather than returning `null` for the next call in the chain to fail on. The actual
+`return this` that keeps a fluent chain going lives in a non-mockable explicit interface
+implementation, which always runs for real.
+
+`IsEnabled` is always `true` and can't be overridden or mocked - this fake has no disabled state, so
+its interpolated `Append`/`BeginSubOperation` overloads always evaluate their holes. To test code
+against a genuinely disabled operation, use the first recipe above (`NullLogger.Instance`) instead.
+
+Since `BeginSubOperation` on this fake returns the same instance (cast to `ISubOperationLog`), a
+"sub-operation" shares `Properties`/`EventId` with the root exactly as a real one does - but disposing
+either disposes the same object, so don't expect independent `Dispose` calls per sub-operation.
+
 ### Common pitfalls
 
 `BeginOperation`/`BeginSubOperation` return an ordinary `IDisposable` - nothing enforces disposal.

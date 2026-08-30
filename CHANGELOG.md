@@ -21,6 +21,16 @@ First stable release. The API is now considered settled; subsequent 1.x releases
   `BeginOperation(..., threadSafe: true)`, interpolated-string-handler overloads for `Append`/
   `BeginSubOperation`, and the chainable `SetResultTo`/`AddPropertyTo`/`AppendValueTo`/
   `AppendResultTo`/`AppendJsonTo` extension methods.
+- **`FakeOperationLog`** — a do-nothing implementation of both `IOperationLog` and
+  `ISubOperationLog`, meant to be subclassed or handed to a mocking framework, for testing code that
+  takes either parameter type. Mocking those interfaces directly does not work: `Append`/
+  `BeginSubOperation` have overloads taking an interpolated string handler, a `ref struct` parameter
+  that Castle DynamicProxy (and therefore Moq and NSubstitute) can't forward, so calling
+  `log.Append($"...")` on such a mock throws `InvalidProgramException`. Every fluent member has a
+  mockable, `void`-returning counterpart of the same name that a test can set up or verify; the
+  actual `return this` lives in a non-mockable explicit interface implementation, so a fluent chain
+  keeps working even on an unconfigured mock with no `CallBase`. See the README's "Testing code that
+  takes an `IOperationLog`" section.
 - **Five new analyzers.** `RSSL0006` (undisposed `IOperationLog`, with two code fixes), and
   `RSSL0007`/`RSSL0009`/`RSSL0010` (a `<PropertyName>`-capturing interpolated string that gets
   routed through a local, an expression, or a helper method, silently defeating both the tag and
