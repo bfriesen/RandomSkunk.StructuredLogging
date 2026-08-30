@@ -7,6 +7,11 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 /// </summary>
 public static class DiagnosticDescriptors
 {
+    // Each rule's help link (the "learn more" link on an IDE lightbulb, and the linked rule ID in
+    // build output) points at that rule's row in the README's analyzer table, anchored by an
+    // <a id="rssl000N"> element in the row's first cell.
+    private const string HelpLinkBase = "https://github.com/bfriesen/RandomSkunk.StructuredLogging#";
+
     /// <summary>
     /// Reported on a call to one of <c>Microsoft.Extensions.Logging.LoggerExtensions</c>'
     /// <c>Log</c>/<c>LogTrace</c>/<c>LogDebug</c>/<c>LogInformation</c>/<c>LogWarning</c>/
@@ -19,7 +24,8 @@ public static class DiagnosticDescriptors
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true,
-        description: "Microsoft.Extensions.Logging.LoggerExtensions' Log/LogTrace/LogDebug/LogInformation/LogWarning/LogError/LogCritical extension methods force every structured property into the message template. RandomSkunk.StructuredLogging's Trace/Debug/Information/Warning/Error/Critical/Write extension methods let the message be worded freely while structured properties are attached separately.");
+        description: "Microsoft.Extensions.Logging.LoggerExtensions' Log/LogTrace/LogDebug/LogInformation/LogWarning/LogError/LogCritical extension methods force every structured property into the message template. RandomSkunk.StructuredLogging's Trace/Debug/Information/Warning/Error/Critical/Write extension methods let the message be worded freely while structured properties are attached separately.",
+        helpLinkUri: HelpLinkBase + "rssl0001");
 
     /// <summary>
     /// Reported on an interpolation hole in a RandomSkunk.StructuredLogging message argument that
@@ -35,7 +41,8 @@ public static class DiagnosticDescriptors
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Hidden,
         isEnabledByDefault: true,
-        description: "Marks an interpolation hole (e.g. {who:<Recipient>} in $\"Hello, {who:<Recipient>}!\") in a RandomSkunk.StructuredLogging message argument that captures its value as a structured property via the <PropertyName> tag format. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these holes.");
+        description: "Marks an interpolation hole (e.g. {who:<Recipient>} in $\"Hello, {who:<Recipient>}!\") in a RandomSkunk.StructuredLogging message argument that captures its value as a structured property via the <PropertyName> tag format. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these holes.",
+        helpLinkUri: HelpLinkBase + "rssl0002");
 
     /// <summary>
     /// Reported on an interpolation hole in a RandomSkunk.StructuredLogging message argument that
@@ -51,7 +58,8 @@ public static class DiagnosticDescriptors
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Hidden,
         isEnabledByDefault: true,
-        description: "Marks an interpolation hole (e.g. {who} in $\"Hello, {who}!\") in a RandomSkunk.StructuredLogging message argument whose value is not captured as a structured property via the <PropertyName> tag format. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these holes.");
+        description: "Marks an interpolation hole (e.g. {who} in $\"Hello, {who}!\") in a RandomSkunk.StructuredLogging message argument whose value is not captured as a structured property via the <PropertyName> tag format. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these holes.",
+        helpLinkUri: HelpLinkBase + "rssl0003");
 
     /// <summary>
     /// Reported on a name/value tuple argument (e.g. <c>("UserId", userId)</c>) passed at the end
@@ -68,7 +76,8 @@ public static class DiagnosticDescriptors
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Hidden,
         isEnabledByDefault: true,
-        description: "Marks a name/value tuple argument (e.g. (\"UserId\", userId) in logger.Debug($\"...\", (\"UserId\", userId))) passed at the end of a RandomSkunk.StructuredLogging extension method call to attach a structured property, when the name is a compile-time constant string (a literal, a constant concatenation, or an interpolated string whose holes are themselves constant strings). Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these arguments.");
+        description: "Marks a name/value tuple argument (e.g. (\"UserId\", userId) in logger.Debug($\"...\", (\"UserId\", userId))) passed at the end of a RandomSkunk.StructuredLogging extension method call to attach a structured property, when the name is a compile-time constant string (a literal, a constant concatenation, or an interpolated string whose holes are themselves constant strings). Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these arguments.",
+        helpLinkUri: HelpLinkBase + "rssl0004");
 
     /// <summary>
     /// Reported on a call to any of the RandomSkunk.StructuredLogging
@@ -84,7 +93,8 @@ public static class DiagnosticDescriptors
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Hidden,
         isEnabledByDefault: true,
-        description: "Marks a call to one of the RandomSkunk.StructuredLogging Trace/Debug/Information/Warning/Error/Critical/Write extension methods. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these calls.");
+        description: "Marks a call to one of the RandomSkunk.StructuredLogging Trace/Debug/Information/Warning/Error/Critical/Write extension methods. Reported at silent/hidden severity since it isn't a warning about anything wrong with the code - it exists so that code fixes can target these calls.",
+        helpLinkUri: HelpLinkBase + "rssl0005");
 
     /// <summary>
     /// Reported on a call to <c>BeginOperation</c>/<c>BeginSubOperation</c> whose returned
@@ -98,7 +108,8 @@ public static class DiagnosticDescriptors
         category: "Reliability",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "BeginOperation returns an IOperationLog and BeginSubOperation returns an ISubOperationLog, whose disposal is what actually writes its log entry (root) or 'complete' journal line (sub-operation). Nothing enforces disposal, and forgetting it silently drops the entire journal - no exception, no partial log entry - and leaks the operation's pooled StringBuilder. This is the operation-logging analog of CA2000, which can't catch this itself: its escape analysis anchors on 'new' expressions visible in the consuming compilation, and BeginOperation's internal object construction is opaque, living inside the already-compiled library assembly.");
+        description: "BeginOperation returns an IOperationLog and BeginSubOperation returns an ISubOperationLog, whose disposal is what actually writes its log entry (root) or 'complete' journal line (sub-operation). Nothing enforces disposal, and forgetting it silently drops the entire journal - no exception, no partial log entry - and leaks the operation's pooled StringBuilder. This is the operation-logging analog of CA2000, which can't catch this itself: its escape analysis anchors on 'new' expressions visible in the consuming compilation, and BeginOperation's internal object construction is opaque, living inside the already-compiled library assembly.",
+        helpLinkUri: HelpLinkBase + "rssl0006");
 
     /// <summary>
     /// Reported on a local variable that's initialized from an interpolated string expression and
@@ -112,7 +123,8 @@ public static class DiagnosticDescriptors
         category: "Reliability",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "The disabled-level optimization and the <PropertyName> tag format both depend on an interpolated string literal binding directly to a logging call's interpolated-string-handler overload. Assigning the interpolated string to a string local first (e.g. `string msg = $\"User {id:<UserId>}\"; logger.Debug(msg);`) forces the plain `string message` overload instead: the string is built eagerly regardless of level, and the <PropertyName> tag is handed to the interpolated value's IFormattable.ToString(format) as a genuine .NET format string, which usually throws FormatException at the log call site the first time that code path runs. Only fires when the initializer captures at least one <PropertyName> tag - a tagless interpolated string local only loses the disabled-level optimization, which this diagnostic doesn't police.");
+        description: "The disabled-level optimization and the <PropertyName> tag format both depend on an interpolated string literal binding directly to a logging call's interpolated-string-handler overload. Assigning the interpolated string to a string local first (e.g. `string msg = $\"User {id:<UserId>}\"; logger.Debug(msg);`) forces the plain `string message` overload instead: the string is built eagerly regardless of level, and the <PropertyName> tag is handed to the interpolated value's IFormattable.ToString(format) as a genuine .NET format string, which usually throws FormatException at the log call site the first time that code path runs. Only fires when the initializer captures at least one <PropertyName> tag - a tagless interpolated string local only loses the disabled-level optimization, which this diagnostic doesn't police.",
+        helpLinkUri: HelpLinkBase + "rssl0007");
 
     /// <summary>
     /// Reported on an interpolation hole in a RandomSkunk.StructuredLogging message argument whose
@@ -129,7 +141,8 @@ public static class DiagnosticDescriptors
         category: "Reliability",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
-        description: "A format specifier that starts with '<' but never closes with '>' (e.g. {value:<UserId}, a missing '>' typo) can't be parsed as a <PropertyName> tag or the <> no-capture escape hatch. At run time, RandomSkunk.StructuredLogging throws UnterminatedLogPropertyTagException rather than silently treating the raw text as a real format string handed to IFormattable.ToString(format). This diagnostic flags the same mistake at compile time. If the format is genuinely meant to start with a literal '<', use the '<>' escape hatch, e.g. {value:<><realformat}.");
+        description: "A format specifier that starts with '<' but never closes with '>' (e.g. {value:<UserId}, a missing '>' typo) can't be parsed as a <PropertyName> tag or the <> no-capture escape hatch. At run time, RandomSkunk.StructuredLogging throws UnterminatedLogPropertyTagException rather than silently treating the raw text as a real format string handed to IFormattable.ToString(format). This diagnostic flags the same mistake at compile time. If the format is genuinely meant to start with a literal '<', use the '<>' escape hatch, e.g. {value:<><realformat}.",
+        helpLinkUri: HelpLinkBase + "rssl0008");
 
     /// <summary>
     /// Reported on a call to one of the RandomSkunk.StructuredLogging
@@ -145,7 +158,8 @@ public static class DiagnosticDescriptors
         category: "Reliability",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "The disabled-level optimization and the <PropertyName> tag format both depend on an interpolated string literal binding directly to a logging call's interpolated-string-handler overload. Applying a method call or '+' concatenation directly to the literal (e.g. `logger.Debug($\"User {id:<UserId>}\".ToUpper())` or `logger.Debug($\"count: {count:<Count>}\" + suffix)`) forces the plain `string message` overload instead: the string is built eagerly regardless of level, and the <PropertyName> tag is handed to the interpolated value's IFormattable.ToString(format) as a genuine .NET format string, which usually throws FormatException at the log call site the first time that code path runs. Only fires when the literal captures at least one <PropertyName> tag - a tagless interpolated string literal only loses the disabled-level optimization, which this diagnostic doesn't police.");
+        description: "The disabled-level optimization and the <PropertyName> tag format both depend on an interpolated string literal binding directly to a logging call's interpolated-string-handler overload. Applying a method call or '+' concatenation directly to the literal (e.g. `logger.Debug($\"User {id:<UserId>}\".ToUpper())` or `logger.Debug($\"count: {count:<Count>}\" + suffix)`) forces the plain `string message` overload instead: the string is built eagerly regardless of level, and the <PropertyName> tag is handed to the interpolated value's IFormattable.ToString(format) as a genuine .NET format string, which usually throws FormatException at the log call site the first time that code path runs. Only fires when the literal captures at least one <PropertyName> tag - a tagless interpolated string literal only loses the disabled-level optimization, which this diagnostic doesn't police.",
+        helpLinkUri: HelpLinkBase + "rssl0009");
 
     /// <summary>
     /// Reported on a call to one of the RandomSkunk.StructuredLogging
@@ -161,5 +175,6 @@ public static class DiagnosticDescriptors
         category: "Reliability",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "The disabled-level optimization and the <PropertyName> tag format both depend on an interpolated string literal binding directly to a logging call's interpolated-string-handler overload. Passing the literal through a wrapper/helper method first (e.g. `logger.Debug(FormatMessage($\"User {id:<UserId>}\"))`) forces the ordinary compiler-provided handler to build it eagerly as soon as the helper is called, regardless of whether the level is enabled, and whatever plain string the helper returns then binds the logging call's plain `string message` overload instead - the <PropertyName> tag is handed to the interpolated value's IFormattable.ToString(format) as a genuine .NET format string, which usually throws FormatException while evaluating the argument, before the helper method even runs. Only fires when the literal captures at least one <PropertyName> tag - a tagless interpolated string literal only loses the disabled-level optimization, which this diagnostic doesn't police.");
+        description: "The disabled-level optimization and the <PropertyName> tag format both depend on an interpolated string literal binding directly to a logging call's interpolated-string-handler overload. Passing the literal through a wrapper/helper method first (e.g. `logger.Debug(FormatMessage($\"User {id:<UserId>}\"))`) forces the ordinary compiler-provided handler to build it eagerly as soon as the helper is called, regardless of whether the level is enabled, and whatever plain string the helper returns then binds the logging call's plain `string message` overload instead - the <PropertyName> tag is handed to the interpolated value's IFormattable.ToString(format) as a genuine .NET format string, which usually throws FormatException while evaluating the argument, before the helper method even runs. Only fires when the literal captures at least one <PropertyName> tag - a tagless interpolated string literal only loses the disabled-level optimization, which this diagnostic doesn't police.",
+        helpLinkUri: HelpLinkBase + "rssl0010");
 }
