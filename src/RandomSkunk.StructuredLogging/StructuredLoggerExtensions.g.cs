@@ -221,6 +221,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -228,6 +229,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref TraceInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -246,6 +249,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -254,6 +258,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref TraceInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -274,6 +280,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -283,6 +290,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -305,6 +314,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -315,6 +325,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -339,6 +351,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -350,6 +363,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -376,6 +391,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -388,6 +404,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -416,6 +434,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -429,6 +448,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -648,6 +669,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -655,6 +677,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -673,6 +697,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -681,6 +706,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -701,6 +728,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -710,6 +738,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -732,6 +762,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -742,6 +773,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -766,6 +799,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -777,6 +811,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -803,6 +839,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -815,6 +852,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -843,6 +882,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -856,6 +896,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -1060,12 +1102,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         [InterpolatedStringHandlerArgument("logger")] ref TraceInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1083,6 +1128,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1090,6 +1136,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref TraceInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1109,6 +1157,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1117,6 +1166,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1138,6 +1189,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1147,6 +1199,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1170,6 +1224,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1180,6 +1235,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1205,6 +1262,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1216,6 +1274,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1243,6 +1303,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1255,6 +1316,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1459,12 +1522,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -1482,6 +1548,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1489,6 +1556,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -1508,6 +1577,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1516,6 +1586,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -1537,6 +1609,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1546,6 +1619,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -1569,6 +1644,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1579,6 +1655,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -1604,6 +1682,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1615,6 +1694,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -1642,6 +1723,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1654,6 +1736,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -1858,12 +1942,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref TraceInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1881,6 +1968,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1888,6 +1976,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref TraceInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1907,6 +1997,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1915,6 +2006,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1936,6 +2029,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1945,6 +2039,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -1968,6 +2064,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -1978,6 +2075,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -2003,6 +2102,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2014,6 +2114,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -2041,6 +2143,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2053,6 +2156,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -2257,12 +2362,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -2280,6 +2388,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2287,6 +2396,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -2306,6 +2417,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2314,6 +2426,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -2335,6 +2449,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2344,6 +2459,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -2367,6 +2484,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2377,6 +2495,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -2402,6 +2522,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2413,6 +2534,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -2440,6 +2563,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2452,6 +2576,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -2641,11 +2767,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref TraceInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -2662,12 +2791,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref TraceInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -2686,6 +2818,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Trace level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2693,6 +2826,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -2713,6 +2848,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2721,6 +2857,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -2743,6 +2881,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2752,6 +2891,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -2776,6 +2917,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2786,6 +2928,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -2812,6 +2956,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -2823,6 +2968,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -3012,11 +3159,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -3033,12 +3183,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -3057,6 +3210,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3064,6 +3218,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -3084,6 +3240,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3092,6 +3249,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -3114,6 +3273,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3123,6 +3283,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -3147,6 +3309,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3157,6 +3320,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -3183,6 +3348,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Trace<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3194,6 +3360,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Trace))
             return;
 
@@ -3413,6 +3581,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3420,6 +3589,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref DebugInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -3438,6 +3609,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3446,6 +3618,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref DebugInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -3466,6 +3640,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3475,6 +3650,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -3497,6 +3674,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3507,6 +3685,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -3531,6 +3711,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3542,6 +3723,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -3568,6 +3751,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3580,6 +3764,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -3608,6 +3794,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3621,6 +3808,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -3840,6 +4029,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3847,6 +4037,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -3865,6 +4057,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3873,6 +4066,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -3893,6 +4088,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3902,6 +4098,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -3924,6 +4122,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3934,6 +4133,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -3958,6 +4159,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -3969,6 +4171,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -3995,6 +4199,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4007,6 +4212,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -4035,6 +4242,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4048,6 +4256,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -4252,12 +4462,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         [InterpolatedStringHandlerArgument("logger")] ref DebugInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -4275,6 +4488,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4282,6 +4496,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref DebugInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -4301,6 +4517,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4309,6 +4526,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -4330,6 +4549,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4339,6 +4559,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -4362,6 +4584,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4372,6 +4595,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -4397,6 +4622,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4408,6 +4634,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -4435,6 +4663,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4447,6 +4676,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -4651,12 +4882,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -4674,6 +4908,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4681,6 +4916,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -4700,6 +4937,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4708,6 +4946,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -4729,6 +4969,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4738,6 +4979,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -4761,6 +5004,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4771,6 +5015,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -4796,6 +5042,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4807,6 +5054,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -4834,6 +5083,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -4846,6 +5096,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -5050,12 +5302,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref DebugInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5073,6 +5328,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5080,6 +5336,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref DebugInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5099,6 +5357,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5107,6 +5366,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5128,6 +5389,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5137,6 +5399,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5160,6 +5424,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5170,6 +5435,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5195,6 +5462,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5206,6 +5474,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5233,6 +5503,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5245,6 +5516,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5449,12 +5722,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -5472,6 +5748,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5479,6 +5756,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -5498,6 +5777,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5506,6 +5786,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -5527,6 +5809,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5536,6 +5819,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -5559,6 +5844,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5569,6 +5855,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -5594,6 +5882,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5605,6 +5894,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -5632,6 +5923,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5644,6 +5936,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -5833,11 +6127,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref DebugInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5854,12 +6151,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref DebugInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5878,6 +6178,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Debug level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5885,6 +6186,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5905,6 +6208,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5913,6 +6217,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5935,6 +6241,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5944,6 +6251,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -5968,6 +6277,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -5978,6 +6288,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -6004,6 +6316,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6015,6 +6328,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -6204,11 +6519,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -6225,12 +6543,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -6249,6 +6570,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6256,6 +6578,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -6276,6 +6600,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6284,6 +6609,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -6306,6 +6633,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6315,6 +6643,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -6339,6 +6669,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6349,6 +6680,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -6375,6 +6708,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Debug<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6386,6 +6720,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Debug))
             return;
 
@@ -6605,6 +6941,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6612,6 +6949,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref InformationInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -6630,6 +6969,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6638,6 +6978,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref InformationInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -6658,6 +7000,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6667,6 +7010,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -6689,6 +7034,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6699,6 +7045,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -6723,6 +7071,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6734,6 +7083,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -6760,6 +7111,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6772,6 +7124,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -6800,6 +7154,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -6813,6 +7168,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -7032,6 +7389,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7039,6 +7397,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7057,6 +7417,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7065,6 +7426,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7085,6 +7448,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7094,6 +7458,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7116,6 +7482,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7126,6 +7493,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7150,6 +7519,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7161,6 +7531,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7187,6 +7559,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7199,6 +7572,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7227,6 +7602,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7240,6 +7616,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7444,12 +7822,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         [InterpolatedStringHandlerArgument("logger")] ref InformationInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -7467,6 +7848,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7474,6 +7856,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref InformationInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -7493,6 +7877,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7501,6 +7886,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -7522,6 +7909,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7531,6 +7919,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -7554,6 +7944,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7564,6 +7955,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -7589,6 +7982,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7600,6 +7994,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -7627,6 +8023,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7639,6 +8036,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -7843,12 +8242,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7866,6 +8268,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7873,6 +8276,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7892,6 +8297,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7900,6 +8306,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7921,6 +8329,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7930,6 +8339,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7953,6 +8364,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7963,6 +8375,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -7988,6 +8402,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -7999,6 +8414,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -8026,6 +8443,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8038,6 +8456,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -8242,12 +8662,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref InformationInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -8265,6 +8688,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8272,6 +8696,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref InformationInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -8291,6 +8717,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8299,6 +8726,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -8320,6 +8749,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8329,6 +8759,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -8352,6 +8784,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8362,6 +8795,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -8387,6 +8822,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8398,6 +8834,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -8425,6 +8863,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8437,6 +8876,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -8641,12 +9082,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -8664,6 +9108,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8671,6 +9116,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -8690,6 +9137,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8698,6 +9146,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -8719,6 +9169,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8728,6 +9179,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -8751,6 +9204,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8761,6 +9215,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -8786,6 +9242,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8797,6 +9254,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -8824,6 +9283,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -8836,6 +9296,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -9025,11 +9487,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref InformationInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9046,12 +9511,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref InformationInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9070,6 +9538,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Information level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9077,6 +9546,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9097,6 +9568,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9105,6 +9577,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9127,6 +9601,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9136,6 +9611,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9160,6 +9637,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9170,6 +9648,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9196,6 +9676,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9207,6 +9688,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9396,11 +9879,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -9417,12 +9903,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -9441,6 +9930,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9448,6 +9938,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -9468,6 +9960,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9476,6 +9969,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -9498,6 +9993,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9507,6 +10003,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -9531,6 +10029,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9541,6 +10040,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -9567,6 +10068,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Information<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9578,6 +10080,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Information))
             return;
 
@@ -9797,6 +10301,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9804,6 +10309,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref WarningInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9822,6 +10329,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9830,6 +10338,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref WarningInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9850,6 +10360,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9859,6 +10370,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9881,6 +10394,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9891,6 +10405,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9915,6 +10431,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9926,6 +10443,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9952,6 +10471,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -9964,6 +10484,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -9992,6 +10514,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10005,6 +10528,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -10224,6 +10749,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10231,6 +10757,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -10249,6 +10777,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10257,6 +10786,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -10277,6 +10808,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10286,6 +10818,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -10308,6 +10842,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10318,6 +10853,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -10342,6 +10879,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10353,6 +10891,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -10379,6 +10919,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10391,6 +10932,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -10419,6 +10962,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10432,6 +10976,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -10636,12 +11182,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         [InterpolatedStringHandlerArgument("logger")] ref WarningInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -10659,6 +11208,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10666,6 +11216,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref WarningInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -10685,6 +11237,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10693,6 +11246,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -10714,6 +11269,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10723,6 +11279,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -10746,6 +11304,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10756,6 +11315,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -10781,6 +11342,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10792,6 +11354,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -10819,6 +11383,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -10831,6 +11396,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -11035,12 +11602,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11058,6 +11628,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11065,6 +11636,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11084,6 +11657,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11092,6 +11666,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11113,6 +11689,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11122,6 +11699,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11145,6 +11724,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11155,6 +11735,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11180,6 +11762,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11191,6 +11774,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11218,6 +11803,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11230,6 +11816,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11434,12 +12022,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref WarningInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -11457,6 +12048,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11464,6 +12056,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref WarningInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -11483,6 +12077,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11491,6 +12086,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -11512,6 +12109,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11521,6 +12119,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -11544,6 +12144,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11554,6 +12155,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -11579,6 +12182,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11590,6 +12194,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -11617,6 +12223,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11629,6 +12236,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -11833,12 +12442,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11856,6 +12468,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11863,6 +12476,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11882,6 +12497,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11890,6 +12506,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11911,6 +12529,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11920,6 +12539,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11943,6 +12564,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11953,6 +12575,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -11978,6 +12602,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -11989,6 +12614,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -12016,6 +12643,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12028,6 +12656,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -12217,11 +12847,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref WarningInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -12238,12 +12871,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref WarningInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -12262,6 +12898,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Warning level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12269,6 +12906,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -12289,6 +12928,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12297,6 +12937,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -12319,6 +12961,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12328,6 +12971,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -12352,6 +12997,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12362,6 +13008,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -12388,6 +13036,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12399,6 +13048,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -12588,11 +13239,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -12609,12 +13263,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -12633,6 +13290,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12640,6 +13298,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -12660,6 +13320,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12668,6 +13329,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -12690,6 +13353,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12699,6 +13363,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -12723,6 +13389,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12733,6 +13400,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -12759,6 +13428,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Warning<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12770,6 +13440,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Warning))
             return;
 
@@ -12989,6 +13661,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -12996,6 +13669,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref ErrorInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13014,6 +13689,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13022,6 +13698,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref ErrorInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13042,6 +13720,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13051,6 +13730,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13073,6 +13754,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13083,6 +13765,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13107,6 +13791,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13118,6 +13803,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13144,6 +13831,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13156,6 +13844,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13184,6 +13874,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13197,6 +13888,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13416,6 +14109,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13423,6 +14117,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -13441,6 +14137,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13449,6 +14146,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -13469,6 +14168,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13478,6 +14178,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -13500,6 +14202,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13510,6 +14213,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -13534,6 +14239,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13545,6 +14251,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -13571,6 +14279,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13583,6 +14292,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -13611,6 +14322,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13624,6 +14336,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -13828,12 +14542,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         [InterpolatedStringHandlerArgument("logger")] ref ErrorInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13851,6 +14568,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13858,6 +14576,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref ErrorInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13877,6 +14597,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13885,6 +14606,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13906,6 +14629,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13915,6 +14639,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13938,6 +14664,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13948,6 +14675,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -13973,6 +14702,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -13984,6 +14714,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -14011,6 +14743,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14023,6 +14756,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -14227,12 +14962,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -14250,6 +14988,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14257,6 +14996,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -14276,6 +15017,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14284,6 +15026,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -14305,6 +15049,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14314,6 +15059,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -14337,6 +15084,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14347,6 +15095,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -14372,6 +15122,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14383,6 +15134,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -14410,6 +15163,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14422,6 +15176,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -14626,12 +15382,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref ErrorInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -14649,6 +15408,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14656,6 +15416,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref ErrorInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -14675,6 +15437,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14683,6 +15446,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -14704,6 +15469,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14713,6 +15479,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -14736,6 +15504,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14746,6 +15515,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -14771,6 +15542,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14782,6 +15554,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -14809,6 +15583,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -14821,6 +15596,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -15025,12 +15802,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15048,6 +15828,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15055,6 +15836,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15074,6 +15857,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15082,6 +15866,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15103,6 +15889,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15112,6 +15899,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15135,6 +15924,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15145,6 +15935,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15170,6 +15962,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15181,6 +15974,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15208,6 +16003,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15220,6 +16016,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15409,11 +16207,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref ErrorInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -15430,12 +16231,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref ErrorInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -15454,6 +16258,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Error level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15461,6 +16266,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -15481,6 +16288,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15489,6 +16297,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -15511,6 +16321,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15520,6 +16331,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -15544,6 +16357,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15554,6 +16368,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -15580,6 +16396,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15591,6 +16408,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -15780,11 +16599,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15801,12 +16623,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15825,6 +16650,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15832,6 +16658,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15852,6 +16680,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15860,6 +16689,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15882,6 +16713,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15891,6 +16723,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15915,6 +16749,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15925,6 +16760,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -15951,6 +16788,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Error<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -15962,6 +16800,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Error))
             return;
 
@@ -16181,6 +17021,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16188,6 +17029,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref CriticalInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -16206,6 +17049,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16214,6 +17058,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref CriticalInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -16234,6 +17080,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16243,6 +17090,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -16265,6 +17114,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16275,6 +17125,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -16299,6 +17151,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16310,6 +17163,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -16336,6 +17191,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16348,6 +17204,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -16376,6 +17234,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16389,6 +17248,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -16608,6 +17469,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16615,6 +17477,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -16633,6 +17497,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16641,6 +17506,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -16661,6 +17528,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16670,6 +17538,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -16692,6 +17562,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16702,6 +17573,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -16726,6 +17599,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16737,6 +17611,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -16763,6 +17639,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16775,6 +17652,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -16803,6 +17682,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -16816,6 +17696,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -17020,12 +17902,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         [InterpolatedStringHandlerArgument("logger")] ref CriticalInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17043,6 +17928,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17050,6 +17936,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref CriticalInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17069,6 +17957,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17077,6 +17966,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17098,6 +17989,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17107,6 +17999,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17130,6 +18024,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17140,6 +18035,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17165,6 +18062,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17176,6 +18074,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17203,6 +18103,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17215,6 +18116,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17419,12 +18322,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         EventId eventId,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -17442,6 +18348,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17449,6 +18356,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -17468,6 +18377,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17476,6 +18386,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -17497,6 +18409,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17506,6 +18419,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -17529,6 +18444,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17539,6 +18455,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -17564,6 +18482,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17575,6 +18494,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -17602,6 +18523,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17614,6 +18536,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -17818,12 +18742,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger")] ref CriticalInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17841,6 +18768,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17848,6 +18776,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger")] ref CriticalInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17867,6 +18797,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17875,6 +18806,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17896,6 +18829,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17905,6 +18839,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17928,6 +18864,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17938,6 +18875,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -17963,6 +18902,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -17974,6 +18914,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -18001,6 +18943,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18013,6 +18956,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -18217,12 +19162,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -18240,6 +19188,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18247,6 +19196,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -18266,6 +19217,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18274,6 +19226,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -18295,6 +19249,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18304,6 +19259,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -18327,6 +19284,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18337,6 +19295,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -18362,6 +19322,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18373,6 +19334,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -18400,6 +19363,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18412,6 +19376,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -18601,11 +19567,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref CriticalInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -18622,12 +19591,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         [InterpolatedStringHandlerArgument("logger")] ref CriticalInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -18646,6 +19618,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if the Critical level is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18653,6 +19626,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -18673,6 +19648,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18681,6 +19657,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -18703,6 +19681,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18712,6 +19691,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -18736,6 +19717,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18746,6 +19728,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -18772,6 +19756,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -18783,6 +19768,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -18972,11 +19959,14 @@ public static class StructuredLoggerExtensions
     /// <param name="logger">The logger to write to.</param>
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -18993,12 +19983,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -19017,6 +20010,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19024,6 +20018,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -19044,6 +20040,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19052,6 +20049,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -19074,6 +20073,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19083,6 +20083,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -19107,6 +20109,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19117,6 +20120,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -19143,6 +20148,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Critical<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19154,6 +20160,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(LogLevel.Critical))
             return;
 
@@ -19388,6 +20396,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19396,6 +20405,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -19415,6 +20426,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19424,6 +20436,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -19445,6 +20459,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19455,6 +20470,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -19478,6 +20495,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19489,6 +20507,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -19514,6 +20534,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19526,6 +20547,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -19553,6 +20576,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19566,6 +20590,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -19595,6 +20621,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19609,6 +20636,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -19843,6 +20872,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19851,6 +20881,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -19870,6 +20902,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19879,6 +20912,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -19900,6 +20935,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19910,6 +20946,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -19933,6 +20971,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19944,6 +20983,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -19969,6 +21010,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -19981,6 +21023,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -20008,6 +21052,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20021,6 +21066,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -20050,6 +21097,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20064,6 +21112,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -20283,6 +21333,7 @@ public static class StructuredLoggerExtensions
     /// <param name="level">The severity level of the log message.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20290,6 +21341,8 @@ public static class StructuredLoggerExtensions
         EventId eventId,
         [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -20308,6 +21361,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20316,6 +21370,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -20336,6 +21392,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20345,6 +21402,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -20367,6 +21426,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20377,6 +21437,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -20401,6 +21463,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20412,6 +21475,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -20438,6 +21503,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20450,6 +21516,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -20478,6 +21546,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20491,6 +21560,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -20710,6 +21781,7 @@ public static class StructuredLoggerExtensions
     /// <param name="level">The severity level of the log message.</param>
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20717,6 +21789,8 @@ public static class StructuredLoggerExtensions
         EventId eventId,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -20735,6 +21809,7 @@ public static class StructuredLoggerExtensions
     /// <param name="eventId">The event id associated with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20743,6 +21818,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -20763,6 +21840,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20772,6 +21850,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -20794,6 +21874,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20804,6 +21885,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -20828,6 +21911,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20839,6 +21923,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -20865,6 +21951,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20877,6 +21964,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -20905,6 +21994,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -20918,6 +22008,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -21137,6 +22229,7 @@ public static class StructuredLoggerExtensions
     /// <param name="level">The severity level of the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21144,6 +22237,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -21162,6 +22257,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21170,6 +22266,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -21190,6 +22288,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21199,6 +22298,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -21221,6 +22322,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21231,6 +22333,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -21255,6 +22359,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21266,6 +22371,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -21292,6 +22399,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21304,6 +22412,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -21332,6 +22442,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21345,6 +22456,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -21564,6 +22677,7 @@ public static class StructuredLoggerExtensions
     /// <param name="level">The severity level of the log message.</param>
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21571,6 +22685,8 @@ public static class StructuredLoggerExtensions
         Exception? exception,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -21589,6 +22705,7 @@ public static class StructuredLoggerExtensions
     /// <param name="exception">The exception to associate with the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21597,6 +22714,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -21617,6 +22736,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21626,6 +22746,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -21648,6 +22770,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21658,6 +22781,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -21682,6 +22807,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21693,6 +22819,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -21719,6 +22847,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21731,6 +22860,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -21759,6 +22890,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -21772,6 +22904,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -21976,12 +23110,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="level">The severity level of the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -21999,6 +23136,7 @@ public static class StructuredLoggerExtensions
     /// <param name="level">The severity level of the log message.</param>
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22006,6 +23144,8 @@ public static class StructuredLoggerExtensions
         [InterpolatedStringHandlerArgument("logger", "level")] ref WriteInterpolatedStringHandler message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -22025,6 +23165,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message. Its interpolated arguments are only evaluated if <paramref name="level"/> is enabled for <paramref name="logger"/>.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22033,6 +23174,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -22054,6 +23197,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22063,6 +23207,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -22086,6 +23232,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22096,6 +23243,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -22121,6 +23270,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22132,6 +23282,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -22159,6 +23311,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22171,6 +23324,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!message.IsEnabled)
             return;
 
@@ -22375,12 +23530,15 @@ public static class StructuredLoggerExtensions
     /// <param name="logProperties">A collection of structured log properties.</param>
     /// <param name="level">The severity level of the log message.</param>
     /// <param name="message">The log message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
         LogLevel level,
         string message)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -22398,6 +23556,7 @@ public static class StructuredLoggerExtensions
     /// <param name="level">The severity level of the log message.</param>
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22405,6 +23564,8 @@ public static class StructuredLoggerExtensions
         string message,
         (string Name, T1 Value) additionalLogProperty1)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -22424,6 +23585,7 @@ public static class StructuredLoggerExtensions
     /// <param name="message">The log message.</param>
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22432,6 +23594,8 @@ public static class StructuredLoggerExtensions
         (string Name, T1 Value) additionalLogProperty1,
         (string Name, T2 Value) additionalLogProperty2)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -22453,6 +23617,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty1">The first additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22462,6 +23627,8 @@ public static class StructuredLoggerExtensions
         (string Name, T2 Value) additionalLogProperty2,
         (string Name, T3 Value) additionalLogProperty3)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -22485,6 +23652,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty2">The second additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22495,6 +23663,8 @@ public static class StructuredLoggerExtensions
         (string Name, T3 Value) additionalLogProperty3,
         (string Name, T4 Value) additionalLogProperty4)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -22520,6 +23690,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty3">The third additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22531,6 +23702,8 @@ public static class StructuredLoggerExtensions
         (string Name, T4 Value) additionalLogProperty4,
         (string Name, T5 Value) additionalLogProperty5)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 
@@ -22558,6 +23731,7 @@ public static class StructuredLoggerExtensions
     /// <param name="additionalLogProperty4">The fourth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty5">The fifth additional structured log property, as a name/value pair.</param>
     /// <param name="additionalLogProperty6">The sixth additional structured log property, as a name/value pair.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="logProperties"/> is <see langword="null"/>.</exception>
     public static void Write<T1, T2, T3, T4, T5, T6>(
         this ILogger logger,
         IReadOnlyCollection<KeyValuePair<string, object?>> logProperties,
@@ -22570,6 +23744,8 @@ public static class StructuredLoggerExtensions
         (string Name, T5 Value) additionalLogProperty5,
         (string Name, T6 Value) additionalLogProperty6)
     {
+        ArgumentNullException.ThrowIfNull(logProperties);
+
         if (!logger.IsEnabled(level))
             return;
 

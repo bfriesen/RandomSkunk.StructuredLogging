@@ -166,6 +166,47 @@ public class StructuredLoggerExtensionsTests
     }
 
     [Fact]
+    public void CollectionOverload_NullCollection_ThrowsArgumentNullException()
+    {
+        RecordingLogger logger = new();
+        IReadOnlyCollection<KeyValuePair<string, object?>> properties = null!;
+
+        Action act = () => logger.Debug(properties, $"msg");
+
+        // Named for the caller's own parameter, not 'source' - the name Enumerable.ToArray would have
+        // reported had the null been left to reach the collection conversion.
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("logProperties");
+    }
+
+    [Fact]
+    public void CollectionOverload_NullCollection_PlainStringMessage_ThrowsArgumentNullException()
+    {
+        // The plain-string overloads check logger.IsEnabled directly rather than reading it off a
+        // handler, so they're a separate emit path and need their own coverage.
+        RecordingLogger logger = new();
+        IReadOnlyCollection<KeyValuePair<string, object?>> properties = null!;
+        string message = "msg";
+
+        Action act = () => logger.Debug(properties, message, ("A", 1));
+
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("logProperties");
+    }
+
+    [Fact]
+    public void CollectionOverload_NullCollection_Disabled_ThrowsArgumentNullException()
+    {
+        // Rejected ahead of the level check, so a null collection can't lie dormant in a call site whose
+        // level happens to be turned off.
+        RecordingLogger logger = new() { Enabled = false };
+        IReadOnlyCollection<KeyValuePair<string, object?>> properties = null!;
+
+        Action act = () => logger.Debug(properties, $"msg");
+
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("logProperties");
+        logger.LogCallCount.Should().Be(0);
+    }
+
+    [Fact]
     public void EventIdAndException_BothPassedThrough()
     {
         RecordingLogger logger = new();

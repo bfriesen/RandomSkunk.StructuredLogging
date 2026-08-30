@@ -51,7 +51,8 @@ static void WriteDocComment(
     string indent,
     string summary,
     IEnumerable<(string Name, string Text)>? typeParams = null,
-    IEnumerable<(string Name, string Text)>? parameters = null)
+    IEnumerable<(string Name, string Text)>? parameters = null,
+    IEnumerable<(string Cref, string Text)>? exceptions = null)
 {
     sb.AppendLine($"{indent}/// <summary>");
     sb.AppendLine($"{indent}/// {summary}");
@@ -64,6 +65,10 @@ static void WriteDocComment(
     if (parameters is not null)
         foreach ((string name, string text) in parameters)
             sb.AppendLine($"{indent}/// <param name=\"{name}\">{text}</param>");
+
+    if (exceptions is not null)
+        foreach ((string cref, string text) in exceptions)
+            sb.AppendLine($"{indent}/// <exception cref=\"{cref}\">{text}</exception>");
 }
 
 static string GenerateHandlers(string[] levels)
@@ -530,8 +535,12 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     foreach (int i in Enumerable.Range(1, arity))
         parameterDocs.Add(($"{propertyParamPrefix}{i}", $"The {Ordinal(i)}{propertyDocFragment} structured log property, as a name/value pair."));
 
+    (string, string)[]? exceptionDocs = includeCollection
+        ? [("ArgumentNullException", "<paramref name=\"logProperties\"/> is <see langword=\"null\"/>.")]
+        : null;
+
     string summaryFragment = includeCollection ? CollectionSummaryFragment(arity) : PropertyCountSummaryFragment(arity);
-    WriteDocComment(sb, "    ", $"Writes a log message{summaryFragment} {LevelPhrase(group)}.", typeParamDocs, parameterDocs);
+    WriteDocComment(sb, "    ", $"Writes a log message{summaryFragment} {LevelPhrase(group)}.", typeParamDocs, parameterDocs, exceptionDocs);
     AppendMethodSignature(sb, "    ", $"public static void {group.MethodName}{typeParamList}", parameters);
 
     string messageTextExpr;
@@ -554,6 +563,19 @@ static void AppendArityMethod(StringBuilder sb, MethodGroup group, Combo combo, 
     {
         messageTextExpr = "message";
         capturedPropertiesExpr = "[]";
+    }
+
+    // Validated ahead of the level check, not after it, so a null collection is rejected the same way
+    // whether or not the level happens to be enabled - otherwise it's a latent bug that only shows up
+    // once someone turns the level on. It also has to happen here rather than being left to the
+    // conversion below: Enumerable.ToArray would throw for it, but named 'source' after its own
+    // parameter, pointing at an implementation detail instead of the caller's argument. The cost on the
+    // disabled path is a null test on an argument register - ThrowIfNull inlines to a compare-and-branch
+    // with the throw itself in a separate non-inlined helper.
+    if (includeCollection)
+    {
+        sb.AppendLine("        ArgumentNullException.ThrowIfNull(logProperties);");
+        sb.AppendLine();
     }
 
     string enabledCheckExpr = useHandler ? "message.IsEnabled" : $"logger.IsEnabled({group.LevelExpr})";
