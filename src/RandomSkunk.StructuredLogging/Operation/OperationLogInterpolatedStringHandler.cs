@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -34,6 +35,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// </para>
 /// </summary>
 [InterpolatedStringHandler]
+[EditorBrowsable(EditorBrowsableState.Never)]
 public ref struct OperationLogInterpolatedStringHandler
 {
     private StringBuilder.AppendInterpolatedStringHandler _handler;
