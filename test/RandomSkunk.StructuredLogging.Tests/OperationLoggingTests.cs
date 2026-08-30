@@ -1146,6 +1146,95 @@ public class OperationLoggingTests
         logger.LastMessage.Should().Contain("`Fetch` result: null");
     }
 
+    [Fact]
+    public void AddProperty_NullName_ThrowsArgumentNullException()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        Func<IOperationLog> act = () => log.AddProperty(null!, 1);
+
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("name");
+    }
+
+    [Fact]
+    public void AddProperty_NullName_SubOperation_ThrowsArgumentNullException()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
+        Func<ISubOperationLog> act = () => subLog.AddProperty(null!, 1);
+
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("name");
+    }
+
+    [Fact]
+    public void AddProperty_NullName_ThreadSafe_ThrowsArgumentNullException()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name", threadSafe: true);
+        Func<IOperationLog> act = () => log.AddProperty(null!, 1);
+
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("name");
+    }
+
+    [Fact]
+    public void AddProperty_NullName_Disabled_ThrowsArgumentNullException()
+    {
+        // A disabled operation journals nothing, but it still has to reject a null name the same way an
+        // enabled one does - otherwise the bug lies dormant until someone turns the level on.
+        RecordingLogger logger = new() { Enabled = false };
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        Func<IOperationLog> act = () => log.AddProperty(null!, 1);
+
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("name");
+    }
+
+    [Fact]
+    public void AddProperty_NullName_LeavesTheOperationUsable()
+    {
+        // The null name used to survive AddProperty and only throw later, out of FinalizeHeader during
+        // Dispose - which killed the entire log entry and masked any exception already unwinding through
+        // the `using`. Rejecting it at the call site has to leave the operation itself intact.
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            Func<IOperationLog> act = () => log.AddProperty(null!, 1);
+            act.Should().Throw<ArgumentNullException>();
+
+            log.AddProperty("UserId", 123).Append("still working");
+        }
+
+        logger.LogCallCount.Should().Be(1);
+        logger.LastMessage.Should().Contain("still working");
+        logger.LastMessage.Should().EndWith("Operation complete.");
+        logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("UserId", 123));
+    }
+
+    [Fact]
+    public void Dispose_WhenTheSinkThrows_StillDisposesTheSharedState()
+    {
+        // Whatever goes wrong while flushing the entry, the shared state has to end up disposed: that's
+        // what returns the pooled journal and what makes a sub-operation that outlived the root throw
+        // instead of writing into a StringBuilder the pool has already handed to someone else.
+        RecordingLogger logger = new() { ThrowOnLog = new InvalidOperationException("sink failed") };
+
+        IOperationLog log = logger.BeginOperation("Name");
+        ISubOperationLog leakedSubLog = log.BeginSubOperation("Fetch");
+
+        Action dispose = log.Dispose;
+        dispose.Should().Throw<InvalidOperationException>().WithMessage("sink failed");
+
+        logger.LogCallCount.Should().Be(1);
+
+        Action append = () => leakedSubLog.Append("late write");
+        append.Should().Throw<ObjectDisposedException>();
+    }
+
     private sealed class NonFormattable
     {
         public override string ToString() => "custom-to-string";

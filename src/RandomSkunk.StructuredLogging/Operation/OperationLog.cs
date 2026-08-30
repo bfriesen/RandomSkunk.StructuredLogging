@@ -35,10 +35,18 @@ internal abstract class OperationLog<TOperationLog>(OperationLogState state, str
     public bool IsEnabled => true;
 #pragma warning restore CA1822 // Mark members as static
 
-    public TOperationLog AddProperty<T>(string propertyName, T value)
+    public TOperationLog AddProperty<T>(string name, T value)
     {
         _state.ThrowIfDisposed();
-        _state.AddProperty(propertyName, value);
+
+        // Validated here rather than left to fail on its own: a null name passes through
+        // OperationLogState.AddProperty untouched and only throws later, from FinalizeHeader's
+        // journal insert - which runs inside Dispose, so the NullReferenceException surfaces far
+        // from the offending call, takes the entire log entry with it, and masks whatever
+        // exception was already in flight through the surrounding `using`.
+        ArgumentNullException.ThrowIfNull(name);
+
+        _state.AddProperty(name, value);
         return (TOperationLog)(object)this;
     }
 

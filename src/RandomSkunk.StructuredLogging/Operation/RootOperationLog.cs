@@ -60,35 +60,46 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
 
     protected override void DisposeCore()
     {
-        _state.Stopwatch.Stop();
-        _state.FinalizeHeader();
+        try
+        {
+            _state.Stopwatch.Stop();
+            _state.FinalizeHeader();
 
-        string journal = _state.BeginJournalEntry()
-            .Append("Operation complete.")
-            .ToString();
+            string journal = _state.BeginJournalEntry()
+                .Append("Operation complete.")
+                .ToString();
 
-        if (_state.HasResult)
-            _state.Logger.Write(
-                _state.Properties ?? (IReadOnlyCollection<KeyValuePair<string, object?>>)[],
-                _state.Level,
-                _state.EventId,
-                _state.Exception,
-                journal,
-                ("Operation.Name", _operationName),
-                ("Operation.StartTime", _state.StartTime),
-                ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds),
-                ("Operation.Result", _state.Result));
-        else
-            _state.Logger.Write(
-                _state.Properties ?? (IReadOnlyCollection<KeyValuePair<string, object?>>)[],
-                _state.Level,
-                _state.EventId,
-                _state.Exception,
-                journal,
-                ("Operation.Name", _operationName),
-                ("Operation.StartTime", _state.StartTime),
-                ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds));
-
-        _state.Dispose();
+            if (_state.HasResult)
+                _state.Logger.Write(
+                    _state.Properties ?? (IReadOnlyCollection<KeyValuePair<string, object?>>)[],
+                    _state.Level,
+                    _state.EventId,
+                    _state.Exception,
+                    journal,
+                    ("Operation.Name", _operationName),
+                    ("Operation.StartTime", _state.StartTime),
+                    ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds),
+                    ("Operation.Result", _state.Result));
+            else
+                _state.Logger.Write(
+                    _state.Properties ?? (IReadOnlyCollection<KeyValuePair<string, object?>>)[],
+                    _state.Level,
+                    _state.EventId,
+                    _state.Exception,
+                    journal,
+                    ("Operation.Name", _operationName),
+                    ("Operation.StartTime", _state.StartTime),
+                    ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds));
+        }
+        finally
+        {
+            // In a finally so that a throw anywhere above - a sink that throws from ILogger.Log, or a
+            // journal write that fails while building the entry - still hands the pooled journal back
+            // and still marks the state disposed. Otherwise that StringBuilder is dropped on the floor
+            // (the pool just allocates a replacement) and, worse, any sub-operation that outlived the
+            // root goes on writing into a journal whose owner has already given up on it, instead of
+            // throwing ObjectDisposedException like it does on every other path.
+            _state.Dispose();
+        }
     }
 }

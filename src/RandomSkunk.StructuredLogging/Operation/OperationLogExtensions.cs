@@ -74,11 +74,16 @@ public static class OperationLogExtensions
     /// <param name="log">The operation (or sub-operation) to record the property to.</param>
     /// <param name="propertyName">The name to record the property under.</param>
     /// <returns><paramref name="propertyValue"/>, unchanged.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="log"/> or <paramref name="propertyName"/> is <see langword="null"/>.</exception>
     [return: NotNullIfNotNull(nameof(propertyValue))]
     public static T AddPropertyTo<T, TLog>(this T propertyValue, TLog log, string propertyName)
         where TLog : IOperationLogBase<TLog>
     {
         ArgumentNullException.ThrowIfNull(log);
+
+        // Validated here as well as in AddProperty itself, so the exception names this method's own
+        // parameter rather than the interface member's.
+        ArgumentNullException.ThrowIfNull(propertyName);
 
         log.AddProperty(propertyName, propertyValue);
         return propertyValue;

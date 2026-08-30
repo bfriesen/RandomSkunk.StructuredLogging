@@ -82,6 +82,7 @@ public interface IOperationLogBase<TOperationLog> : IDisposable
     /// <param name="name">The property name.</param>
     /// <param name="value">The property value.</param>
     /// <returns>This <typeparamref name="TOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="name"/> is <see langword="null"/>.</exception>
     /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
     TOperationLog AddProperty<T>(string name, T value);
 

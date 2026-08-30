@@ -26,6 +26,12 @@ internal sealed class RecordingLogger : ILogger
 
     public IReadOnlyList<KeyValuePair<string, object?>>? LastProperties { get; private set; }
 
+    /// <summary>
+    /// When set, <see cref="Log"/> records the call and then throws this exception - a stand-in for a
+    /// misbehaving sink, so tests can assert what the library does when the write itself fails.
+    /// </summary>
+    public Exception? ThrowOnLog { get; set; }
+
     public IDisposable? BeginScope<TState>(TState state)
         where TState : notnull
     {
@@ -43,5 +49,8 @@ internal sealed class RecordingLogger : ILogger
         LastException = exception;
         LastMessage = formatter(state, exception);
         LastProperties = state as IReadOnlyList<KeyValuePair<string, object?>>;
+
+        if (ThrowOnLog is not null)
+            throw ThrowOnLog;
     }
 }

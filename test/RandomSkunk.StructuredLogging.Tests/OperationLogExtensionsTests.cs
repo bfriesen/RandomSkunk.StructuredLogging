@@ -86,6 +86,18 @@ public class OperationLogExtensionsTests
     }
 
     [Fact]
+    public void AddPropertyTo_NullPropertyName_ThrowsArgumentNullException()
+    {
+        RecordingLogger logger = new();
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        Func<string> act = () => "value".AddPropertyTo(log, null!);
+
+        // Named for this method's own parameter, not the AddProperty member it forwards to.
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("propertyName");
+    }
+
+    [Fact]
     public void AppendValueTo_ReturnsValueUnchangedAndAppendsJournalLine()
     {
         RecordingLogger logger = new();

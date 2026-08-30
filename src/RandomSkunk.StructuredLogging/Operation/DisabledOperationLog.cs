@@ -42,8 +42,14 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog, ISu
 
     public bool IsEnabled => false;
 
-    private void AddPropertyCore<T>(string name, T value) =>
+    // Validates name even though a disabled operation journals nothing, so the same call throws the
+    // same way whether or not the level happens to be enabled - otherwise a null name is a latent bug
+    // that only surfaces once someone turns the level on.
+    private void AddPropertyCore<T>(string name, T value)
+    {
+        ArgumentNullException.ThrowIfNull(name);
         (_properties ??= new(capacity: 8)).Add(new(name, value));
+    }
 
     IOperationLog IOperationLogBase<IOperationLog>.AddProperty<T>(string name, T value) { AddPropertyCore(name, value); return this; }
 
