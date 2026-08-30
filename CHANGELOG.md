@@ -59,6 +59,9 @@ First stable release. The API is now considered settled; subsequent 1.x releases
 - The analyzers package is now built against Roslyn 4.8.0 rather than 5.6.0, so it loads in any
   host with the .NET 8 SDK or VS 2022 17.8 and newer. Built against 5.6.0, it failed to load in an
   older host with `CS9057`, silently costing that consumer all ten diagnostics and every code fix.
+- The `Microsoft.Extensions.Logging.Abstractions` floor is now per-target-framework - 8.0.0 for
+  `net8.0`, 10.0.0 for `net10.0` - instead of 10.0.9 for both, so installing this package no longer
+  drags a .NET 8 application onto the 10.x abstractions.
 
 ### Removed
 

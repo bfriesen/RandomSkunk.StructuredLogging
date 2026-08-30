@@ -34,8 +34,16 @@
     <None Include="../../icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
+  <!--
+    The dependency floor is per-TFM on purpose. A single central version would put the same floor in
+    both dependency groups of the nuspec, so a .NET 8 consumer would be forced onto the 10.x
+    abstractions just by installing this package. Each group instead asks for the lowest version that
+    has the API this library uses (ILogger/LogLevel/EventId, unchanged since 8.0.0); NuGet resolves
+    higher on its own when anything else in the graph wants a newer one.
+  -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" VersionOverride="8.0.0" Condition="'$(TargetFramework)' == 'net8.0'" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" VersionOverride="10.0.0" Condition="'$(TargetFramework)' == 'net10.0'" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
   </ItemGroup>
 
