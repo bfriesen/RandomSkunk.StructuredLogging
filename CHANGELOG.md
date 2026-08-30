@@ -65,6 +65,8 @@ First stable release. The API is now considered settled; subsequent 1.x releases
 - `AssemblyVersion` is pinned to `<major>.0.0.0`, so every 1.x build shares one assembly identity
   and a patch or minor upgrade is a binary drop-in. `FileVersion`/`InformationalVersion` still carry
   the full version.
+- The assemblies are not strong-named, and deliberately so - the strong-name reference rule is a
+  .NET Framework restriction that does not apply to this library's `net8.0`/`net10.0` targets.
 
 ### Removed
 

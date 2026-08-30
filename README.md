@@ -35,7 +35,8 @@ flush it as exactly one log entry when the operation completes, instead of one l
 dotnet add package RandomSkunk.StructuredLogging
 ```
 
-Targets `net8.0` and `net10.0`, and depends only on `Microsoft.Extensions.Logging.Abstractions`.
+Targets `net8.0` and `net10.0`, and depends only on `Microsoft.Extensions.Logging.Abstractions`
+(8.0.0 or newer on `net8.0`, 10.0.0 or newer on `net10.0`). The assemblies are not strong-named.
 
 ## The basic call
 
