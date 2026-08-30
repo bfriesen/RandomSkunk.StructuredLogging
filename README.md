@@ -1,8 +1,8 @@
-# <img src="icon.png" alt="" width="32" height="32" valign="middle" /> RandomSkunk.StructuredLogging
+# <img src="https://raw.githubusercontent.com/bfriesen/RandomSkunk.StructuredLogging/main/icon.png" alt="" width="32" height="32" valign="middle" /> RandomSkunk.StructuredLogging
 
 [![NuGet](https://img.shields.io/nuget/v/RandomSkunk.StructuredLogging.svg)](https://www.nuget.org/packages/RandomSkunk.StructuredLogging)
 [![CI](https://github.com/bfriesen/RandomSkunk.StructuredLogging/actions/workflows/ci.yml/badge.svg)](https://github.com/bfriesen/RandomSkunk.StructuredLogging/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/bfriesen/RandomSkunk.StructuredLogging/blob/main/LICENSE)
 
 Modern structured logging extensions for .NET that separate human-readable messages from
 machine-readable attributes.
@@ -551,4 +551,4 @@ warnings.
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/bfriesen/RandomSkunk.StructuredLogging/blob/main/LICENSE)
