@@ -21,7 +21,7 @@ The SDK version is pinned in `global.json` (currently 10.0.301).
 
 After making changes, always ask before committing them - do not run `git commit` unprompted.
 
-`v2` is a clean-room rewrite: the library has a prior implementation on other git branches, and the rewrite is deliberately not informed by its design or code. Never inspect another branch (`git log --all`, `git diff <other-branch>`, `git show <other-branch>:<path>`, checking it out, browsing it on a remote, etc.) - read-only commands scoped to the current branch's own history are fine. If a task seems to need comparing against another branch, stop and ask first.
+`main` (formerly `v2`) is a clean-room rewrite of the library and is now the mainline. The prior implementation - everything published as 0.9.x - lives on the `v1` branch. The rewrite was deliberately not informed by v1's design or code, and the rule that forbade looking at it has been retired now that the rewrite is complete: consulting `v1` is fine, but treat it as history rather than precedent. Nothing in the current design needs to justify itself against it.
 
 ## Code style
 
