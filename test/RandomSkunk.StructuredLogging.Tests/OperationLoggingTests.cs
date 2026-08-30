@@ -458,6 +458,32 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void SetResult_AppendsMarkerJournalLine_DoesNotAppendFormattedValue()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.SetResult("done");
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("Operation result set.");
+        journal.Should().NotContain("Operation result: done");
+    }
+
+    [Fact]
+    public void SetResult_CalledTwice_AppendsOverwriteMarkerOnSecondCall()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.SetResult("first").SetResult("second");
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("Operation result set.");
+        journal.Should().Contain("Operation result set again, overwriting the previous value.");
+    }
+
+    [Fact]
     public void SetException_SetsExceptionOnFinalEntry()
     {
         RecordingLogger logger = new();
@@ -470,7 +496,7 @@ public class OperationLoggingTests
     }
 
     [Fact]
-    public void SetException_DoesNotAppendJournalLine()
+    public void SetException_AppendsMarkerJournalLine_DoesNotAppendExceptionText()
     {
         RecordingLogger logger = new();
         InvalidOperationException exception = new("boom");
@@ -479,7 +505,22 @@ public class OperationLoggingTests
             log.SetException(exception);
 
         string journal = logger.LastMessage!;
+        journal.Should().Contain("Operation exception set.");
         journal.Should().NotContain("failed:");
+        journal.Should().NotContain(exception.ToString());
+    }
+
+    [Fact]
+    public void SetException_CalledTwice_AppendsOverwriteMarkerOnSecondCall()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.SetException(new InvalidOperationException("first")).SetException(new InvalidOperationException("second"));
+
+        string journal = logger.LastMessage!;
+        journal.Should().Contain("Operation exception set.");
+        journal.Should().Contain("Operation exception set again, overwriting the previous value.");
     }
 
     [Fact]

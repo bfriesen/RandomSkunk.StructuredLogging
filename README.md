@@ -307,13 +307,14 @@ return order.RecordResultTo(log);
 ```
 
 Disposing `log` writes a single log entry whose message *is* the full journal - every
-`Append`/`AppendValue`/`AppendJson` call and sub-operation start/result/failure/complete line, each
-timestamped with elapsed seconds - and whose structured properties include `Operation.Name`,
-`Operation.StartTime`, `Operation.DurationSeconds`, `Operation.Result` (if set), and any properties
-added via `AddProperty`. The journal's header starts with the operation name; if `BeginOperation` was
-called with a non-default `EventId`, the next header line shows its value; then a `Start Time` line;
-then a `Properties:` line followed by a bulleted list naming every structured property the final entry
-will carry - the built-ins above plus any added via `AddProperty` - ending with a dashed rule:
+`Append`/`AppendValue`/`AppendJson` call, sub-operation start/result/failure/complete line, and
+`SetException`/`SetResult` marker, each timestamped with elapsed seconds - and whose structured
+properties include `Operation.Name`, `Operation.StartTime`, `Operation.DurationSeconds`,
+`Operation.Result` (if set), and any properties added via `AddProperty`. The journal's header starts
+with the operation name; if `BeginOperation` was called with a non-default `EventId`, the next header
+line shows its value; then a `Start Time` line; then a `Properties:` line followed by a bulleted list
+naming every structured property the final entry will carry - the built-ins above plus any added via
+`AddProperty` - ending with a dashed rule:
 
 ```
 Operation: FulfillOrder
@@ -329,6 +330,7 @@ Properties:
 [0.003] `ChargePayment` started.
 [0.041] `ChargePayment` result: Receipt { Id = ..., Amount = 99.00 }
 [0.041] `ChargePayment` complete.
+[0.042] Operation result set.
 [0.042] Operation complete.
 ```
 
@@ -401,13 +403,19 @@ check that yourself before doing work that would otherwise go to waste.
   Useful even without an exception, e.g. a rejected/backordered/declined result that should still
   raise the log level: `log.Escalate(LogLevel.Warning);`.
 - `IOperationLog.SetException(exception)` - **root only**; not on `ISubOperationLog`. Sets the
-  final log entry's `Exception` structured property directly, with no journal side effect. A
-  sub-operation that wants to fail the root's own entry holds onto the root `IOperationLog` (not
-  the sub-operation) and calls this on it directly; otherwise use `AppendException` above.
+  final log entry's `Exception` structured property directly. Unlike `AppendException` above, it
+  doesn't write the exception's text to the journal - it appends a one-line `Operation exception
+  set.` marker instead (`Operation exception set again, overwriting the previous value.` on a
+  second or later call, so an accidental double-set is visible in the journal instead of silently
+  overwriting the first exception). A sub-operation that wants to fail the root's own entry holds
+  onto the root `IOperationLog` (not the sub-operation) and calls this on it directly; otherwise
+  use `AppendException` above.
 - `IOperationLog.SetResult<T>(value)` - **root only**; not on `ISubOperationLog`. Sets the
-  `Operation.Result` structured property directly, with no journal side effect. Typically called
-  via the fluent `value.RecordResultTo(log)` extension method (root only - a sub-operation uses
-  `AppendResultTo` above instead) so it can be chained directly onto a `return` expression.
+  `Operation.Result` structured property directly. Unlike `AppendResult` above, it doesn't write
+  the formatted value to the journal - it appends a one-line `Operation result set.` marker instead
+  (`Operation result set again, overwriting the previous value.` on a second or later call). Typically
+  called via the fluent `value.RecordResultTo(log)` extension method (root only - a sub-operation
+  uses `AppendResultTo` above instead) so it can be chained directly onto a `return` expression.
 - `value.RecordValueTo(log, [valueName])` / `value.RecordJsonTo(log, [valueName])` /
   `value.RecordPropertyTo(log, name)` - fluent equivalents of `AppendValue`/`AppendJson`/
   `AddProperty` that return `value` unchanged, for chaining inline into an expression, e.g.

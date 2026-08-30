@@ -21,11 +21,14 @@ public interface IOperationLog : IOperationLogBase<IOperationLog>
 {
     /// <summary>
     /// Sets the <c>Exception</c> argument of the operation's final log entry. Unlike
-    /// <see cref="IOperationLogBase{TOperationLog}.AppendException"/>, this doesn't append anything to the journal
-    /// by itself. This does not, by itself, change the level the final log entry is written at - call
+    /// <see cref="IOperationLogBase{TOperationLog}.AppendException"/>, this doesn't append the exception itself
+    /// (e.g. its stack trace) to the journal - it only appends a one-line "Operation exception set." marker
+    /// (or "Operation exception set again, overwriting the previous value." on a second or later call), so the
+    /// journal records *when* this was called and whether it happened more than once without duplicating the
+    /// exception's full text. This does not, by itself, change the level the final log entry is written at - call
     /// <see cref="IOperationLogBase{TOperationLog}.Escalate"/> as well if the exception should also raise the
-    /// operation's level. Calling this more than once overwrites any exception set by an earlier call -
-    /// there's no warning if that happens.
+    /// operation's level. Calling this more than once overwrites any exception set by an earlier call - the
+    /// journal marker above is the only warning that happens.
     /// </summary>
     /// <param name="exception">The exception to record.</param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
@@ -34,10 +37,14 @@ public interface IOperationLog : IOperationLogBase<IOperationLog>
 
     /// <summary>
     /// Sets the <c>Operation.Result</c> structured property of the operation's final log entry. Unlike
-    /// <see cref="IOperationLogBase{TOperationLog}.AppendResult{T}"/>, this doesn't append anything to the journal
-    /// by itself. Typically called via the <see cref="OperationLogExtensions.RecordResultTo{T}"/> extension
+    /// <see cref="IOperationLogBase{TOperationLog}.AppendResult{T}"/>, this doesn't append the formatted value
+    /// itself to the journal - it only appends a one-line "Operation result set." marker (or "Operation result
+    /// set again, overwriting the previous value." on a second or later call), so the journal records *when*
+    /// this was called and whether it happened more than once without duplicating the formatted value.
+    /// Typically called via the <see cref="OperationLogExtensions.RecordResultTo{T}"/> extension
     /// method rather than directly, so it can be chained onto a return expression. Calling this more than
-    /// once overwrites any result set by an earlier call - there's no warning if that happens.
+    /// once overwrites any result set by an earlier call - the journal marker above is the only warning that
+    /// happens.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
     /// <param name="value">The result to record.</param>

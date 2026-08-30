@@ -16,6 +16,9 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
     public IOperationLog SetException(Exception exception)
     {
         _state.ThrowIfDisposed();
+        BeginJournalEntry().Append(_state.Exception is not null
+            ? "Operation exception set again, overwriting the previous value."
+            : "Operation exception set.");
         _state.Exception = exception;
         return this;
     }
@@ -23,6 +26,9 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
     public IOperationLog SetResult<T>(T value)
     {
         _state.ThrowIfDisposed();
+        BeginJournalEntry().Append(_state.HasResult
+            ? "Operation result set again, overwriting the previous value."
+            : "Operation result set.");
         _state.Result = value;
         _state.HasResult = true;
         return this;
