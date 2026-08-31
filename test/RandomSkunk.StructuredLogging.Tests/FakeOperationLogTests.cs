@@ -33,6 +33,10 @@ public class FakeOperationLogTests
     {
         Mock<FakeOperationLog> log = new() { CallBase = true };
 
+        // BeginSubOperation is abstract - it has no do-nothing default, so the sub-operation it returns
+        // has to be configured explicitly. Returning the root itself reproduces the old default behavior.
+        log.Setup(x => x.BeginSubOperation(It.IsAny<string>())).Returns(log.Object);
+
         RunOperation(log.Object, 42);
 
         log.Verify(x => x.Append("Fetching user 42"), Times.Once);
@@ -44,6 +48,12 @@ public class FakeOperationLogTests
     public void NSubstitute_InterpolatedAppend_ArrivesAtAppend()
     {
         FakeOperationLog log = Substitute.ForPartsOf<FakeOperationLog>();
+
+        // BeginSubOperation is abstract - it has no do-nothing default, so the sub-operation it returns
+        // has to be configured explicitly. Left unconfigured, NSubstitute would auto-generate a raw
+        // ISubOperationLog substitute to return, and calling its interpolated Append would throw the exact
+        // InvalidProgramException this fake exists to avoid.
+        log.BeginSubOperation(Arg.Any<string>()).Returns(log);
 
         RunOperation(log, 42);
 
@@ -66,9 +76,10 @@ public class FakeOperationLogTests
     [Fact]
     public void SubOperation_IsTheSameInstanceAsTheRoot()
     {
-        // BeginSubOperation returns `this` (see the remarks on FakeOperationLog), so disposing the
-        // sub-operation and disposing the root are the same call.
+        // BeginSubOperation is abstract, so it has to be configured to return something - here, the root
+        // itself, so disposing the sub-operation and disposing the root are the same call.
         Mock<FakeOperationLog> log = new() { CallBase = true };
+        log.Setup(x => x.BeginSubOperation("Load")).Returns(log.Object);
 
         using (ISubOperationLog subLog = ((IOperationLog)log.Object).BeginSubOperation("Load"))
             subLog.Should().BeSameAs(log.Object);
@@ -118,8 +129,10 @@ public class FakeOperationLogTests
     {
         // IsEnabled has no public counterpart at all - both explicit implementations just return true
         // unconditionally - so this fake has no disabled state, and interpolated Append/BeginSubOperation
-        // overloads always evaluate their holes regardless of CallBase or setup.
-        FakeOperationLog log = new();
+        // overloads always evaluate their holes regardless of CallBase or setup. FakeOperationLog is
+        // abstract (BeginSubOperation has no sensible do-nothing default), so any concrete subclass will
+        // do here - RecordingFake is already at hand.
+        FakeOperationLog log = new RecordingFake();
         bool holeEvaluated = false;
 
         IOperationLog asInterface = log;
@@ -140,7 +153,9 @@ public class FakeOperationLogTests
     [Fact]
     public void DefaultMembers_ReturnSelfAndEmptyState()
     {
-        FakeOperationLog log = new();
+        // BeginSubOperation is abstract - RecordingFake's override happens to return `this`, which is what
+        // the assertion below relies on.
+        FakeOperationLog log = new RecordingFake();
         IOperationLog asInterface = log;
 
         asInterface.AddProperty("A", 1).Should().BeSameAs(log);
@@ -161,7 +176,9 @@ public class FakeOperationLogTests
     [Fact]
     public void SubOperation_DefaultMembers_ReturnSelfAndEmptyState()
     {
-        FakeOperationLog log = new();
+        // BeginSubOperation is abstract - RecordingFake's override happens to return `this`, which is what
+        // the assertion below relies on.
+        FakeOperationLog log = new RecordingFake();
         ISubOperationLog subLog = log;
 
         subLog.AddProperty("A", 1).Should().BeSameAs(log);
@@ -188,9 +205,10 @@ public class FakeOperationLogTests
             AppendedText.Add(text);
         }
 
-        public override void BeginSubOperation(string operationName)
+        public override ISubOperationLog BeginSubOperation(string operationName)
         {
             SubOperationNames.Add(operationName);
+            return this;
         }
     }
 }

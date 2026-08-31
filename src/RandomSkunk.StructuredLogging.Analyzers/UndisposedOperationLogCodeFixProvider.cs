@@ -48,9 +48,9 @@ public sealed class UndisposedOperationLogCodeFixProvider : CodeFixProvider
 
         INamedTypeSymbol? operationLogType = semanticModel.Compilation.GetTypeByMetadataName(
             "RandomSkunk.StructuredLogging.Operation.IOperationLog");
-        INamedTypeSymbol? operationLogBaseType = semanticModel.Compilation.GetTypeByMetadataName(
-            "RandomSkunk.StructuredLogging.Operation.IOperationLogBase`1");
-        if (operationLogType is null || operationLogBaseType is null)
+        INamedTypeSymbol? subOperationLogType = semanticModel.Compilation.GetTypeByMetadataName(
+            "RandomSkunk.StructuredLogging.Operation.ISubOperationLog");
+        if (operationLogType is null || subOperationLogType is null)
             return;
 
         // IOperationLog's/ISubOperationLog's fluent AddProperty/Append/AppendValue/AppendJson/
@@ -59,7 +59,7 @@ public sealed class UndisposedOperationLogCodeFixProvider : CodeFixProvider
         // the exact value that needs disposing - the outermost link in the chain, not the inner
         // BeginOperation/BeginSubOperation call the diagnostic anchors on, is what the fixes below
         // need to treat as "the operation-log-producing expression".
-        SyntaxNode operationLogExpression = OperationLogChain.GetOutermost(invocation, operationLogType, operationLogBaseType).Syntax;
+        SyntaxNode operationLogExpression = OperationLogChain.GetOutermost(invocation, operationLogType, subOperationLogType).Syntax;
 
         StatementSyntax? anchorStatement = operationLogExpression.FirstAncestorOrSelf<StatementSyntax>();
         if (anchorStatement is null)

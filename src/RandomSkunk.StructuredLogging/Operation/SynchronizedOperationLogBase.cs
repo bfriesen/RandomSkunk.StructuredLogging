@@ -7,22 +7,32 @@ namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Base class for <see cref="SynchronizedOperationLog"/> and <see cref="SynchronizedSubOperationLog"/>,
-/// holding the <see cref="IOperationLogBase{TOperationLog}"/> members whose implementation is identical between the
-/// two - everything except <see cref="IOperationLog.SetException"/>/<see cref="IOperationLog.SetResult{T}"/>,
-/// which only the root decorator has. Implements <see cref="IOperationLogBase{TOperationLog}"/> itself (rather than
-/// leaving that to <typeparamref name="TOperationLog"/>-specific derived classes, the way
-/// <see cref="OperationLog{TOperationLog}"/> does via its own type parameter) because every member here can return
-/// <typeparamref name="TOperationLog"/> directly - the wrapped log's own interface - the same way
-/// <c>OperationLog{TOperationLog}</c> returns its type parameter.
+/// holding the members whose implementation is identical between the two - everything except
+/// <see cref="IOperationLog.SetException"/>/<see cref="IOperationLog.SetResult{T}"/>, which only the root
+/// decorator has. Non-generic: since <see cref="IOperationLog"/> and <see cref="ISubOperationLog"/> are
+/// deliberately unrelated interfaces, there's no type this base class could hold the wrapped <c>inner</c>
+/// log as that would let it call <c>inner.AddProperty(...)</c>, <c>inner.Append(...)</c>, etc. directly - so
+/// unlike <see cref="OperationLogBase"/> (whose shared members do their own work against a
+/// concretely-typed <see cref="OperationLogState"/>), every member here that needs to reach the wrapped log
+/// is split into a <see langword="void"/> (or, for
+/// <see cref="BeginSubOperation(string)"/>/<see cref="Dispose"/>, non-<see langword="void"/> but
+/// non-self-returning) method here that does the locking, plus an abstract <c>...Core</c> method - the only
+/// thing <see cref="SynchronizedOperationLog"/>/<see cref="SynchronizedSubOperationLog"/> need to
+/// implement - that makes the one call to their own strongly-typed <c>_inner</c> field. Each decorator's own
+/// fluent interface member (<see cref="IOperationLog.AddProperty{T}"/> and its siblings) is then a one-line
+/// wrapper that calls the corresponding member here and returns <see langword="this"/>, the same shape as
+/// <see cref="RootOperationLog"/>/<see cref="ChildOperationLog"/> wrap <see cref="OperationLogBase"/>.
+/// <see cref="EventId"/>/<see cref="IsEnabled"/> are abstract here too (rather than each decorator
+/// redeclaring an unrelated property of the same name), purely so this class has something to forward
+/// <see cref="IOperationLogBase.EventId"/>/<see cref="IOperationLogBase.IsEnabled"/> to - they don't need
+/// locking, so there's no <c>...Core</c> split for them.
+/// <para>
+/// Also implements <see cref="IOperationLogBase"/> explicitly, for the same reason
+/// <see cref="OperationLogBase"/> does - see that interface's doc comment.
+/// </para>
 /// </summary>
-/// <typeparam name="TOperationLog">
-/// The wrapped log's type - <see cref="IOperationLog"/> for <see cref="SynchronizedOperationLog"/>,
-/// <see cref="ISubOperationLog"/> for <see cref="SynchronizedSubOperationLog"/>.
-/// </typeparam>
-internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLog inner, object gate) : IOperationLogBase<TOperationLog>
-    where TOperationLog : class, IOperationLogBase<TOperationLog>
+internal abstract class SynchronizedOperationLogBase(object gate) : IOperationLogBase
 {
-    protected readonly TOperationLog _inner = inner;
     protected readonly object _gate = gate;
 
     public IReadOnlyList<KeyValuePair<string, object?>> Properties
@@ -30,63 +40,73 @@ internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLo
         get
         {
             lock (_gate)
-                return [.. _inner.Properties];
+                return PropertiesCore();
         }
     }
 
-    public EventId EventId => _inner.EventId;
+    protected abstract IReadOnlyList<KeyValuePair<string, object?>> PropertiesCore();
 
-    public bool IsEnabled => _inner.IsEnabled;
+    public abstract EventId EventId { get; }
 
-    public TOperationLog AddProperty<T>(string name, T value)
+    public abstract bool IsEnabled { get; }
+
+    protected void AddPropertyLocked<T>(string name, T value)
     {
         lock (_gate)
-            _inner.AddProperty(name, value);
-        return (TOperationLog)(object)this;
+            AddPropertyCore(name, value);
     }
 
-    public TOperationLog AppendException(Exception exception)
+    protected abstract void AddPropertyCore<T>(string name, T value);
+
+    protected void AppendExceptionLocked(Exception exception)
     {
         lock (_gate)
-            _inner.AppendException(exception);
-        return (TOperationLog)(object)this;
+            AppendExceptionCore(exception);
     }
 
-    public TOperationLog AppendResult<T>(T value)
+    protected abstract void AppendExceptionCore(Exception exception);
+
+    protected void AppendResultLocked<T>(T value)
     {
         lock (_gate)
-            _inner.AppendResult(value);
-        return (TOperationLog)(object)this;
+            AppendResultCore(value);
     }
 
-    public TOperationLog Escalate(LogLevel level)
+    protected abstract void AppendResultCore<T>(T value);
+
+    protected void EscalateLocked(LogLevel level)
     {
         lock (_gate)
-            _inner.Escalate(level);
-        return (TOperationLog)(object)this;
+            EscalateCore(level);
     }
 
-    public TOperationLog Append(string text)
+    protected abstract void EscalateCore(LogLevel level);
+
+    protected void AppendLocked(string text)
     {
         lock (_gate)
-            _inner.Append(text);
-        return (TOperationLog)(object)this;
+            AppendCore(text);
     }
+
+    protected abstract void AppendCore(string text);
 
     // The handler evaluated text into a private buffer, not the shared journal, precisely because it
     // can't hold `_gate` while doing so - see OperationLogInterpolatedStringHandler's doc comment. Splice
-    // that buffer into the real journal here, under the lock, then return it to the pool.
-    public TOperationLog Append(ref OperationLogInterpolatedStringHandler text)
+    // that buffer into the real journal here, under the lock, then return it to the pool. The
+    // IJournalOwner check/splice is shareable without an abstract hook - IJournalOwner is an internal
+    // interface unaffected by IOperationLog/ISubOperationLog being unrelated - so only the plain-string
+    // fallback (the `else` branch) needs one.
+    protected void AppendLocked(ref OperationLogInterpolatedStringHandler text)
     {
         if (!text.IsEnabled)
-            return (TOperationLog)(object)this;
+            return;
 
         StringBuilder rented = text.RentedBuilder!;
         try
         {
             lock (_gate)
             {
-                if (_inner is IJournalOwner owner)
+                if (InnerJournalOwnerCore() is IJournalOwner owner)
                 {
                     StringBuilder journal = owner.BeginJournalEntry();
                     foreach (ReadOnlyMemory<char> chunk in rented.GetChunks())
@@ -94,7 +114,7 @@ internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLo
                 }
                 else
                 {
-                    _inner.Append(rented.ToString());
+                    AppendCore(rented.ToString());
                 }
             }
         }
@@ -102,31 +122,35 @@ internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLo
         {
             OperationLogPools.Journals.Return(rented);
         }
-
-        return (TOperationLog)(object)this;
     }
 
-    public TOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    protected abstract IJournalOwner? InnerJournalOwnerCore();
+
+    protected void AppendValueLocked<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
         lock (_gate)
-            _inner.AppendValue(value, valueName);
-        return (TOperationLog)(object)this;
+            AppendValueCore(value, valueName);
+    }
+
+    protected abstract void AppendValueCore<T>(T value, string? valueName);
+
+    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
+    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
+    protected void AppendJsonLocked<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        lock (_gate)
+            AppendJsonCore(value, valueName);
     }
 
     [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
     [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
-    public TOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
-    {
-        lock (_gate)
-            _inner.AppendJson(value, valueName);
-        return (TOperationLog)(object)this;
-    }
+    protected abstract void AppendJsonCore<T>(T value, string? valueName);
 
     public ISubOperationLog BeginSubOperation(string operationName)
     {
         ISubOperationLog subOperation;
         lock (_gate)
-            subOperation = _inner.BeginSubOperation(operationName);
+            subOperation = BeginSubOperationCore(operationName);
         return new SynchronizedSubOperationLog(subOperation, _gate);
     }
 
@@ -139,7 +163,7 @@ internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLo
             // Nothing was evaluated - inner.BeginSubOperation(string) ignores its argument when inner
             // is itself disabled, so the name doesn't matter here.
             lock (_gate)
-                subOperation = _inner.BeginSubOperation(string.Empty);
+                subOperation = BeginSubOperationCore(string.Empty);
             return new SynchronizedSubOperationLog(subOperation, _gate);
         }
 
@@ -148,7 +172,7 @@ internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLo
         {
             string name = rented.ToString();
             lock (_gate)
-                subOperation = _inner.BeginSubOperation(name);
+                subOperation = BeginSubOperationCore(name);
         }
         finally
         {
@@ -158,9 +182,41 @@ internal abstract class SynchronizedOperationLogBase<TOperationLog>(TOperationLo
         return new SynchronizedSubOperationLog(subOperation, _gate);
     }
 
+    protected abstract ISubOperationLog BeginSubOperationCore(string operationName);
+
     public void Dispose()
     {
         lock (_gate)
-            _inner.Dispose();
+            DisposeCore();
     }
+
+    protected abstract void DisposeCore();
+
+    IReadOnlyList<KeyValuePair<string, object?>> IOperationLogBase.Properties => Properties;
+
+    EventId IOperationLogBase.EventId => EventId;
+
+    bool IOperationLogBase.IsEnabled => IsEnabled;
+
+    void IOperationLogBase.Escalate(LogLevel level) => EscalateLocked(level);
+
+    void IOperationLogBase.AddProperty<T>(string name, T value) => AddPropertyLocked(name, value);
+
+    void IOperationLogBase.AppendException(Exception exception) => AppendExceptionLocked(exception);
+
+    void IOperationLogBase.AppendResult<T>(T value) => AppendResultLocked(value);
+
+    void IOperationLogBase.Append(string text) => AppendLocked(text);
+
+    void IOperationLogBase.Append(ref OperationLogInterpolatedStringHandler text) => AppendLocked(ref text);
+
+    void IOperationLogBase.AppendValue<T>(T value, string? valueName) => AppendValueLocked(value, valueName);
+
+    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
+    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
+    void IOperationLogBase.AppendJson<T>(T value, string? valueName) => AppendJsonLocked(value, valueName);
+
+    ISubOperationLog IOperationLogBase.BeginSubOperation(string operationName) => BeginSubOperation(operationName);
+
+    ISubOperationLog IOperationLogBase.BeginSubOperation(ref OperationLogInterpolatedStringHandler operationName) => BeginSubOperation(ref operationName);
 }

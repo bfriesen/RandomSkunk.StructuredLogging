@@ -347,11 +347,13 @@ check that yourself before doing work that would otherwise go to waste.
   `level` (default `LogLevel.Information`) and `threadSafe` (default `false`) parameters, and
   return the root `IOperationLog`. `IOperationLog.BeginSubOperation(name)` starts a nested
   sub-operation, returned as a separate `ISubOperationLog`. `IOperationLog` and `ISubOperationLog`
-  are deliberately unrelated interfaces - neither extends the other - so a chain of calls on one
-  keeps returning that same interface rather than widening to a shared ancestor, and so a
-  sub-operation reference can never reach the root-only members below. Both extend a shared
-  `IOperationLogBase<TSelf>` interface for everything else, listed here as members of `log`
-  regardless of which concrete interface it is.
+  are unrelated to each other - neither extends the other - so a chain of calls on one keeps
+  returning that same interface rather than widening to a shared ancestor, and so a sub-operation
+  reference can never reach the root-only members below. Both extend a shared, non-fluent
+  `IOperationLogBase` interface for everything else - useful mainly for writing code that works
+  against either kind of operation log at the cost of chaining - but listed here as members of
+  `log` regardless of which concrete interface it is, since `IOperationLog`/`ISubOperationLog` each
+  redeclare their own fluent, self-returning version of every member below.
 - `log.AddProperty<T>(name, value)` - adds a structured property to the final entry. Available on
   the root and every sub-operation.
 - `log.Properties` - the properties added so far via `AddProperty`, as an
@@ -512,20 +514,60 @@ log.Verify(x => x.Append("Fetching order 42"), Times.Once);
 log.Verify(x => x.SetResult("Shipped"), Times.Once);
 ```
 
-No `CallBase` needed: every fluent member on `FakeOperationLog` has a mockable `void`-returning
-counterpart with the same name (`Append`, `AddProperty`, `BeginSubOperation`, and so on), so an
-unconfigured mock simply does nothing rather than returning `null` for the next call in the chain to
-fail on. The actual `return this` that keeps a fluent chain going lives in a non-mockable explicit
-interface implementation, which always runs for real.
+No `CallBase` needed for `Append`, `AddProperty`, `Escalate`, `AppendException`, `AppendResult`,
+`AppendValue`, `AppendJson`, `SetException`, and `SetResult`: each has a mockable `void`-returning
+counterpart with the same name, so an unconfigured mock simply does nothing rather than returning
+`null` for the next call in the chain to fail on. The actual `return this` that keeps a fluent chain
+going lives in a non-mockable explicit interface implementation, which always runs for real.
+
+`BeginSubOperation` is the exception - `FakeOperationLog` is `abstract`, and `BeginSubOperation` is its
+one abstract member. `Ship` above never begins a sub-operation, so the mock doesn't need it configured;
+code that does call `BeginSubOperation` does, though, since there's no sensible do-nothing default for
+"what sub-operation log should this return" - unlike every other member, it has to be configured (or
+overridden in a subclass) first:
+
+```csharp
+log.Setup(x => x.BeginSubOperation(It.IsAny<string>())).Returns(log.Object);
+```
+
+Left unconfigured, `Mock<FakeOperationLog>` returns `null` for it, and NSubstitute's
+`Substitute.ForPartsOf<>` auto-generates a raw `ISubOperationLog` substitute to return instead - which
+throws the exact `InvalidProgramException` this fake exists to avoid, the moment code under test calls
+its interpolated `Append` overload. Returning the fake itself, as above, reproduces the old
+always-`this` behavior; returning a different `ISubOperationLog` (another `FakeOperationLog`, a
+separately-asserted mock) works just as well when the test needs to tell the sub-operation apart from
+the root.
 
 `IsEnabled` is always `true` on `FakeOperationLog` and can't be overridden or mocked - this fake has no
 disabled state, so its interpolated `Append`/`BeginSubOperation` overloads always evaluate their holes.
 To test code against a genuinely disabled operation, use the first recipe above (`NullLogger.Instance`)
 instead.
 
-Since `BeginSubOperation` on this fake returns the same instance (cast to `ISubOperationLog`), a
-"sub-operation" shares `Properties`/`EventId` with the root exactly as a real one does - but disposing
-either disposes the same object, so don't expect independent `Dispose` calls per sub-operation.
+When `BeginSubOperation` is configured (or overridden) to return the fake itself, a "sub-operation"
+shares `Properties`/`EventId` with the root exactly as a real one does - but disposing either disposes
+the same object, so don't expect independent `Dispose` calls per sub-operation. A subclass that wants
+independent `Dispose` calls *and* correctly shared `Properties` can have `BeginSubOperation` return a
+new instance built with `FakeOperationLog`'s protected copy constructor instead:
+
+```csharp
+private sealed class TestOperationLog : FakeOperationLog
+{
+    public TestOperationLog()
+    {
+    }
+
+    private TestOperationLog(TestOperationLog parent) : base(parent)
+    {
+    }
+
+    public override ISubOperationLog BeginSubOperation(string operationName) => new TestOperationLog(this);
+}
+```
+
+The new instance's `Properties` list is the same list, by reference, as the instance it was built
+from - so `AddProperty` calls made through either are visible through both, exactly as they would be on
+a real operation and its sub-operation - but everything else (the journal buffer, `Dispose`) is
+independent.
 
 In production, register `OperationLogFactory<>` once, as an open generic, alongside your usual
 `AddLogging()` call:

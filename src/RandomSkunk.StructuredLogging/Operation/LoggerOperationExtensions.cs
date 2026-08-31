@@ -12,8 +12,8 @@ public static class LoggerOperationExtensions
     /// entry when the returned <see cref="IOperationLog"/> is disposed. If <paramref name="level"/> is
     /// disabled for <paramref name="logger"/>, no journal accumulation happens and no log entry is ever
     /// written - mirroring the level-disabled short-circuit this library's interpolated string handlers
-    /// already use - but <see cref="IOperationLogBase{TOperationLog}.EventId"/> and <see cref="IOperationLogBase{TOperationLog}.Properties"/>
-    /// (via <see cref="IOperationLogBase{TOperationLog}.AddProperty{T}"/>) still behave as they would on an enabled
+    /// already use - but <see cref="IOperationLog.EventId"/> and <see cref="IOperationLog.Properties"/>
+    /// (via <see cref="IOperationLog.AddProperty{T}"/>) still behave as they would on an enabled
     /// operation, since callers may read them regardless of whether the operation logs anything.
     /// </summary>
     /// <param name="logger">The logger the operation's single log entry will eventually be written to.</param>
@@ -33,8 +33,8 @@ public static class LoggerOperationExtensions
     /// entry (tagged with <paramref name="eventId"/>) when the returned <see cref="IOperationLog"/> is
     /// disposed. If <paramref name="level"/> is disabled for <paramref name="logger"/>, no journal
     /// accumulation happens and no log entry is ever written - mirroring the level-disabled short-circuit
-    /// this library's interpolated string handlers already use - but <see cref="IOperationLogBase{TOperationLog}.EventId"/>
-    /// and <see cref="IOperationLogBase{TOperationLog}.Properties"/> (via <see cref="IOperationLogBase{TOperationLog}.AddProperty{T}"/>) still
+    /// this library's interpolated string handlers already use - but <see cref="IOperationLog.EventId"/>
+    /// and <see cref="IOperationLog.Properties"/> (via <see cref="IOperationLog.AddProperty{T}"/>) still
     /// behave as they would on an enabled operation, since callers may read them regardless of whether
     /// the operation logs anything.
     /// </summary>

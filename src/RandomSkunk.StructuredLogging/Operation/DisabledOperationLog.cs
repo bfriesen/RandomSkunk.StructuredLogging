@@ -17,18 +17,20 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// still carries per-operation state (<see cref="EventId"/>/<see cref="Properties"/>).
 /// <para>
 /// Implements both <see cref="IOperationLog"/> and <see cref="ISubOperationLog"/> directly - the two are
-/// unrelated interfaces (see <see cref="IOperationLogBase{TOperationLog}"/>), but a single disabled instance still
-/// needs to satisfy both, since <see cref="BeginSubOperation(string)"/> hands itself back out as an
+/// unrelated to each other (neither extends the other), but a single disabled instance still needs to
+/// satisfy both, since <see cref="BeginSubOperation(string)"/> hands itself back out as an
 /// <see cref="ISubOperationLog"/>. The members the two interfaces share (all except
-/// <see cref="IOperationLog.SetException"/>/<see cref="IOperationLog.SetResult{T}"/>) are inherited from
-/// <see cref="IOperationLogBase{TOperationLog}"/> and return different types per closed instantiation
-/// (<see cref="IOperationLog"/> vs. <see cref="ISubOperationLog"/>), so a single public method can't satisfy
-/// both - those are implemented explicitly, qualified by the closed generic interface that actually
-/// declares each member (<c>IOperationLogBase&lt;IOperationLog&gt;</c>/<c>IOperationLogBase&lt;ISubOperationLog&gt;</c>,
-/// not <see cref="IOperationLog"/>/<see cref="ISubOperationLog"/> themselves, since C# requires an explicit
-/// interface implementation to name the interface that declares the member), each just forwarding to a
-/// shared private helper where there's real logic (<see cref="AddPropertyCore{T}"/>) or just returning
-/// <see langword="this"/> where there isn't.
+/// <see cref="IOperationLog.SetException"/>/<see cref="IOperationLog.SetResult{T}"/>) return different types
+/// per interface (<see cref="IOperationLog"/> vs. <see cref="ISubOperationLog"/>), so a single public method
+/// can't satisfy both - those are implemented explicitly, qualified by whichever interface declares each
+/// member, each just forwarding to a shared private helper where there's real logic
+/// (<see cref="AddPropertyCore{T}"/>) or just returning <see langword="this"/> where there isn't. Both
+/// interfaces also extend the shared <see cref="IOperationLogBase"/>, whose same-named members are
+/// <see langword="void"/> rather than self-returning - implementing <see cref="IOperationLog"/>/
+/// <see cref="ISubOperationLog"/> means implementing that too, so this class has a third,
+/// <see langword="void"/>-returning explicit implementation of each shared member alongside the two
+/// self-returning ones - one implementation, not two, since both parent interfaces contribute the same
+/// <see cref="IOperationLogBase"/> requirement.
 /// </para>
 /// </summary>
 internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog, ISubOperationLog
@@ -51,47 +53,82 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog, ISu
         (_properties ??= new(capacity: 8)).Add(new(name, value));
     }
 
-    IOperationLog IOperationLogBase<IOperationLog>.AddProperty<T>(string name, T value) { AddPropertyCore(name, value); return this; }
+    IOperationLog IOperationLog.AddProperty<T>(string name, T value) { AddPropertyCore(name, value); return this; }
 
-    ISubOperationLog IOperationLogBase<ISubOperationLog>.AddProperty<T>(string name, T value) { AddPropertyCore(name, value); return this; }
+    ISubOperationLog ISubOperationLog.AddProperty<T>(string name, T value) { AddPropertyCore(name, value); return this; }
+
+    // IOperationLog and ISubOperationLog now both extend IOperationLogBase, so a type implementing either
+    // must also implement IOperationLogBase's own void-returning members - one implementation covers the
+    // requirement contributed by both parent interfaces, since it's the same interface member either way.
+    void IOperationLogBase.AddProperty<T>(string name, T value) => AddPropertyCore(name, value);
 
     public IOperationLog SetException(Exception exception) => this;
 
-    IOperationLog IOperationLogBase<IOperationLog>.Escalate(LogLevel level) => this;
+    IOperationLog IOperationLog.Escalate(LogLevel level) => this;
 
-    ISubOperationLog IOperationLogBase<ISubOperationLog>.Escalate(LogLevel level) => this;
+    ISubOperationLog ISubOperationLog.Escalate(LogLevel level) => this;
+
+    void IOperationLogBase.Escalate(LogLevel level)
+    {
+    }
 
     public IOperationLog SetResult<T>(T value) => this;
 
-    IOperationLog IOperationLogBase<IOperationLog>.AppendException(Exception exception) => this;
+    IOperationLog IOperationLog.AppendException(Exception exception) => this;
 
-    ISubOperationLog IOperationLogBase<ISubOperationLog>.AppendException(Exception exception) => this;
+    ISubOperationLog ISubOperationLog.AppendException(Exception exception) => this;
 
-    IOperationLog IOperationLogBase<IOperationLog>.AppendResult<T>(T value) => this;
+    void IOperationLogBase.AppendException(Exception exception)
+    {
+    }
 
-    ISubOperationLog IOperationLogBase<ISubOperationLog>.AppendResult<T>(T value) => this;
+    IOperationLog IOperationLog.AppendResult<T>(T value) => this;
 
-    IOperationLog IOperationLogBase<IOperationLog>.Append(string text) => this;
+    ISubOperationLog ISubOperationLog.AppendResult<T>(T value) => this;
 
-    ISubOperationLog IOperationLogBase<ISubOperationLog>.Append(string text) => this;
+    void IOperationLogBase.AppendResult<T>(T value)
+    {
+    }
+
+    IOperationLog IOperationLog.Append(string text) => this;
+
+    ISubOperationLog ISubOperationLog.Append(string text) => this;
+
+    void IOperationLogBase.Append(string text)
+    {
+    }
 
     // The handler's constructor already saw IsEnabled == false and skipped evaluating text's
     // interpolated arguments entirely - nothing was written anywhere.
-    IOperationLog IOperationLogBase<IOperationLog>.Append(ref OperationLogInterpolatedStringHandler text) => this;
+    IOperationLog IOperationLog.Append(ref OperationLogInterpolatedStringHandler text) => this;
 
-    ISubOperationLog IOperationLogBase<ISubOperationLog>.Append(ref OperationLogInterpolatedStringHandler text) => this;
+    ISubOperationLog ISubOperationLog.Append(ref OperationLogInterpolatedStringHandler text) => this;
 
-    IOperationLog IOperationLogBase<IOperationLog>.AppendValue<T>(T value, string? valueName) => this;
+    void IOperationLogBase.Append(ref OperationLogInterpolatedStringHandler text)
+    {
+    }
 
-    ISubOperationLog IOperationLogBase<ISubOperationLog>.AppendValue<T>(T value, string? valueName) => this;
+    IOperationLog IOperationLog.AppendValue<T>(T value, string? valueName) => this;
+
+    ISubOperationLog ISubOperationLog.AppendValue<T>(T value, string? valueName) => this;
+
+    void IOperationLogBase.AppendValue<T>(T value, string? valueName)
+    {
+    }
 
     [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
     [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
-    IOperationLog IOperationLogBase<IOperationLog>.AppendJson<T>(T value, string? valueName) => this;
+    IOperationLog IOperationLog.AppendJson<T>(T value, string? valueName) => this;
 
     [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
     [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
-    ISubOperationLog IOperationLogBase<ISubOperationLog>.AppendJson<T>(T value, string? valueName) => this;
+    ISubOperationLog ISubOperationLog.AppendJson<T>(T value, string? valueName) => this;
+
+    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
+    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
+    void IOperationLogBase.AppendJson<T>(T value, string? valueName)
+    {
+    }
 
     public ISubOperationLog BeginSubOperation(string operationName) => this;
 

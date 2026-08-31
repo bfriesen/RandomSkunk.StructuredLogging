@@ -5,23 +5,21 @@ using Microsoft.Extensions.Logging;
 namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
-/// Declares the members shared by <see cref="IOperationLog"/> (the root operation) and
-/// <see cref="ISubOperationLog"/> (a nested sub-operation), each fluent member returning
-/// <typeparamref name="TOperationLog"/> itself so a chain of calls on an <see cref="IOperationLog"/> keeps
-/// returning <see cref="IOperationLog"/> (and likewise for <see cref="ISubOperationLog"/>) rather than
-/// widening to some common ancestor type. <see cref="IOperationLog"/> and <see cref="ISubOperationLog"/>
-/// are deliberately *not* related to each other - each extends this interface independently - so that
-/// <see cref="IOperationLog.SetException"/>/<see cref="IOperationLog.SetResult{T}"/>, which only
-/// <see cref="IOperationLog"/> declares, can never be reached from a sub-operation reference. A sub-operation
-/// that wants to record its own outcome uses <see cref="AppendException"/>/<see cref="AppendResult{T}"/>
-/// instead, declared here so both the root and every sub-operation have them.
+/// Internal counterpart to <see cref="ISubOperationLog"/>: declares the same members, but every member
+/// whose <see cref="ISubOperationLog"/> counterpart is fluent (returns <see cref="ISubOperationLog"/>
+/// itself) returns <see langword="void"/> here instead. Implemented explicitly by
+/// <see cref="OperationLogBase"/> and <see cref="SynchronizedOperationLogBase"/> - the two internal base
+/// classes shared by <see cref="IOperationLog"/>'s and <see cref="ISubOperationLog"/>'s concrete
+/// implementations - so that each can provide one shared, <see langword="void"/>-returning implementation
+/// of a member without colliding with the self-returning member of the same name that
+/// <see cref="RootOperationLog"/>/<see cref="ChildOperationLog"/> (or
+/// <see cref="SynchronizedOperationLog"/>/<see cref="SynchronizedSubOperationLog"/>) declares to actually
+/// satisfy <see cref="IOperationLog"/>/<see cref="ISubOperationLog"/>. Not implemented by
+/// <see cref="IOperationLog"/>/<see cref="ISubOperationLog"/> themselves, and not part of the public API -
+/// unlike the public, generic type of the same name this replaced, this one exists purely as
+/// implementation-sharing plumbing between the two base classes.
 /// </summary>
-/// <typeparam name="TOperationLog">
-/// The most-derived interface - <see cref="IOperationLog"/> or <see cref="ISubOperationLog"/> - so this
-/// interface's fluent members return that same type rather than a shared base type.
-/// </typeparam>
-public interface IOperationLogBase<TOperationLog> : IDisposable
-    where TOperationLog : IOperationLogBase<TOperationLog>
+public interface IOperationLogBase : IDisposable
 {
     /// <summary>
     /// The structured properties added so far via <see cref="AddProperty{T}"/>, on this operation or any
@@ -62,14 +60,13 @@ public interface IOperationLogBase<TOperationLog> : IDisposable
     /// the level of an already-enabled operation - it never re-enables a disabled one. Can be called on the
     /// root operation or any nested sub-operation; either way it affects the one level the eventual entry
     /// gets written at, the same way <see cref="AddProperty{T}"/> affects the one set of properties.
-    /// Typically called alongside <see cref="AppendException"/> (or, on the root, <see cref="IOperationLog.SetException"/>),
-    /// but useful on its own too - e.g. a business failure that never throws (a rejected/backordered/declined
-    /// result) can still warrant a higher level.
+    /// Typically called alongside <see cref="AppendException"/> (or <see cref="IOperationLog.SetException"/>), but useful
+    /// on its own too - e.g. a business failure that never throws (a rejected/backordered/declined result)
+    /// can still warrant a higher level.
     /// </summary>
     /// <param name="level">The level to escalate to, if more severe than the operation's current level.</param>
-    /// <returns>This <typeparamref name="TOperationLog"/>, so calls can be chained.</returns>
-    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
-    TOperationLog Escalate(LogLevel level);
+    /// <exception cref="ObjectDisposedException">The operation has already been disposed.</exception>
+    void Escalate(LogLevel level);
 
     /// <summary>
     /// Adds a structured property to the operation's final log entry. Unlike the built-in
@@ -81,58 +78,51 @@ public interface IOperationLogBase<TOperationLog> : IDisposable
     /// <typeparam name="T">The type of the property value.</typeparam>
     /// <param name="name">The property name.</param>
     /// <param name="value">The property value.</param>
-    /// <returns>This <typeparamref name="TOperationLog"/>, so calls can be chained.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="name"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
-    TOperationLog AddProperty<T>(string name, T value);
+    /// <exception cref="ObjectDisposedException">The operation has already been disposed.</exception>
+    void AddProperty<T>(string name, T value);
 
     /// <summary>
-    /// Appends a "`name` failed: ..." line describing <paramref name="exception"/> to the journal (the root
-    /// operation writes "Operation failed: ..." instead, since it has no sub-operation name of its own).
-    /// Unlike <see cref="IOperationLog.SetException"/>, this never sets the <c>Exception</c> argument of the
-    /// final log entry - only the root's own <see cref="IOperationLog.SetException"/> can do that. This does
-    /// not, by itself, change the level the final log entry is written at - call <see cref="Escalate"/> as
-    /// well if the exception should also raise the operation's level.
+    /// Appends a "Operation failed: ..." line describing <paramref name="exception"/> to the journal.
+    /// Unlike <see cref="IOperationLog.SetException"/>, this never sets the <c>Exception</c> argument of the final log
+    /// entry - only <see cref="IOperationLog.SetException"/> can do that. This does not, by itself, change the level the
+    /// final log entry is written at - call <see cref="Escalate"/> as well if the exception should also
+    /// raise the operation's level.
     /// </summary>
     /// <param name="exception">The exception to record.</param>
-    /// <returns>This <typeparamref name="TOperationLog"/>, so calls can be chained.</returns>
-    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
-    TOperationLog AppendException(Exception exception);
+    /// <exception cref="ObjectDisposedException">The operation has already been disposed.</exception>
+    void AppendException(Exception exception);
 
     /// <summary>
-    /// Appends a "`name` result: ..." line (rendered via <see cref="IFormattable"/>/<see cref="object.ToString"/>)
-    /// describing <paramref name="value"/> to the journal (the root operation writes "Operation result: ..."
-    /// instead, since it has no sub-operation name of its own). Unlike <see cref="IOperationLog.SetResult{T}"/>,
-    /// this never sets the <c>Operation.Result</c> structured property of the final log entry - only the
-    /// root's own <see cref="IOperationLog.SetResult{T}"/> can do that. Typically called via the
-    /// <see cref="OperationLogExtensions.AppendResultTo{T, TLog}"/> extension method rather than directly, so
-    /// it can be chained onto a return expression.
+    /// Appends a "Operation result: ..." line (rendered via <see cref="IFormattable"/>/<see cref="object.ToString"/>)
+    /// describing <paramref name="value"/> to the journal. Unlike <see cref="IOperationLog.SetResult{T}"/>, this never
+    /// sets the <c>Operation.Result</c> structured property of the final log entry - only
+    /// <see cref="IOperationLog.SetResult{T}"/> can do that. Typically called via the
+    /// <see cref="OperationLogExtensions.AppendResultTo{T}(T, IOperationLog)"/> extension method rather than
+    /// directly, so it can be chained onto a return expression.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
     /// <param name="value">The result to record.</param>
-    /// <returns>This <typeparamref name="TOperationLog"/>, so calls can be chained.</returns>
-    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
-    TOperationLog AppendResult<T>(T value);
+    /// <exception cref="ObjectDisposedException">The operation has already been disposed.</exception>
+    void AppendResult<T>(T value);
 
     /// <summary>
     /// Appends a line of free text to the operation's journal, which becomes the message of the
     /// final log entry.
     /// </summary>
     /// <param name="text">The text to append.</param>
-    /// <returns>This <typeparamref name="TOperationLog"/>, so calls can be chained.</returns>
-    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
-    TOperationLog Append(string text);
+    /// <exception cref="ObjectDisposedException">The operation has already been disposed.</exception>
+    void Append(string text);
 
     /// <summary>
     /// Appends a line of free text to the operation's journal, which becomes the message of the
     /// final log entry. Unlike <see cref="Append(string)"/>, <paramref name="text"/>'s interpolated
-    /// arguments are only evaluated if <see cref="IsEnabled"/> is <see langword="true"/> - see
+    /// arguments are only evaluated if <see cref="IOperationLogBase.IsEnabled"/> is <see langword="true"/> - see
     /// <see cref="OperationLogInterpolatedStringHandler"/>.
     /// </summary>
     /// <param name="text">The text to append.</param>
-    /// <returns>This <typeparamref name="TOperationLog"/>, so calls can be chained.</returns>
-    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
-    TOperationLog Append([InterpolatedStringHandlerArgument("")] ref OperationLogInterpolatedStringHandler text);
+    /// <exception cref="ObjectDisposedException">The operation has already been disposed.</exception>
+    void Append([InterpolatedStringHandlerArgument("")] ref OperationLogInterpolatedStringHandler text);
 
     /// <summary>
     /// Appends a line of free text to the operation's journal in the form <c>`valueName`: value</c>,
@@ -147,9 +137,9 @@ public interface IOperationLogBase<TOperationLog> : IDisposable
     /// The name to label the value with. Defaults to the source text of the <paramref name="value"/>
     /// argument expression, via <see cref="CallerArgumentExpressionAttribute"/>.
     /// </param>
-    /// <returns>This <typeparamref name="TOperationLog"/>, so calls can be chained.</returns>
-    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
-    TOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
+    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ObjectDisposedException">The operation has already been disposed.</exception>
+    void AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
 
     /// <summary>
     /// Appends a line of free text to the operation's journal in the form <c>`valueName`: value</c>, like
@@ -163,8 +153,8 @@ public interface IOperationLogBase<TOperationLog> : IDisposable
     /// The name to label the value with. Defaults to the source text of the <paramref name="value"/>
     /// argument expression, via <see cref="CallerArgumentExpressionAttribute"/>.
     /// </param>
-    /// <returns>This <typeparamref name="TOperationLog"/>, so calls can be chained.</returns>
-    /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
+    /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
+    /// <exception cref="ObjectDisposedException">The operation has already been disposed.</exception>
     /// <remarks>
     /// This is the one member of this interface that isn't trimming/Native AOT safe: it serializes
     /// <paramref name="value"/> with reflection-based <see cref="System.Text.Json.JsonSerializer"/>, so it is
@@ -174,14 +164,13 @@ public interface IOperationLogBase<TOperationLog> : IDisposable
     /// </remarks>
     [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
     [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
-    TOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
+    void AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null);
 
     /// <summary>
     /// Begins a nested sub-operation. A "started" line is immediately appended to the journal, and a
     /// "complete" line is appended when the returned <see cref="ISubOperationLog"/> is disposed. Like this
     /// operation, the returned sub-operation never writes its own log entry - it only ever contributes to
-    /// the root's single flushed entry. Always returns <see cref="ISubOperationLog"/>, regardless of
-    /// <typeparamref name="TOperationLog"/> - a sub-operation of the root is still just a sub-operation.
+    /// the root's single flushed entry.
     /// </summary>
     /// <param name="operationName">The sub-operation's name, used in its journal lines (e.g. "started"/"complete").</param>
     /// <returns>An <see cref="ISubOperationLog"/> representing the nested sub-operation.</returns>

@@ -126,7 +126,7 @@ internal sealed class OperationLogState : IDisposable
 
     /// <summary>
     /// Raises <see cref="Level"/> to <paramref name="level"/> if it's more severe than the operation's
-    /// current level, leaving it unchanged otherwise - see <see cref="IOperationLogBase{TOperationLog}.Escalate"/>.
+    /// current level, leaving it unchanged otherwise - see <see cref="IOperationLog.Escalate"/>.
     /// </summary>
     /// <returns>
     /// The level <see cref="Level"/> was set to just before this call - the same as the new
@@ -163,8 +163,8 @@ internal sealed class OperationLogState : IDisposable
 
     /// <summary>
     /// Throws <see cref="ObjectDisposedException"/> if the root operation has already been disposed - see
-    /// <see cref="IsDisposed"/>. Called by every <see cref="OperationLog{TOperationLog}"/> member that would
-    /// otherwise read or write this shared state.
+    /// <see cref="IsDisposed"/>. Called by every <see cref="RootOperationLog"/>/<see cref="ChildOperationLog"/>
+    /// member that would otherwise read or write this shared state.
     /// </summary>
     public void ThrowIfDisposed()
     {

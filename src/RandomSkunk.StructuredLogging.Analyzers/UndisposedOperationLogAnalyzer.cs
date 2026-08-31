@@ -35,22 +35,22 @@ public sealed class UndisposedOperationLogAnalyzer : DiagnosticAnalyzer
                 "RandomSkunk.StructuredLogging.Operation.LoggerOperationExtensions");
             INamedTypeSymbol? operationLogType = compilationContext.Compilation.GetTypeByMetadataName(
                 "RandomSkunk.StructuredLogging.Operation.IOperationLog");
-            INamedTypeSymbol? operationLogBaseType = compilationContext.Compilation.GetTypeByMetadataName(
-                "RandomSkunk.StructuredLogging.Operation.IOperationLogBase`1");
+            INamedTypeSymbol? subOperationLogType = compilationContext.Compilation.GetTypeByMetadataName(
+                "RandomSkunk.StructuredLogging.Operation.ISubOperationLog");
 
             // RandomSkunk.StructuredLogging isn't referenced by this compilation, so there's
             // nothing this analyzer could ever flag in it.
-            if (loggerOperationExtensionsType is null || operationLogType is null || operationLogBaseType is null)
+            if (loggerOperationExtensionsType is null || operationLogType is null || subOperationLogType is null)
                 return;
 
             compilationContext.RegisterOperationAction(
-                operationContext => AnalyzeInvocation(operationContext, loggerOperationExtensionsType, operationLogType, operationLogBaseType),
+                operationContext => AnalyzeInvocation(operationContext, loggerOperationExtensionsType, operationLogType, subOperationLogType),
                 OperationKind.Invocation);
         });
     }
 
     private static void AnalyzeInvocation(
-        OperationAnalysisContext context, INamedTypeSymbol loggerOperationExtensionsType, INamedTypeSymbol operationLogType, INamedTypeSymbol operationLogBaseType)
+        OperationAnalysisContext context, INamedTypeSymbol loggerOperationExtensionsType, INamedTypeSymbol operationLogType, INamedTypeSymbol subOperationLogType)
     {
         IInvocationOperation invocation = (IInvocationOperation)context.Operation;
 
@@ -60,20 +60,19 @@ public sealed class UndisposedOperationLogAnalyzer : DiagnosticAnalyzer
         // containing-type check below works the same way regardless of call syntax.
         IMethodSymbol method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
 
-        // BeginSubOperation is declared once, on the generic IOperationLogBase<TOperationLog> - both
-        // IOperationLog.BeginSubOperation and ISubOperationLog.BeginSubOperation resolve to a closed
-        // instantiation of it (IOperationLogBase<IOperationLog>/IOperationLogBase<ISubOperationLog>),
-        // so the containing-type check has to compare against the open generic definition via
-        // OriginalDefinition rather than against IOperationLog/ISubOperationLog directly.
+        // BeginSubOperation is declared separately on both IOperationLog and ISubOperationLog (the two
+        // interfaces are unrelated), so a call through either receiver type resolves to that
+        // interface's own copy - matched here against both directly.
         bool isBeginOperation = method.Name == "BeginOperation"
             && SymbolEqualityComparer.Default.Equals(method.ContainingType, loggerOperationExtensionsType);
         bool isBeginSubOperation = method.Name == "BeginSubOperation"
-            && SymbolEqualityComparer.Default.Equals(method.ContainingType.OriginalDefinition, operationLogBaseType);
+            && (SymbolEqualityComparer.Default.Equals(method.ContainingType, operationLogType)
+                || SymbolEqualityComparer.Default.Equals(method.ContainingType, subOperationLogType));
 
         if (!isBeginOperation && !isBeginSubOperation)
             return;
 
-        if (IsDisposedOrEscapes(invocation, operationLogType, operationLogBaseType))
+        if (IsDisposedOrEscapes(invocation, operationLogType, subOperationLogType))
             return;
 
         context.ReportDiagnostic(Diagnostic.Create(
@@ -95,9 +94,9 @@ public sealed class UndisposedOperationLogAnalyzer : DiagnosticAnalyzer
     /// disposed even though <paramref name="invocation"/> (the <c>BeginOperation</c> call) isn't
     /// itself the declaration's initializer - see <see cref="OperationLogChain"/>.
     /// </summary>
-    private static bool IsDisposedOrEscapes(IInvocationOperation invocation, INamedTypeSymbol operationLogType, INamedTypeSymbol operationLogBaseType)
+    private static bool IsDisposedOrEscapes(IInvocationOperation invocation, INamedTypeSymbol operationLogType, INamedTypeSymbol subOperationLogType)
     {
-        IOperation effective = OperationLogChain.GetOutermost(invocation, operationLogType, operationLogBaseType);
+        IOperation effective = OperationLogChain.GetOutermost(invocation, operationLogType, subOperationLogType);
 
         // A declarator's initializer value is wrapped in an IVariableInitializerOperation, e.g.
         // `IOperationLog log = logger.BeginOperation(...);` is
@@ -108,12 +107,12 @@ public sealed class UndisposedOperationLogAnalyzer : DiagnosticAnalyzer
 
         // `using var log = logger.BeginOperation(...);` / `using (var log = logger.BeginOperation(...)) { }`
         if (parent is IVariableDeclaratorOperation declarator)
-            return IsLocalDisposedOrEscapes(declarator, operationLogType, operationLogBaseType);
+            return IsLocalDisposedOrEscapes(declarator, operationLogType, subOperationLogType);
 
         return IndicatesDisposalOrEscape(parent);
     }
 
-    private static bool IsLocalDisposedOrEscapes(IVariableDeclaratorOperation declarator, INamedTypeSymbol operationLogType, INamedTypeSymbol operationLogBaseType)
+    private static bool IsLocalDisposedOrEscapes(IVariableDeclaratorOperation declarator, INamedTypeSymbol operationLogType, INamedTypeSymbol subOperationLogType)
     {
         // `using var log = logger.BeginOperation(...);` (a using declaration) or
         // `using (var log = logger.BeginOperation(...)) { }` (a using statement) - checked via
@@ -134,7 +133,7 @@ public sealed class UndisposedOperationLogAnalyzer : DiagnosticAnalyzer
         // through a chain of fluent calls made directly on it, e.g. `log.AddProperty(...).Dispose();`.
         foreach (ILocalReferenceOperation localReference in FindLocalReferences(RootOf(declarator), local))
         {
-            IOperation effective = OperationLogChain.GetOutermost(localReference, operationLogType, operationLogBaseType);
+            IOperation effective = OperationLogChain.GetOutermost(localReference, operationLogType, subOperationLogType);
             if (IndicatesDisposalOrEscape(effective.Parent))
                 return true;
         }

@@ -4,8 +4,8 @@ namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// Implemented by <see cref="ISubOperationLog"/> implementations that own a real journal
-/// <see cref="StringBuilder"/> - <see cref="RootOperationLog"/> and <see cref="ChildOperationLog"/> (via
-/// <see cref="OperationLog{TOperationLog}"/>) - so that <see cref="OperationLogInterpolatedStringHandler"/> can
+/// <see cref="StringBuilder"/> - <see cref="RootOperationLog"/> and <see cref="ChildOperationLog"/> - so
+/// that <see cref="OperationLogInterpolatedStringHandler"/> can
 /// write directly into it instead of building a separate, throwaway string first. Deliberately not
 /// implemented by <see cref="SynchronizedOperationLog"/> or <see cref="SynchronizedSubOperationLog"/>:
 /// writing into a shared journal has to happen under its lock, which can't be guaranteed during

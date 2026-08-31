@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.Extensions.Logging;
 
@@ -8,11 +10,64 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// Its <see cref="DisposeCore"/> is the only place that ever writes to <see cref="OperationLogState.Logger"/> -
 /// every <see cref="ChildOperationLog"/> nested under it only ever contributes to <see cref="OperationLogState"/>.
 /// Applies no synchronization of its own - see <see cref="SynchronizedOperationLog"/> for the decorator
-/// that wraps this type when an operation is begun with <c>threadSafe: true</c>.
+/// that wraps this type when an operation is begun with <c>threadSafe: true</c>. Every fluent member
+/// shared with <see cref="ChildOperationLog"/> is a <c>...Core</c>-suffixed <see langword="void"/> method
+/// on <see cref="OperationLogBase"/>; this class's own same-named members are the ones that actually satisfy
+/// <see cref="IOperationLog"/>, each just calling the base version and returning <see langword="this"/>.
 /// </summary>
 internal sealed class RootOperationLog(OperationLogState state, string operationName)
-    : OperationLog<IOperationLog>(state, operationName), IOperationLog
+    : OperationLogBase(state, operationName), IOperationLog
 {
+    public IOperationLog AddProperty<T>(string name, T value)
+    {
+        base.AddPropertyCore(name, value);
+        return this;
+    }
+
+    public IOperationLog Append(string text)
+    {
+        base.AppendCore(text);
+        return this;
+    }
+
+    public IOperationLog Append(ref OperationLogInterpolatedStringHandler text)
+    {
+        base.AppendCore(ref text);
+        return this;
+    }
+
+    public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        base.AppendValueCore(value, valueName);
+        return this;
+    }
+
+    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
+    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
+    public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    {
+        base.AppendJsonCore(value, valueName);
+        return this;
+    }
+
+    public IOperationLog AppendException(Exception exception)
+    {
+        AppendExceptionCore(exception);
+        return this;
+    }
+
+    public IOperationLog AppendResult<T>(T value)
+    {
+        AppendResultCore(value);
+        return this;
+    }
+
+    public IOperationLog Escalate(LogLevel level)
+    {
+        EscalateCore(level);
+        return this;
+    }
+
     public IOperationLog SetException(Exception exception)
     {
         _state.ThrowIfDisposed();
@@ -34,28 +89,25 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
         return this;
     }
 
-    public IOperationLog AppendException(Exception exception)
+    protected override void AppendExceptionCore(Exception exception)
     {
         _state.ThrowIfDisposed();
         BeginJournalEntry().Append($"Operation failed:\n{exception}");
-        return this;
     }
 
-    public IOperationLog AppendResult<T>(T value)
+    protected override void AppendResultCore<T>(T value)
     {
         _state.ThrowIfDisposed();
         StringBuilder journal = BeginJournalEntry().Append("Operation result: ");
         ValueFormatting.AppendValue(journal, value);
-        return this;
     }
 
-    public IOperationLog Escalate(LogLevel level)
+    protected override void EscalateCore(LogLevel level)
     {
         _state.ThrowIfDisposed();
         LogLevel previousLevel = _state.Escalate(level);
         if (level > previousLevel)
             BeginJournalEntry().Append($"Operation escalated from {previousLevel} to {level}.");
-        return this;
     }
 
     protected override void DisposeCore()
