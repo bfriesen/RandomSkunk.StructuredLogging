@@ -457,7 +457,7 @@ await Task.WhenAll(items.Select(async item =>
 
 ### Testing code that takes an `IOperationLog`
 
-Three recipes, depending on what the code under test needs.
+Two recipes, depending on what the code under test needs.
 
 **A real, silent operation log.** If the code just needs *an* operation log and the test doesn't care
 what it records, begin one on `NullLogger.Instance`. The level is disabled, so you get the library's
@@ -475,49 +475,16 @@ forward. The proxy generated for those two members is invalid, so `log.Append($"
 `InvalidProgramException` at run time; since that's the idiomatic call, a mock of the interface fails
 on contact with the code it's meant to test.
 
-Use `FakeOperationLog` instead - a single do-nothing type implementing both `IOperationLog` and
-`ISubOperationLog`. Every fluent member has a mockable `void`-returning counterpart with the same name
-(`Append`, `AddProperty`, `BeginSubOperation`, and so on); the interpolated-handler overloads hand the
-already-built text to it as a plain string. Subclass `FakeOperationLog`, or hand it to your mocking
-framework and set up or verify those members directly:
-
-```csharp
-Mock<FakeOperationLog> log = new();
-
-ProcessOrder(log.Object, orderId: 42);      // internally calls log.Append($"Fetching order {orderId}")
-
-log.Verify(x => x.Append("Fetching order 42"), Times.Once);
-```
-
-No `CallBase` needed: the members you set up or verify return `void`, so an unconfigured mock simply
-does nothing rather than returning `null` for the next call in the chain to fail on. The actual
-`return this` that keeps a fluent chain going lives in a non-mockable explicit interface
-implementation, which always runs for real.
-
-`IsEnabled` is always `true` and can't be overridden or mocked - this fake has no disabled state, so
-its interpolated `Append`/`BeginSubOperation` overloads always evaluate their holes. To test code
-against a genuinely disabled operation, use the first recipe above (`NullLogger.Instance`) instead.
-
-Since `BeginSubOperation` on this fake returns the same instance (cast to `ISubOperationLog`), a
-"sub-operation" shares `Properties`/`EventId` with the root exactly as a real one does - but disposing
-either disposes the same object, so don't expect independent `Dispose` calls per sub-operation.
-
-**A class that begins its own operation log.** The two recipes above assume the code under test
-*receives* an `IOperationLog` parameter. Just as often, a class begins and disposes its own - calling
-`logger.BeginOperation(...)` internally - and there's no seam to substitute a `FakeOperationLog` in
-its place. Asserting against the operation's actual `ILogger` call instead is one option, but it means
-a test knows the library's internal journal-text format and structured property names, and breaks if
-either ever changes.
-
-Depend on `OperationLogFactory` instead of calling `logger.BeginOperation(...)` directly, and that
-knowledge is no longer needed:
+Depend on `OperationLogFactory<TCategoryName>` instead of calling `logger.BeginOperation(...)`
+directly. It mirrors `ILogger<TCategoryName>`, so declare it closed over the consuming type exactly as
+you would `ILogger<TSelf>`:
 
 ```csharp
 public sealed class OrderShipper
 {
-    private readonly OperationLogFactory _operationLogFactory;
+    private readonly OperationLogFactory<OrderShipper> _operationLogFactory;
 
-    public OrderShipper(OperationLogFactory operationLogFactory) => _operationLogFactory = operationLogFactory;
+    public OrderShipper(OperationLogFactory<OrderShipper> operationLogFactory) => _operationLogFactory = operationLogFactory;
 
     public void Ship(int orderId)
     {
@@ -530,12 +497,12 @@ public sealed class OrderShipper
 }
 ```
 
-`OperationLogFactory.BeginOperation` (and its `EventId`-taking overload) is `virtual`, so a test mocks
-the factory to return a `FakeOperationLog` in place of a real operation - the same assertions as the
-previous recipe, with no `ILogger` involved at all:
+`BeginOperation` (and its `EventId`-taking overload) is `virtual`, so a test mocks the factory to
+return `FakeOperationLog` - a single do-nothing type implementing both `IOperationLog` and
+`ISubOperationLog` - in place of a real operation:
 
 ```csharp
-Mock<OperationLogFactory> factory = new(NullLogger.Instance);
+Mock<OperationLogFactory<OrderShipper>> factory = new(NullLogger<OrderShipper>.Instance);
 Mock<FakeOperationLog> log = new();
 factory.Setup(x => x.BeginOperation("ShipOrder", It.IsAny<LogLevel>(), It.IsAny<bool>())).Returns(log.Object);
 
@@ -545,9 +512,23 @@ log.Verify(x => x.Append("Fetching order 42"), Times.Once);
 log.Verify(x => x.SetResult("Shipped"), Times.Once);
 ```
 
-`OperationLogFactory<TCategoryName>` is the generic counterpart, mirroring `ILogger<TCategoryName>`:
-depend on `OperationLogFactory<OrderShipper>` exactly as you would `ILogger<OrderShipper>`, and register
-it once, as an open generic, alongside your usual `AddLogging()` call:
+No `CallBase` needed: every fluent member on `FakeOperationLog` has a mockable `void`-returning
+counterpart with the same name (`Append`, `AddProperty`, `BeginSubOperation`, and so on), so an
+unconfigured mock simply does nothing rather than returning `null` for the next call in the chain to
+fail on. The actual `return this` that keeps a fluent chain going lives in a non-mockable explicit
+interface implementation, which always runs for real.
+
+`IsEnabled` is always `true` on `FakeOperationLog` and can't be overridden or mocked - this fake has no
+disabled state, so its interpolated `Append`/`BeginSubOperation` overloads always evaluate their holes.
+To test code against a genuinely disabled operation, use the first recipe above (`NullLogger.Instance`)
+instead.
+
+Since `BeginSubOperation` on this fake returns the same instance (cast to `ISubOperationLog`), a
+"sub-operation" shares `Properties`/`EventId` with the root exactly as a real one does - but disposing
+either disposes the same object, so don't expect independent `Dispose` calls per sub-operation.
+
+In production, register `OperationLogFactory<>` once, as an open generic, alongside your usual
+`AddLogging()` call:
 
 ```csharp
 services.AddSingleton(typeof(OperationLogFactory<>));
@@ -557,6 +538,24 @@ A container that already resolves `ILogger<TCategoryName>` - every container bui
 `Microsoft.Extensions.DependencyInjection` does, once logging is registered - resolves
 `OperationLogFactory<TCategoryName>` for any consuming type from that one registration, with nothing
 further to wire up per type.
+
+If you'd rather exercise a real, enabled operation against a fake or mocked `ILogger` you control -
+instead of mocking `OperationLogFactory` itself - expect exactly **one** call to that logger once the
+operation is disposed, no matter how many `Append`/`AddProperty`/sub-operation calls happened along the
+way. That's the whole point of the feature: everything collapses into a single log entry on dispose, in
+a test double exactly as it would in a real sink.
+
+What's safe to assert against that one call is its structured properties: `Operation.Name`,
+`Operation.StartTime`, and `Operation.DurationSeconds` are always present; `Operation.Result` is present
+only if `SetResult` was called; and anything added via `AddProperty` is there under the name it was
+added with. There's no `Operation.Exception` property - an exception set via `SetException` is carried
+as the log entry's own `Exception` argument instead (a hand-rolled `ILogger` test double's own field for
+it, or the exception argument captured from a mocked `Log<TState>` call), the same place any ordinary
+log call's exception would be. The entry's `LogLevel` and `EventId` behave normally too, exactly as they
+would for a non-operation log call. The journal text making up the message, on the other hand, is *not*
+part of the stable contract - its formatting (headers, timestamps, the dashed rule, journal line
+wording) can change between versions, so avoid asserting against more of it than the specific
+substrings your own `Append`/`AppendValue`/`AppendJson` calls contributed.
 
 ### Common pitfalls
 
