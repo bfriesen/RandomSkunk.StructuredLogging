@@ -4,9 +4,11 @@ namespace RandomSkunk.StructuredLogging.Tests;
 
 /// <summary>
 /// A minimal <see cref="ILogger"/> test double that records the arguments of the last <see cref="Log"/> call,
-/// so tests can assert on what the extension methods actually passed through.
+/// so tests can assert on what the extension methods actually passed through. Not sealed so
+/// <see cref="RecordingLogger{T}"/> can add the <see cref="ILogger{TCategoryName}"/> marker without
+/// duplicating any of this.
 /// </summary>
-internal sealed class RecordingLogger : ILogger
+internal class RecordingLogger : ILogger
 {
     public bool Enabled { get; set; } = true;
 
@@ -53,4 +55,15 @@ internal sealed class RecordingLogger : ILogger
         if (ThrowOnLog is not null)
             throw ThrowOnLog;
     }
+}
+
+/// <summary>
+/// The <see cref="ILogger{TCategoryName}"/> counterpart to <see cref="RecordingLogger"/>, for testing code
+/// that depends on <see cref="RandomSkunk.StructuredLogging.Operation.OperationLogFactory{TCategoryName}"/>.
+/// <see cref="ILogger{TCategoryName}"/> adds no members beyond <see cref="ILogger"/>, so there's nothing to
+/// override here.
+/// </summary>
+/// <typeparam name="T">The logger's category type.</typeparam>
+internal sealed class RecordingLogger<T> : RecordingLogger, ILogger<T>
+{
 }

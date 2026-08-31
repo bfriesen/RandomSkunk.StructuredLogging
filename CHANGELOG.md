@@ -31,6 +31,15 @@ First stable release. The API is now considered settled; subsequent 1.x releases
   actual `return this` lives in a non-mockable explicit interface implementation, so a fluent chain
   keeps working even on an unconfigured mock with no `CallBase`. See the README's "Testing code that
   takes an `IOperationLog`" section.
+- **`OperationLogFactory`/`OperationLogFactory<TCategoryName>`** — a DI-friendly seam for a class that
+  begins and disposes its own operation log internally, rather than receiving one as a parameter.
+  Depend on `OperationLogFactory` instead of calling `logger.BeginOperation(...)` directly, and its
+  `virtual` `BeginOperation` overloads let a test substitute a mock that returns a `FakeOperationLog`
+  — no need to assert against the real `ILogger` call, which would otherwise require knowing the
+  journal-text format and structured property names. `OperationLogFactory<TCategoryName>` mirrors
+  `ILogger<TCategoryName>`: register it once as an open generic and a DI container resolves it per
+  consuming type with no further registration. See the README's "Testing code that takes an
+  `IOperationLog`" section.
 - **Five new analyzers.** `RSSL0006` (undisposed `IOperationLog`, with two code fixes), and
   `RSSL0007`/`RSSL0009`/`RSSL0010` (a `<PropertyName>`-capturing interpolated string that gets
   routed through a local, an expression, or a helper method, silently defeating both the tag and

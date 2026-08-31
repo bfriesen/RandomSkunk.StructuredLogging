@@ -457,7 +457,7 @@ await Task.WhenAll(items.Select(async item =>
 
 ### Testing code that takes an `IOperationLog`
 
-Two recipes, depending on what the code under test needs.
+Three recipes, depending on what the code under test needs.
 
 **A real, silent operation log.** If the code just needs *an* operation log and the test doesn't care
 what it records, begin one on `NullLogger.Instance`. The level is disabled, so you get the library's
@@ -501,6 +501,62 @@ against a genuinely disabled operation, use the first recipe above (`NullLogger.
 Since `BeginSubOperation` on this fake returns the same instance (cast to `ISubOperationLog`), a
 "sub-operation" shares `Properties`/`EventId` with the root exactly as a real one does - but disposing
 either disposes the same object, so don't expect independent `Dispose` calls per sub-operation.
+
+**A class that begins its own operation log.** The two recipes above assume the code under test
+*receives* an `IOperationLog` parameter. Just as often, a class begins and disposes its own - calling
+`logger.BeginOperation(...)` internally - and there's no seam to substitute a `FakeOperationLog` in
+its place. Asserting against the operation's actual `ILogger` call instead is one option, but it means
+a test knows the library's internal journal-text format and structured property names, and breaks if
+either ever changes.
+
+Depend on `OperationLogFactory` instead of calling `logger.BeginOperation(...)` directly, and that
+knowledge is no longer needed:
+
+```csharp
+public sealed class OrderShipper
+{
+    private readonly OperationLogFactory _operationLogFactory;
+
+    public OrderShipper(OperationLogFactory operationLogFactory) => _operationLogFactory = operationLogFactory;
+
+    public void Ship(int orderId)
+    {
+        using IOperationLog log = _operationLogFactory.BeginOperation("ShipOrder");
+        log.AddProperty("OrderId", orderId);
+        log.Append($"Fetching order {orderId}");
+        // ...
+        log.SetResult("Shipped");
+    }
+}
+```
+
+`OperationLogFactory.BeginOperation` (and its `EventId`-taking overload) is `virtual`, so a test mocks
+the factory to return a `FakeOperationLog` in place of a real operation - the same assertions as the
+previous recipe, with no `ILogger` involved at all:
+
+```csharp
+Mock<OperationLogFactory> factory = new(NullLogger.Instance);
+Mock<FakeOperationLog> log = new();
+factory.Setup(x => x.BeginOperation("ShipOrder", It.IsAny<LogLevel>(), It.IsAny<bool>())).Returns(log.Object);
+
+new OrderShipper(factory.Object).Ship(orderId: 42);
+
+log.Verify(x => x.Append("Fetching order 42"), Times.Once);
+log.Verify(x => x.SetResult("Shipped"), Times.Once);
+```
+
+`OperationLogFactory<TCategoryName>` is the generic counterpart, mirroring `ILogger<TCategoryName>`:
+depend on `OperationLogFactory<OrderShipper>` exactly as you would `ILogger<OrderShipper>`, and register
+it once, as an open generic, alongside your usual `AddLogging()` call:
+
+```csharp
+services.AddSingleton(typeof(OperationLogFactory<>));
+```
+
+A container that already resolves `ILogger<TCategoryName>` - every container built on
+`Microsoft.Extensions.DependencyInjection` does, once logging is registered - resolves
+`OperationLogFactory<TCategoryName>` for any consuming type from that one registration, with nothing
+further to wire up per type.
 
 ### Common pitfalls
 
