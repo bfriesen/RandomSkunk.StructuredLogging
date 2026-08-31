@@ -37,20 +37,22 @@ public sealed class UndisposedOperationLogAnalyzer : DiagnosticAnalyzer
                 "RandomSkunk.StructuredLogging.Operation.IOperationLog");
             INamedTypeSymbol? subOperationLogType = compilationContext.Compilation.GetTypeByMetadataName(
                 "RandomSkunk.StructuredLogging.Operation.ISubOperationLog");
+            INamedTypeSymbol? operationLogBaseType = compilationContext.Compilation.GetTypeByMetadataName(
+                "RandomSkunk.StructuredLogging.Operation.IOperationLogBase");
 
             // RandomSkunk.StructuredLogging isn't referenced by this compilation, so there's
             // nothing this analyzer could ever flag in it.
-            if (loggerOperationExtensionsType is null || operationLogType is null || subOperationLogType is null)
+            if (loggerOperationExtensionsType is null || operationLogType is null || subOperationLogType is null || operationLogBaseType is null)
                 return;
 
             compilationContext.RegisterOperationAction(
-                operationContext => AnalyzeInvocation(operationContext, loggerOperationExtensionsType, operationLogType, subOperationLogType),
+                operationContext => AnalyzeInvocation(operationContext, loggerOperationExtensionsType, operationLogType, subOperationLogType, operationLogBaseType),
                 OperationKind.Invocation);
         });
     }
 
     private static void AnalyzeInvocation(
-        OperationAnalysisContext context, INamedTypeSymbol loggerOperationExtensionsType, INamedTypeSymbol operationLogType, INamedTypeSymbol subOperationLogType)
+        OperationAnalysisContext context, INamedTypeSymbol loggerOperationExtensionsType, INamedTypeSymbol operationLogType, INamedTypeSymbol subOperationLogType, INamedTypeSymbol operationLogBaseType)
     {
         IInvocationOperation invocation = (IInvocationOperation)context.Operation;
 
@@ -60,14 +62,17 @@ public sealed class UndisposedOperationLogAnalyzer : DiagnosticAnalyzer
         // containing-type check below works the same way regardless of call syntax.
         IMethodSymbol method = invocation.TargetMethod.ReducedFrom ?? invocation.TargetMethod;
 
-        // BeginSubOperation is declared separately on both IOperationLog and ISubOperationLog (the two
-        // interfaces are unrelated), so a call through either receiver type resolves to that
-        // interface's own copy - matched here against both directly.
+        // BeginSubOperation is declared once, on the shared IOperationLogBase - IOperationLog and
+        // ISubOperationLog both inherit it unchanged rather than redeclaring it (unlike the fluent
+        // members, its return type - ISubOperationLog - doesn't need to vary by receiver), so a call
+        // through either receiver type resolves to IOperationLogBase's copy, not IOperationLog's or
+        // ISubOperationLog's own.
         bool isBeginOperation = method.Name == "BeginOperation"
             && SymbolEqualityComparer.Default.Equals(method.ContainingType, loggerOperationExtensionsType);
         bool isBeginSubOperation = method.Name == "BeginSubOperation"
             && (SymbolEqualityComparer.Default.Equals(method.ContainingType, operationLogType)
-                || SymbolEqualityComparer.Default.Equals(method.ContainingType, subOperationLogType));
+                || SymbolEqualityComparer.Default.Equals(method.ContainingType, subOperationLogType)
+                || SymbolEqualityComparer.Default.Equals(method.ContainingType, operationLogBaseType));
 
         if (!isBeginOperation && !isBeginSubOperation)
             return;
