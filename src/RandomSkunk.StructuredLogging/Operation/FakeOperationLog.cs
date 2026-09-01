@@ -15,8 +15,9 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// <para>
 /// <b>Why this type exists.</b> Mocking <see cref="IOperationLog"/> or <see cref="ISubOperationLog"/>
 /// directly doesn't work: <see cref="IOperationLog.Append(ref OperationLogInterpolatedStringHandler)"/>
-/// and <see cref="IOperationLog.BeginSubOperation(ref OperationLogInterpolatedStringHandler)"/> - and their
-/// <see cref="ISubOperationLog"/> equivalents - take a <see langword="ref"/> <see langword="struct"/> parameter, which a proxy-generating framework
+/// and <see cref="IOperationLogBase.BeginSubOperation(ref OperationLogInterpolatedStringHandler)"/> - and
+/// their <see cref="ISubOperationLog"/> equivalents - take a <see langword="ref"/> <see langword="struct"/>
+/// parameter, which a proxy-generating framework
 /// (Moq, NSubstitute, and anything else built on Castle DynamicProxy) can't forward - the proxy it
 /// generates for those two members is invalid, and invoking either one throws
 /// <see cref="InvalidProgramException"/> at run time. Since <c>log.Append($"...")</c> is the idiomatic
@@ -166,9 +167,9 @@ public abstract class FakeOperationLog : IOperationLog, ISubOperationLog, IJourn
     }
 
     /// <summary>
-    /// Does nothing. Called by both <see cref="IOperationLog.Escalate"/>/<see cref="ISubOperationLog.Escalate"/> implementations -
-    /// deliberately non-virtual, see <see cref="FakeOperationLog"/> - so a test can set this up or verify
-    /// it in place of either.
+    /// Does nothing. Called by both <see cref="IOperationLog.Escalate"/>/<see cref="ISubOperationLog.Escalate"/>
+    /// implementations - deliberately non-virtual, see <see cref="FakeOperationLog"/> - so a test can set
+    /// this up or verify it in place of either.
     /// </summary>
     /// <param name="level">Ignored.</param>
     public virtual void Escalate(LogLevel level)
@@ -229,8 +230,9 @@ public abstract class FakeOperationLog : IOperationLog, ISubOperationLog, IJourn
     }
 
     /// <summary>
-    /// Does nothing. Called by both <see cref="IOperationLog.AppendException"/>/<see cref="ISubOperationLog.AppendException"/> implementations,
-    /// so a test can set this up or verify it in place of either.
+    /// Does nothing. Called by both
+    /// <see cref="IOperationLog.AppendException"/>/<see cref="ISubOperationLog.AppendException"/>
+    /// implementations, so a test can set this up or verify it in place of either.
     /// </summary>
     /// <param name="exception">Ignored.</param>
     public virtual void AppendException(Exception exception)
@@ -252,8 +254,9 @@ public abstract class FakeOperationLog : IOperationLog, ISubOperationLog, IJourn
     }
 
     /// <summary>
-    /// Does nothing. Called by both <see cref="IOperationLog.AppendResult{T}"/>/<see cref="ISubOperationLog.AppendResult{T}"/> implementations,
-    /// so a test can set this up or verify it in place of either.
+    /// Does nothing. Called by both
+    /// <see cref="IOperationLog.AppendResult{T}"/>/<see cref="ISubOperationLog.AppendResult{T}"/>
+    /// implementations, so a test can set this up or verify it in place of either.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
     /// <param name="value">Ignored.</param>
@@ -349,8 +352,9 @@ public abstract class FakeOperationLog : IOperationLog, ISubOperationLog, IJourn
     }
 
     /// <summary>
-    /// Does nothing. Called by both <see cref="IOperationLog.AppendValue{T}"/>/<see cref="ISubOperationLog.AppendValue{T}"/> implementations,
-    /// so a test can set this up or verify it in place of either.
+    /// Does nothing. Called by both
+    /// <see cref="IOperationLog.AppendValue{T}"/>/<see cref="ISubOperationLog.AppendValue{T}"/>
+    /// implementations, so a test can set this up or verify it in place of either.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="value">Ignored.</param>
@@ -378,8 +382,9 @@ public abstract class FakeOperationLog : IOperationLog, ISubOperationLog, IJourn
     }
 
     /// <summary>
-    /// Does nothing. Called by both <see cref="IOperationLog.AppendJson{T}"/>/<see cref="ISubOperationLog.AppendJson{T}"/> implementations,
-    /// so a test can set this up or verify it in place of either.
+    /// Does nothing. Called by both
+    /// <see cref="IOperationLog.AppendJson{T}"/>/<see cref="ISubOperationLog.AppendJson{T}"/>
+    /// implementations, so a test can set this up or verify it in place of either.
     /// </summary>
     /// <typeparam name="T">The type of the value.</typeparam>
     /// <param name="value">Ignored.</param>

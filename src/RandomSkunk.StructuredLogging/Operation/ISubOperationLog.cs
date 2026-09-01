@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
-/// A nested sub-operation, returned by <see cref="IOperationLog.BeginSubOperation(string)"/> on either the
+/// A nested sub-operation, returned by <see cref="IOperationLogBase.BeginSubOperation(string)"/> on either the
 /// root operation or another sub-operation. Every fluent member returns <see cref="ISubOperationLog"/>
 /// itself, so a chain of calls on a sub-operation keeps returning a sub-operation - deliberately unrelated
 /// to <see cref="IOperationLog"/> (neither extends the other; each declares its own copy of the members
@@ -25,7 +25,7 @@ public interface ISubOperationLog : IOperationLogBase
     /// <summary>
     /// Raises the level the operation's final log entry is written at, if <paramref name="level"/> is more
     /// severe than the operation's current level - otherwise this is a no-op. Unlike the level passed to
-    /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>,
+    /// <see cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>,
     /// which also determines up front whether the operation journals anything at all, this can only raise
     /// the level of an already-enabled operation - it never re-enables a disabled one. Can be called on the
     /// root operation or any nested sub-operation; either way it affects the one level the eventual entry
@@ -71,8 +71,8 @@ public interface ISubOperationLog : IOperationLogBase
     /// describing <paramref name="value"/> to the journal. Unlike <see cref="IOperationLog.SetResult{T}"/>,
     /// this never sets the <c>Operation.Result</c> structured property of the final log entry - only the
     /// root's own <see cref="IOperationLog.SetResult{T}"/> can do that. Typically called via the
-    /// <see cref="RandomSkunk.StructuredLogging.Operation.Fluent.OperationLogExtensions.AppendResultTo{T}(T, ISubOperationLog)"/> extension method rather
-    /// than directly, so it can be chained onto a return expression.
+    /// <see cref="Fluent.OperationLogExtensions.AppendResultTo{T}(T, ISubOperationLog)"/> extension method
+    /// rather than directly, so it can be chained onto a return expression.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
     /// <param name="value">The result to record.</param>
@@ -92,7 +92,7 @@ public interface ISubOperationLog : IOperationLogBase
     /// <summary>
     /// Appends a line of free text to the operation's journal, which becomes the message of the
     /// final log entry. Unlike <see cref="Append(string)"/>, <paramref name="text"/>'s interpolated
-    /// arguments are only evaluated if <see cref="IsEnabled"/> is <see langword="true"/> - see
+    /// arguments are only evaluated if <see cref="IOperationLogBase.IsEnabled"/> is <see langword="true"/> - see
     /// <see cref="OperationLogInterpolatedStringHandler"/>.
     /// </summary>
     /// <param name="text">The text to append.</param>

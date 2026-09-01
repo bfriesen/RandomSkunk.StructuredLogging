@@ -7,8 +7,9 @@ namespace RandomSkunk.StructuredLogging.Analyzers;
 
 /// <summary>
 /// Determines whether an expression's value is knowable at compile time as a <see cref="string"/>,
-/// for a broader notion of "constant" than the C# language's own (<see cref="SemanticModel.GetConstantValue(SyntaxNode, System.Threading.CancellationToken)"/>)
-/// covers - the interpolated-string case below is not a <em>constant expression</em> per the C#
+/// for a broader notion of "constant" than the C# language's own
+/// (<see cref="SemanticModel.GetConstantValue(SyntaxNode, System.Threading.CancellationToken)"/>) covers -
+/// the interpolated-string case below is not a <em>constant expression</em> per the C#
 /// spec (interpolated strings only fold to a constant when they contain no interpolations at all),
 /// even though its value is still fully knowable at compile time when every hole's own value is.
 /// Used by <see cref="LogPropertyTupleArgumentAnalyzer"/> (RSSL0004) to decide whether a tuple

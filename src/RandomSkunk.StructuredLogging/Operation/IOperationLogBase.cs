@@ -41,21 +41,22 @@ public interface IOperationLogBase : IDisposable
 
     /// <summary>
     /// Whether this operation is actually journaling - <see langword="false"/> if the level passed to
-    /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>
+    /// <see cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>
     /// was disabled on the logger at that time, <see langword="true"/> otherwise. The same value on the
     /// root operation and every nested sub-operation, since <see cref="BeginSubOperation(string)"/> always
     /// produces a sub-operation that matches its parent. Never changes after the operation begins - in
     /// particular, <see cref="Escalate"/> can raise the level the final entry is written at, but it can't
     /// turn a disabled operation into an enabled one. Useful for skipping expensive work that would only
     /// go into an <see cref="AddProperty{T}"/>/<see cref="AppendValue{T}"/>/<see cref="AppendJson{T}"/>
-    /// call whose result would otherwise be discarded, e.g. <c>if (log.IsEnabled) log.AppendJson(BuildExpensiveDiagnostics());</c>.
+    /// call whose result would otherwise be discarded, e.g.
+    /// <c>if (log.IsEnabled) log.AppendJson(BuildExpensiveDiagnostics());</c>.
     /// </summary>
     bool IsEnabled { get; }
 
     /// <summary>
     /// Raises the level the operation's final log entry is written at, if <paramref name="level"/> is more
     /// severe than the operation's current level - otherwise this is a no-op. Unlike the level passed to
-    /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>,
+    /// <see cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>,
     /// which also determines up front whether the operation journals anything at all, this can only raise
     /// the level of an already-enabled operation - it never re-enables a disabled one. Can be called on the
     /// root operation or any nested sub-operation; either way it affects the one level the eventual entry
@@ -98,8 +99,8 @@ public interface IOperationLogBase : IDisposable
     /// describing <paramref name="value"/> to the journal. Unlike <see cref="IOperationLog.SetResult{T}"/>, this never
     /// sets the <c>Operation.Result</c> structured property of the final log entry - only
     /// <see cref="IOperationLog.SetResult{T}"/> can do that. Typically called via the
-    /// <see cref="RandomSkunk.StructuredLogging.Operation.Fluent.OperationLogExtensions.AppendResultTo{T}(T, IOperationLog)"/> extension method rather than
-    /// directly, so it can be chained onto a return expression.
+    /// <see cref="Fluent.OperationLogExtensions.AppendResultTo{T}(T, IOperationLog)"/> extension method
+    /// rather than directly, so it can be chained onto a return expression.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
     /// <param name="value">The result to record.</param>

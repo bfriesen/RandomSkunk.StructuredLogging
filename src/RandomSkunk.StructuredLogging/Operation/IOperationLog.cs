@@ -6,7 +6,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
 /// The root operation log returned by
-/// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>.
+/// <see cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>.
 /// Disposing it writes exactly one log entry summarizing everything that happened during the operation,
 /// including any nested sub-operation activity. Every fluent member returns <see cref="IOperationLog"/>
 /// itself, so a chain of calls on the root keeps returning the root. Adds <see cref="SetException"/> and
@@ -24,7 +24,7 @@ public interface IOperationLog : IOperationLogBase
     /// <summary>
     /// Raises the level the operation's final log entry is written at, if <paramref name="level"/> is more
     /// severe than the operation's current level - otherwise this is a no-op. Unlike the level passed to
-    /// <see cref="LoggerOperationExtensions.BeginOperation(Microsoft.Extensions.Logging.ILogger, string, Microsoft.Extensions.Logging.LogLevel, bool)"/>,
+    /// <see cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>,
     /// which also determines up front whether the operation journals anything at all, this can only raise
     /// the level of an already-enabled operation - it never re-enables a disabled one. Can be called on the
     /// root operation or any nested sub-operation; either way it affects the one level the eventual entry
@@ -75,7 +75,8 @@ public interface IOperationLog : IOperationLogBase
     /// only appends a one-line "Operation result set." marker (or "Operation result set again, overwriting
     /// the previous value." on a second or later call), so the journal records *when* this was called and
     /// whether it happened more than once without duplicating the formatted value. Typically called via the
-    /// <see cref="RandomSkunk.StructuredLogging.Operation.Fluent.OperationLogExtensions.SetResultTo{T}"/> extension method rather than directly, so it can
+    /// <see cref="Fluent.OperationLogExtensions.SetResultTo{T}"/> extension method rather than directly,
+    /// so it can
     /// be chained onto a return expression. Calling this more than once overwrites any result set by an
     /// earlier call - the journal marker above is the only warning that happens.
     /// </summary>
@@ -102,8 +103,8 @@ public interface IOperationLog : IOperationLogBase
     /// describing <paramref name="value"/> to the journal. Unlike <see cref="SetResult{T}"/>, this never
     /// sets the <c>Operation.Result</c> structured property of the final log entry - only
     /// <see cref="SetResult{T}"/> can do that. Typically called via the
-    /// <see cref="RandomSkunk.StructuredLogging.Operation.Fluent.OperationLogExtensions.AppendResultTo{T}(T, IOperationLog)"/> extension method rather than
-    /// directly, so it can be chained onto a return expression.
+    /// <see cref="Fluent.OperationLogExtensions.AppendResultTo{T}(T, IOperationLog)"/> extension method
+    /// rather than directly, so it can be chained onto a return expression.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>
     /// <param name="value">The result to record.</param>

@@ -44,7 +44,10 @@ public class OperationLogFactory
     /// behavior this delegates to.
     /// </summary>
     /// <param name="operationName">The operation's name, used in its journal lines and its final log message.</param>
-    /// <param name="level">The severity level the operation's final log entry is written at. Defaults to <see cref="LogLevel.Information"/>.</param>
+    /// <param name="level">
+    /// The severity level the operation's final log entry is written at. Defaults to
+    /// <see cref="LogLevel.Information"/>.
+    /// </param>
     /// <param name="threadSafe">
     /// <see langword="true"/> to make the returned <see cref="IOperationLog"/> (and every
     /// sub-operation begun from it) safe to use concurrently, e.g. from sub-operations run
@@ -61,7 +64,10 @@ public class OperationLogFactory
     /// </summary>
     /// <param name="eventId">The event id associated with the operation's final log entry.</param>
     /// <param name="operationName">The operation's name, used in its journal lines and its final log message.</param>
-    /// <param name="level">The severity level the operation's final log entry is written at. Defaults to <see cref="LogLevel.Information"/>.</param>
+    /// <param name="level">
+    /// The severity level the operation's final log entry is written at. Defaults to
+    /// <see cref="LogLevel.Information"/>.
+    /// </param>
     /// <param name="threadSafe">
     /// <see langword="true"/> to make the returned <see cref="IOperationLog"/> (and every
     /// sub-operation begun from it) safe to use concurrently, e.g. from sub-operations run

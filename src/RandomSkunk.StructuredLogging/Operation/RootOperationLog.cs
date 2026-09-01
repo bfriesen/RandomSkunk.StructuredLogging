@@ -6,7 +6,8 @@ using Microsoft.Extensions.Logging;
 namespace RandomSkunk.StructuredLogging.Operation;
 
 /// <summary>
-/// The root <see cref="IOperationLog"/> returned by <see cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>.
+/// The root <see cref="IOperationLog"/> returned by
+/// <see cref="LoggerOperationExtensions.BeginOperation(ILogger, string, LogLevel, bool)"/>.
 /// Its <see cref="DisposeCore"/> is the only place that ever writes to <see cref="OperationLogState.Logger"/> -
 /// every <see cref="ChildOperationLog"/> nested under it only ever contributes to <see cref="OperationLogState"/>.
 /// Applies no synchronization of its own - see <see cref="SynchronizedOperationLog"/> for the decorator

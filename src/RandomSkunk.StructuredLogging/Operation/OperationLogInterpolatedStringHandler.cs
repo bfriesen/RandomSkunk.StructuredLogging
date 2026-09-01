@@ -9,7 +9,7 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// <see cref="IOperationLog.Append(ref OperationLogInterpolatedStringHandler)"/> and
 /// <see cref="IOperationLogBase.BeginSubOperation(ref OperationLogInterpolatedStringHandler)"/> (and their
 /// <see cref="ISubOperationLog"/> equivalents).
-/// Building the interpolated content is skipped entirely when <see cref="IOperationLog.IsEnabled"/>
+/// Building the interpolated content is skipped entirely when <see cref="IOperationLogBase.IsEnabled"/>
 /// is <see langword="false"/>, the same short-circuit the structured-logging message handlers apply for a
 /// disabled <see cref="Microsoft.Extensions.Logging.LogLevel"/>.
 /// <para>
@@ -123,7 +123,10 @@ public ref struct OperationLogInterpolatedStringHandler
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
-    /// <param name="alignment">The minimum number of characters the formatted value should occupy; positive values right-align with padding, negative values left-align with padding.</param>
+    /// <param name="alignment">
+    /// The minimum number of characters the formatted value should occupy; positive values right-align
+    /// with padding, negative values left-align with padding.
+    /// </param>
     public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>
@@ -131,7 +134,10 @@ public ref struct OperationLogInterpolatedStringHandler
     /// </summary>
     /// <typeparam name="T">The type of the value to append.</typeparam>
     /// <param name="value">The value to format and append.</param>
-    /// <param name="alignment">The minimum number of characters the formatted value should occupy; positive values right-align with padding, negative values left-align with padding.</param>
+    /// <param name="alignment">
+    /// The minimum number of characters the formatted value should occupy; positive values right-align
+    /// with padding, negative values left-align with padding.
+    /// </param>
     /// <param name="format">A standard or custom format string supported by <paramref name="value"/>'s type.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
 
@@ -145,7 +151,10 @@ public ref struct OperationLogInterpolatedStringHandler
     /// Appends a string interpolation value.
     /// </summary>
     /// <param name="value">The string to append.</param>
-    /// <param name="alignment">The minimum number of characters the formatted value should occupy; positive values right-align with padding, negative values left-align with padding.</param>
+    /// <param name="alignment">
+    /// The minimum number of characters the formatted value should occupy; positive values right-align
+    /// with padding, negative values left-align with padding.
+    /// </param>
     public void AppendFormatted(string? value, int alignment) => _handler.AppendFormatted(value, alignment);
 
     /// <summary>

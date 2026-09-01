@@ -96,7 +96,9 @@ public static class OperationLogExtensions
     /// <param name="log">The root operation to record the property to.</param>
     /// <param name="propertyName">The name to record the property under.</param>
     /// <returns><paramref name="propertyValue"/>, unchanged.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="log"/> or <paramref name="propertyName"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="log"/> or <paramref name="propertyName"/> is <see langword="null"/>.
+    /// </exception>
     [return: NotNullIfNotNull(nameof(propertyValue))]
     public static T AddPropertyTo<T>(this T propertyValue, IOperationLog log, string propertyName)
     {
@@ -122,7 +124,9 @@ public static class OperationLogExtensions
     /// <param name="log">The sub-operation to record the property to.</param>
     /// <param name="propertyName">The name to record the property under.</param>
     /// <returns><paramref name="propertyValue"/>, unchanged.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="log"/> or <paramref name="propertyName"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="log"/> or <paramref name="propertyName"/> is <see langword="null"/>.
+    /// </exception>
     [return: NotNullIfNotNull(nameof(propertyValue))]
     public static T AddPropertyTo<T>(this T propertyValue, ISubOperationLog log, string propertyName)
     {
