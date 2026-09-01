@@ -47,20 +47,20 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog, ISu
     // Validates name even though a disabled operation journals nothing, so the same call throws the
     // same way whether or not the level happens to be enabled - otherwise a null name is a latent bug
     // that only surfaces once someone turns the level on.
-    private void AddPropertyCore<T>(string name, T value)
+    private void AddPropertyCore<T>(string propertyName, T value)
     {
-        ArgumentNullException.ThrowIfNull(name);
-        (_properties ??= new(capacity: 8)).Add(new(name, value));
+        ArgumentNullException.ThrowIfNull(propertyName);
+        (_properties ??= new(capacity: 8)).Add(new(propertyName, value));
     }
 
-    IOperationLog IOperationLog.AddProperty<T>(string name, T value) { AddPropertyCore(name, value); return this; }
+    IOperationLog IOperationLog.AddProperty<T>(string propertyName, T value) { AddPropertyCore(propertyName, value); return this; }
 
-    ISubOperationLog ISubOperationLog.AddProperty<T>(string name, T value) { AddPropertyCore(name, value); return this; }
+    ISubOperationLog ISubOperationLog.AddProperty<T>(string propertyName, T value) { AddPropertyCore(propertyName, value); return this; }
 
     // IOperationLog and ISubOperationLog now both extend IOperationLogBase, so a type implementing either
     // must also implement IOperationLogBase's own void-returning members - one implementation covers the
     // requirement contributed by both parent interfaces, since it's the same interface member either way.
-    void IOperationLogBase.AddProperty<T>(string name, T value) => AddPropertyCore(name, value);
+    void IOperationLogBase.AddProperty<T>(string propertyName, T value) => AddPropertyCore(propertyName, value);
 
     public IOperationLog SetException(Exception exception) => this;
 

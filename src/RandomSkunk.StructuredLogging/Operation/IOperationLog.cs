@@ -46,12 +46,12 @@ public interface IOperationLog : IOperationLogBase
     /// sub-operation; either way the property is added to the one entry that eventually gets flushed.
     /// </summary>
     /// <typeparam name="T">The type of the property value.</typeparam>
-    /// <param name="name">The property name.</param>
+    /// <param name="propertyName">The property name.</param>
     /// <param name="value">The property value.</param>
     /// <returns>This <see cref="IOperationLog"/>, so calls can be chained.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="name"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="propertyName"/> is <see langword="null"/>.</exception>
     /// <exception cref="ObjectDisposedException">The operation has already been disposed.</exception>
-    new IOperationLog AddProperty<T>(string name, T value);
+    new IOperationLog AddProperty<T>(string propertyName, T value);
 
     /// <summary>
     /// Sets the <c>Exception</c> argument of the operation's final log entry. Unlike

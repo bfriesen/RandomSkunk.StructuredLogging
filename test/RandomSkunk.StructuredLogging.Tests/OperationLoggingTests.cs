@@ -1154,7 +1154,7 @@ public class OperationLoggingTests
         using IOperationLog log = logger.BeginOperation("Name");
         Func<IOperationLog> act = () => log.AddProperty(null!, 1);
 
-        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("name");
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("propertyName");
     }
 
     [Fact]
@@ -1166,7 +1166,7 @@ public class OperationLoggingTests
         using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
         Func<ISubOperationLog> act = () => subLog.AddProperty(null!, 1);
 
-        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("name");
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("propertyName");
     }
 
     [Fact]
@@ -1177,7 +1177,7 @@ public class OperationLoggingTests
         using IOperationLog log = logger.BeginOperation("Name", threadSafe: true);
         Func<IOperationLog> act = () => log.AddProperty(null!, 1);
 
-        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("name");
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("propertyName");
     }
 
     [Fact]
@@ -1190,7 +1190,7 @@ public class OperationLoggingTests
         using IOperationLog log = logger.BeginOperation("Name");
         Func<IOperationLog> act = () => log.AddProperty(null!, 1);
 
-        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("name");
+        act.Should().Throw<ArgumentNullException>().Which.ParamName.Should().Be("propertyName");
     }
 
     [Fact]

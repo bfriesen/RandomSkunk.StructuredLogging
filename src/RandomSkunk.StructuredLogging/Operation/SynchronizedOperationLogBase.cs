@@ -50,13 +50,13 @@ internal abstract class SynchronizedOperationLogBase(object gate) : IOperationLo
 
     public abstract bool IsEnabled { get; }
 
-    protected void AddPropertyLocked<T>(string name, T value)
+    protected void AddPropertyLocked<T>(string propertyName, T value)
     {
         lock (_gate)
-            AddPropertyCore(name, value);
+            AddPropertyCore(propertyName, value);
     }
 
-    protected abstract void AddPropertyCore<T>(string name, T value);
+    protected abstract void AddPropertyCore<T>(string propertyName, T value);
 
     protected void AppendExceptionLocked(Exception exception)
     {
@@ -200,7 +200,7 @@ internal abstract class SynchronizedOperationLogBase(object gate) : IOperationLo
 
     void IOperationLogBase.Escalate(LogLevel level) => EscalateLocked(level);
 
-    void IOperationLogBase.AddProperty<T>(string name, T value) => AddPropertyLocked(name, value);
+    void IOperationLogBase.AddProperty<T>(string propertyName, T value) => AddPropertyLocked(propertyName, value);
 
     void IOperationLogBase.AppendException(Exception exception) => AppendExceptionLocked(exception);
 

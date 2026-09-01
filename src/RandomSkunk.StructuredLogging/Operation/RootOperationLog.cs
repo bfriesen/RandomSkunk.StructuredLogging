@@ -18,9 +18,9 @@ namespace RandomSkunk.StructuredLogging.Operation;
 internal sealed class RootOperationLog(OperationLogState state, string operationName)
     : OperationLogBase(state, operationName), IOperationLog
 {
-    public IOperationLog AddProperty<T>(string name, T value)
+    public IOperationLog AddProperty<T>(string propertyName, T value)
     {
-        base.AddPropertyCore(name, value);
+        base.AddPropertyCore(propertyName, value);
         return this;
     }
 

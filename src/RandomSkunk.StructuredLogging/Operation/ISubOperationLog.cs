@@ -47,12 +47,12 @@ public interface ISubOperationLog : IOperationLogBase
     /// sub-operation; either way the property is added to the one entry that eventually gets flushed.
     /// </summary>
     /// <typeparam name="T">The type of the property value.</typeparam>
-    /// <param name="name">The property name.</param>
+    /// <param name="propertyName">The property name.</param>
     /// <param name="value">The property value.</param>
     /// <returns>This <see cref="ISubOperationLog"/>, so calls can be chained.</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="name"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="propertyName"/> is <see langword="null"/>.</exception>
     /// <exception cref="ObjectDisposedException">The root operation has already been disposed.</exception>
-    new ISubOperationLog AddProperty<T>(string name, T value);
+    new ISubOperationLog AddProperty<T>(string propertyName, T value);
 
     /// <summary>
     /// Appends a "`name` failed: ..." line describing <paramref name="exception"/> to the journal. Unlike

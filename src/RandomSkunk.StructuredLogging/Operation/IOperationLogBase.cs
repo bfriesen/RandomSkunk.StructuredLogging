@@ -76,11 +76,11 @@ public interface IOperationLogBase : IDisposable
     /// sub-operation; either way the property is added to the one entry that eventually gets flushed.
     /// </summary>
     /// <typeparam name="T">The type of the property value.</typeparam>
-    /// <param name="name">The property name.</param>
+    /// <param name="propertyName">The property name.</param>
     /// <param name="value">The property value.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="name"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="propertyName"/> is <see langword="null"/>.</exception>
     /// <exception cref="ObjectDisposedException">The operation has already been disposed.</exception>
-    void AddProperty<T>(string name, T value);
+    void AddProperty<T>(string propertyName, T value);
 
     /// <summary>
     /// Appends a "Operation failed: ..." line describing <paramref name="exception"/> to the journal.

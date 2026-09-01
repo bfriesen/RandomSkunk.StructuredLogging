@@ -176,26 +176,26 @@ public abstract class FakeOperationLog : IOperationLog, ISubOperationLog, IJourn
     }
 
     /// <inheritdoc/>
-    IOperationLog IOperationLog.AddProperty<T>(string name, T value)
+    IOperationLog IOperationLog.AddProperty<T>(string propertyName, T value)
     {
-        _properties.Add(new KeyValuePair<string, object?>(name, value));
-        AddProperty(name, value);
+        _properties.Add(new KeyValuePair<string, object?>(propertyName, value));
+        AddProperty(propertyName, value);
         return this;
     }
 
     /// <inheritdoc/>
-    ISubOperationLog ISubOperationLog.AddProperty<T>(string name, T value)
+    ISubOperationLog ISubOperationLog.AddProperty<T>(string propertyName, T value)
     {
-        _properties.Add(new KeyValuePair<string, object?>(name, value));
-        AddProperty(name, value);
+        _properties.Add(new KeyValuePair<string, object?>(propertyName, value));
+        AddProperty(propertyName, value);
         return this;
     }
 
     /// <inheritdoc/>
-    void IOperationLogBase.AddProperty<T>(string name, T value)
+    void IOperationLogBase.AddProperty<T>(string propertyName, T value)
     {
-        _properties.Add(new KeyValuePair<string, object?>(name, value));
-        AddProperty(name, value);
+        _properties.Add(new KeyValuePair<string, object?>(propertyName, value));
+        AddProperty(propertyName, value);
     }
 
     /// <summary>
@@ -208,9 +208,9 @@ public abstract class FakeOperationLog : IOperationLog, ISubOperationLog, IJourn
     /// <see cref="FakeOperationLog"/>.
     /// </summary>
     /// <typeparam name="T">The type of the property value.</typeparam>
-    /// <param name="name">The property name.</param>
+    /// <param name="propertyName">The property name.</param>
     /// <param name="value">The property value.</param>
-    public virtual void AddProperty<T>(string name, T value)
+    public virtual void AddProperty<T>(string propertyName, T value)
     {
     }
 

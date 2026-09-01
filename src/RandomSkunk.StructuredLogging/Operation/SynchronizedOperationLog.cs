@@ -31,7 +31,7 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
 
     protected override IReadOnlyList<KeyValuePair<string, object?>> PropertiesCore() => [.. _inner.Properties];
 
-    protected override void AddPropertyCore<T>(string name, T value) => _inner.AddProperty(name, value);
+    protected override void AddPropertyCore<T>(string propertyName, T value) => _inner.AddProperty(propertyName, value);
 
     protected override void AppendExceptionCore(Exception exception) => _inner.AppendException(exception);
 
@@ -67,9 +67,9 @@ internal sealed class SynchronizedOperationLog(IOperationLog inner, object gate)
         return this;
     }
 
-    public IOperationLog AddProperty<T>(string name, T value)
+    public IOperationLog AddProperty<T>(string propertyName, T value)
     {
-        base.AddPropertyLocked(name, value);
+        base.AddPropertyLocked(propertyName, value);
         return this;
     }
 

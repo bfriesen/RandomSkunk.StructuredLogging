@@ -47,7 +47,7 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
     public bool IsEnabled => true;
 #pragma warning restore CA1822 // Mark members as static
 
-    protected void AddPropertyCore<T>(string name, T value)
+    protected void AddPropertyCore<T>(string propertyName, T value)
     {
         _state.ThrowIfDisposed();
 
@@ -56,9 +56,9 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
         // journal insert - which runs inside Dispose, so the NullReferenceException surfaces far
         // from the offending call, takes the entire log entry with it, and masks whatever
         // exception was already in flight through the surrounding `using`.
-        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(propertyName);
 
-        _state.AddProperty(name, value);
+        _state.AddProperty(propertyName, value);
     }
 
     /// <summary>
@@ -145,7 +145,7 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
 
     void IOperationLogBase.Escalate(LogLevel level) => EscalateCore(level);
 
-    void IOperationLogBase.AddProperty<T>(string name, T value) => AddPropertyCore(name, value);
+    void IOperationLogBase.AddProperty<T>(string propertyName, T value) => AddPropertyCore(propertyName, value);
 
     void IOperationLogBase.AppendException(Exception exception) => AppendExceptionCore(exception);
 
