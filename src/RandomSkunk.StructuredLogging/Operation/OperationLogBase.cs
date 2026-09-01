@@ -8,28 +8,23 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// <summary>
 /// Base class for <see cref="RootOperationLog"/> and <see cref="ChildOperationLog"/>, holding the members
 /// whose implementations are identical between the two. Non-generic: since <see cref="IOperationLog"/> and
-/// <see cref="ISubOperationLog"/> are deliberately unrelated interfaces (neither extends the other, and
-/// neither extends a shared base), a member declared here can't return "whichever interface the derived
-/// class implements" the way it could when both interfaces shared a common generic ancestor. Instead, every
-/// member that would otherwise need to return that self-type (<see cref="AddPropertyCore{T}"/>,
-/// <see cref="AppendCore(string)"/>, <see cref="AppendCore(ref OperationLogInterpolatedStringHandler)"/>,
-/// <see cref="AppendValueCore{T}"/>, <see cref="AppendJsonCore{T}"/>, and - since the journal message each
-/// writes differs between root and sub-operation - the abstract <see cref="AppendExceptionCore"/>,
-/// <see cref="AppendResultCore{T}"/>, <see cref="EscalateCore"/>) is declared here, suffixed <c>Core</c> (to
-/// avoid a same-signature-different-return-type member hiding the interface-satisfying one declared on
-/// <see cref="RootOperationLog"/>/<see cref="ChildOperationLog"/>), returning <see langword="void"/>;
-/// <see cref="RootOperationLog"/>/<see cref="ChildOperationLog"/> each declare the real,
-/// interface-satisfying fluent member as a one-line wrapper that calls the <see langword="void"/> version
-/// here (or, for the three abstract ones, provides it) and returns <see langword="this"/>.
+/// <see cref="ISubOperationLog"/> are deliberately unrelated interfaces (neither extends the other), a
+/// member declared here can't return "whichever interface the derived class implements" the way it could if
+/// both shared a common generic ancestor. Instead, this class implements <see cref="IOperationLogBase"/>
+/// directly and non-explicitly, with plain public members (<see cref="AddProperty{T}"/>,
+/// <see cref="Append(string)"/>, <see cref="Append(ref OperationLogInterpolatedStringHandler)"/>,
+/// <see cref="AppendValue{T}"/>, <see cref="AppendJson{T}"/>, and - since the journal message each writes
+/// differs between root and sub-operation - the abstract <see cref="AppendException"/>,
+/// <see cref="AppendResult{T}"/>, <see cref="Escalate"/>) that return <see langword="void"/> rather than a
+/// self-type. <see cref="RootOperationLog"/>/<see cref="ChildOperationLog"/> each add a same-named,
+/// self-returning explicit implementation of <see cref="IOperationLog"/>'s/<see cref="ISubOperationLog"/>'s
+/// fluent counterpart - a one-line wrapper that calls the member here (or, for the three abstract ones,
+/// provides it) and returns <see langword="this"/>; that explicit member doesn't collide with the one
+/// declared here because it satisfies a different interface, with a different return type.
 /// <see cref="BeginSubOperation(string)"/> and <see cref="Dispose"/> don't have this problem - both
 /// interfaces declare them with the same, non-self return type (<see cref="ISubOperationLog"/> and
 /// <see langword="void"/> respectively) - so they're fully implemented here and satisfy both interfaces'
-/// members implicitly, exactly as before.
-/// <para>
-/// Also implements <see cref="IOperationLogBase"/> explicitly, purely so the <c>Core</c> members above have
-/// a declared interface contract - <see cref="RootOperationLog"/>/<see cref="ChildOperationLog"/> never
-/// consume it, only <see cref="OperationLogBase"/> itself.
-/// </para>
+/// members directly.
 /// </summary>
 internal abstract class OperationLogBase(OperationLogState state, string operationName) : IJournalOwner, IOperationLogBase
 {
@@ -45,7 +40,17 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
 
     public bool IsEnabled => true;
 
-    protected void AddPropertyCore<T>(string propertyName, T value)
+    /// <summary>
+    /// Throws if the root operation has been disposed, then appends the "[elapsed] " timestamp prefix
+    /// that starts every journal line - see <see cref="IJournalOwner"/>.
+    /// </summary>
+    public StringBuilder BeginJournalEntry()
+    {
+        _state.ThrowIfDisposed();
+        return _state.BeginJournalEntry();
+    }
+
+    public void AddProperty<T>(string propertyName, T value)
     {
         _state.ThrowIfDisposed();
 
@@ -72,29 +77,15 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
         _state.AddProperty(propertyName, value);
     }
 
-    /// <summary>
-    /// Throws if the root operation has been disposed, then appends the "[elapsed] " timestamp prefix
-    /// that starts every journal line - see <see cref="IJournalOwner"/>.
-    /// </summary>
-    public StringBuilder BeginJournalEntry()
-    {
-        _state.ThrowIfDisposed();
-        return _state.BeginJournalEntry();
-    }
+    public void Append(string text) => BeginJournalEntry().Append(text);
 
-    protected void AppendCore(string text) => BeginJournalEntry().Append(text);
-
-#pragma warning disable IDE0060 // Remove unused parameter
-#pragma warning disable CA1822 // Mark members as static
-    protected void AppendCore(ref OperationLogInterpolatedStringHandler text)
+    public void Append(ref OperationLogInterpolatedStringHandler text)
     {
         // The handler already wrote everything directly into the journal (via BeginJournalEntry, in
         // its constructor) while it was being built - nothing left to do here.
     }
-#pragma warning restore CA1822 // Mark members as static
-#pragma warning restore IDE0060 // Remove unused parameter
 
-    protected void AppendValueCore<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    public void AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
         StringBuilder journal = BeginJournalEntry().Append($"`{valueName}`: ");
         ValueFormatting.AppendValue(journal, value);
@@ -102,7 +93,7 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
 
     [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
     [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
-    protected void AppendJsonCore<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    public void AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
     {
         StringBuilder journal = BeginJournalEntry().Append($"`{valueName}`: ");
         ValueFormatting.AppendJson(journal, value);
@@ -113,11 +104,11 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
     // escalated..." on a sub-operation) - but declared here anyway (rather than directly on
     // IOperationLog.AppendException/ISubOperationLog.AppendException) so this class has a single place
     // that explicitly implements all of IOperationLogBase.
-    protected abstract void AppendExceptionCore(Exception exception);
+    public abstract void AppendException(Exception exception);
 
-    protected abstract void AppendResultCore<T>(T value);
+    public abstract void AppendResult<T>(T value);
 
-    protected abstract void EscalateCore(LogLevel level);
+    public abstract void Escalate(LogLevel level);
 
     public ISubOperationLog BeginSubOperation(string subOperationName)
     {
@@ -153,24 +144,6 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
     }
 
     protected abstract void DisposeCore();
-
-    void IOperationLogBase.Escalate(LogLevel level) => EscalateCore(level);
-
-    void IOperationLogBase.AddProperty<T>(string propertyName, T value) => AddPropertyCore(propertyName, value);
-
-    void IOperationLogBase.AppendException(Exception exception) => AppendExceptionCore(exception);
-
-    void IOperationLogBase.AppendResult<T>(T value) => AppendResultCore(value);
-
-    void IOperationLogBase.Append(string text) => AppendCore(text);
-
-    void IOperationLogBase.Append(ref OperationLogInterpolatedStringHandler text) => AppendCore(ref text);
-
-    void IOperationLogBase.AppendValue<T>(T value, string? valueName) => AppendValueCore(value, valueName);
-
-    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
-    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
-    void IOperationLogBase.AppendJson<T>(T value, string? valueName) => AppendJsonCore(value, valueName);
 
     private static bool IsReservedProperty(string propertyName)
     {

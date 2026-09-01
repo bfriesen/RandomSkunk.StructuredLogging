@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 
 namespace RandomSkunk.StructuredLogging.Operation;
@@ -7,92 +6,62 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// <summary>
 /// Wraps a sub-operation <see cref="ISubOperationLog"/> (normally a <see cref="ChildOperationLog"/>, though
 /// this decorator doesn't depend on that) so every member is synchronized on a shared <c>gate</c> - the same
-/// one the root <see cref="SynchronizedOperationLog"/> it descends from uses. See
-/// <see cref="SynchronizedOperationLogBase"/> for the shared locking logic; the <c>...Core</c> methods below
-/// are the one call each makes to this decorator's own strongly-typed <see cref="_inner"/>, since
-/// <see cref="IOperationLog"/> and <see cref="ISubOperationLog"/> share no common interface the base class
-/// could hold a wrapped-log field as.
+/// one the root <see cref="SynchronizedOperationLog"/> it descends from uses. Every member is already
+/// implemented, locked, on <see cref="SynchronizedOperationLogBase"/> (which holds the wrapped log as
+/// <see cref="IOperationLogBase"/>, since <see cref="IOperationLog"/> and <see cref="ISubOperationLog"/>
+/// both extend it); this class only adds a same-named, explicit <see cref="ISubOperationLog"/> fluent
+/// wrapper for each - a one-line call to the base member, returning <see langword="this"/>.
 /// </summary>
 internal sealed class SynchronizedSubOperationLog(ISubOperationLog inner, object gate)
-    : SynchronizedOperationLogBase(gate), ISubOperationLog
+    : SynchronizedOperationLogBase(inner, gate), ISubOperationLog
 {
-    private readonly ISubOperationLog _inner = inner;
-
-    public override EventId EventId => _inner.EventId;
-
-    public override bool IsEnabled => _inner.IsEnabled;
-
-    protected override IReadOnlyList<KeyValuePair<string, object?>> PropertiesCore() => [.. _inner.Properties];
-
-    protected override void AddPropertyCore<T>(string propertyName, T value) => _inner.AddProperty(propertyName, value);
-
-    protected override void AppendExceptionCore(Exception exception) => _inner.AppendException(exception);
-
-    protected override void AppendResultCore<T>(T value) => _inner.AppendResult(value);
-
-    protected override void EscalateCore(LogLevel level) => _inner.Escalate(level);
-
-    protected override void AppendCore(string text) => _inner.Append(text);
-
-    protected override IJournalOwner? InnerJournalOwnerCore() => _inner as IJournalOwner;
-
-    protected override void AppendValueCore<T>(T value, string? valueName) => _inner.AppendValue(value, valueName);
-
-    [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
-    [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
-    protected override void AppendJsonCore<T>(T value, string? valueName) => _inner.AppendJson(value, valueName);
-
-    protected override ISubOperationLog BeginSubOperationCore(string operationName) => _inner.BeginSubOperation(operationName);
-
-    protected override void DisposeCore() => _inner.Dispose();
-
-    public ISubOperationLog AddProperty<T>(string propertyName, T value)
+    ISubOperationLog ISubOperationLog.AddProperty<T>(string propertyName, T value)
     {
-        base.AddPropertyLocked(propertyName, value);
+        AddProperty(propertyName, value);
         return this;
     }
 
-    public ISubOperationLog AppendException(Exception exception)
+    ISubOperationLog ISubOperationLog.AppendException(Exception exception)
     {
-        base.AppendExceptionLocked(exception);
+        AppendException(exception);
         return this;
     }
 
-    public ISubOperationLog AppendResult<T>(T value)
+    ISubOperationLog ISubOperationLog.AppendResult<T>(T value)
     {
-        base.AppendResultLocked(value);
+        AppendResult(value);
         return this;
     }
 
-    public ISubOperationLog Escalate(LogLevel level)
+    ISubOperationLog ISubOperationLog.Escalate(LogLevel level)
     {
-        base.EscalateLocked(level);
+        Escalate(level);
         return this;
     }
 
-    public ISubOperationLog Append(string text)
+    ISubOperationLog ISubOperationLog.Append(string text)
     {
-        base.AppendLocked(text);
+        Append(text);
         return this;
     }
 
-    public ISubOperationLog Append(ref OperationLogInterpolatedStringHandler text)
+    ISubOperationLog ISubOperationLog.Append(ref OperationLogInterpolatedStringHandler text)
     {
-        base.AppendLocked(ref text);
+        Append(ref text);
         return this;
     }
 
-    public ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    ISubOperationLog ISubOperationLog.AppendValue<T>(T value, string? valueName)
     {
-        base.AppendValueLocked(value, valueName);
+        AppendValue(value, valueName);
         return this;
     }
 
     [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
     [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
-    public ISubOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    ISubOperationLog ISubOperationLog.AppendJson<T>(T value, string? valueName)
     {
-        base.AppendJsonLocked(value, valueName);
+        AppendJson(value, valueName);
         return this;
     }
 }

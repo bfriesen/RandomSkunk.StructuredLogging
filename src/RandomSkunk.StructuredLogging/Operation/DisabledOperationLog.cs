@@ -7,18 +7,19 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// An <see cref="IOperationLog"/> returned when the operation's level is disabled on the logger, so a
 /// disabled operation does zero journal accumulation - mirroring how the interpolated string handlers
 /// skip evaluating their holes entirely when disabled. Unlike a fully no-op implementation,
-/// <see cref="EventId"/> and <see cref="Properties"/> (via <see cref="AddPropertyCore{T}"/>) still
-/// behave as callers would expect from an enabled operation, since code may read them regardless of whether
-/// the operation ends up writing a log entry - e.g. to tag an unrelated log line with the operation's
-/// <see cref="EventId"/>, or to pass <see cref="Properties"/> to another structured log call. Every other
-/// member is a no-op. A root and every sub-operation begun from it are behaviorally identical - there's no
-/// per-level state left to distinguish them - so <see cref="BeginSubOperation(string)"/> just returns
+/// <see cref="IOperationLogBase.EventId"/> and <see cref="IOperationLogBase.Properties"/> (via
+/// <see cref="AddPropertyCore{T}"/>) still behave as callers would expect from an enabled operation, since
+/// code may read them regardless of whether the operation ends up writing a log entry - e.g. to tag an
+/// unrelated log line with the operation's <see cref="IOperationLogBase.EventId"/>, or to pass
+/// <see cref="IOperationLogBase.Properties"/> to another structured log call. Every other member is a no-op.
+/// A root and every sub-operation begun from it are behaviorally identical - there's no per-level state left
+/// to distinguish them - so <see cref="IOperationLogBase.BeginSubOperation(string)"/> just returns
 /// <see langword="this"/> instead of allocating. Not a singleton (unlike the type it replaced) since it
-/// still carries per-operation state (<see cref="EventId"/>/<see cref="Properties"/>).
+/// still carries per-operation state (<see cref="IOperationLogBase.EventId"/>/<see cref="IOperationLogBase.Properties"/>).
 /// <para>
 /// Implements both <see cref="IOperationLog"/> and <see cref="ISubOperationLog"/> directly - the two are
 /// unrelated to each other (neither extends the other), but a single disabled instance still needs to
-/// satisfy both, since <see cref="BeginSubOperation(string)"/> hands itself back out as an
+/// satisfy both, since <see cref="IOperationLogBase.BeginSubOperation(string)"/> hands itself back out as an
 /// <see cref="ISubOperationLog"/>. The members the two interfaces share (all except
 /// <see cref="IOperationLog.SetException"/>/<see cref="IOperationLog.SetResult{T}"/>) return different types
 /// per interface (<see cref="IOperationLog"/> vs. <see cref="ISubOperationLog"/>), so a single public method
@@ -37,12 +38,12 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog, ISu
 {
     private List<KeyValuePair<string, object?>>? _properties;
 
-    public IReadOnlyList<KeyValuePair<string, object?>> Properties =>
+    IReadOnlyList<KeyValuePair<string, object?>> IOperationLogBase.Properties =>
         _properties ?? (IReadOnlyList<KeyValuePair<string, object?>>)[];
 
-    public EventId EventId => eventId;
+    EventId IOperationLogBase.EventId => eventId;
 
-    public bool IsEnabled => false;
+    bool IOperationLogBase.IsEnabled => false;
 
     // Validates name even though a disabled operation journals nothing, so the same call throws the
     // same way whether or not the level happens to be enabled - otherwise a null name is a latent bug
@@ -62,7 +63,7 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog, ISu
     // requirement contributed by both parent interfaces, since it's the same interface member either way.
     void IOperationLogBase.AddProperty<T>(string propertyName, T value) => AddPropertyCore(propertyName, value);
 
-    public IOperationLog SetException(Exception exception) => this;
+    IOperationLog IOperationLog.SetException(Exception exception) => this;
 
     IOperationLog IOperationLog.Escalate(LogLevel level) => this;
 
@@ -72,7 +73,7 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog, ISu
     {
     }
 
-    public IOperationLog SetResult<T>(T value) => this;
+    IOperationLog IOperationLog.SetResult<T>(T value) => this;
 
     IOperationLog IOperationLog.AppendException(Exception exception) => this;
 
@@ -130,11 +131,11 @@ internal sealed class DisabledOperationLog(EventId eventId) : IOperationLog, ISu
     {
     }
 
-    public ISubOperationLog BeginSubOperation(string operationName) => this;
+    ISubOperationLog IOperationLogBase.BeginSubOperation(string operationName) => this;
 
-    public ISubOperationLog BeginSubOperation(ref OperationLogInterpolatedStringHandler operationName) => this;
+    ISubOperationLog IOperationLogBase.BeginSubOperation(ref OperationLogInterpolatedStringHandler operationName) => this;
 
-    public void Dispose()
+    void IDisposable.Dispose()
     {
     }
 }

@@ -11,77 +11,77 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// to the shared <see cref="OperationLogState._journal"/>. Applies no synchronization of its own - see
 /// <see cref="SynchronizedSubOperationLog"/> for the decorator that wraps this type when an operation is
 /// begun with <c>threadSafe: true</c>. Every fluent member shared with <see cref="RootOperationLog"/> is a
-/// <c>...Core</c>-suffixed <see langword="void"/> method on <see cref="OperationLogBase"/>; this class's own
-/// same-named members are the ones that actually satisfy <see cref="ISubOperationLog"/>, each just calling
-/// the base version and returning <see langword="this"/>.
+/// plain, non-self-returning <see langword="void"/> method on <see cref="OperationLogBase"/>; this class's
+/// own same-named explicit <see cref="ISubOperationLog"/> members are the ones that actually satisfy
+/// <see cref="ISubOperationLog"/>, each just calling the base version and returning <see langword="this"/>.
 /// </summary>
 internal sealed class ChildOperationLog(OperationLogState state, string operationName)
     : OperationLogBase(state, operationName), ISubOperationLog
 {
-    public ISubOperationLog AddProperty<T>(string propertyName, T value)
+    ISubOperationLog ISubOperationLog.AddProperty<T>(string propertyName, T value)
     {
-        base.AddPropertyCore(propertyName, value);
+        AddProperty(propertyName, value);
         return this;
     }
 
-    public ISubOperationLog Append(string text)
+    ISubOperationLog ISubOperationLog.Append(string text)
     {
-        base.AppendCore(text);
+        Append(text);
         return this;
     }
 
-    public ISubOperationLog Append(ref OperationLogInterpolatedStringHandler text)
+    ISubOperationLog ISubOperationLog.Append(ref OperationLogInterpolatedStringHandler text)
     {
-        base.AppendCore(ref text);
+        Append(ref text);
         return this;
     }
 
-    public ISubOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    ISubOperationLog ISubOperationLog.AppendValue<T>(T value, string? valueName)
     {
-        base.AppendValueCore(value, valueName);
+        AppendValue(value, valueName);
         return this;
     }
 
     [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
     [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
-    public ISubOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    ISubOperationLog ISubOperationLog.AppendJson<T>(T value, string? valueName)
     {
-        base.AppendJsonCore(value, valueName);
+        AppendJson(value, valueName);
         return this;
     }
 
-    public ISubOperationLog AppendException(Exception exception)
+    ISubOperationLog ISubOperationLog.AppendException(Exception exception)
     {
-        AppendExceptionCore(exception);
+        AppendException(exception);
         return this;
     }
 
-    public ISubOperationLog AppendResult<T>(T value)
+    ISubOperationLog ISubOperationLog.AppendResult<T>(T value)
     {
-        AppendResultCore(value);
+        AppendResult(value);
         return this;
     }
 
-    public ISubOperationLog Escalate(LogLevel level)
+    ISubOperationLog ISubOperationLog.Escalate(LogLevel level)
     {
-        EscalateCore(level);
+        Escalate(level);
         return this;
     }
 
-    protected override void AppendExceptionCore(Exception exception)
+    public override void AppendException(Exception exception)
     {
         _state.ThrowIfDisposed();
         _state.BeginJournalEntry().Append($"`{_operationName}` failed:\n{exception}");
     }
 
-    protected override void AppendResultCore<T>(T value)
+    public override void AppendResult<T>(T value)
     {
         _state.ThrowIfDisposed();
         StringBuilder journal = _state.BeginJournalEntry().Append($"`{_operationName}` result: ");
         ValueFormatting.AppendValue(journal, value);
     }
 
-    protected override void EscalateCore(LogLevel level)
+    public override void Escalate(LogLevel level)
     {
         _state.ThrowIfDisposed();
         LogLevel previousLevel = _state.Escalate(level);

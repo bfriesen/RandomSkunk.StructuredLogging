@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.Extensions.Logging;
 
@@ -12,64 +11,65 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// every <see cref="ChildOperationLog"/> nested under it only ever contributes to <see cref="OperationLogState"/>.
 /// Applies no synchronization of its own - see <see cref="SynchronizedOperationLog"/> for the decorator
 /// that wraps this type when an operation is begun with <c>threadSafe: true</c>. Every fluent member
-/// shared with <see cref="ChildOperationLog"/> is a <c>...Core</c>-suffixed <see langword="void"/> method
-/// on <see cref="OperationLogBase"/>; this class's own same-named members are the ones that actually satisfy
-/// <see cref="IOperationLog"/>, each just calling the base version and returning <see langword="this"/>.
+/// shared with <see cref="ChildOperationLog"/> is a plain, non-self-returning <see langword="void"/> method
+/// on <see cref="OperationLogBase"/>; this class's own same-named explicit <see cref="IOperationLog"/>
+/// members are the ones that actually satisfy <see cref="IOperationLog"/>, each just calling the base
+/// version and returning <see langword="this"/>.
 /// </summary>
 internal sealed class RootOperationLog(OperationLogState state, string operationName)
     : OperationLogBase(state, operationName), IOperationLog
 {
-    public IOperationLog AddProperty<T>(string propertyName, T value)
+    IOperationLog IOperationLog.AddProperty<T>(string propertyName, T value)
     {
-        base.AddPropertyCore(propertyName, value);
+        AddProperty(propertyName, value);
         return this;
     }
 
-    public IOperationLog Append(string text)
+    IOperationLog IOperationLog.Append(string text)
     {
-        base.AppendCore(text);
+        Append(text);
         return this;
     }
 
-    public IOperationLog Append(ref OperationLogInterpolatedStringHandler text)
+    IOperationLog IOperationLog.Append(ref OperationLogInterpolatedStringHandler text)
     {
-        base.AppendCore(ref text);
+        Append(ref text);
         return this;
     }
 
-    public IOperationLog AppendValue<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    IOperationLog IOperationLog.AppendValue<T>(T value, string? valueName)
     {
-        base.AppendValueCore(value, valueName);
+        AppendValue(value, valueName);
         return this;
     }
 
     [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
     [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
-    public IOperationLog AppendJson<T>(T value, [CallerArgumentExpression(nameof(value))] string? valueName = null)
+    IOperationLog IOperationLog.AppendJson<T>(T value, string? valueName)
     {
-        base.AppendJsonCore(value, valueName);
+        AppendJson(value, valueName);
         return this;
     }
 
-    public IOperationLog AppendException(Exception exception)
+    IOperationLog IOperationLog.AppendException(Exception exception)
     {
-        AppendExceptionCore(exception);
+        AppendException(exception);
         return this;
     }
 
-    public IOperationLog AppendResult<T>(T value)
+    IOperationLog IOperationLog.AppendResult<T>(T value)
     {
-        AppendResultCore(value);
+        AppendResult(value);
         return this;
     }
 
-    public IOperationLog Escalate(LogLevel level)
+    IOperationLog IOperationLog.Escalate(LogLevel level)
     {
-        EscalateCore(level);
+        Escalate(level);
         return this;
     }
 
-    public IOperationLog SetException(Exception exception)
+    IOperationLog IOperationLog.SetException(Exception exception)
     {
         _state.ThrowIfDisposed();
         BeginJournalEntry().Append(_state.Exception is not null
@@ -79,7 +79,7 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
         return this;
     }
 
-    public IOperationLog SetResult<T>(T value)
+    IOperationLog IOperationLog.SetResult<T>(T value)
     {
         _state.ThrowIfDisposed();
         BeginJournalEntry().Append(_state.HasResult
@@ -90,20 +90,20 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
         return this;
     }
 
-    protected override void AppendExceptionCore(Exception exception)
+    public override void AppendException(Exception exception)
     {
         _state.ThrowIfDisposed();
         BeginJournalEntry().Append($"Operation failed:\n{exception}");
     }
 
-    protected override void AppendResultCore<T>(T value)
+    public override void AppendResult<T>(T value)
     {
         _state.ThrowIfDisposed();
         StringBuilder journal = BeginJournalEntry().Append("Operation result: ");
         ValueFormatting.AppendValue(journal, value);
     }
 
-    protected override void EscalateCore(LogLevel level)
+    public override void Escalate(LogLevel level)
     {
         _state.ThrowIfDisposed();
         LogLevel previousLevel = _state.Escalate(level);

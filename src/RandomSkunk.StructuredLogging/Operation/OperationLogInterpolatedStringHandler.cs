@@ -13,11 +13,12 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// is <see langword="false"/>, the same short-circuit the structured-logging message handlers apply for a
 /// disabled <see cref="Microsoft.Extensions.Logging.LogLevel"/>.
 /// <para>
-/// Two constructors, one per receiver type (<see cref="IOperationLog"/>, <see cref="ISubOperationLog"/>),
-/// since the two interfaces are deliberately unrelated and the
-/// interpolated-string-handler pattern binds a constructor overload to the receiver's exact static type -
-/// both just forward to a shared private constructor after pulling out the two things that differ per
-/// receiver type (<c>IsEnabled</c>, and whether it's an <see cref="IJournalOwner"/>).
+/// One constructor, typed to receive the shared <see cref="IOperationLogBase"/> rather than one per receiver
+/// type - since <see cref="IOperationLog"/> and <see cref="ISubOperationLog"/> both extend it, the
+/// interpolated-string-handler pattern (which just needs an implicit conversion from the receiver's static
+/// type to the constructor's parameter type) is satisfied by this one constructor for either receiver. It
+/// reads the two things that differ per receiver - <c>IsEnabled</c>, and whether it's an
+/// <see cref="IJournalOwner"/> - straight off <c>log</c>.
 /// </para>
 /// <para>
 /// When the operation owns a real journal (<see cref="IJournalOwner"/> - in practice
@@ -61,40 +62,37 @@ public ref struct OperationLogInterpolatedStringHandler
     /// evaluating and appending the interpolated string's arguments.
     /// </param>
     public OperationLogInterpolatedStringHandler(int literalLength, int formattedCount, IOperationLogBase log, out bool handlerIsValid)
-        : this(literalLength, formattedCount, log.IsEnabled, log as IJournalOwner, out handlerIsValid)
     {
-    }
+        IsEnabled = handlerIsValid = log.IsEnabled;
 
-    private OperationLogInterpolatedStringHandler(int literalLength, int formattedCount, bool isEnabled, IJournalOwner? journalOwner, out bool handlerIsValid)
-    {
-        IsEnabled = handlerIsValid = isEnabled;
-
-        if (!IsEnabled)
+        if (handlerIsValid)
         {
-            _handler = default;
-            _directTarget = null;
-            _directStartIndex = 0;
-            _rentedBuilder = null;
-            return;
-        }
+            StringBuilder target;
 
-        StringBuilder target;
-        if (journalOwner is not null)
-        {
-            target = journalOwner.BeginJournalEntry();
-            _directTarget = target;
-            _directStartIndex = target.Length;
-            _rentedBuilder = null;
+            if (log is IJournalOwner journalOwner)
+            {
+                target = journalOwner.BeginJournalEntry();
+                _directTarget = target;
+                _directStartIndex = target.Length;
+                _rentedBuilder = default;
+            }
+            else
+            {
+                target = OperationLogPools.Journals.Rent();
+                _directTarget = default;
+                _directStartIndex = default;
+                _rentedBuilder = target;
+            }
+
+            _handler = new StringBuilder.AppendInterpolatedStringHandler(literalLength, formattedCount, target);
         }
         else
         {
-            target = OperationLogPools.Journals.Rent();
-            _rentedBuilder = target;
-            _directTarget = null;
-            _directStartIndex = 0;
+            _handler = default;
+            _directTarget = default;
+            _directStartIndex = default;
+            _rentedBuilder = default;
         }
-
-        _handler = new StringBuilder.AppendInterpolatedStringHandler(literalLength, formattedCount, target);
     }
 
     /// <summary>
