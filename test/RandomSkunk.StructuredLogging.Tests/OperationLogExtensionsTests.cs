@@ -1,5 +1,6 @@
 using AwesomeAssertions;
 using RandomSkunk.StructuredLogging.Operation;
+using RandomSkunk.StructuredLogging.Operation.Fluent;
 
 namespace RandomSkunk.StructuredLogging.Tests;
 

@@ -71,7 +71,7 @@ public interface ISubOperationLog : IOperationLogBase
     /// describing <paramref name="value"/> to the journal. Unlike <see cref="IOperationLog.SetResult{T}"/>,
     /// this never sets the <c>Operation.Result</c> structured property of the final log entry - only the
     /// root's own <see cref="IOperationLog.SetResult{T}"/> can do that. Typically called via the
-    /// <see cref="OperationLogExtensions.AppendResultTo{T}(T, ISubOperationLog)"/> extension method rather
+    /// <see cref="RandomSkunk.StructuredLogging.Operation.Fluent.OperationLogExtensions.AppendResultTo{T}(T, ISubOperationLog)"/> extension method rather
     /// than directly, so it can be chained onto a return expression.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>

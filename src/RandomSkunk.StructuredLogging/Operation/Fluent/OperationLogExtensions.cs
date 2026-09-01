@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace RandomSkunk.StructuredLogging.Operation;
+namespace RandomSkunk.StructuredLogging.Operation.Fluent;
 
 /// <summary>
 /// Extension methods for recording a value to an operation's (or sub-operation's) journal, or recording a
@@ -13,7 +13,13 @@ namespace RandomSkunk.StructuredLogging.Operation;
 /// other. Each method's name mirrors the <see cref="IOperationLog"/>/<see cref="ISubOperationLog"/> member
 /// it calls, plus a <c>To</c> suffix - e.g. <see cref="SetResultTo{T}"/> calls
 /// <see cref="IOperationLog.SetResult{T}"/>, <see cref="AppendResultTo{T}(T, IOperationLog)"/> calls
-/// <see cref="IOperationLog.AppendResult{T}"/>.
+/// <see cref="IOperationLog.AppendResult{T}"/>. Deliberately kept in its own namespace, separate from
+/// <see cref="RandomSkunk.StructuredLogging.Operation"/>: these extend every type (constrained only via
+/// the <c>log</c> parameter), so a plain <c>using RandomSkunk.StructuredLogging.Operation;</c> - already
+/// required for <see cref="IOperationLog"/>/<see cref="ISubOperationLog"/> themselves - would otherwise put
+/// all five on every value's completion list in the file, whether or not the caller wants the fluent,
+/// chained-onto-an-expression style. A caller who does want it opts in with one more
+/// <c>using RandomSkunk.StructuredLogging.Operation.Fluent;</c>.
 /// </summary>
 public static class OperationLogExtensions
 {

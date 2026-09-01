@@ -20,7 +20,10 @@ First stable release. The API is now considered settled; subsequent 1.x releases
   `Escalate`, `IsEnabled`, `EventId`, `Properties`, opt-in thread safety via
   `BeginOperation(..., threadSafe: true)`, interpolated-string-handler overloads for `Append`/
   `BeginSubOperation`, and the chainable `SetResultTo`/`AddPropertyTo`/`AppendValueTo`/
-  `AppendResultTo`/`AppendJsonTo` extension methods.
+  `AppendResultTo`/`AppendJsonTo` extension methods, kept in a separate
+  `RandomSkunk.StructuredLogging.Operation.Fluent` namespace (opt-in via a second `using`) since
+  they extend every type and would otherwise clutter every value's completion list in a file that
+  only needed the base namespace.
 - **`FakeOperationLog`** — a do-nothing implementation of both `IOperationLog` and
   `ISubOperationLog`, meant to be subclassed or handed to a mocking framework, for testing code that
   takes either parameter type. Mocking those interfaces directly does not work: `Append`/

@@ -75,7 +75,7 @@ public interface IOperationLog : IOperationLogBase
     /// only appends a one-line "Operation result set." marker (or "Operation result set again, overwriting
     /// the previous value." on a second or later call), so the journal records *when* this was called and
     /// whether it happened more than once without duplicating the formatted value. Typically called via the
-    /// <see cref="OperationLogExtensions.SetResultTo{T}"/> extension method rather than directly, so it can
+    /// <see cref="RandomSkunk.StructuredLogging.Operation.Fluent.OperationLogExtensions.SetResultTo{T}"/> extension method rather than directly, so it can
     /// be chained onto a return expression. Calling this more than once overwrites any result set by an
     /// earlier call - the journal marker above is the only warning that happens.
     /// </summary>
@@ -102,7 +102,7 @@ public interface IOperationLog : IOperationLogBase
     /// describing <paramref name="value"/> to the journal. Unlike <see cref="SetResult{T}"/>, this never
     /// sets the <c>Operation.Result</c> structured property of the final log entry - only
     /// <see cref="SetResult{T}"/> can do that. Typically called via the
-    /// <see cref="OperationLogExtensions.AppendResultTo{T}(T, IOperationLog)"/> extension method rather than
+    /// <see cref="RandomSkunk.StructuredLogging.Operation.Fluent.OperationLogExtensions.AppendResultTo{T}(T, IOperationLog)"/> extension method rather than
     /// directly, so it can be chained onto a return expression.
     /// </summary>
     /// <typeparam name="T">The type of the result.</typeparam>

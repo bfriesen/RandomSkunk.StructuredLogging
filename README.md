@@ -282,7 +282,15 @@ the wrapper/helper-method form - see below.
 Beyond individual log calls, the library also has a canonical-log-line-style feature for
 journaling everything that happens during an operation and flushing it as exactly **one** log
 entry when the operation completes — instead of one log line per step, scattered across the
-timeline and hard to correlate.
+timeline and hard to correlate. All of it lives in the `RandomSkunk.StructuredLogging.Operation`
+namespace, so a file that uses `BeginOperation`, `IOperationLog`, or `ISubOperationLog` needs
+`using RandomSkunk.StructuredLogging.Operation;`. The `SetResultTo`/`AppendResultTo`/`AddPropertyTo`/
+`AppendValueTo`/`AppendJsonTo` extension methods below live in a separate
+`RandomSkunk.StructuredLogging.Operation.Fluent` namespace instead - they extend *every* type, so
+keeping them out of the base namespace means a file that only calls the ordinary members
+(`AddProperty`, `AppendValue`, `SetResult`, ...) doesn't get all five on every value's completion
+list. Add `using RandomSkunk.StructuredLogging.Operation.Fluent;` too if you want the fluent,
+chained-onto-an-expression style, as the example below does with `SetResultTo`.
 
 ```csharp
 using var log = logger.BeginOperation("FulfillOrder");
