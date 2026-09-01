@@ -122,6 +122,10 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
                 .Append("Operation complete.")
                 .ToString();
 
+            // The journal header prints StartTime as local time (with its offset), for a human
+            // reading the entry in their own context. Operation.StartTime is the machine-facing
+            // property, so it's converted to UTC here instead - a consumer correlating entries
+            // across timezones shouldn't have to parse the offset back out itself.
             if (_state.HasResult)
                 _state.Logger.Write(
                     _state.Properties ?? (IReadOnlyCollection<KeyValuePair<string, object?>>)[],
@@ -130,7 +134,7 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
                     _state.Exception,
                     journal,
                     ("Operation.Name", _operationName),
-                    ("Operation.StartTime", _state.StartTime),
+                    ("Operation.StartTime", _state.StartTime.UtcDateTime),
                     ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds),
                     ("Operation.Result", _state.Result));
             else
@@ -141,7 +145,7 @@ internal sealed class RootOperationLog(OperationLogState state, string operation
                     _state.Exception,
                     journal,
                     ("Operation.Name", _operationName),
-                    ("Operation.StartTime", _state.StartTime),
+                    ("Operation.StartTime", _state.StartTime.UtcDateTime),
                     ("Operation.DurationSeconds", _state.Stopwatch.Elapsed.TotalSeconds));
         }
         finally

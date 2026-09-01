@@ -97,7 +97,8 @@ public class OperationLoggingTests
         Dictionary<string, object?> properties = logger.LastProperties!.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
         properties.Should().ContainKey("Operation.Name").WhoseValue.Should().Be("Name");
-        properties.Should().ContainKey("Operation.StartTime").WhoseValue.Should().BeOfType<DateTimeOffset>();
+        properties.Should().ContainKey("Operation.StartTime").WhoseValue.Should().BeOfType<DateTime>()
+            .Which.Kind.Should().Be(DateTimeKind.Utc);
         properties.Should().ContainKey("Operation.DurationSeconds").WhoseValue.Should().BeOfType<double>();
         properties.Should().NotContainKey("Operation.Result");
         logger.LastMessage.Should().NotBeNull();
@@ -113,7 +114,11 @@ public class OperationLoggingTests
         }
 
         string journal = logger.LastMessage!;
-        DateTimeOffset startTime = (DateTimeOffset)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.StartTime").Value!;
+        // Operation.StartTime is UTC (for cross-timezone correlation); the journal header prints
+        // local time instead, for a human reading the entry in their own context - convert back
+        // to compare them, since the local value itself isn't exposed anywhere.
+        DateTime startTimeUtc = (DateTime)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.StartTime").Value!;
+        DateTimeOffset startTime = startTimeUtc.ToLocalTime();
 
         string startTimeLine = "Start Time: " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff zzz", CultureInfo.InvariantCulture);
         const string propertiesLines = "Properties:\n- Operation.Name\n- Operation.StartTime\n- Operation.DurationSeconds";
@@ -177,7 +182,11 @@ public class OperationLoggingTests
         }
 
         string journal = logger.LastMessage!;
-        DateTimeOffset startTime = (DateTimeOffset)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.StartTime").Value!;
+        // Operation.StartTime is UTC (for cross-timezone correlation); the journal header prints
+        // local time instead, for a human reading the entry in their own context - convert back
+        // to compare them, since the local value itself isn't exposed anywhere.
+        DateTime startTimeUtc = (DateTime)logger.LastProperties!.Single(kvp => kvp.Key == "Operation.StartTime").Value!;
+        DateTimeOffset startTime = startTimeUtc.ToLocalTime();
 
         string startTimeLine = "Start Time: " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff zzz", CultureInfo.InvariantCulture);
         const string propertiesLines = "Properties:\n- Operation.Name\n- Operation.StartTime\n- Operation.DurationSeconds";

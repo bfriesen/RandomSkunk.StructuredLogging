@@ -323,7 +323,10 @@ properties include `Operation.Name`, `Operation.StartTime`, `Operation.DurationS
 with the operation name; if `BeginOperation` was called with a non-default `EventId`, the next header
 line shows its value; then a `Start Time` line; then a `Properties:` line followed by a bulleted list
 naming every structured property the final entry will carry - the built-ins above plus any added via
-`AddProperty` - ending with a dashed rule:
+`AddProperty` - ending with a dashed rule. The header's `Start Time` is local (with its UTC offset),
+for a human reading the entry in their own context; the `Operation.StartTime` structured property is
+UTC (a plain `DateTime` with `Kind=Utc`), so a consumer correlating entries across timezones doesn't
+have to parse the offset back out itself:
 
 ```
 Operation: FulfillOrder
