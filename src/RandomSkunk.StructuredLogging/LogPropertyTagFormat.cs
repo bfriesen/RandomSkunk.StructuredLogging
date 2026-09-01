@@ -42,7 +42,10 @@ internal static class LogPropertyTagFormat
         int closeIndex = span[1..].IndexOf('>');
 
         if (closeIndex < 0)
-            throw new UnterminatedLogPropertyTagException(format);
+        {
+            throw new UnterminatedLogPropertyTagException(
+                $"The format \"{format}\" starts with '<' but has no matching '>', so it can't be parsed as a \"<PropertyName>\" capture tag. If the format is meant to start with a literal '<', use the \"<>\" escape hatch instead, e.g. \"<>{format}\".");
+        }
 
         ReadOnlySpan<char> tag = span.Slice(1, closeIndex);
         ReadOnlySpan<char> remaining = span[(closeIndex + 2)..];
@@ -66,8 +69,35 @@ internal static class LogPropertyTagFormat
 /// </summary>
 public sealed class UnterminatedLogPropertyTagException : FormatException
 {
-    internal UnterminatedLogPropertyTagException(string format)
-        : base($"The format \"{format}\" starts with '<' but has no matching '>', so it can't be parsed as a \"<PropertyName>\" capture tag. If the format is meant to start with a literal '<', use the \"<>\" escape hatch instead, e.g. \"<>{format}\".")
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnterminatedLogPropertyTagException"/> class.
+    /// </summary>
+    public UnterminatedLogPropertyTagException()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnterminatedLogPropertyTagException"/> class
+    /// with a specified error message.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
+    public UnterminatedLogPropertyTagException(string message)
+        : base(message)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UnterminatedLogPropertyTagException"/> class
+    /// with a specified error message and a reference to the inner exception that is the cause of
+    /// this exception.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
+    /// <param name="innerException">
+    /// The exception that is the cause of the current exception, or <see langword="null"/> if no
+    /// inner exception is specified.
+    /// </param>
+    public UnterminatedLogPropertyTagException(string message, Exception? innerException)
+        : base(message, innerException)
     {
     }
 }
