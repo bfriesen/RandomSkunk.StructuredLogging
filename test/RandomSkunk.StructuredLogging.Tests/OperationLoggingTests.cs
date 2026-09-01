@@ -1225,6 +1225,74 @@ public class OperationLoggingTests
     }
 
     [Fact]
+    public void AddProperty_ReservedName_WarnsInJournalButStillAddsTheProperty()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.AddProperty("Operation.Result", 123);
+
+        logger.LastMessage.Should().Contain(
+            "\"Operation.Result\" is a reserved property name; the operation's own property of that name will be duplicated in the log entry.");
+        logger.LastProperties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Operation.Result", 123));
+    }
+
+    [Fact]
+    public void AddProperty_ReservedName_SubOperation_WarnsInJournal()
+    {
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+        {
+            using ISubOperationLog subLog = log.BeginSubOperation("Fetch");
+            subLog.AddProperty("Operation.Name", "oops");
+        }
+
+        logger.LastMessage.Should().Contain(
+            "\"Operation.Name\" is a reserved property name; the operation's own property of that name will be duplicated in the log entry.");
+    }
+
+    [Fact]
+    public void AddProperty_ReservedName_Disabled_DoesNotThrow()
+    {
+        // A disabled operation journals nothing, so there's nowhere to warn into - but adding a
+        // reserved-prefixed property must still succeed rather than throw, same as any other name.
+        RecordingLogger logger = new() { Enabled = false };
+
+        using IOperationLog log = logger.BeginOperation("Name");
+        Action act = () => log.AddProperty("Operation.Name", "oops");
+
+        act.Should().NotThrow();
+        log.Properties.Should().ContainEquivalentOf(new KeyValuePair<string, object?>("Operation.Name", "oops"));
+    }
+
+    [Fact]
+    public void AddProperty_UnreservedNameStartingWithOperation_DoesNotWarn()
+    {
+        // A name that merely starts with the word "Operation" but isn't in the reserved namespace is
+        // an ordinary property.
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.AddProperty("OperationCount", 5);
+
+        logger.LastMessage.Should().NotContain("reserved property name");
+    }
+
+    [Fact]
+    public void AddProperty_UnreservedNameUnderTheOperationPrefix_DoesNotWarn()
+    {
+        // Only the four names the library actually writes are reserved - a name that merely shares the
+        // "Operation." prefix but isn't one of them doesn't collide with anything, so it isn't flagged.
+        RecordingLogger logger = new();
+
+        using (IOperationLog log = logger.BeginOperation("Name"))
+            log.AddProperty("Operation.Foo", 5);
+
+        logger.LastMessage.Should().NotContain("reserved property name");
+    }
+
+    [Fact]
     public void Dispose_WhenTheSinkThrows_StillDisposesTheSharedState()
     {
         // Whatever goes wrong while flushing the entry, the shared state has to end up disposed: that's

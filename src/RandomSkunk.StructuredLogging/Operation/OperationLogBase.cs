@@ -43,9 +43,7 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
 
     public EventId EventId => _state.EventId;
 
-#pragma warning disable CA1822 // Mark members as static
     public bool IsEnabled => true;
-#pragma warning restore CA1822 // Mark members as static
 
     protected void AddPropertyCore<T>(string propertyName, T value)
     {
@@ -57,6 +55,19 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
         // from the offending call, takes the entire log entry with it, and masks whatever
         // exception was already in flight through the surrounding `using`.
         ArgumentNullException.ThrowIfNull(propertyName);
+
+        // The reserved names are passed to Write as trailing tuple arguments, never through this
+        // same list, so a caller using one here can't actually overwrite them; it only means the
+        // sink sees the key twice. That's the same thing Microsoft.Extensions.Logging itself does
+        // nothing about for two ordinary duplicate template holes - resolving duplicate keys is
+        // sink policy, not something this library enforces - so this warns rather than throws,
+        // just making the mistake visible in the one place a developer will actually look instead
+        // of silently leaving it to the sink.
+        if (IsReservedProperty(propertyName))
+        {
+            BeginJournalEntry().Append('"').Append(propertyName)
+                .Append("\" is a reserved property name; the operation's own property of that name will be duplicated in the log entry.");
+        }
 
         _state.AddProperty(propertyName, value);
     }
@@ -160,4 +171,20 @@ internal abstract class OperationLogBase(OperationLogState state, string operati
     [RequiresUnreferencedCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, whose required members cannot be statically determined. Use AppendValue instead, or preserve the serialized type.")]
     [RequiresDynamicCode("AppendJson serializes an arbitrary value using reflection-based System.Text.Json, which may require runtime code generation. Use AppendValue instead in a Native AOT application.")]
     void IOperationLogBase.AppendJson<T>(T value, string? valueName) => AppendJsonCore(value, valueName);
+
+    private static bool IsReservedProperty(string propertyName)
+    {
+        if (propertyName.Length >= 14)
+        {
+            ReadOnlySpan<char> span = propertyName;
+            if (span.StartsWith("Operation."))
+            {
+                span = span[10..];
+                if (span.SequenceEqual("Name") || span.SequenceEqual("Result") || span.SequenceEqual("StartTime") || span.SequenceEqual("DurationSeconds"))
+                    return true;
+            }
+        }
+
+        return false;
+    }
 }

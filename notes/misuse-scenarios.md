@@ -129,8 +129,23 @@ exception-tracking tooling.
 caller who calls `log.AddProperty("Operation.Name", ...)` gets a silent
 duplicate-key collision with no warning that this prefix is off-limits.
 
-**Decision:** Fix. Add a guard in `AddProperty` (root/child/disabled paths)
-that throws `ArgumentException` if `propertyName` starts with `"Operation."`.
+**Decision:** Fix, but warn rather than throw. `Microsoft.Extensions.Logging`
+itself does nothing about two ordinary duplicate property names (confirmed:
+`logger.LogDebug("{User} {User}", a, b)` produces two `"User"` entries in the
+state list, no exception, no dedup) - resolving duplicate keys is sink
+policy, not something this library enforces elsewhere, and the four
+`Operation.*` properties are passed to `Write` as trailing tuple arguments,
+never through the same list `AddProperty` writes to, so a caller can't
+actually overwrite them - only duplicate the key from the sink's point of
+view. So `OperationLogBase.AddPropertyCore` (root/child paths; disabled has
+no journal to warn into, which is fine since a disabled operation writes no
+entry) appends a journal line - `"<name>" is a reserved property name; the
+operation's own property of that name will be duplicated in the log
+entry.` - when `propertyName` exactly matches one of the four names the
+library actually writes (`Operation.Name`, `Operation.StartTime`,
+`Operation.DurationSeconds`, `Operation.Result`), not just the `"Operation."`
+prefix - an unrelated name like `Operation.Foo` doesn't collide with
+anything the library writes, so warning about it would just be noise.
 
 ## 14. Level is frozen at `BeginOperation`, not re-checked at dispose
 
